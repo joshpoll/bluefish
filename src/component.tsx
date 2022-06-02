@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 export type Size = {
   width: number,
   height: number,
@@ -113,12 +115,63 @@ const position = (position: Position, component: Component) => new Component([co
     positions: [position],
   }
 }, (bbox: BBox, children: Component[]) => {
+  // return <g transform={`translate(${bbox.x},${bbox.y})`}>
+  //   {children[0].paint()}
+  // </g>;
+  return children[0].paint();
+})
+
+const row = (spacing: number, children: Component[]) => new Component(children, (interval: SizeInterval, children: Component[]) => {
+  children.map(c => c.layout(interval))
+  const width = children.reduce((acc, c) => acc + c.size!.width, 0);
+  const height = children.reduce((acc, c) => Math.max(c.size!.height), -Infinity);
+  // const top = children.reduce((acc, c) => Math.min(acc, c.position!.y), -Infinity);
+  // const bottom = children.reduce((acc, c) => Math.max(acc, c.position!.y + c.size!.height), Infinity);
+  // 0: 0
+  // 1: 0 + width_0 + spacing
+  // 2: 0 + width_0 + spacing + width_1 + spacing
+  // ...
+  const initial = _.initial(children);
+  const positions = initial.reduce((acc, c) => [{
+    x: acc[0].x + c.size!.width + spacing,
+    y: 0,
+  }, ...acc], [{ x: 0, y: 0 }]).reverse();
+  return {
+    size: {
+      width,
+      // height: bottom - top,
+      height,
+    },
+    positions,
+  }
+},
+  (bbox: BBox, children: Component[]) => {
+    return <g transform={`translate(${bbox.x},${bbox.y})`}>
+      {children.map((c) => c.paint())}
+    </g>
+  });
+
+type Constraint = string;
+
+const group = (components: Record<string, Component>, relations: Record<`${string}->${string}`, Constraint[]>) => new Component(Object.values(components), (interval: SizeInterval, children: Component[]) => {
+  // find any components that already have specified positions.
+  //   run connected components. for CC's with "UI" components that have specified positions, need
+  //   to be able to solve completely. for CC's without, can pick default values
+  // propagate information using blue or indigo (not sure which)
+  // compute everything!
+  throw 'exn'
+}, (bbox: BBox, children: Component[]) => {
+  // COMBAK: translation? local vs. global coordinates?
   return <g transform={`translate(${bbox.x},${bbox.y})`}>
-    {children[0].paint()}
-  </g>;
+    {children.map((c) => c.paint())}
+  </g>
 })
 
 export const testComponent = svg([
+  row(5, [rect({ width: 100, height: 100 }), rect({ width: 50, height: 200 }), rect({ width: 50, height: 50 })]),
+]);
+
+export const testRow = svg([
   position({ x: 10, y: 10 }, rect({ width: 100, height: 100 })),
   position({ x: 30, y: 200 }, rect({ width: 50, height: 200 })),
 ]);

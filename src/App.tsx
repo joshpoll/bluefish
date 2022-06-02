@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { render, testComponent } from './component';
+import { render, testComponent, testRow } from './component';
 
 function App() {
   return (
@@ -22,6 +22,7 @@ function App() {
       </header>
       <div>
         {render(testComponent)}
+        {render(testRow)}
       </div>
     </div>
   );
