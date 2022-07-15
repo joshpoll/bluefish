@@ -1,3 +1,17 @@
+# TODO:
+
+- group, stack, choice. start with more limited expressiveness for now
+- general layout pass + reference + dodge structure (similar to ggplot2 layering)
+- goals: graphviz, tidy tree, LaTeX web implementation, occupancy bitmap labeling, math augmentation
+  benchmarks, GoG(s), pretty printer
+- benchmark examples????
+  - pretty-printed code with highlighting and annotations
+  - LaTeX with highlighting and annotations
+  - auto-labeling on something other than a chart
+  - nudging and bracketing and underlining latex after the fact
+  - blobby diagram using occupancy bitmap (or similar) placement of diagram pieces inside
+- stretch-ish goal: polar coordinate stuff? reviewers will ask about it
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

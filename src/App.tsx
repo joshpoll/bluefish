@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { render, testComponent, testRow } from './component';
+import { render, testRow, testComponent } from './component';
 
 function App() {
   return (
@@ -21,8 +21,8 @@ function App() {
         </a>
       </header>
       <div>
-        {render(testComponent)}
         {render(testRow)}
+        {render(testComponent)}
       </div>
     </div>
   );
