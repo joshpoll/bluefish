@@ -146,6 +146,7 @@ const text = (contents: string, params?: Text) => {
     contents,
     `${fontStyle ?? ''} ${fontWeight ?? ''} ${fontSize ?? ''} ${fontFamily ?? ''}`,
   );
+  console.log(contents, measurements);
   return new Component(
     [],
     (interval: SizeInterval, children: Component[]) => {
@@ -437,7 +438,24 @@ export const testRow = svg([
 
 export const testComponent = svg([
   position({ x: 10, y: 10 }, rect({ width: 100, height: 100, fill: 'firebrick' })),
-  position({ x: 30, y: 200 }, text('y = mx + 1', { fontSize: 20 })),
+  position({ x: 30, y: 200 }, text('y = mx + 1', { fontSize: '20px' })),
+]);
+
+export const annotatedEquation = svg([
+  position({ x: 60, y: 50 }, text('FORMULA', { fontSize: 60, fill: 'gray' })),
+  position({ x: 10, y: 100 }, rect({ width: 400, height: 5, fill: 'gray' })),
+  position({ x: 10, y: 100 }, rect({ width: 5, height: 20, fill: 'gray' })),
+  position({ x: 10 + 400, y: 100 }, rect({ width: 5, height: 20, fill: 'gray' })),
+  position({ x: 30, y: 200 }, text('y = mx + 1', { fontSize: '80px' })),
+  position(
+    { x: 10, y: 350 },
+    row({ spacing: 10 }, 'bottom', [
+      text('identifier', { fontSize: '20px' }),
+      text('expression', { fontSize: '20px' }),
+      text('operator', { fontSize: '20px' }),
+      text('numeric literal', { fontSize: '20px' }),
+    ]),
+  ),
 ]);
 
 export const render = (component: Component): JSX.Element => {
