@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { Constraint, solve } from './blue';
+import { measureText } from './measureText';
 
 export type Size = {
   width: number;
@@ -125,6 +126,43 @@ const rect = (params: Rect) =>
       return <rect {...params} x={bbox.x} y={bbox.y} width={bbox.width} height={bbox.height} />;
     },
   );
+
+type Text = React.SVGProps<SVGTextElement> &
+  Partial<{
+    x: number;
+    y: number;
+  }>;
+
+// TODO: use 'alphabetic' baseline in renderer? may need to figure out displacement again
+// TODO: maybe use https://airbnb.io/visx/docs/text?
+// TODO: maybe use alignmentBaseline="baseline" to measure the baseline as well?? need to add it as
+// a guide
+// TODO: very close to good alignment, but not quite there. Can I use more of the canvas
+// measurements somehow?
+const text = (contents: string, params?: Text) => {
+  params = { fontFamily: 'sans-serif', fontSize: '12px', fontWeight: 'normal', ...params };
+  const { fontStyle, fontWeight, fontSize, fontFamily } = params;
+  const measurements = measureText(
+    contents,
+    `${fontStyle ?? ''} ${fontWeight ?? ''} ${fontSize ?? ''} ${fontFamily ?? ''}`,
+  );
+  return new Component(
+    [],
+    (interval: SizeInterval, children: Component[]) => {
+      return {
+        size: { width: measurements.width, height: measurements.fontHeight },
+        positions: [],
+      };
+    },
+    (bbox: BBox, children: Component[]) => {
+      return (
+        <text {...params} x={bbox.x} y={bbox.y + bbox.height - measurements.fontDescent}>
+          {contents}
+        </text>
+      );
+    },
+  );
+};
 
 const position = (position: Position, component: Component) =>
   new Component(
@@ -399,7 +437,7 @@ export const testRow = svg([
 
 export const testComponent = svg([
   position({ x: 10, y: 10 }, rect({ width: 100, height: 100, fill: 'firebrick' })),
-  position({ x: 30, y: 200 }, rect({ width: 50, height: 200, fill: 'cornflowerblue' })),
+  position({ x: 30, y: 200 }, text('y = mx + 1', { fontSize: 20 })),
 ]);
 
 export const render = (component: Component): JSX.Element => {
