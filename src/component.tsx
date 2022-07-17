@@ -61,7 +61,7 @@ export const rect = (params: Rect) => {
         //   height: interval.height.ub,
         // }
         return {
-          size: { width: params.width!, height: params.height! },
+          size: { width: params.width ?? interval.width.lb, height: params.height ?? interval.width.lb },
           positions: [],
         };
       },
@@ -257,6 +257,93 @@ export const row = (options: RowOptions, alignment: VerticalAlignment, children:
               ...acc,
             ],
             [{ x: 0, y: yPos[0] }],
+          )
+          .reverse();
+        return {
+          size: {
+            width,
+            // height: bottom - top,
+            height,
+          },
+          positions,
+        };
+      } else {
+        throw new Error('never');
+      }
+    },
+    (bbox: BBox, children: Component[]) => {
+      return <g transform={`translate(${bbox.x},${bbox.y})`}>{children.map((c) => c.paint())}</g>;
+    },
+  ).mod(position({ x: options.x ?? 0, y: options.y ?? 0 }));
+
+type HorizontalAlignment = 'left' | 'center' | 'right';
+
+type ColOptions = ({ spacing: number } | { totalHeight: number }) & { x?: number; y?: number };
+
+export const col = (options: ColOptions, alignment: HorizontalAlignment, children: Component[]) =>
+  new Component(
+    children,
+    (interval: SizeInterval, children: Component[]) => {
+      children.map((c) => c.layout(interval));
+      const width = children.reduce((acc, c) => Math.max(acc, c.size!.width), -Infinity);
+      const height = children.reduce((acc, c) => acc + c.size!.height, 0);
+      // const top = children.reduce((acc, c) => Math.min(acc, c.position!.y), Infinity);
+      // const bottom = children.reduce((acc, c) => Math.max(acc, c.position!.y + c.size!.height), -Infinity);
+      // const top = children.reduce((acc, c) => Math.min(acc, 0), Infinity);
+      // const bottom = children.reduce((acc, c) => Math.max(acc, 0 + c.size!.height), -Infinity);
+      let xPos: number[];
+      switch (alignment) {
+        case 'left':
+          xPos = Array(children.length).fill(0);
+          break;
+        case 'center':
+          xPos = children.map((c) => c.size!.width / 2);
+          xPos = xPos.map((x) => Math.max(...xPos) - x);
+          break;
+        case 'right':
+          xPos = children.map((c) => c.size!.width);
+          xPos = xPos.map((x) => Math.max(...xPos) - x);
+          break;
+      }
+      // 0: 0
+      // 1: 0 + width_0 + spacing
+      // 2: 0 + width_0 + spacing + width_1 + spacing
+      // ...
+      const initial = _.initial(children);
+      if ('spacing' in options) {
+        const positions = initial
+          .reduce(
+            (acc, c, i) => [
+              {
+                x: xPos[i + 1],
+                y: acc[0].y + c.size!.height + options.spacing,
+              },
+              ...acc,
+            ],
+            [{ x: xPos[0], y: 0 }],
+          )
+          .reverse();
+        return {
+          size: {
+            width,
+            // height: bottom - top,
+            height,
+          },
+          positions,
+        };
+      } else if ('totalHeight' in options) {
+        const occupiedHeight = children.reduce((height, c) => height + c.size!.height, 0);
+        const spacing = (options.totalHeight - occupiedHeight) / (children.length - 1);
+        const positions = initial
+          .reduce(
+            (acc, c, i) => [
+              {
+                x: xPos[i + 1],
+                y: acc[0].y + c.size!.height + spacing,
+              },
+              ...acc,
+            ],
+            [{ x: xPos[0], y: 0 }],
           )
           .reverse();
         return {

@@ -60,7 +60,7 @@ export class Component {
     return this._paint({ ...this.size!, ...this.position! }, this.children);
   }
 
-  mod(...modify: ((component: Component) => Modifier)[]): Component {
+  mod(...modify: ((component: Component) => Component)[]): Component {
     return modify.reduce((c: Component, m) => m(c), this);
   }
 }
@@ -95,3 +95,5 @@ export class Modifier extends Component {
     super([child], modifierLayoutToLayout(layout), modifierPaintToPaint(paint));
   }
 }
+
+export type ModifierFn = (component: Component) => Modifier;

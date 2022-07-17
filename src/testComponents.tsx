@@ -1,10 +1,32 @@
-import { rect, svg, text, row, blob } from './component';
-import { padding } from './modifier';
+import { rect, svg, text, row, blob, col } from './component';
+import { background, padding } from './modifier';
 
 // /* { spacing: 5 } */
 
 export const testRow = svg([
   row({ totalWidth: 300 }, 'top', [
+    rect({ width: 100, height: 100, fill: 'firebrick' }),
+    rect({ width: 50, height: 200, fill: 'cornflowerblue' }),
+    blob(
+      {
+        seed: Math.random(),
+        extraPoints: 8,
+        randomness: 4,
+        // size: 60,
+        size: 100,
+      },
+      {
+        fill: 'cornflowerblue',
+        stroke: 'black',
+        strokeWidth: 3,
+      },
+    ).mod(padding(15)),
+    rect({ width: 50, height: 50, fill: 'coral' }),
+  ]),
+]);
+
+export const testCol = svg([
+  col({ totalHeight: 500 }, 'left', [
     rect({ width: 100, height: 100, fill: 'firebrick' }),
     rect({ width: 50, height: 200, fill: 'cornflowerblue' }),
     blob(
@@ -45,17 +67,20 @@ export const annotatedEquation = svg([
 ]);
 
 export const annotatedDiagram = svg([
-  blob(
-    {
-      seed: Math.random(),
-      extraPoints: 8,
-      randomness: 4,
-      size: 200,
-    },
-    {
-      fill: 'cornflowerblue',
-      stroke: 'black',
-      strokeWidth: 3,
-    },
-  ).mod(padding(15)),
+  col({ spacing: 5 }, 'center', [
+    blob(
+      {
+        seed: Math.random(),
+        extraPoints: 8,
+        randomness: 4,
+        size: 200,
+      },
+      {
+        fill: 'rgb(225, 248, 226)',
+        stroke: 'black',
+        strokeWidth: 2,
+      },
+    ).mod(padding(20), background(rect({ fill: 'firebrick' }))),
+    text('f^{-1}(N)\nlives here!', { fontSize: '20px' }),
+  ]),
 ]);
