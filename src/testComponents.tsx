@@ -1,4 +1,5 @@
-import { rect, svg, text, row, padding, blob } from './component';
+import { rect, svg, text, row, blob } from './component';
+import { padding } from './modifier';
 
 // /* { spacing: 5 } */
 
@@ -35,7 +36,7 @@ export const annotatedEquation = svg([
   rect({ x: 10 + 400, y: 200, width: 5, height: 20, fill: 'gray' }),
   text('y = mx + 1', { x: 30, y: 200, fontSize: '80px' }),
   row({ x: 10, y: 350, spacing: 10 }, 'bottom', [
-    padding(10, text('identifier', { fontSize: '20px' })),
+    text('identifier', { fontSize: '20px' }).mod(padding(10)),
     text('expression', { fontSize: '20px' }),
     text('operator', { fontSize: '20px' }),
     text('numeric literal', { fontSize: '20px' }),

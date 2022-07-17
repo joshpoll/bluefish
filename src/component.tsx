@@ -191,48 +191,6 @@ export const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOpt
   );
 };
 
-type Padding = number | Partial<{ top: number; right: number; bottom: number; left: number }>;
-type ElaboratedPadding = { top: number; right: number; bottom: number; left: number };
-
-export const padding = (padding: Padding, component: Component) => {
-  const elaboratedPadding: ElaboratedPadding =
-    typeof padding === 'number'
-      ? { top: padding, right: padding, bottom: padding, left: padding }
-      : {
-          top: padding.top ?? 0,
-          right: padding.right ?? 0,
-          bottom: padding.bottom ?? 0,
-          left: padding.left ?? 0,
-        };
-
-  return new Component(
-    [component],
-    (interval: SizeInterval, children: Component[]) => {
-      // subtract padding from interval
-      const { width, height } = interval;
-      const { top, right, bottom, left } = elaboratedPadding;
-      const newInterval = {
-        width: { ub: width.ub - left - right, lb: width.lb - left - right },
-        height: { ub: height.ub - top - bottom, lb: height.lb - left - right },
-      };
-      children.map((c) => c.layout(newInterval));
-      return {
-        size: {
-          width: children[0].size!.width + left + right,
-          height: children[0].size!.height + top + bottom,
-        },
-        positions: [{ x: elaboratedPadding.left, y: elaboratedPadding.top }],
-      };
-    },
-    (bbox: BBox, children: Component[]) => {
-      // return <g transform={`translate(${bbox.x},${bbox.y})`}>
-      //   {children[0].paint()}
-      // </g>;
-      return children[0].paint();
-    },
-  );
-};
-
 type VerticalAlignment = 'top' | 'middle' | 'bottom';
 
 type RowOptions = ({ spacing: number } | { totalWidth: number }) & { x?: number; y?: number };
