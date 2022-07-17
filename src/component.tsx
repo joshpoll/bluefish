@@ -2,80 +2,14 @@ import * as _ from 'lodash';
 import { Constraint, solve } from './blue';
 import { measureText } from './measureText';
 import * as blobs2 from 'blobs/v2';
-import { Modifier, position } from './modifier';
-
-export type Size = {
-  width: number;
-  height: number;
-};
-
-export type Interval = {
-  lb: number;
-  ub: number;
-};
-
-export type SizeInterval = {
-  width: Interval;
-  height: Interval;
-};
-
-export type Position = {
-  x: number;
-  y: number;
-};
-
-export type BBox = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
+import { position } from './modifier';
+import { BBox, Component, SizeInterval } from './componentTypes';
 
 // export type Component = {
 //   children: Component[],
 //   layout: (children: Component[]) => Size,
 //   paint: () => JSX.Element,
 // }
-
-export type Paint = (bbox: BBox, children: Component[]) => JSX.Element;
-export type Layout = (
-  interval: SizeInterval,
-  children: Component[],
-) => {
-  size: Size;
-  positions: Position[];
-};
-
-export class Component {
-  children: Component[];
-  _layout: Layout;
-  _paint: Paint;
-  size?: Size;
-  position?: Position;
-
-  constructor(children: Component[], layout: Layout, paint: Paint) {
-    this.children = children;
-    this._layout = layout;
-    this._paint = paint;
-  }
-
-  layout(interval: SizeInterval) {
-    const { size, positions } = this._layout(interval, this.children);
-    // set our size
-    this.size = size;
-    // set our children's positions
-    this.children.map((c, i) => (c.position = positions[i]));
-    return { size, positions };
-  }
-
-  paint() {
-    return this._paint({ ...this.size!, ...this.position! }, this.children);
-  }
-
-  mod(...modify: ((component: Component) => Modifier)[]): Component {
-    return modify.reduce((c: Component, m) => m(c), this);
-  }
-}
 
 // layout pass
 // paint pass
@@ -115,23 +49,43 @@ type Rect = React.SVGProps<SVGRectElement> &
     height: number;
   }>;
 
-export const rect = (params: Rect) =>
-  new Component(
-    [],
-    (interval: SizeInterval, children: Component[]) => {
-      // return {
-      //   width: interval.width.ub,
-      //   height: interval.height.ub,
-      // }
-      return {
-        size: { width: params.width!, height: params.height! },
-        positions: [],
-      };
-    },
-    (bbox: BBox, children: Component[]) => {
-      return <rect {...params} x={bbox.x} y={bbox.y} width={bbox.width} height={bbox.height} />;
-    },
-  ).mod(position({ x: params.x ?? 0, y: params.y ?? 0 }));
+export const rect = (params: Rect) => {
+  if (params.x === undefined || params.y === undefined) {
+    return new Component(
+      [],
+      (interval: SizeInterval, children: Component[]) => {
+        // return {
+        //   width: interval.width.ub,
+        //   height: interval.height.ub,
+        // }
+        return {
+          size: { width: params.width!, height: params.height! },
+          positions: [],
+        };
+      },
+      (bbox: BBox, children: Component[]) => {
+        return <rect {...params} x={bbox.x} y={bbox.y} width={bbox.width} height={bbox.height} />;
+      },
+    );
+  } else {
+    return new Component(
+      [],
+      (interval: SizeInterval, children: Component[]) => {
+        // return {
+        //   width: interval.width.ub,
+        //   height: interval.height.ub,
+        // }
+        return {
+          size: { width: params.width!, height: params.height! },
+          positions: [],
+        };
+      },
+      (bbox: BBox, children: Component[]) => {
+        return <rect {...params} x={bbox.x} y={bbox.y} width={bbox.width} height={bbox.height} />;
+      },
+    ).mod(position({ x: params.x, y: params.y }));
+  }
+};
 
 type Text = React.SVGProps<SVGTextElement> &
   Partial<{
@@ -146,29 +100,55 @@ type Text = React.SVGProps<SVGTextElement> &
 // TODO: very close to good alignment, but not quite there. Can I use more of the canvas
 // measurements somehow?
 export const text = (contents: string, params?: Text) => {
-  params = { fontFamily: 'sans-serif', fontSize: '12px', fontWeight: 'normal', ...params };
-  const { fontStyle, fontWeight, fontSize, fontFamily } = params;
-  const measurements = measureText(
-    contents,
-    `${fontStyle ?? ''} ${fontWeight ?? ''} ${fontSize ?? ''} ${fontFamily ?? ''}`,
-  );
-  console.log(contents, measurements);
-  return new Component(
-    [],
-    (interval: SizeInterval, children: Component[]) => {
-      return {
-        size: { width: measurements.width, height: measurements.fontHeight },
-        positions: [],
-      };
-    },
-    (bbox: BBox, children: Component[]) => {
-      return (
-        <text {...params} x={bbox.x} y={bbox.y + bbox.height - measurements.fontDescent}>
-          {contents}
-        </text>
-      );
-    },
-  ).mod(position({ x: params.x ?? 0, y: params.y ?? 0 }));
+  if (params === undefined || params.x === undefined || params.y === undefined) {
+    params = { fontFamily: 'sans-serif', fontSize: '12px', fontWeight: 'normal', ...params };
+    const { fontStyle, fontWeight, fontSize, fontFamily } = params;
+    const measurements = measureText(
+      contents,
+      `${fontStyle ?? ''} ${fontWeight ?? ''} ${fontSize ?? ''} ${fontFamily ?? ''}`,
+    );
+    console.log(contents, measurements);
+    return new Component(
+      [],
+      (interval: SizeInterval, children: Component[]) => {
+        return {
+          size: { width: measurements.width, height: measurements.fontHeight },
+          positions: [],
+        };
+      },
+      (bbox: BBox, children: Component[]) => {
+        return (
+          <text {...params} x={bbox.x} y={bbox.y + bbox.height - measurements.fontDescent}>
+            {contents}
+          </text>
+        );
+      },
+    );
+  } else {
+    params = { fontFamily: 'sans-serif', fontSize: '12px', fontWeight: 'normal', ...params };
+    const { fontStyle, fontWeight, fontSize, fontFamily } = params;
+    const measurements = measureText(
+      contents,
+      `${fontStyle ?? ''} ${fontWeight ?? ''} ${fontSize ?? ''} ${fontFamily ?? ''}`,
+    );
+    console.log(contents, measurements);
+    return new Component(
+      [],
+      (interval: SizeInterval, children: Component[]) => {
+        return {
+          size: { width: measurements.width, height: measurements.fontHeight },
+          positions: [],
+        };
+      },
+      (bbox: BBox, children: Component[]) => {
+        return (
+          <text {...params} x={bbox.x} y={bbox.y + bbox.height - measurements.fontDescent}>
+            {contents}
+          </text>
+        );
+      },
+    ).mod(position({ x: params.x!, y: params.y! }));
+  }
 };
 
 const blobElement = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
