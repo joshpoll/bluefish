@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import { Constraint, solve } from './blue';
 import { measureText } from './measureText';
 import * as blobs2 from 'blobs/v2';
+import { Modifier, position } from './modifier';
 
 export type Size = {
   width: number;
@@ -70,6 +71,10 @@ export class Component {
   paint() {
     return this._paint({ ...this.size!, ...this.position! }, this.children);
   }
+
+  mod(...modify: ((component: Component) => Modifier)[]): Component {
+    return modify.reduce((c: Component, m) => m(c), this);
+  }
 }
 
 // layout pass
@@ -80,7 +85,7 @@ export class Component {
 // SVG canvas
 // layout: width and height and return it
 // paint: SVG
-const svg = (children: Component[]) =>
+export const svg = (children: Component[]) =>
   new Component(
     children,
     (interval: SizeInterval, children: Component[]) => {
@@ -110,7 +115,7 @@ type Rect = React.SVGProps<SVGRectElement> &
     height: number;
   }>;
 
-const rect = (params: Rect) =>
+export const rect = (params: Rect) =>
   new Component(
     [],
     (interval: SizeInterval, children: Component[]) => {
@@ -126,7 +131,7 @@ const rect = (params: Rect) =>
     (bbox: BBox, children: Component[]) => {
       return <rect {...params} x={bbox.x} y={bbox.y} width={bbox.width} height={bbox.height} />;
     },
-  );
+  ).mod(position({ x: params.x ?? 0, y: params.y ?? 0 }));
 
 type Text = React.SVGProps<SVGTextElement> &
   Partial<{
@@ -140,7 +145,7 @@ type Text = React.SVGProps<SVGTextElement> &
 // a guide
 // TODO: very close to good alignment, but not quite there. Can I use more of the canvas
 // measurements somehow?
-const text = (contents: string, params?: Text) => {
+export const text = (contents: string, params?: Text) => {
   params = { fontFamily: 'sans-serif', fontSize: '12px', fontWeight: 'normal', ...params };
   const { fontStyle, fontWeight, fontSize, fontFamily } = params;
   const measurements = measureText(
@@ -163,14 +168,14 @@ const text = (contents: string, params?: Text) => {
         </text>
       );
     },
-  );
+  ).mod(position({ x: params.x ?? 0, y: params.y ?? 0 }));
 };
 
 const blobElement = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
 };
 
-const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): Component => {
+export const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): Component => {
   return new Component(
     [],
     (interval: SizeInterval, children: Component[]) => {
@@ -186,31 +191,10 @@ const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | 
   );
 };
 
-const position = (position: Position, component: Component) =>
-  new Component(
-    [component],
-    (interval: SizeInterval, children: Component[]) => {
-      children.map((c) => c.layout(interval));
-      return {
-        size: {
-          width: interval.width.ub,
-          height: interval.height.ub,
-        },
-        positions: [position],
-      };
-    },
-    (bbox: BBox, children: Component[]) => {
-      // return <g transform={`translate(${bbox.x},${bbox.y})`}>
-      //   {children[0].paint()}
-      // </g>;
-      return children[0].paint();
-    },
-  );
-
 type Padding = number | Partial<{ top: number; right: number; bottom: number; left: number }>;
 type ElaboratedPadding = { top: number; right: number; bottom: number; left: number };
 
-const padding = (padding: Padding, component: Component) => {
+export const padding = (padding: Padding, component: Component) => {
   const elaboratedPadding: ElaboratedPadding =
     typeof padding === 'number'
       ? { top: padding, right: padding, bottom: padding, left: padding }
@@ -251,9 +235,9 @@ const padding = (padding: Padding, component: Component) => {
 
 type VerticalAlignment = 'top' | 'middle' | 'bottom';
 
-type RowOptions = { spacing: number } | { totalWidth: number };
+type RowOptions = ({ spacing: number } | { totalWidth: number }) & { x?: number; y?: number };
 
-const row = (options: RowOptions, alignment: VerticalAlignment, children: Component[]) =>
+export const row = (options: RowOptions, alignment: VerticalAlignment, children: Component[]) =>
   new Component(
     children,
     (interval: SizeInterval, children: Component[]) => {
@@ -334,7 +318,7 @@ const row = (options: RowOptions, alignment: VerticalAlignment, children: Compon
     (bbox: BBox, children: Component[]) => {
       return <g transform={`translate(${bbox.x},${bbox.y})`}>{children.map((c) => c.paint())}</g>;
     },
-  );
+  ).mod(position({ x: options.x ?? 0, y: options.y ?? 0 }));
 
 /* inflex - "flex" - inflex - "flex" - inflex */
 /* assumption: inflex sizes are known */
@@ -488,51 +472,6 @@ const group = (components: Record<string, Component>, relations: Record<`${strin
       return <g transform={`translate(${bbox.x},${bbox.y})`}>{children.map((c) => c.paint())}</g>;
     },
   );
-
-// /* { spacing: 5 } */
-
-export const testRow = svg([
-  row({ totalWidth: 300 }, 'top', [
-    rect({ width: 100, height: 100, fill: 'firebrick' }),
-    rect({ width: 50, height: 200, fill: 'cornflowerblue' }),
-    blob(
-      {
-        seed: Math.random(),
-        extraPoints: 8,
-        randomness: 4,
-        size: 60,
-      },
-      {
-        fill: 'white',
-        stroke: 'black',
-        strokeWidth: 2,
-      },
-    ),
-    rect({ width: 50, height: 50, fill: 'coral' }),
-  ]),
-]);
-
-export const testComponent = svg([
-  position({ x: 10, y: 10 }, rect({ width: 100, height: 100, fill: 'firebrick' })),
-  position({ x: 30, y: 200 }, text('y = mx + 1', { fontSize: '20px' })),
-]);
-
-export const annotatedEquation = svg([
-  position({ x: 60, y: 150 }, text('FORMULA', { fontSize: 60, fill: 'gray' })),
-  position({ x: 10, y: 200 }, rect({ width: 400, height: 5, fill: 'gray' })),
-  position({ x: 10, y: 200 }, rect({ width: 5, height: 20, fill: 'gray' })),
-  position({ x: 10 + 400, y: 200 }, rect({ width: 5, height: 20, fill: 'gray' })),
-  position({ x: 30, y: 200 }, text('y = mx + 1', { fontSize: '80px' })),
-  position(
-    { x: 10, y: 350 },
-    row({ spacing: 10 }, 'bottom', [
-      padding(10, text('identifier', { fontSize: '20px' })),
-      text('expression', { fontSize: '20px' }),
-      text('operator', { fontSize: '20px' }),
-      text('numeric literal', { fontSize: '20px' }),
-    ]),
-  ),
-]);
 
 export const render = (component: Component): JSX.Element => {
   const sizeInterval: SizeInterval = {
