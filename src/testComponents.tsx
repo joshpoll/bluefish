@@ -12,14 +12,15 @@ export const testRow = svg([
         seed: Math.random(),
         extraPoints: 8,
         randomness: 4,
-        size: 60,
+        // size: 60,
+        size: 100,
       },
       {
-        fill: 'white',
+        fill: 'cornflowerblue',
         stroke: 'black',
-        strokeWidth: 2,
+        strokeWidth: 3,
       },
-    ),
+    ).mod(padding(15)),
     rect({ width: 50, height: 50, fill: 'coral' }),
   ]),
 ]);
@@ -36,9 +37,25 @@ export const annotatedEquation = svg([
   rect({ x: 10 + 400, y: 200, width: 5, height: 20, fill: 'gray' }),
   text('y = mx + 1', { x: 30, y: 200, fontSize: '80px' }),
   row({ x: 10, y: 350, spacing: 10 }, 'bottom', [
-    text('identifier', { fontSize: '20px' }).mod(padding(10)),
+    text('identifier', { fontSize: '20px' }).mod(padding({ left: 10, right: 10 })),
     text('expression', { fontSize: '20px' }),
     text('operator', { fontSize: '20px' }),
     text('numeric literal', { fontSize: '20px' }),
   ]),
+]);
+
+export const annotatedDiagram = svg([
+  blob(
+    {
+      seed: Math.random(),
+      extraPoints: 8,
+      randomness: 4,
+      size: 200,
+    },
+    {
+      fill: 'cornflowerblue',
+      stroke: 'black',
+      strokeWidth: 3,
+    },
+  ).mod(padding(15)),
 ]);

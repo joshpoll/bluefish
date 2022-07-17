@@ -3,7 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import { render } from './component';
 import * as blobs2 from 'blobs/v2';
-import { annotatedEquation, testComponent, testRow } from './testComponents';
+import { annotatedEquation, testComponent, testRow, annotatedDiagram } from './testComponents';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -21,6 +21,8 @@ function App() {
           Learn React
         </a>
       </header>
+      <br />
+      <div>{render(annotatedDiagram)}</div>
       <div>
         {render(testRow)}
         {render(testComponent)}

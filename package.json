@@ -12,9 +12,11 @@
     "@types/react-dom": "^18.0.0",
     "blobs": "^2.2.1-beta.1",
     "lodash": "^4.17.21",
+    "nanoid": "^4.0.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-scripts": "5.0.1",
+    "svg-path-reverse": "^1.3.0",
     "typescript": "^4.4.2",
     "web-vitals": "^2.1.0"
   },

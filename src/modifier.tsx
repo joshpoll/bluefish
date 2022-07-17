@@ -58,10 +58,7 @@ export const padding = (padding: Padding) => (component: Component) => {
       };
     },
     (bbox: BBox, child: Component) => {
-      // return <g transform={`translate(${bbox.x},${bbox.y})`}>
-      //   {children[0].paint()}
-      // </g>;
-      return child.paint();
+      return <g transform={`translate(${bbox.x},${bbox.y})`}>{child.paint()}</g>;
     },
   );
 };

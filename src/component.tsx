@@ -4,6 +4,8 @@ import { measureText } from './measureText';
 import * as blobs2 from 'blobs/v2';
 import { position } from './modifier';
 import { BBox, Component, SizeInterval } from './componentTypes';
+import { nanoid } from 'nanoid';
+import * as reversePath from 'svg-path-reverse';
 
 // export type Component = {
 //   children: Component[],
@@ -152,7 +154,23 @@ export const text = (contents: string, params?: Text) => {
 };
 
 const blobElement = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
-  return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
+  const id = nanoid();
+  console.log(blobs2.svgPath(blobOptions));
+  const path = blobs2.svgPath(blobOptions);
+  const reversedPath = reversePath.normalize(reversePath.reverse(path));
+  return (
+    <>
+      <path {...svgOptions} d={path}></path>
+      <defs>
+        <path id={id} {...svgOptions} d={reversedPath}></path>
+      </defs>
+      <text dy={'-1.5%'} fontSize={'20px'}>
+        <textPath href={`#${id}`} startOffset={'30%'} method={'align'}>
+          Lebesgue measurable sets
+        </textPath>
+      </text>
+    </>
+  );
 };
 
 export const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): Component => {
