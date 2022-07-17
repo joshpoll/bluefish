@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { Constraint, solve } from './blue';
 import { measureText } from './measureText';
+import * as blobs2 from 'blobs/v2';
 
 export type Size = {
   width: number;
@@ -161,6 +162,26 @@ const text = (contents: string, params?: Text) => {
           {contents}
         </text>
       );
+    },
+  );
+};
+
+const blobElement = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
+  return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
+};
+
+const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): Component => {
+  return new Component(
+    [],
+    (interval: SizeInterval, children: Component[]) => {
+      return {
+        size: { width: blobOptions.size, height: blobOptions.size },
+        positions: [],
+      };
+    },
+    (bbox: BBox, children: Component[]) => {
+      // translate blobElement by bbox.x and bbox.y
+      return <g transform={`translate(${bbox.x}, ${bbox.y})`}>{blobElement(blobOptions, svgOptions)}</g>;
     },
   );
 };
@@ -474,6 +495,19 @@ export const testRow = svg([
   row({ totalWidth: 300 }, 'top', [
     rect({ width: 100, height: 100, fill: 'firebrick' }),
     rect({ width: 50, height: 200, fill: 'cornflowerblue' }),
+    blob(
+      {
+        seed: Math.random(),
+        extraPoints: 8,
+        randomness: 4,
+        size: 60,
+      },
+      {
+        fill: 'white',
+        stroke: 'black',
+        strokeWidth: 2,
+      },
+    ),
     rect({ width: 50, height: 50, fill: 'coral' }),
   ]),
 ]);

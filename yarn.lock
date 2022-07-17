@@ -2746,6 +2746,11 @@ binary-extensions@^2.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.2.0.tgz#75f502eeaf9ffde42fc98829645be4ea76bd9e2d"
   integrity sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==
 
+blobs@^2.2.1-beta.1:
+  version "2.2.1-beta.1"
+  resolved "https://registry.yarnpkg.com/blobs/-/blobs-2.2.1-beta.1.tgz#411cdee36e951789a8bacb215be10927c929709c"
+  integrity sha512-LR5wykXqR6cZ2bIbDPrSrumxgvqRqTHrP8iByGmKRvyD4Z7V499Hsc9bB7m17lgS1c1ngzlxHOzyn+dxKi9FkQ==
+
 bluebird@^3.5.5:
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.7.2.tgz#9f229c15be272454ffa973ace0dbee79a1b0c36f"
