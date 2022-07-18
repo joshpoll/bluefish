@@ -64,6 +64,22 @@ export const annotatedEquation = svg([
     text('operator', { fontSize: '20px' }),
     text('numeric literal', { fontSize: '20px' }),
   ]),
+  arrow(
+    { from: { x: 50, y: 350 }, to: { x: 40, y: 300 } },
+    { padStart: 0, padEnd: 0, arrowTail: false, arrowHead: false, stretch: 0 },
+  ),
+  arrow(
+    { from: { x: 175, y: 350 }, to: { x: 220, y: 280 } },
+    { padStart: 0, padEnd: 0, arrowTail: false, arrowHead: false, stretch: 0 },
+  ),
+  arrow(
+    { from: { x: 250, y: 350 }, to: { x: 320, y: 280 } },
+    { padStart: 0, padEnd: 0, arrowTail: false, arrowHead: false, stretch: 0 },
+  ),
+  arrow(
+    { from: { x: 375, y: 350 }, to: { x: 380, y: 280 } },
+    { padStart: 0, padEnd: 0, arrowTail: false, arrowHead: false, stretch: 0 },
+  ),
 ]);
 
 export const annotatedDiagram = svg([

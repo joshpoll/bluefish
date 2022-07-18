@@ -6,8 +6,7 @@ import { position } from './modifier';
 import { BBox, Component, SizeInterval } from './componentTypes';
 import { nanoid } from 'nanoid';
 import * as reversePath from 'svg-path-reverse';
-import { getArrow } from 'perfect-arrows';
-import { ArrowOptions } from 'perfect-arrows/dist/lib/getBoxToBoxArrow';
+import { getArrow, ArrowOptions as PerfectArrowOptions } from 'perfect-arrows';
 
 // export type Component = {
 //   children: Component[],
@@ -532,8 +531,12 @@ type Arrow = {
   to: { x: number; y: number };
 };
 
+type ArrowOptions = PerfectArrowOptions & { arrowTail?: boolean; arrowHead?: boolean };
+
 export const arrow = (params: Arrow, options?: ArrowOptions) => {
   const { from, to } = params;
+  const arrowTail = options?.arrowTail ?? true;
+  const arrowHead = options?.arrowHead ?? true;
   const arrow = getArrow(from.x, from.y, to.x, to.y, options);
 
   const [sx, sy, cx, cy, ex, ey, ae, as, ec] = arrow;
@@ -554,9 +557,13 @@ export const arrow = (params: Arrow, options?: ArrowOptions) => {
     (bbox: BBox, children: Component[]) => {
       return (
         <g stroke="#000" fill="#000" strokeWidth={3}>
-          <circle cx={sx} cy={sy} r={4} />
+          {arrowTail ? <circle cx={sx} cy={sy} r={4} /> : <></>}
           <path d={`M${sx},${sy} Q${cx},${cy} ${ex},${ey}`} fill="none" />
-          <polygon points="0,-6 12,0, 0,6" transform={`translate(${ex},${ey}) rotate(${endAngleAsDegrees})`} />
+          {arrowHead ? (
+            <polygon points="0,-6 12,0, 0,6" transform={`translate(${ex},${ey}) rotate(${endAngleAsDegrees})`} />
+          ) : (
+            <></>
+          )}
         </g>
       );
     },
