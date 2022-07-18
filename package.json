@@ -13,6 +13,7 @@
     "blobs": "^2.2.1-beta.1",
     "lodash": "^4.17.21",
     "nanoid": "^4.0.0",
+    "perfect-arrows": "^0.3.7",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-scripts": "5.0.1",

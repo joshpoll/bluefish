@@ -3,7 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import { render } from './component';
 import * as blobs2 from 'blobs/v2';
-import { annotatedEquation, testComponent, testRow, annotatedDiagram, testCol } from './testComponents';
+import { annotatedEquation, testComponent, testRow, annotatedDiagram, testCol, testArrow } from './testComponents';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -22,6 +22,7 @@ function App() {
         </a>
       </header>
       <br />
+      <div>{render(testArrow)}</div>
       <div>{render(annotatedDiagram)}</div>
       <div>
         {render(testRow)}

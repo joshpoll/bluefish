@@ -1,5 +1,5 @@
-import { rect, svg, text, row, blob, col } from './component';
-import { background, padding } from './modifier';
+import { rect, svg, text, row, blob, col, arrow } from './component';
+import { background, padding, position } from './modifier';
 
 // /* { spacing: 5 } */
 
@@ -67,7 +67,7 @@ export const annotatedEquation = svg([
 ]);
 
 export const annotatedDiagram = svg([
-  col({ spacing: 5 }, 'center', [
+  col({ spacing: 40 }, 'center', [
     blob(
       {
         seed: Math.random(),
@@ -80,7 +80,24 @@ export const annotatedDiagram = svg([
         stroke: 'black',
         strokeWidth: 2,
       },
-    ).mod(padding(20), background(rect({ fill: 'firebrick' }))),
+    ).mod(padding(20)),
     text('f^{-1}(N)\nlives here!', { fontSize: '20px' }),
   ]),
+  blob(
+    {
+      seed: Math.random(),
+      extraPoints: 8,
+      randomness: 4,
+      size: 75,
+    },
+    {
+      fill: 'rgb(175, 234, 179)',
+      stroke: 'black',
+      strokeWidth: 2,
+    },
+  ).mod(position({ x: 50, y: 75 })),
+  arrow({ from: { x: 150, y: 275 }, to: { x: 128, y: 150 } }, { padStart: 0, padEnd: 40 }),
+  text('X', { fontWeight: 'bold', fontSize: '20px' }).mod(position({ x: 128, y: 150 })),
 ]);
+
+export const testArrow = svg([arrow({ from: { x: 64, y: 64 }, to: { x: 128, y: 96 } })]);
