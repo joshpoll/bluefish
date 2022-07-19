@@ -19,7 +19,7 @@ short-term goals:
   - I will keep an in-memory representation of the view tree after _layout_, which can be used by
     later steps. in this case arrows will be able to read layout of other nodes before placement
 
-broader plans:
+# broader plans:
 - group, stack, choice. start with more limited expressiveness for now
 - general layout pass + reference + dodge structure (similar to ggplot2 layering)
 - goals: graphviz, tidy tree, LaTeX web implementation, occupancy bitmap labeling, math augmentation
