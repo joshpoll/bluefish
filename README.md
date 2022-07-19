@@ -6,6 +6,10 @@ short-term goals:
     to layout and/or paint.
   - but could also pass boundary after the first object is painted...
   - just pick one and figure it out later
+- working group primitive
+- bracket
+
+# DONE (mostly):
 - references for arrows (just hack it in the easiest possible way for now)
   - most bang for the buck b/c broader applicability
   - but potentially harder than boundary paths...

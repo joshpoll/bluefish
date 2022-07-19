@@ -4,7 +4,7 @@ import { background, padding, position } from './modifier';
 // /* { spacing: 5 } */
 
 export const testRow = svg([
-  row({ totalWidth: 300 }, 'top', [
+  row({ totalWidth: 300, alignment: 'top' }, [
     rect({ width: 100, height: 100, fill: 'firebrick' }),
     rect({ width: 50, height: 200, fill: 'cornflowerblue' }),
     blob(
@@ -26,7 +26,7 @@ export const testRow = svg([
 ]);
 
 export const testCol = svg([
-  col({ totalHeight: 500 }, 'left', [
+  col({ totalHeight: 500, alignment: 'left' }, [
     rect({ width: 100, height: 100, fill: 'firebrick' }),
     rect({ width: 50, height: 200, fill: 'cornflowerblue' }),
     blob(
@@ -58,7 +58,7 @@ export const annotatedEquation = svg([
   rect({ x: 10, y: 200, width: 5, height: 20, fill: 'gray' }),
   rect({ x: 10 + 400, y: 200, width: 5, height: 20, fill: 'gray' }),
   text('y = mx + 1', { x: 30, y: 200, fontSize: '80px' }),
-  row({ x: 10, y: 350, spacing: 10 }, 'bottom', [
+  row({ x: 10, y: 350, spacing: 10, alignment: 'bottom' }, [
     text('identifier', { fontSize: '20px' }).mod(padding({ left: 10, right: 10 })),
     text('expression', { fontSize: '20px' }),
     text('operator', { fontSize: '20px' }),
@@ -83,7 +83,7 @@ export const annotatedEquation = svg([
 ]);
 
 export const annotatedDiagram = svg([
-  col({ spacing: 40 }, 'center', [
+  col({ spacing: 40, alignment: 'center' }, [
     blob(
       {
         seed: Math.random(),
@@ -142,7 +142,7 @@ export const annotatedEquationRef = svg([
   rect({ x: 10, y: 200, width: 400, height: 5, fill: 'gray' }),
   rect({ x: 10, y: 200, width: 5, height: 20, fill: 'gray' }),
   rect({ x: 10 + 400, y: 200, width: 5, height: 20, fill: 'gray' }),
-  row({ x: 30, y: 200, spacing: 20 }, 'middle', formulaText),
-  row({ x: 10, y: 350, spacing: 10 }, 'bottom', labelText),
+  row({ x: 30, y: 200, spacing: 20, alignment: 'middle' }, formulaText),
+  row({ x: 10, y: 350, spacing: 10, alignment: 'bottom' }, labelText),
   ...labelToFormulaArrows,
 ]);

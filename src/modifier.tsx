@@ -96,6 +96,41 @@ export const background = (background: Component) => (component: Component) => {
   );
 };
 
+// type BracketOptions = {};
+
+// export const bracket = (options: BracketOptions) => (component: Component) => {
+//   return new Component(
+//     [component, background],
+//     (interval: SizeInterval, children: Component[]) => {
+//       const [child, background] = children;
+//       child.layout(interval);
+//       background.layout({
+//         width: { ub: interval.width.ub, lb: child.size!.width },
+//         height: { ub: interval.height.ub, lb: child.size!.height },
+//       });
+//       return {
+//         size: {
+//           width: background.size!.width,
+//           height: background.size!.height,
+//         },
+//         positions: [
+//           { x: 0, y: 0 },
+//           { x: 0, y: 0 },
+//         ],
+//       };
+//     },
+//     (bbox: BBox, children: Component[]) => {
+//       const [child, background] = children;
+//       return (
+//         <g transform={`translate(${bbox.x}, ${bbox.y})`}>
+//           {background.paint()}
+//           {child.paint()}
+//         </g>
+//       );
+//     },
+//   );
+// };
+
 // export const boundaryLabel = (label: string) => (component: Component) => {
 //   const labelComponent = new Component(
 //     [],

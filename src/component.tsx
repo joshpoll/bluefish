@@ -227,9 +227,13 @@ export const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOpt
 
 type VerticalAlignment = 'top' | 'middle' | 'bottom';
 
-type RowOptions = ({ spacing: number } | { totalWidth: number }) & { x?: number; y?: number };
+type RowOptions = ({ spacing: number } | { totalWidth: number }) & {
+  x?: number;
+  y?: number;
+  alignment: VerticalAlignment;
+};
 
-export const row = (options: RowOptions, alignment: VerticalAlignment, children: Component[]) =>
+export const row = (options: RowOptions, children: Component[]) =>
   new Component(
     children,
     (interval: SizeInterval, children: Component[]) => {
@@ -241,7 +245,7 @@ export const row = (options: RowOptions, alignment: VerticalAlignment, children:
       // const top = children.reduce((acc, c) => Math.min(acc, 0), Infinity);
       // const bottom = children.reduce((acc, c) => Math.max(acc, 0 + c.size!.height), -Infinity);
       let yPos: number[];
-      switch (alignment) {
+      switch (options.alignment) {
         case 'top':
           yPos = Array(children.length).fill(0);
           break;
@@ -314,9 +318,13 @@ export const row = (options: RowOptions, alignment: VerticalAlignment, children:
 
 type HorizontalAlignment = 'left' | 'center' | 'right';
 
-type ColOptions = ({ spacing: number } | { totalHeight: number }) & { x?: number; y?: number };
+type ColOptions = ({ spacing: number } | { totalHeight: number }) & {
+  x?: number;
+  y?: number;
+  alignment: HorizontalAlignment;
+};
 
-export const col = (options: ColOptions, alignment: HorizontalAlignment, children: Component[]) =>
+export const col = (options: ColOptions, children: Component[]) =>
   new Component(
     children,
     (interval: SizeInterval, children: Component[]) => {
@@ -328,7 +336,7 @@ export const col = (options: ColOptions, alignment: HorizontalAlignment, childre
       // const top = children.reduce((acc, c) => Math.min(acc, 0), Infinity);
       // const bottom = children.reduce((acc, c) => Math.max(acc, 0 + c.size!.height), -Infinity);
       let xPos: number[];
-      switch (alignment) {
+      switch (options.alignment) {
         case 'left':
           xPos = Array(children.length).fill(0);
           break;
