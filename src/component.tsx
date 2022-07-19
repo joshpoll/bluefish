@@ -645,15 +645,30 @@ export const arrowRef = (params: ArrowRef, options?: ArrowOptions) => {
   return new Component(
     [],
     (interval: SizeInterval, children: Component[]) => {
+      let fromChild: Component | undefined = params.from.ref;
+      let fromOffset: { x: number; y: number } = { x: 0, y: 0 };
+      while (fromChild !== undefined && fromChild.position !== undefined) {
+        fromOffset.x += fromChild.position!.x;
+        fromOffset.y += fromChild.position!.y;
+        fromChild = fromChild.parent;
+      }
+      let toChild: Component | undefined = params.to.ref;
+      let toOffset: { x: number; y: number } = { x: 0, y: 0 };
+      while (toChild !== undefined && toChild.position !== undefined) {
+        toOffset.x += toChild.position!.x;
+        toOffset.y += toChild.position!.y;
+        toChild = toChild.parent;
+      }
+
       const fromBBox = {
-        x: from.position!.x,
-        y: from.position!.y,
+        x: fromOffset.x,
+        y: fromOffset.y,
         width: from.size!.width,
         height: from.size!.height,
       };
       const toBBox = {
-        x: to.position!.x,
-        y: to.position!.y,
+        x: toOffset.x,
+        y: toOffset.y,
         width: to.size!.width,
         height: to.size!.height,
       };
@@ -674,18 +689,34 @@ export const arrowRef = (params: ArrowRef, options?: ArrowOptions) => {
       };
     },
     (bbox: BBox, children: Component[]) => {
+      let fromChild: Component | undefined = params.from.ref;
+      let fromOffset: { x: number; y: number } = { x: 0, y: 0 };
+      while (fromChild !== undefined && fromChild.position !== undefined) {
+        fromOffset.x += fromChild.position!.x;
+        fromOffset.y += fromChild.position!.y;
+        fromChild = fromChild.parent;
+      }
+      let toChild: Component | undefined = params.to.ref;
+      let toOffset: { x: number; y: number } = { x: 0, y: 0 };
+      while (toChild !== undefined && toChild.position !== undefined) {
+        toOffset.x += toChild.position!.x;
+        toOffset.y += toChild.position!.y;
+        toChild = toChild.parent;
+      }
+
       const fromBBox = {
-        x: from.position!.x + 10,
-        y: from.position!.y + 350,
+        x: fromOffset.x,
+        y: fromOffset.y,
         width: from.size!.width,
         height: from.size!.height,
       };
       const toBBox = {
-        x: to.position!.x + 30,
-        y: to.position!.y + 200,
+        x: toOffset.x,
+        y: toOffset.y,
         width: to.size!.width,
         height: to.size!.height,
       };
+
       const arrowTail = options?.arrowTail ?? true;
       const arrowHead = options?.arrowHead ?? true;
 

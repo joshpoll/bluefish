@@ -42,9 +42,11 @@ export class Component {
   position?: Position;
   //   boundary path (string type for now, but could refine later. check tldraw for details/inspiration/libraries)
   boundary?: string;
+  parent?: Component;
 
   constructor(children: Component[], layout: Layout, paint: Paint, boundary?: string) {
     this.children = children;
+    children.map((c) => (c.parent = this));
     this._layout = layout;
     this._paint = paint;
     this.boundary = boundary;
