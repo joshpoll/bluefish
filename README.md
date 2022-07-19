@@ -1,5 +1,21 @@
 # TODO:
 
+short-term goals:
+- boundary paths for boundary labels
+  - some questions about data dependencies for this... probably need to pass boundary as an argument
+    to layout and/or paint.
+  - but could also pass boundary after the first object is painted...
+  - just pick one and figure it out later
+- references for arrows (just hack it in the easiest possible way for now)
+  - most bang for the buck b/c broader applicability
+  - but potentially harder than boundary paths...
+  - see what swiftui/flutter do for references. ok... they use either explicitly position data in
+    nodes or abuse the 'preferences' upwards data movement. neither of these is particularly
+    compelling to me
+  - I will keep an in-memory representation of the view tree after _layout_, which can be used by
+    later steps. in this case arrows will be able to read layout of other nodes before placement
+
+broader plans:
 - group, stack, choice. start with more limited expressiveness for now
 - general layout pass + reference + dodge structure (similar to ggplot2 layering)
 - goals: graphviz, tidy tree, LaTeX web implementation, occupancy bitmap labeling, math augmentation

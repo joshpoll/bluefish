@@ -40,11 +40,14 @@ export class Component {
   _paint: Paint;
   size?: Size;
   position?: Position;
+  //   boundary path (string type for now, but could refine later. check tldraw for details/inspiration/libraries)
+  boundary?: string;
 
-  constructor(children: Component[], layout: Layout, paint: Paint) {
+  constructor(children: Component[], layout: Layout, paint: Paint, boundary?: string) {
     this.children = children;
     this._layout = layout;
     this._paint = paint;
+    this.boundary = boundary;
   }
 
   layout(interval: SizeInterval) {

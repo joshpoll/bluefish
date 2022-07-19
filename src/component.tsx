@@ -6,7 +6,7 @@ import { position } from './modifier';
 import { BBox, Component, SizeInterval } from './componentTypes';
 import { nanoid } from 'nanoid';
 import * as reversePath from 'svg-path-reverse';
-import { getArrow, ArrowOptions as PerfectArrowOptions } from 'perfect-arrows';
+import { getArrow, ArrowOptions as PerfectArrowOptions, getBoxToBoxArrow } from 'perfect-arrows';
 
 // export type Component = {
 //   children: Component[],
@@ -174,7 +174,36 @@ const blobElement = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOpt
   );
 };
 
+const blobPath = (blobOptions: blobs2.BlobOptions): string => {
+  const path = blobs2.svgPath(blobOptions);
+  return path;
+};
+
+// export const boundaryLabel = (component: Component) => {
+//   const id = nanoid();
+//   return new Component(
+//     [],
+//     (interval: SizeInterval, children: Component[]) => {},
+//     (bbox: BBox, children: Component[]) => {
+//       return (
+//         <g transform={`translate(${bbox.x}, ${bbox.y})`}>
+//           <defs>
+//             <path id={id} d={path}></path>
+//           </defs>
+//           <text dy={'-1.5%'} fontSize={'20px'}>
+//             <textPath href={`#${id}`} startOffset={'30%'} method={'align'}>
+//               Lebesgue measurable sets
+//             </textPath>
+//           </text>
+//         </g>
+//       );
+//     },
+//   );
+// };
+
 export const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): Component => {
+  //   const path = blobPath(blobOptions);
+  //   const reversedPath = reversePath.normalize(reversePath.reverse(path));
   return new Component(
     [],
     (interval: SizeInterval, children: Component[]) => {
@@ -185,8 +214,14 @@ export const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOpt
     },
     (bbox: BBox, children: Component[]) => {
       // translate blobElement by bbox.x and bbox.y
-      return <g transform={`translate(${bbox.x}, ${bbox.y})`}>{blobElement(blobOptions, svgOptions)}</g>;
+      return (
+        <g transform={`translate(${bbox.x}, ${bbox.y})`}>
+          {/* <path {...svgOptions} d={path}></path> */}
+          {blobElement(blobOptions, svgOptions)}
+        </g>
+      );
     },
+    // reversedPath,
   );
 };
 
@@ -555,6 +590,117 @@ export const arrow = (params: Arrow, options?: ArrowOptions) => {
       };
     },
     (bbox: BBox, children: Component[]) => {
+      return (
+        <g stroke="#000" fill="#000" strokeWidth={3}>
+          {arrowTail ? <circle cx={sx} cy={sy} r={4} /> : <></>}
+          <path d={`M${sx},${sy} Q${cx},${cy} ${ex},${ey}`} fill="none" />
+          {arrowHead ? (
+            <polygon points="0,-6 12,0, 0,6" transform={`translate(${ex},${ey}) rotate(${endAngleAsDegrees})`} />
+          ) : (
+            <></>
+          )}
+        </g>
+      );
+    },
+  );
+};
+
+type Port = 'ne' | 'nw' | 'se' | 'sw' | 'n' | 's' | 'e' | 'w';
+
+type ArrowRef = {
+  from: { ref: Component; port: Port };
+  to: { ref: Component; port: Port };
+};
+
+const bboxToPoint = (bbox: { x: number; y: number; width: number; height: number }, port: Port) => {
+  switch (port) {
+    case 'ne':
+      return { x: bbox.x + bbox.width, y: bbox.y };
+    case 'nw':
+      return { x: bbox.x, y: bbox.y };
+    case 'se':
+      return { x: bbox.x + bbox.width, y: bbox.y + bbox.height };
+    case 'sw':
+      return { x: bbox.x, y: bbox.y + bbox.height };
+    case 'n':
+      return { x: bbox.x + bbox.width / 2, y: bbox.y };
+    case 's':
+      return { x: bbox.x + bbox.width / 2, y: bbox.y + bbox.height };
+    case 'e':
+      return { x: bbox.x + bbox.width, y: bbox.y + bbox.height / 2 };
+    case 'w':
+      return { x: bbox.x, y: bbox.y + bbox.height / 2 };
+    default:
+      throw new Error(`Unknown port: ${port}`);
+  }
+};
+
+// assumes components were already laid out
+// TODO: how do I get rid of the duplication in the two functions?
+// TODO: hack uses fixed translation that only works for the one example
+export const arrowRef = (params: ArrowRef, options?: ArrowOptions) => {
+  const from = params.from.ref;
+  const to = params.to.ref;
+
+  return new Component(
+    [],
+    (interval: SizeInterval, children: Component[]) => {
+      const fromBBox = {
+        x: from.position!.x,
+        y: from.position!.y,
+        width: from.size!.width,
+        height: from.size!.height,
+      };
+      const toBBox = {
+        x: to.position!.x,
+        y: to.position!.y,
+        width: to.size!.width,
+        height: to.size!.height,
+      };
+
+      const fromPoint = bboxToPoint(fromBBox, params.from.port);
+      const toPoint = bboxToPoint(toBBox, params.to.port);
+
+      const arrow = getArrow(fromPoint.x, fromPoint.y, toPoint.x, toPoint.y, options);
+
+      const [sx, sy, cx, cy, ex, ey, ae, as, ec] = arrow;
+
+      return {
+        size: {
+          width: Math.abs(ex - sx),
+          height: Math.abs(ey - sy),
+        },
+        positions: [],
+      };
+    },
+    (bbox: BBox, children: Component[]) => {
+      const fromBBox = {
+        x: from.position!.x + 10,
+        y: from.position!.y + 350,
+        width: from.size!.width,
+        height: from.size!.height,
+      };
+      const toBBox = {
+        x: to.position!.x + 30,
+        y: to.position!.y + 200,
+        width: to.size!.width,
+        height: to.size!.height,
+      };
+      const arrowTail = options?.arrowTail ?? true;
+      const arrowHead = options?.arrowHead ?? true;
+
+      const fromPoint = bboxToPoint(fromBBox, params.from.port);
+      const toPoint = bboxToPoint(toBBox, params.to.port);
+
+      const arrow = getArrow(fromPoint.x, fromPoint.y, toPoint.x, toPoint.y, options);
+
+      const [sx, sy, cx, cy, ex, ey, ae, as, ec] = arrow;
+
+      const endAngleAsDegrees = ae * (180 / Math.PI);
+
+      console.log('toBBox', toBBox);
+      console.log('fromBBox', fromBBox);
+
       return (
         <g stroke="#000" fill="#000" strokeWidth={3}>
           {arrowTail ? <circle cx={sx} cy={sy} r={4} /> : <></>}
