@@ -25,13 +25,14 @@ export type BBox = {
   height: number;
 };
 
-export type Paint = (bbox: BBox, children: Component[]) => JSX.Element;
+export type Paint = (bbox: BBox, children: Component[], boundary?: string) => JSX.Element;
 export type Layout = (
   interval: SizeInterval,
   children: Component[],
 ) => {
   size: Size;
   positions: Position[];
+  boundary?: string;
 };
 
 export class Component {
@@ -53,16 +54,19 @@ export class Component {
   }
 
   layout(interval: SizeInterval) {
-    const { size, positions } = this._layout(interval, this.children);
+    const { size, positions, boundary } = this._layout(interval, this.children);
     // set our size
     this.size = size;
     // set our children's positions
     this.children.map((c, i) => (c.position = positions[i]));
-    return { size, positions };
+    // set our boundary
+    // TODO: big hack to allow us to override the boundary
+    this.boundary = this.boundary ?? boundary;
+    return { size, positions, boundary };
   }
 
   paint() {
-    return this._paint({ ...this.size!, ...this.position! }, this.children);
+    return this._paint({ ...this.size!, ...this.position! }, this.children, this.boundary);
   }
 
   mod(...modify: ((component: Component) => Component)[]): Component {

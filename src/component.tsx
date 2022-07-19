@@ -210,14 +210,15 @@ export const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOpt
       return {
         size: { width: blobOptions.size, height: blobOptions.size },
         positions: [],
+        boundary: reversePath.normalize(reversePath.reverse(blobPath(blobOptions))),
       };
     },
-    (bbox: BBox, children: Component[]) => {
+    (bbox: BBox, children: Component[], boundary?: string) => {
       // translate blobElement by bbox.x and bbox.y
       return (
         <g transform={`translate(${bbox.x}, ${bbox.y})`}>
-          {/* <path {...svgOptions} d={path}></path> */}
-          {blobElement(blobOptions, svgOptions)}
+          <path {...svgOptions} d={boundary}></path>
+          {/* {blobElement(blobOptions, svgOptions)} */}
         </g>
       );
     },

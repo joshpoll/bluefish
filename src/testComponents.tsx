@@ -1,5 +1,5 @@
 import { rect, svg, text, row, blob, col, arrow, arrowRef } from './component';
-import { background, padding, position } from './modifier';
+import { background, boundaryLabel, padding, position } from './modifier';
 
 // /* { spacing: 5 } */
 
@@ -82,6 +82,9 @@ export const annotatedEquation = svg([
   ),
 ]);
 
+const X = text('X', { fontWeight: 'bold', fontSize: '20px' }).mod(position({ x: 128, y: 150 }));
+const XLabel = text('f^{-1}(N)\nlives here!', { fontSize: '20px' });
+
 export const annotatedDiagram = svg([
   col({ spacing: 40, alignment: 'center' }, [
     blob(
@@ -96,8 +99,11 @@ export const annotatedDiagram = svg([
         stroke: 'black',
         strokeWidth: 2,
       },
-    ).mod(padding(20)),
-    text('f^{-1}(N)\nlives here!', { fontSize: '20px' }),
+    ).mod(
+      boundaryLabel('Lebesgue measurable sets', { dy: '-1.5%', fontSize: '20px', startOffset: '30%', method: 'align' }),
+      padding(20),
+    ),
+    XLabel,
   ]),
   blob(
     {
@@ -112,8 +118,10 @@ export const annotatedDiagram = svg([
       strokeWidth: 2,
     },
   ).mod(position({ x: 50, y: 75 })),
+  X,
   arrow({ from: { x: 150, y: 275 }, to: { x: 128, y: 150 } }, { padStart: 0, padEnd: 40 }),
-  text('X', { fontWeight: 'bold', fontSize: '20px' }).mod(position({ x: 128, y: 150 })),
+  //   TODO: this arrow is not working
+  //   arrowRef({ from: { ref: XLabel, port: 'n' }, to: { ref: X, port: 's' } }, { padStart: 0, padEnd: 40 }),
 ]);
 
 export const testArrow = svg([arrow({ from: { x: 64, y: 64 }, to: { x: 128, y: 96 } })]);
