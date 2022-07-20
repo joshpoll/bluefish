@@ -1,4 +1,4 @@
-import { rect, svg, text, row, blob, col, arrow, arrowRef } from './component';
+import { rect, svg, text, row, blob, col, arrow, arrowRef, group } from './component';
 import { background, boundaryLabel, padding, position } from './modifier';
 
 // /* { spacing: 5 } */
@@ -54,9 +54,11 @@ export const testComponent = svg([
 
 export const annotatedEquation = svg([
   text('FORMULA', { x: 60, y: 150, fontSize: 60, fill: 'gray' }),
-  rect({ x: 10, y: 200, width: 400, height: 5, fill: 'gray' }),
-  rect({ x: 10, y: 200, width: 5, height: 20, fill: 'gray' }),
-  rect({ x: 10 + 400, y: 200, width: 5, height: 20, fill: 'gray' }),
+  group([
+    rect({ x: 10, y: 200, width: 400, height: 5, fill: 'gray' }),
+    rect({ x: 10, y: 200, width: 5, height: 20, fill: 'gray' }),
+    rect({ x: 10 + 400, y: 200, width: 5, height: 20, fill: 'gray' }),
+  ]),
   text('y = mx + 1', { x: 30, y: 200, fontSize: '80px' }),
   row({ x: 10, y: 350, spacing: 10, alignment: 'bottom' }, [
     text('identifier', { fontSize: '20px' }).mod(padding({ left: 10, right: 10 })),
@@ -147,10 +149,12 @@ const labelToFormulaArrows = labelToFormula.map(({ label, formula }) =>
 
 export const annotatedEquationRef = svg([
   text('FORMULA', { x: 60, y: 150, fontSize: 60, fill: 'gray' }),
-  rect({ x: 10, y: 200, width: 400, height: 5, fill: 'gray' }),
-  rect({ x: 10, y: 200, width: 5, height: 20, fill: 'gray' }),
-  rect({ x: 10 + 400, y: 200, width: 5, height: 20, fill: 'gray' }),
+  group([
+    rect({ x: 10, y: 200, width: 400, height: 5, fill: 'gray' }),
+    rect({ x: 10, y: 200, width: 5, height: 20, fill: 'gray' }),
+    rect({ x: 10 + 400, y: 200, width: 5, height: 20, fill: 'gray' }),
+  ]),
   row({ x: 30, y: 200, spacing: 20, alignment: 'middle' }, formulaText),
   row({ x: 10, y: 350, spacing: 10, alignment: 'bottom' }, labelText),
-  ...labelToFormulaArrows,
+  group(labelToFormulaArrows),
 ]);

@@ -31,6 +31,7 @@ export type Layout = (
   children: Component[],
 ) => {
   size: Size;
+  ownPosition?: Position;
   positions: Position[];
   boundary?: string;
 };
@@ -54,11 +55,20 @@ export class Component {
   }
 
   layout(interval: SizeInterval) {
-    const { size, positions, boundary } = this._layout(interval, this.children);
+    const { size, positions, boundary, ownPosition } = this._layout(interval, this.children);
     // set our size
     this.size = size;
+    // set our position
+    this.position = ownPosition;
     // set our children's positions
-    this.children.map((c, i) => (c.position = positions[i]));
+    // this.children.map((c, i) => (c.position = positions[i]));
+
+    // set our children's positions iff they are not already set
+    this.children.forEach((c, i) => {
+      if (c.position === undefined) {
+        c.position = positions[i];
+      }
+    });
     // set our boundary
     // TODO: big hack to allow us to override the boundary
     this.boundary = this.boundary ?? boundary;

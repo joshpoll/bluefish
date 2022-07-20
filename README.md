@@ -1,15 +1,21 @@
 # TODO:
 
 short-term goals:
+- working group primitive
+  - simple group with no layout
+  - group with layout
+- bracket
+- bertin's hotel chart (copying Protovis/D3 spec)
+  - https://mbostock.github.io/protovis/ex/hotel.html
+  - https://observablehq.com/@observablehq/bertin-hotel
+
+# DONE (mostly):
+
 - boundary paths for boundary labels
   - some questions about data dependencies for this... probably need to pass boundary as an argument
     to layout and/or paint.
   - but could also pass boundary after the first object is painted...
   - just pick one and figure it out later
-- working group primitive
-- bracket
-
-# DONE (mostly):
 - references for arrows (just hack it in the easiest possible way for now)
   - most bang for the buck b/c broader applicability
   - but potentially harder than boundary paths...

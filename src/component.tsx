@@ -53,41 +53,23 @@ type Rect = React.SVGProps<SVGRectElement> &
   }>;
 
 export const rect = (params: Rect) => {
-  if (params.x === undefined || params.y === undefined) {
-    return new Component(
-      [],
-      (interval: SizeInterval, children: Component[]) => {
-        // return {
-        //   width: interval.width.ub,
-        //   height: interval.height.ub,
-        // }
-        return {
-          size: { width: params.width ?? interval.width.lb, height: params.height ?? interval.width.lb },
-          positions: [],
-        };
-      },
-      (bbox: BBox, children: Component[]) => {
-        return <rect {...params} x={bbox.x} y={bbox.y} width={bbox.width} height={bbox.height} />;
-      },
-    );
-  } else {
-    return new Component(
-      [],
-      (interval: SizeInterval, children: Component[]) => {
-        // return {
-        //   width: interval.width.ub,
-        //   height: interval.height.ub,
-        // }
-        return {
-          size: { width: params.width!, height: params.height! },
-          positions: [],
-        };
-      },
-      (bbox: BBox, children: Component[]) => {
-        return <rect {...params} x={bbox.x} y={bbox.y} width={bbox.width} height={bbox.height} />;
-      },
-    ).mod(position({ x: params.x, y: params.y }));
-  }
+  return new Component(
+    [],
+    (interval: SizeInterval, children: Component[]) => {
+      // return {
+      //   width: interval.width.ub,
+      //   height: interval.height.ub,
+      // }
+      return {
+        size: { width: params.width ?? interval.width.lb, height: params.height ?? interval.width.lb },
+        positions: [],
+        ownPosition: params.x === undefined || params.y === undefined ? undefined : { x: params.x, y: params.y },
+      };
+    },
+    (bbox: BBox, children: Component[]) => {
+      return <rect {...params} x={bbox.x} y={bbox.y} width={bbox.width} height={bbox.height} />;
+    },
+  );
 };
 
 type Text = React.SVGProps<SVGTextElement> &
@@ -103,55 +85,33 @@ type Text = React.SVGProps<SVGTextElement> &
 // TODO: very close to good alignment, but not quite there. Can I use more of the canvas
 // measurements somehow?
 export const text = (contents: string, params?: Text) => {
-  if (params === undefined || params.x === undefined || params.y === undefined) {
-    params = { fontFamily: 'sans-serif', fontSize: '12px', fontWeight: 'normal', ...params };
-    const { fontStyle, fontWeight, fontSize, fontFamily } = params;
-    const measurements = measureText(
-      contents,
-      `${fontStyle ?? ''} ${fontWeight ?? ''} ${fontSize ?? ''} ${fontFamily ?? ''}`,
-    );
-    console.log(contents, measurements);
-    return new Component(
-      [],
-      (interval: SizeInterval, children: Component[]) => {
-        return {
-          size: { width: measurements.width, height: measurements.fontHeight },
-          positions: [],
-        };
-      },
-      (bbox: BBox, children: Component[]) => {
-        return (
-          <text {...params} x={bbox.x} y={bbox.y + bbox.height - measurements.fontDescent}>
-            {contents}
-          </text>
-        );
-      },
-    );
-  } else {
-    params = { fontFamily: 'sans-serif', fontSize: '12px', fontWeight: 'normal', ...params };
-    const { fontStyle, fontWeight, fontSize, fontFamily } = params;
-    const measurements = measureText(
-      contents,
-      `${fontStyle ?? ''} ${fontWeight ?? ''} ${fontSize ?? ''} ${fontFamily ?? ''}`,
-    );
-    console.log(contents, measurements);
-    return new Component(
-      [],
-      (interval: SizeInterval, children: Component[]) => {
-        return {
-          size: { width: measurements.width, height: measurements.fontHeight },
-          positions: [],
-        };
-      },
-      (bbox: BBox, children: Component[]) => {
-        return (
-          <text {...params} x={bbox.x} y={bbox.y + bbox.height - measurements.fontDescent}>
-            {contents}
-          </text>
-        );
-      },
-    ).mod(position({ x: params.x!, y: params.y! }));
-  }
+  params = { fontFamily: 'sans-serif', fontSize: '12px', fontWeight: 'normal', ...params };
+  const { fontStyle, fontWeight, fontSize, fontFamily } = params;
+  const measurements = measureText(
+    contents,
+    `${fontStyle ?? ''} ${fontWeight ?? ''} ${fontSize ?? ''} ${fontFamily ?? ''}`,
+  );
+  console.log(contents, measurements);
+  return new Component(
+    [],
+    (interval: SizeInterval, children: Component[]) => {
+      return {
+        size: { width: measurements.width, height: measurements.fontHeight },
+        positions: [],
+        ownPosition:
+          params === undefined || params.x === undefined || params.y === undefined
+            ? undefined
+            : { x: params.x, y: params.y },
+      };
+    },
+    (bbox: BBox, children: Component[]) => {
+      return (
+        <text {...params} x={bbox.x} y={bbox.y + bbox.height - measurements.fontDescent}>
+          {contents}
+        </text>
+      );
+    },
+  );
 };
 
 const blobElement = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
@@ -492,74 +452,95 @@ const computeConnectedComponents = (nodes: string[], edges: [string, string][]):
   return components;
 };
 
-// TODO: this suggests that children should be records, not arrays
-const group = (components: Record<string, Component>, relations: Record<`${string}->${string}`, Constraint[]>) =>
+// TODO: need to be able to set children's positions before returning so we can correctly compute our bbox size
+export const group = (components: Component[]): Component =>
   new Component(
-    Object.values(components),
+    components,
     (interval: SizeInterval, children: Component[]) => {
       children.map((c) => c.layout(interval));
-      // COMBAK: for now we assume that the constraints form a single connected component and no
-      // child has a pre-defined position
-      const constraints = Object.values(relations).flat();
-      const solution = solve(constraints);
-      // COMBAK: for now we assume that variables are named as 'foo.<dimension>'
-      const positions = Object.keys(components).map((node) => ({
-        x: solution[`${node}.x`],
-        y: solution[`${node}.y`],
-      }));
-      const left = Math.min(...positions.map((p) => p.x));
-      const top = Math.min(...positions.map((p) => p.y));
-      const right = Math.max(...positions.map((p, i) => p.x + children[i].size!.width));
-      const bottom = Math.max(...positions.map((p, i) => p.y + children[i].size!.height));
-      const width = right - left;
-      const height = bottom - top;
+      const width = children.reduce((acc, c) => Math.max(acc, c.size!.width), -Infinity);
+      const height = children.reduce((acc, c) => Math.max(acc, c.size!.height), -Infinity);
       return {
         size: {
           width,
           height,
         },
-        positions,
+        positions: children.map((c) => ({ x: 0, y: 0 })),
       };
-
-      // TODO: this is all good stuff for generalizing to connected components
-      /* //   compute connected components of components and relations
-      const edges = Object.keys(relations).map((r) => r.split('->') as [string, string]);
-      const connectedComponents = computeConnectedComponents(Object.keys(components), edges);
-      // find any components that already have specified positions.
-      let isXFixed: boolean[] = [];
-      let isYFixed: boolean[] = [];
-      for (const i in connectedComponents) {
-        for (const node of connectedComponents[i]) {
-          if (components[node].position !== undefined) {
-            if (components[node].position!.x !== undefined) {
-              isXFixed[i] = true;
-            }
-            if (components[node].position!.y !== undefined) {
-              isYFixed[i] = true;
-            }
-          }
-        }
-      }
-      // now we solve each connected component
-      // for each dimension,
-      for (const i in isXFixed) {
-        // if a component is fixed then its constraints must be completely solvable
-        if (isXFixed[i]) {
-          // TODO: compute constraints
-          const constraints: any[] = [];
-          const solution = solve(constraints);
-          // TODO: update components with solution
-        } else {
-          // if a component is not fixed then we can set some default values
-          // in fact, one default value is enough, so we arbitrarily choose the first node in the component
-        }
-      } */
     },
     (bbox: BBox, children: Component[]) => {
-      // COMBAK: translation? local vs. global coordinates?
-      return <g transform={`translate(${bbox.x},${bbox.y})`}>{children.map((c) => c.paint())}</g>;
+      return <g transform={`translate(${bbox.x}, ${bbox.y})`}>{children.map((c) => c.paint())}</g>;
     },
   );
+
+// // TODO: this suggests that children should be records, not arrays
+// const group = (components: Record<string, Component>, relations: Record<`${string}->${string}`, Constraint[]>) =>
+//   new Component(
+//     Object.values(components),
+//     (interval: SizeInterval, children: Component[]) => {
+//       children.map((c) => c.layout(interval));
+//       // COMBAK: for now we assume that the constraints form a single connected component and no
+//       // child has a pre-defined position
+//       const constraints = Object.values(relations).flat();
+//       const solution = solve(constraints);
+//       // COMBAK: for now we assume that variables are named as 'foo.<dimension>'
+//       const positions = Object.keys(components).map((node) => ({
+//         x: solution[`${node}.x`],
+//         y: solution[`${node}.y`],
+//       }));
+//       const left = Math.min(...positions.map((p) => p.x));
+//       const top = Math.min(...positions.map((p) => p.y));
+//       const right = Math.max(...positions.map((p, i) => p.x + children[i].size!.width));
+//       const bottom = Math.max(...positions.map((p, i) => p.y + children[i].size!.height));
+//       const width = right - left;
+//       const height = bottom - top;
+//       return {
+//         size: {
+//           width,
+//           height,
+//         },
+//         positions,
+//       };
+
+//       // TODO: this is all good stuff for generalizing to connected components
+//       /* //   compute connected components of components and relations
+//       const edges = Object.keys(relations).map((r) => r.split('->') as [string, string]);
+//       const connectedComponents = computeConnectedComponents(Object.keys(components), edges);
+//       // find any components that already have specified positions.
+//       let isXFixed: boolean[] = [];
+//       let isYFixed: boolean[] = [];
+//       for (const i in connectedComponents) {
+//         for (const node of connectedComponents[i]) {
+//           if (components[node].position !== undefined) {
+//             if (components[node].position!.x !== undefined) {
+//               isXFixed[i] = true;
+//             }
+//             if (components[node].position!.y !== undefined) {
+//               isYFixed[i] = true;
+//             }
+//           }
+//         }
+//       }
+//       // now we solve each connected component
+//       // for each dimension,
+//       for (const i in isXFixed) {
+//         // if a component is fixed then its constraints must be completely solvable
+//         if (isXFixed[i]) {
+//           // TODO: compute constraints
+//           const constraints: any[] = [];
+//           const solution = solve(constraints);
+//           // TODO: update components with solution
+//         } else {
+//           // if a component is not fixed then we can set some default values
+//           // in fact, one default value is enough, so we arbitrarily choose the first node in the component
+//         }
+//       } */
+//     },
+//     (bbox: BBox, children: Component[]) => {
+//       // COMBAK: translation? local vs. global coordinates?
+//       return <g transform={`translate(${bbox.x},${bbox.y})`}>{children.map((c) => c.paint())}</g>;
+//     },
+//   );
 
 export const render = (component: Component): JSX.Element => {
   const sizeInterval: SizeInterval = {
