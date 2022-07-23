@@ -1,6 +1,7 @@
 # TODO:
 
 short-term goals:
+- blob translation w/o position modifier
 - working group primitive
   - simple group with no layout
   - group with layout
@@ -10,6 +11,10 @@ short-term goals:
   - https://observablehq.com/@observablehq/bertin-hotel
 
 # DONE (mostly):
+
+- note: using a position modifier is potentially confusing and doesn't play nicely with positioning
+  other things using bboxes b/c it creates a component the size of its parent, not the size of its
+  child: https://www.youtube.com/watch?v=hDuTeWVf6M8
 
 - boundary paths for boundary labels
   - some questions about data dependencies for this... probably need to pass boundary as an argument

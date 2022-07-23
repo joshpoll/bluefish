@@ -25,6 +25,25 @@ export const position = (position: Position) => (component: Component) =>
     },
   );
 
+export const position2 = (position: Position) => (component: Component) =>
+  new Modifier(
+    component,
+    (interval: SizeInterval, child: Component) => {
+      child.layout(interval);
+      return {
+        size: {
+          width: child.size!.width,
+          height: child.size!.height,
+        },
+        ownPosition: position,
+        position: { x: 0, y: 0 },
+      };
+    },
+    (bbox: BBox, child: Component) => {
+      return <g transform={`translate(${bbox.x},${bbox.y})`}>{child.paint()}</g>;
+    },
+  );
+
 type Padding = number | Partial<{ top: number; right: number; bottom: number; left: number }>;
 type ElaboratedPadding = { top: number; right: number; bottom: number; left: number };
 

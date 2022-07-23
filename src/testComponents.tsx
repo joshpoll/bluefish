@@ -1,5 +1,6 @@
 import { rect, svg, text, row, blob, col, arrow, arrowRef, group } from './component';
-import { background, boundaryLabel, padding, position } from './modifier';
+import { Component } from './componentTypes';
+import { background, boundaryLabel, padding, position, position2 } from './modifier';
 
 // /* { spacing: 5 } */
 
@@ -84,46 +85,65 @@ export const annotatedEquation = svg([
   ),
 ]);
 
-const X = text('X', { fontWeight: 'bold', fontSize: '20px' }).mod(position({ x: 128, y: 150 }));
+const X = text('X', { x: 128, y: 150, fontWeight: 'bold', fontSize: '20px' });
 const XLabel = text('f^{-1}(N)\nlives here!', { fontSize: '20px' });
 
-export const annotatedDiagram = svg([
-  col({ spacing: 40, alignment: 'center' }, [
-    blob(
-      {
-        seed: Math.random(),
-        extraPoints: 8,
-        randomness: 4,
-        size: 200,
-      },
-      {
-        fill: 'rgb(225, 248, 226)',
-        stroke: 'black',
-        strokeWidth: 2,
-      },
-    ).mod(
-      boundaryLabel('Lebesgue measurable sets', { dy: '-1.5%', fontSize: '20px', startOffset: '30%', method: 'align' }),
-      padding(20),
-    ),
-    XLabel,
-  ]),
-  blob(
+type BlobbySetOptions = {
+  size: number;
+  fill: string;
+  stroke: string;
+  strokeWidth: number;
+};
+
+const blobbySet = (name: string, options: BlobbySetOptions) => {
+  return blob(
     {
       seed: Math.random(),
       extraPoints: 8,
       randomness: 4,
-      size: 75,
+      size: options.size,
     },
     {
-      fill: 'rgb(175, 234, 179)',
+      fill: options.fill,
+      stroke: options.stroke,
+      strokeWidth: options.strokeWidth,
+    },
+  ).mod(boundaryLabel(name, { dy: '-1.5%', fontSize: '20px', startOffset: '30%', method: 'align' }), padding(20));
+};
+
+const XFloating = text('X', { fontWeight: 'bold', fontSize: '20px' });
+
+export const annotatedDiagram = svg([
+  col({ spacing: 0, alignment: 'center' }, [
+    blobbySet('Lebesgue measurable sets', {
+      size: 200,
+      fill: 'rgb(225, 248, 226)',
       stroke: 'black',
       strokeWidth: 2,
-    },
-  ).mod(position({ x: 50, y: 75 })),
-  X,
-  arrow({ from: { x: 150, y: 275 }, to: { x: 128, y: 150 } }, { padStart: 0, padEnd: 40 }),
-  //   TODO: this arrow is not working
-  //   arrowRef({ from: { ref: XLabel, port: 'n' }, to: { ref: X, port: 's' } }, { padStart: 0, padEnd: 40 }),
+    }),
+    XLabel,
+  ]),
+  row({ x: 40, y: 65, spacing: 10, alignment: 'middle' }, [
+    // blob(
+    //   {
+    //     seed: Math.random(),
+    //     extraPoints: 8,
+    //     randomness: 4,
+    //     size: 75,
+    //   },
+    //   {
+    //     fill: 'rgb(175, 234, 179)',
+    //     stroke: 'black',
+    //     strokeWidth: 2,
+    //   },
+    // ),
+    blobbySet('Borel sets', { size: 75, fill: 'rgb(175, 234, 179)', stroke: 'black', strokeWidth: 2 }),
+    XFloating,
+  ]),
+  arrowRef(
+    { from: { ref: XLabel, port: 'n' }, to: { ref: XFloating, port: 's' } },
+    { padStart: 10, padEnd: 20, flip: true },
+  ),
 ]);
 
 export const testArrow = svg([arrow({ from: { x: 64, y: 64 }, to: { x: 128, y: 96 } })]);
@@ -158,3 +178,112 @@ export const annotatedEquationRef = svg([
   row({ x: 10, y: 350, spacing: 10, alignment: 'bottom' }, labelText),
   group(labelToFormulaArrows),
 ]);
+
+namespace BertinHotel {
+  export const cw = 50;
+}
+
+const data = [20, 10, 30];
+
+export const bertinHotel = svg([
+  row(
+    { spacing: 0, alignment: 'bottom' },
+    data.map((d) => rect({ width: BertinHotel.cw, height: d * 2, fill: 'white', stroke: 'black' })),
+  ).mod(padding(10)),
+]);
+
+// export const annotatedDiagramSeparated = svg([
+//   col({ spacing: 40, alignment: 'center' }, [blobbySet('Lebesgue measurable sets'), XLabel]),
+//   row({ spacing: 10, alignment: 'middle' }, [
+//     blob(
+//       {
+//         seed: Math.random(),
+//         extraPoints: 8,
+//         randomness: 4,
+//         size: 75,
+//       },
+//       {
+//         fill: 'rgb(175, 234, 179)',
+//         stroke: 'black',
+//         strokeWidth: 2,
+//       },
+//     ).mod(position({ x: 50, y: 75 })),
+//     X,
+//   ]),
+//   group(
+//     [{ from: XLabel, to: X }].map(({ from, to }) =>
+//       arrowRef(
+//         { from: { ref: from, port: 'n' }, to: { ref: to, port: 's' } },
+//         { padStart: 10, padEnd: 10, flip: true },
+//       ),
+//     ),
+//   ),
+// ]);
+
+// advantage of the "everything is a component" approach! since everything's the same type we can
+// compose forever. also we never need to consider relations directly, since they are just groups of
+// objects with relations between them
+type Relations<T> = (components: { [key in keyof T]: Component }) => Component | Component[];
+
+const group2 = <T extends Component[] | Record<string, Component>>(
+  components: T,
+  relations?: Relations<T>,
+): Component => {
+  return null as any;
+};
+
+group2(
+  [
+    rect({ width: 400, height: 5, fill: 'gray' }),
+    rect({ width: 5, height: 20, fill: 'gray' }),
+    rect({ width: 5, height: 20, fill: 'gray' }),
+  ],
+  ([left, middle, right]) => [
+    row({ spacing: 5, alignment: 'middle' }, [left, middle]),
+    row({ spacing: 5, alignment: 'middle' }, [middle, right]),
+    arrowRef({ from: { ref: left, port: 'w' }, to: { ref: right, port: 'e' } }),
+  ],
+);
+
+// group2 basically provides an eta-expanded interface.
+// tho it's not quite eta expansion... maybe it has some other name...
+// f(x) ~> (\x -> f(x)) x
+// the benefit here is using the second notation we can more easily do the following
+// (\x -> f(x)) x ~> (\x -> [f(x), g(x)]) x
+// we would otherwise have to make a new local binding for x, which would probably have to be
+// hoisted out of the function definition entirely, which could be very far away. Here, the lambda
+// abstraction is acting as a local let binding.
+// eta-expanded form has another benefit, which is that we can send the function other things we
+// want i.e. we can intercept between the user giving us a value and actually applying it.
+// export const annotatedDiagramSeparatedGroup2 = svg([
+//   group2([blobbySet('Lebesgue measurable sets'), XLabel], ([set, label]) =>
+//     col({ spacing: 40, alignment: 'center' }, [set, label]),
+//   ),
+//   row({ spacing: 10, alignment: 'middle' }, [
+//     blob(
+//       {
+//         seed: Math.random(),
+//         extraPoints: 8,
+//         randomness: 4,
+//         size: 75,
+//       },
+//       {
+//         fill: 'rgb(175, 234, 179)',
+//         stroke: 'black',
+//         strokeWidth: 2,
+//       },
+//     ).mod(position({ x: 50, y: 75 })),
+//     X,
+//   ]),
+//   group2(
+//     {
+//       from: XLabel,
+//       to: X,
+//     },
+//     ({ from, to }) =>
+//       arrowRef(
+//         { from: { ref: from, port: 'n' }, to: { ref: to, port: 's' } },
+//         { padStart: 10, padEnd: 10, flip: true },
+//       ),
+//   ),
+// ]);

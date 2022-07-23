@@ -12,6 +12,8 @@ import {
   testArrow,
   annotatedEquationRef,
 } from './testComponents';
+import * as _ from 'lodash';
+import { bertinHotel } from './testComponents';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -29,6 +31,8 @@ function App() {
           Learn React
         </a>
       </header>
+      <br />
+      <div>{render(bertinHotel)}</div>
       <br />
       <div>{render(annotatedEquationRef)}</div>
       <br />
