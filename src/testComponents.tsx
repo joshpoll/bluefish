@@ -1,6 +1,8 @@
-import { rect, svg, text, row, blob, col, arrow, arrowRef, group } from './component';
+import { rect, svg, text, row, blob, col, arrow, arrowRef, group, blobPaperJS, align } from './component';
 import { Component } from './componentTypes';
 import { background, boundaryLabel, padding, position, position2 } from './modifier';
+import { Path, Point, PaperScope } from 'paper';
+import { Size } from 'paper/dist/paper-core';
 
 // /* { spacing: 5 } */
 
@@ -26,27 +28,27 @@ export const testRow = svg([
   ]),
 ]);
 
-export const testCol = svg([
-  col({ totalHeight: 500, alignment: 'left' }, [
-    rect({ width: 100, height: 100, fill: 'firebrick' }),
-    rect({ width: 50, height: 200, fill: 'cornflowerblue' }),
-    blob(
-      {
-        seed: Math.random(),
-        extraPoints: 8,
-        randomness: 4,
-        // size: 60,
-        size: 100,
-      },
-      {
-        fill: 'cornflowerblue',
-        stroke: 'black',
-        strokeWidth: 3,
-      },
-    ).mod(padding(15)),
-    rect({ width: 50, height: 50, fill: 'coral' }),
-  ]),
-]);
+// export const testCol = svg([
+//   col({ totalHeight: 500, alignment: 'left' }, [
+//     rect({ width: 100, height: 100, fill: 'firebrick' }),
+//     rect({ width: 50, height: 200, fill: 'cornflowerblue' }),
+//     blob(
+//       {
+//         seed: Math.random(),
+//         extraPoints: 8,
+//         randomness: 4,
+//         // size: 60,
+//         size: 100,
+//       },
+//       {
+//         fill: 'cornflowerblue',
+//         stroke: 'black',
+//         strokeWidth: 3,
+//       },
+//     ).mod(padding(15)),
+//     rect({ width: 50, height: 50, fill: 'coral' }),
+//   ]),
+// ]);
 
 export const testComponent = svg([
   rect({ x: 10, y: 10, width: 100, height: 100, fill: 'firebrick' }),
@@ -113,38 +115,38 @@ const blobbySet = (name: string, options: BlobbySetOptions) => {
 
 const XFloating = text('X', { fontWeight: 'bold', fontSize: '20px' });
 
-export const annotatedDiagram = svg([
-  col({ spacing: 0, alignment: 'center' }, [
-    blobbySet('Lebesgue measurable sets', {
-      size: 200,
-      fill: 'rgb(225, 248, 226)',
-      stroke: 'black',
-      strokeWidth: 2,
-    }),
-    XLabel,
-  ]),
-  row({ x: 40, y: 65, spacing: 10, alignment: 'middle' }, [
-    // blob(
-    //   {
-    //     seed: Math.random(),
-    //     extraPoints: 8,
-    //     randomness: 4,
-    //     size: 75,
-    //   },
-    //   {
-    //     fill: 'rgb(175, 234, 179)',
-    //     stroke: 'black',
-    //     strokeWidth: 2,
-    //   },
-    // ),
-    blobbySet('Borel sets', { size: 75, fill: 'rgb(175, 234, 179)', stroke: 'black', strokeWidth: 2 }),
-    XFloating,
-  ]),
-  arrowRef(
-    { from: { ref: XLabel, port: 'n' }, to: { ref: XFloating, port: 's' } },
-    { padStart: 10, padEnd: 20, flip: true },
-  ),
-]);
+// export const annotatedDiagram = svg([
+//   col({ spacing: 0, alignment: 'center' }, [
+//     blobbySet('Lebesgue measurable sets', {
+//       size: 200,
+//       fill: 'rgb(225, 248, 226)',
+//       stroke: 'black',
+//       strokeWidth: 2,
+//     }),
+//     XLabel,
+//   ]),
+//   row({ x: 40, y: 65, spacing: 10, alignment: 'middle' }, [
+//     // blob(
+//     //   {
+//     //     seed: Math.random(),
+//     //     extraPoints: 8,
+//     //     randomness: 4,
+//     //     size: 75,
+//     //   },
+//     //   {
+//     //     fill: 'rgb(175, 234, 179)',
+//     //     stroke: 'black',
+//     //     strokeWidth: 2,
+//     //   },
+//     // ),
+//     blobbySet('Borel sets', { size: 75, fill: 'rgb(175, 234, 179)', stroke: 'black', strokeWidth: 2 }),
+//     XFloating,
+//   ]),
+//   arrowRef(
+//     { from: { ref: XLabel, port: 'n' }, to: { ref: XFloating, port: 's' } },
+//     { padStart: 10, padEnd: 20, flip: true },
+//   ),
+// ]);
 
 export const testArrow = svg([arrow({ from: { x: 64, y: 64 }, to: { x: 128, y: 96 } })]);
 
@@ -287,3 +289,42 @@ group2(
 //       ),
 //   ),
 // ]);
+
+const canvas = document.createElement('canvas');
+const paperScope = new PaperScope();
+paperScope.setup(canvas);
+const dims = {
+  x: 50,
+  y: 25,
+  width: 200,
+  height: 100,
+};
+let myPath = new Path.Rectangle(new Point(dims.x, dims.y), new Size(dims.width, dims.height));
+// const myPath = new Path();
+// myPath.add(new Point(50, 75));
+// myPath.add(new Point(50, 25));
+// myPath.add(new Point(150, 25));
+// myPath.add(new Point(150, 75));
+myPath.insert(4, new Point(dims.x + dims.width / 2, dims.y + dims.height - (dims.height * 5) / 50));
+
+const dims2 = {
+  x: 50 + 16,
+  y: 50 + 16,
+  width: 100,
+  height: 50,
+};
+let myPath2 = new Path.Rectangle(new Point(dims2.x, dims2.y), new Size(dims2.width, dims2.height));
+myPath2.insert(2, new Point(dims2.x + dims2.width / 2, dims2.y + (dims2.height * 5) / 50));
+myPath2.insert(5, new Point(dims2.x + dims2.width / 2, dims2.y + dims2.height - (dims2.height * 5) / 50));
+
+export const blobPaperJSTest = svg([
+  blobPaperJS(myPath, { fill: 'rgb(225, 248, 226)', stroke: 'black', strokeWidth: 1 }).mod(
+    boundaryLabel('Lebesgue measurable sets', { dy: '-1.5%', fontSize: '16px', startOffset: '20%', method: 'align' }),
+    padding(16),
+  ),
+  blobPaperJS(myPath2, { fill: 'rgb(175, 234, 179)', stroke: 'black', strokeWidth: 1 }).mod((blob) =>
+    //   center([blob, text('Borel sets')]),
+    align('center', [blob, text('Borel sets')]),
+  ),
+  text('Borel sets', { x: dims2.x + 15, y: dims2.y + dims2.height / 2 - 8, fontWeight: 'bold', fontSize: '14px' }),
+]);

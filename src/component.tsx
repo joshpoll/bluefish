@@ -7,6 +7,7 @@ import { BBox, Component, SizeInterval } from './componentTypes';
 import { nanoid } from 'nanoid';
 import * as reversePath from 'svg-path-reverse';
 import { getArrow, ArrowOptions as PerfectArrowOptions, getBoxToBoxArrow } from 'perfect-arrows';
+import { Path } from 'paper';
 
 // export type Component = {
 //   children: Component[],
@@ -32,7 +33,11 @@ export const svg = (children: Component[]) =>
           width: interval.width.ub,
           height: interval.height.ub,
         },
-        positions: children.map((c) => ({ x: 0, y: 0 })),
+        // TODO: need a nicer way of doing this
+        positions: children.map((c) => ({
+          x: c.position ? (c.position.x ? undefined : 0) : 0,
+          y: c.position ? (c.position.y ? undefined : 0) : 0,
+        })),
       };
     },
     (bbox: BBox, children: Component[]) => {
@@ -186,6 +191,173 @@ export const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOpt
   );
 };
 
+export const blobPaperJS = (path: InstanceType<typeof Path>, svgOptions?: blobs2.SvgOptions): Component => {
+  let blobPath = path.clone();
+  blobPath.closed = true;
+  // apply smoothing twice to make the curves a bit less sharp
+  blobPath.smooth({ type: 'continuous' });
+  blobPath.flatten(4);
+  blobPath.smooth({ type: 'continuous' });
+
+  //   const reversedPath = reversePath.normalize(reversePath.reverse(path));
+  return new Component(
+    [],
+    (interval: SizeInterval, children: Component[]) => {
+      const bounds = blobPath.strokeBounds;
+      const boundary = (blobPath.exportSVG() as SVGElement).getAttribute('d') ?? '';
+      return {
+        size: { width: bounds.width, height: bounds.height },
+        positions: [],
+        // boundary: reversePath.normalize(reversePath.reverse(blobPath(blobOptions))),
+        boundary: boundary,
+      };
+    },
+    (bbox: BBox, children: Component[], boundary?: string) => {
+      // translate blobElement by bbox.x and bbox.y
+      return (
+        <g transform={`translate(${bbox.x}, ${bbox.y})`}>
+          <path {...svgOptions} d={boundary}></path>
+        </g>
+      );
+    },
+  );
+};
+
+type AlignOptions =
+  | 'topLeft'
+  | 'top'
+  | 'topRight'
+  | 'left'
+  | 'center'
+  | 'right'
+  | 'bottomLeft'
+  | 'bottom'
+  | 'bottomRight';
+
+export const align = (options: AlignOptions, children: Component[]) =>
+  new Component(
+    children,
+    (interval: SizeInterval, children: Component[]) => {
+      const first = children[0];
+      first.layout(interval);
+      if (first.position === undefined) {
+        first.position = {};
+        if (first.position.x) {
+          first.position.x = 0;
+        }
+      }
+      const second = children[1];
+      second.layout(interval);
+      switch (options) {
+        case 'topLeft':
+          return {
+            size: {
+              width: Math.max(first.size!.width, second.size!.width),
+              height: Math.max(first.size!.height, second.size!.height),
+            },
+            positions: [{}, { x: first.position!.x, y: first.position!.y }],
+          };
+        case 'top':
+          return {
+            size: {
+              width: Math.max(first.size!.width, second.size!.width),
+              height: Math.max(first.size!.height, second.size!.height),
+            },
+            positions: [
+              {},
+              { x: first.position!.x! + first.size!.width / 2 - second.size!.width / 2, y: first.position!.y },
+            ],
+          };
+        case 'topRight':
+          return {
+            size: {
+              width: Math.max(first.size!.width, second.size!.width),
+              height: Math.max(first.size!.height, second.size!.height),
+            },
+            positions: [{}, { x: first.position!.x! + first.size!.width - second.size!.width, y: first.position!.y }],
+          };
+        case 'left':
+          return {
+            size: {
+              width: Math.max(first.size!.width, second.size!.width),
+              height: Math.max(first.size!.height, second.size!.height),
+            },
+            positions: [
+              {},
+              { x: first.position!.x, y: first.position!.y! + first.size!.height / 2 - second.size!.height / 2 },
+            ],
+          };
+        case 'center':
+          return {
+            size: {
+              width: Math.max(first.size!.width, second.size!.width),
+              height: Math.max(first.size!.height, second.size!.height),
+            },
+            positions: [
+              {},
+              {
+                x: first.position!.x! + first.size!.width / 2 - second.size!.width / 2,
+                y: first.position!.y! + first.size!.height / 2 - second.size!.height / 2,
+              },
+            ],
+          };
+        case 'right':
+          return {
+            size: {
+              width: Math.max(first.size!.width, second.size!.width),
+              height: Math.max(first.size!.height, second.size!.height),
+            },
+            positions: [
+              {},
+              {
+                x: first.position!.x! + first.size!.width - second.size!.width,
+                y: first.position!.y! + first.size!.height / 2 - second.size!.height / 2,
+              },
+            ],
+          };
+        case 'bottomLeft':
+          return {
+            size: {
+              width: Math.max(first.size!.width, second.size!.width),
+              height: Math.max(first.size!.height, second.size!.height),
+            },
+            positions: [{}, { x: first.position!.x, y: first.position!.y! + first.size!.height - second.size!.height }],
+          };
+        case 'bottom':
+          return {
+            size: {
+              width: Math.max(first.size!.width, second.size!.width),
+              height: Math.max(first.size!.height, second.size!.height),
+            },
+            positions: [
+              {},
+              {
+                x: first.position!.x! + first.size!.width / 2 - second.size!.width / 2,
+                y: first.position!.y! + first.size!.height - second.size!.height,
+              },
+            ],
+          };
+        case 'bottomRight':
+          return {
+            size: {
+              width: Math.max(first.size!.width, second.size!.width),
+              height: Math.max(first.size!.height, second.size!.height),
+            },
+            positions: [
+              {},
+              {
+                x: first.position!.x! + first.size!.width - second.size!.width,
+                y: first.position!.y! + first.size!.height - second.size!.height,
+              },
+            ],
+          };
+      }
+    },
+    (bbox: BBox, children: Component[]) => {
+      return <g transform={`translate(${bbox.x},${bbox.y})`}>{children.map((c) => c.paint())}</g>;
+    },
+  );
+
 type VerticalAlignment = 'top' | 'middle' | 'bottom';
 
 type RowOptions = ({ spacing: number } | { totalWidth: number }) & {
@@ -200,7 +372,7 @@ export const row = (options: RowOptions, children: Component[]) =>
     (interval: SizeInterval, children: Component[]) => {
       children.map((c) => c.layout(interval));
       const width = children.reduce((acc, c) => acc + c.size!.width, 0);
-      const height = children.reduce((acc, c) => Math.max(c.size!.height), -Infinity);
+      const height = children.reduce((acc, c) => Math.max(acc, c.size!.height), -Infinity);
       // const top = children.reduce((acc, c) => Math.min(acc, c.position!.y), Infinity);
       // const bottom = children.reduce((acc, c) => Math.max(acc, c.position!.y + c.size!.height), -Infinity);
       // const top = children.reduce((acc, c) => Math.min(acc, 0), Infinity);
@@ -244,6 +416,7 @@ export const row = (options: RowOptions, children: Component[]) =>
             height,
           },
           positions,
+          ownPosition: options.x === undefined || options.y === undefined ? undefined : { x: options.x, y: options.y },
         };
       } else if ('totalWidth' in options) {
         const occupiedWidth = children.reduce((width, c) => width + c.size!.width, 0);
@@ -267,6 +440,7 @@ export const row = (options: RowOptions, children: Component[]) =>
             height,
           },
           positions,
+          ownPosition: options.x === undefined || options.y === undefined ? undefined : { x: options.x, y: options.y },
         };
       } else {
         throw new Error('never');
@@ -275,7 +449,7 @@ export const row = (options: RowOptions, children: Component[]) =>
     (bbox: BBox, children: Component[]) => {
       return <g transform={`translate(${bbox.x},${bbox.y})`}>{children.map((c) => c.paint())}</g>;
     },
-  ).mod(position({ x: options.x ?? 0, y: options.y ?? 0 }));
+  );
 
 type HorizontalAlignment = 'left' | 'center' | 'right';
 
@@ -465,7 +639,10 @@ export const group = (components: Component[]): Component =>
           width,
           height,
         },
-        positions: children.map((c) => ({ x: 0, y: 0 })),
+        positions: children.map((c) => ({
+          x: c.position ? (c.position.x ? undefined : 0) : 0,
+          y: c.position ? (c.position.y ? undefined : 0) : 0,
+        })),
       };
     },
     (bbox: BBox, children: Component[]) => {
@@ -638,15 +815,15 @@ export const arrowRef = (params: ArrowRef, options?: ArrowOptions) => {
       let fromChild: Component | undefined = params.from.ref;
       let fromOffset: { x: number; y: number } = { x: 0, y: 0 };
       while (fromChild !== undefined && fromChild.position !== undefined) {
-        fromOffset.x += fromChild.position!.x;
-        fromOffset.y += fromChild.position!.y;
+        fromOffset.x += fromChild.position!.x!;
+        fromOffset.y += fromChild.position!.y!;
         fromChild = fromChild.parent;
       }
       let toChild: Component | undefined = params.to.ref;
       let toOffset: { x: number; y: number } = { x: 0, y: 0 };
       while (toChild !== undefined && toChild.position !== undefined) {
-        toOffset.x += toChild.position!.x;
-        toOffset.y += toChild.position!.y;
+        toOffset.x += toChild.position!.x!;
+        toOffset.y += toChild.position!.y!;
         toChild = toChild.parent;
       }
 
@@ -682,15 +859,15 @@ export const arrowRef = (params: ArrowRef, options?: ArrowOptions) => {
       let fromChild: Component | undefined = params.from.ref;
       let fromOffset: { x: number; y: number } = { x: 0, y: 0 };
       while (fromChild !== undefined && fromChild.position !== undefined) {
-        fromOffset.x += fromChild.position!.x;
-        fromOffset.y += fromChild.position!.y;
+        fromOffset.x += fromChild.position!.x!;
+        fromOffset.y += fromChild.position!.y!;
         fromChild = fromChild.parent;
       }
       let toChild: Component | undefined = params.to.ref;
       let toOffset: { x: number; y: number } = { x: 0, y: 0 };
       while (toChild !== undefined && toChild.position !== undefined) {
-        toOffset.x += toChild.position!.x;
-        toOffset.y += toChild.position!.y;
+        toOffset.x += toChild.position!.x!;
+        toOffset.y += toChild.position!.y!;
         toChild = toChild.parent;
       }
 

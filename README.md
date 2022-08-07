@@ -10,6 +10,11 @@ short-term goals:
   - https://mbostock.github.io/protovis/ex/hotel.html
   - https://observablehq.com/@observablehq/bertin-hotel
 
+longer-term goals:
+- label layout
+- annotations
+- fancier highlighting to support trees case? can maybe use boundaries for that?
+
 # DONE (mostly):
 
 - note: using a position modifier is potentially confusing and doesn't play nicely with positioning

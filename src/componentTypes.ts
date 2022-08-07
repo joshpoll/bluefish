@@ -32,7 +32,7 @@ export type Layout = (
 ) => {
   size: Size;
   ownPosition?: Position;
-  positions: Position[];
+  positions: Partial<Position>[];
   boundary?: string;
 };
 
@@ -41,7 +41,7 @@ export class Component {
   _layout: Layout;
   _paint: Paint;
   size?: Size;
-  position?: Position;
+  position?: Partial<Position>;
   //   boundary path (string type for now, but could refine later. check tldraw for details/inspiration/libraries)
   boundary?: string;
   parent?: Component;
@@ -63,6 +63,18 @@ export class Component {
     // set our children's positions
     // this.children.map((c, i) => (c.position = positions[i]));
 
+    // set our children's positions if we the new positions are defined
+    positions.forEach((p, i) => {
+      if ((p.x !== undefined || p.y !== undefined) && this.children[i].position === undefined) {
+        this.children[i].position = {};
+      }
+      if (p.x !== undefined) {
+        this.children[i].position!.x = p.x;
+      }
+      if (p.y !== undefined) {
+        this.children[i].position!.y = p.y;
+      }
+    });
     // set our children's positions iff they are not already set
     this.children.forEach((c, i) => {
       if (c.position === undefined) {
@@ -76,7 +88,8 @@ export class Component {
   }
 
   paint() {
-    return this._paint({ ...this.size!, ...this.position! }, this.children, this.boundary);
+    // TODO: remove any
+    return this._paint({ ...this.size!, ...this.position! } as any, this.children, this.boundary);
   }
 
   mod(...modify: ((component: Component) => Component)[]): Component {

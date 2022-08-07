@@ -11,15 +11,18 @@ import {
   testCol,
   testArrow,
   annotatedEquationRef,
+  blobPaperJSTest,
 } from './testComponents';
 import * as _ from 'lodash';
-import { bertinHotel } from './testComponents';
+import { bertinHotel } from './examples/bertinHotel';
+import { blob as test_blob } from './examples/paperjs-test';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
 };
 
 function App() {
+  test_blob();
   return (
     <div className="App">
       <header className="App-header">
@@ -31,9 +34,11 @@ function App() {
           Learn React
         </a>
       </header>
+      {/* <br />
+      <div>{render(blobPaperJSTest)}</div> */}
       <br />
       <div>{render(bertinHotel)}</div>
-      <br />
+      {/* <br />
       <div>{render(annotatedEquationRef)}</div>
       <br />
       <div>{render(testArrow)}</div>
@@ -61,7 +66,7 @@ function App() {
             },
           )}
         </svg>
-      </div>
+      </div> */}
     </div>
   );
 }
