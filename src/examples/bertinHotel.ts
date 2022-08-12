@@ -1,5 +1,5 @@
-import { tidy, groupBy } from '@tidyjs/tidy';
-import { svg, row, rect, text, col } from '../component';
+import { tidy, groupBy, Key } from '@tidyjs/tidy';
+import { svg, row, rect, text, col, group } from '../component';
 import { padding } from '../modifier';
 import * as d3 from 'd3-array';
 import { Component } from '../componentTypes';
@@ -65,18 +65,18 @@ const data = [
   { type: '5. % CLIENTELE EUROPE', month: 'Oct', count: 19 },
   { type: '5. % CLIENTELE EUROPE', month: 'Nov', count: 19 },
   { type: '5. % CLIENTELE EUROPE', month: 'Dec', count: 17 },
-  { type: '"6. % CLIENTELE M.EAST, AFRICA"', month: 'Jan', count: 1 },
-  { type: '"6. % CLIENTELE M.EAST, AFRICA"', month: 'Feb', count: 0 },
-  { type: '"6. % CLIENTELE M.EAST, AFRICA"', month: 'Mar', count: 0 },
-  { type: '"6. % CLIENTELE M.EAST, AFRICA"', month: 'Apr', count: 8 },
-  { type: '"6. % CLIENTELE M.EAST, AFRICA"', month: 'May', count: 6 },
-  { type: '"6. % CLIENTELE M.EAST, AFRICA"', month: 'Jun', count: 4 },
-  { type: '"6. % CLIENTELE M.EAST, AFRICA"', month: 'Jul', count: 6 },
-  { type: '"6. % CLIENTELE M.EAST, AFRICA"', month: 'Aug', count: 4 },
-  { type: '"6. % CLIENTELE M.EAST, AFRICA"', month: 'Sep', count: 2 },
-  { type: '"6. % CLIENTELE M.EAST, AFRICA"', month: 'Oct', count: 1 },
-  { type: '"6. % CLIENTELE M.EAST, AFRICA"', month: 'Nov', count: 0 },
-  { type: '"6. % CLIENTELE M.EAST, AFRICA"', month: 'Dec', count: 1 },
+  { type: '6. % CLIENTELE M.EAST, AFRICA', month: 'Jan', count: 1 },
+  { type: '6. % CLIENTELE M.EAST, AFRICA', month: 'Feb', count: 0 },
+  { type: '6. % CLIENTELE M.EAST, AFRICA', month: 'Mar', count: 0 },
+  { type: '6. % CLIENTELE M.EAST, AFRICA', month: 'Apr', count: 8 },
+  { type: '6. % CLIENTELE M.EAST, AFRICA', month: 'May', count: 6 },
+  { type: '6. % CLIENTELE M.EAST, AFRICA', month: 'Jun', count: 4 },
+  { type: '6. % CLIENTELE M.EAST, AFRICA', month: 'Jul', count: 6 },
+  { type: '6. % CLIENTELE M.EAST, AFRICA', month: 'Aug', count: 4 },
+  { type: '6. % CLIENTELE M.EAST, AFRICA', month: 'Sep', count: 2 },
+  { type: '6. % CLIENTELE M.EAST, AFRICA', month: 'Oct', count: 1 },
+  { type: '6. % CLIENTELE M.EAST, AFRICA', month: 'Nov', count: 0 },
+  { type: '6. % CLIENTELE M.EAST, AFRICA', month: 'Dec', count: 1 },
   { type: '7. % CLIENTELE ASIA', month: 'Jan', count: 3 },
   { type: '7. % CLIENTELE ASIA', month: 'Feb', count: 10 },
   { type: '7. % CLIENTELE ASIA', month: 'Mar', count: 6 },
@@ -262,7 +262,20 @@ const means = d3.rollup(
   (d) => d.type,
 );
 
-const groupedData = tidy(data, groupBy('type', groupBy.entriesObject()), (data) => d3.permute(data, order));
+const groupedData = tidy(
+  data,
+  groupBy('type', groupBy.entriesObject()),
+  (
+    data: {
+      key: Key;
+      values: {
+        type: string;
+        month: string;
+        count: number;
+      }[];
+    }[],
+  ) => d3.permute(data, order),
+);
 
 const cw = 11;
 
@@ -278,16 +291,64 @@ const bar = ({ type, count }: { type: string; count: number }) =>
     fill: count > means.get(type)! ? 'black' : 'white',
   });
 
-// TODO: this spacing is completely broken :/
+/* 
+vis.add(pv.Label)
+    .data(pv.repeat("JFMAMJJASOND".split("")))
+    .top(function() ((this.index % 6) > 2) ? 16 : 14)
+    .left(function() cw * (this.index + .5))
+    .textAlign("center")
+    .font("bold 15px Arial");
+*/
+
+const monthLabels = 'JFMAMJJASOND'
+  .split('')
+  .map((m, i) =>
+    text(m, { x: cw * (i + 0.5), y: i % 6 > 2 ? 16 : 14, fontFamily: 'Arial', fontSize: '15px', fontWeight: 'bold' }),
+  );
+
+console.log('bertinHotel');
 export const bertinHotel = svg([
   col(
-    { spacing: 5, alignment: 'center' },
-    groupedData.map(({ key, values }: any) => {
-      console.log('key', key);
-      return row(
-        { spacing: 0, alignment: 'bottom' },
-        (values as { type: string; count: number }[]).map((d) => bar(d)),
-      );
+    { y: 35, spacing: 5, alignment: 'left' },
+    groupedData.map(({ key, values }) => {
+      return row({ spacing: 8, alignment: 'bottom' }, [
+        row(
+          { spacing: 0, alignment: 'bottom' },
+          values.map((d) => bar(d)),
+        ),
+        text(key.toString(), { fontSize: '13px', fontFamily: 'Georgia' }),
+      ]);
     }),
+  ).mod(padding({ left: 5, right: 200, bottom: 100, top: 5 })),
+  group(monthLabels),
+]);
+
+const visualize = <T>(data: T, render: (data: T) => Component): Component => render(data);
+
+function colC(options: any): (children: Component[]) => Component;
+function colC(options: any, children: Component[]): Component;
+function colC(options: any, children?: Component[]): Component | ((children: Component[]) => Component) {
+  if (children === undefined) {
+    return (children: Component[]) => col(options, children);
+  } else {
+    return col(options, children);
+  }
+}
+
+export const bertinHotelV = svg([
+  visualize(
+    groupedData.map(({ key, values }) => {
+      //   console.log('key', key);
+      return row({ spacing: 8, alignment: 'bottom' }, [
+        row(
+          { spacing: 0, alignment: 'bottom' },
+          values.map((d) => bar(d)),
+        ),
+        text('test'),
+      ]);
+    }),
+    // (data) => col({ spacing: 5, alignment: 'center' }, data),
+    // (data) => colC({ spacing: 5, alignment: 'center' }, data),
+    colC({ spacing: 5, alignment: 'center' }),
   ),
 ]);

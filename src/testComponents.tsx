@@ -28,27 +28,27 @@ export const testRow = svg([
   ]),
 ]);
 
-// export const testCol = svg([
-//   col({ totalHeight: 500, alignment: 'left' }, [
-//     rect({ width: 100, height: 100, fill: 'firebrick' }),
-//     rect({ width: 50, height: 200, fill: 'cornflowerblue' }),
-//     blob(
-//       {
-//         seed: Math.random(),
-//         extraPoints: 8,
-//         randomness: 4,
-//         // size: 60,
-//         size: 100,
-//       },
-//       {
-//         fill: 'cornflowerblue',
-//         stroke: 'black',
-//         strokeWidth: 3,
-//       },
-//     ).mod(padding(15)),
-//     rect({ width: 50, height: 50, fill: 'coral' }),
-//   ]),
-// ]);
+export const testCol = svg([
+  col({ totalHeight: 500, alignment: 'left' }, [
+    rect({ width: 100, height: 100, fill: 'firebrick' }),
+    rect({ width: 50, height: 200, fill: 'cornflowerblue' }),
+    blob(
+      {
+        seed: Math.random(),
+        extraPoints: 8,
+        randomness: 4,
+        // size: 60,
+        size: 100,
+      },
+      {
+        fill: 'cornflowerblue',
+        stroke: 'black',
+        strokeWidth: 3,
+      },
+    ).mod(padding(15)),
+    rect({ width: 50, height: 50, fill: 'coral' }),
+  ]),
+]);
 
 export const testComponent = svg([
   rect({ x: 10, y: 10, width: 100, height: 100, fill: 'firebrick' }),
@@ -115,38 +115,38 @@ const blobbySet = (name: string, options: BlobbySetOptions) => {
 
 const XFloating = text('X', { fontWeight: 'bold', fontSize: '20px' });
 
-// export const annotatedDiagram = svg([
-//   col({ spacing: 0, alignment: 'center' }, [
-//     blobbySet('Lebesgue measurable sets', {
-//       size: 200,
-//       fill: 'rgb(225, 248, 226)',
-//       stroke: 'black',
-//       strokeWidth: 2,
-//     }),
-//     XLabel,
-//   ]),
-//   row({ x: 40, y: 65, spacing: 10, alignment: 'middle' }, [
-//     // blob(
-//     //   {
-//     //     seed: Math.random(),
-//     //     extraPoints: 8,
-//     //     randomness: 4,
-//     //     size: 75,
-//     //   },
-//     //   {
-//     //     fill: 'rgb(175, 234, 179)',
-//     //     stroke: 'black',
-//     //     strokeWidth: 2,
-//     //   },
-//     // ),
-//     blobbySet('Borel sets', { size: 75, fill: 'rgb(175, 234, 179)', stroke: 'black', strokeWidth: 2 }),
-//     XFloating,
-//   ]),
-//   arrowRef(
-//     { from: { ref: XLabel, port: 'n' }, to: { ref: XFloating, port: 's' } },
-//     { padStart: 10, padEnd: 20, flip: true },
-//   ),
-// ]);
+export const annotatedDiagram = svg([
+  col({ spacing: 0, alignment: 'center' }, [
+    blobbySet('Lebesgue measurable sets', {
+      size: 200,
+      fill: 'rgb(225, 248, 226)',
+      stroke: 'black',
+      strokeWidth: 2,
+    }),
+    XLabel,
+  ]),
+  row({ x: 40, y: 65, spacing: 10, alignment: 'middle' }, [
+    // blob(
+    //   {
+    //     seed: Math.random(),
+    //     extraPoints: 8,
+    //     randomness: 4,
+    //     size: 75,
+    //   },
+    //   {
+    //     fill: 'rgb(175, 234, 179)',
+    //     stroke: 'black',
+    //     strokeWidth: 2,
+    //   },
+    // ),
+    blobbySet('Borel sets', { size: 75, fill: 'rgb(175, 234, 179)', stroke: 'black', strokeWidth: 2 }),
+    XFloating,
+  ]),
+  arrowRef(
+    { from: { ref: XLabel, port: 'n' }, to: { ref: XFloating, port: 's' } },
+    { padStart: 10, padEnd: 20, flip: true },
+  ),
+]);
 
 export const testArrow = svg([arrow({ from: { x: 64, y: 64 }, to: { x: 128, y: 96 } })]);
 

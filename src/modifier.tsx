@@ -69,12 +69,16 @@ export const padding = (padding: Padding) => (component: Component) => {
         height: { ub: height.ub - top - bottom, lb: height.lb - left - right },
       };
       child.layout(newInterval);
+      console.log('child position', child.position);
       return {
         size: {
           width: child.size!.width + left + right,
           height: child.size!.height + top + bottom,
         },
-        position: { x: elaboratedPadding.left, y: elaboratedPadding.top },
+        position: {
+          x: elaboratedPadding.left + (child.position?.x ?? 0),
+          y: elaboratedPadding.top + (child.position?.y ?? 0),
+        },
       };
     },
     (bbox: BBox, child: Component) => {

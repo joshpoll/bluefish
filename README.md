@@ -9,6 +9,7 @@ short-term goals:
 - bertin's hotel chart (copying Protovis/D3 spec)
   - https://mbostock.github.io/protovis/ex/hotel.html
   - https://observablehq.com/@observablehq/bertin-hotel
+- split up row logic into two separate axis-wise components: align & space
 
 longer-term goals:
 - label layout

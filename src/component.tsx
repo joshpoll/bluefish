@@ -28,10 +28,20 @@ export const svg = (children: Component[]) =>
     children,
     (interval: SizeInterval, children: Component[]) => {
       children.map((c) => c.layout(interval));
+      const left = _.min(children.map((c) => c.position?.x ?? 0)) ?? 0;
+      const right = _.max(children.map((c) => (c.position?.x ?? 0) + c.size!.width)) ?? 0;
+      const top = _.min(children.map((c) => c.position?.y ?? 0)) ?? 0;
+      const bottom = _.max(children.map((c) => (c.position?.y ?? 0) + c.size!.height)) ?? 0;
+      // console.log('svg width', right - left);
+      // console.log('svg height', bottom - top);
+      // console.log(children.map((c) => c.position));
+      // console.log(children.map((c) => c.size));
       return {
         size: {
-          width: interval.width.ub,
-          height: interval.height.ub,
+          width: right - left,
+          height: bottom - top,
+          // width: interval.width.ub,
+          // height: interval.height.ub,
         },
         // TODO: need a nicer way of doing this
         positions: children.map((c) => ({
@@ -451,6 +461,154 @@ export const row = (options: RowOptions, children: Component[]) =>
     },
   );
 
+// TODO: width and height probably have to be dynamically computed?? this is getting a bit complicated...
+export const vAlign = (
+  options: {
+    alignment: VerticalAlignment;
+    y?: number;
+  },
+  children: Component[],
+) =>
+  new Component(
+    children,
+    (interval: SizeInterval, children: Component[]) => {
+      children.map((c) => c.layout(interval));
+      const width = children.reduce((acc, c) => acc + c.size!.width, 0);
+      const height = children.reduce((acc, c) => Math.max(acc, c.size!.height), -Infinity);
+      // const top = children.reduce((acc, c) => Math.min(acc, c.position!.y), Infinity);
+      // const bottom = children.reduce((acc, c) => Math.max(acc, c.position!.y + c.size!.height), -Infinity);
+      // const top = children.reduce((acc, c) => Math.min(acc, 0), Infinity);
+      // const bottom = children.reduce((acc, c) => Math.max(acc, 0 + c.size!.height), -Infinity);
+      let yPos: number[];
+      switch (options.alignment) {
+        case 'top':
+          yPos = Array(children.length).fill(0);
+          break;
+        case 'middle':
+          yPos = children.map((c) => c.size!.height / 2);
+          yPos = yPos.map((y) => Math.max(...yPos) - y);
+          break;
+        case 'bottom':
+          yPos = children.map((c) => c.size!.height);
+          yPos = yPos.map((y) => Math.max(...yPos) - y);
+          break;
+      }
+
+      return {
+        size: {
+          width,
+          height,
+        },
+        positions: yPos.map((y) => ({ y })),
+        // TODO: these casts are totally unsafe!
+        ownPosition: { x: undefined as any as number, y: options.y as number },
+      };
+    },
+    // TODO: this doesn't make sense anymore, because it's going to paint children twice if they've
+    // already been painted. Maybe if a child has already been painted we can just return a fragment
+    // the second time? Or maybe return a DOM ref somehow? Maybe assign parents during layout pass?
+    (bbox: BBox, children: Component[]) => {
+      return <g transform={`translate(${bbox.x},${bbox.y})`}>{children.map((c) => c.paint())}</g>;
+    },
+  );
+
+export const hSpace = (
+  options: ({ spacing: number } | { totalWidth: number }) & { x?: number },
+  children: Component[],
+) =>
+  new Component(
+    children,
+    (interval: SizeInterval, children: Component[]) => {
+      children.map((c) => c.layout(interval));
+      const width = children.reduce((acc, c) => acc + c.size!.width, 0);
+      const height = children.reduce((acc, c) => Math.max(acc, c.size!.height), -Infinity);
+      // const top = children.reduce((acc, c) => Math.min(acc, c.position!.y), Infinity);
+      // const bottom = children.reduce((acc, c) => Math.max(acc, c.position!.y + c.size!.height), -Infinity);
+      // const top = children.reduce((acc, c) => Math.min(acc, 0), Infinity);
+      // const bottom = children.reduce((acc, c) => Math.max(acc, 0 + c.size!.height), -Infinity);
+
+      // 0: 0
+      // 1: 0 + width_0 + spacing
+      // 2: 0 + width_0 + spacing + width_1 + spacing
+      // ...
+      const initial = _.initial(children);
+      if ('spacing' in options) {
+        const positions = initial
+          .reduce(
+            (acc, c, i) => [
+              {
+                x: acc[0].x + c.size!.width + options.spacing,
+              },
+              ...acc,
+            ],
+            [{ x: 0 }],
+          )
+          .reverse();
+        return {
+          size: {
+            width,
+            // height: bottom - top,
+            height,
+          },
+          positions,
+          ownPosition: { x: options.x as number, y: undefined as any as number },
+        };
+      } else if ('totalWidth' in options) {
+        const occupiedWidth = children.reduce((width, c) => width + c.size!.width, 0);
+        const spacing = (options.totalWidth - occupiedWidth) / (children.length - 1);
+        const positions = initial
+          .reduce(
+            (acc, c, i) => [
+              {
+                x: acc[0].x + c.size!.width + spacing,
+              },
+              ...acc,
+            ],
+            [{ x: 0 }],
+          )
+          .reverse();
+        return {
+          size: {
+            width,
+            // height: bottom - top,
+            height,
+          },
+          positions,
+          ownPosition: { x: options.x as number, y: undefined as any as number },
+        };
+      } else {
+        throw new Error('never');
+      }
+    },
+    (bbox: BBox, children: Component[]) => {
+      return <g transform={`translate(${bbox.x},${bbox.y})`}>{children.map((c) => c.paint())}</g>;
+    },
+  );
+
+// TODO: based on this representation, maybe it makes sense for the *group* to own the children
+// rather than either of hSpace and vAlign. Basically, by the time we hit the group, the children
+// had better be defined, but they are allowed to not be totally defined lower down in the tree.
+// This a relaxation of the tree structure that still actually preserves the tree somehow.
+// It also specializes into the original tree structure when nothing weird is going on. Plus it
+// behaves exactly like the monolithic row component to outside observers if the group owns the
+// children.
+// One downside/tradeoff to this approach is a bit of nonlocality maybe. If A currently owns a child
+// and then I add B that also owns the child, then ownership is transferred from A to A & B's LCA.
+// How does this feature interface with layered/staged layouts? Maybe it's easier to just have a
+// vertical and a horizontal owner per pass? I can't think of multi-owner situations in a single
+// pass that don't have this property, because the only way the owners can't interfere is if they
+// are controlling different dimensions. If the owners _do_ interfere then they must necessarily be
+// ordered and so belong in different passes. This doesn't happen in this case, because we have one
+// horizontal and one vertical owner.
+// At the end of the day, a component can only have one DOM owner at a time. So how do we serialize
+// the owner? Maybe arbitrarily pick horizontal or vertical owner. Maybe arbitrarily pick the first
+// owner we encounter during layout, which might give users a bit more control, but maybe it's less
+// predictable than always knowing e.g. the horizontal owner is the DOM owner. Though that does
+// introduce an asymmetry/bias between horizontal and vertical axes that can be avoided by choosing
+// the first one we encounter.
+export const rowComp = (options: RowOptions, children: Component[]) =>
+  group([hSpace(options, children), vAlign(options, children)]);
+
 type HorizontalAlignment = 'left' | 'center' | 'right';
 
 type ColOptions = ({ spacing: number } | { totalHeight: number }) & {
@@ -464,8 +622,11 @@ export const col = (options: ColOptions, children: Component[]) =>
     children,
     (interval: SizeInterval, children: Component[]) => {
       children.map((c) => c.layout(interval));
-      const width = children.reduce((acc, c) => Math.max(acc, c.size!.width), -Infinity);
-      const height = children.reduce((acc, c) => acc + c.size!.height, 0);
+      const width = _.min(children.map((c) => c.size!.width)) ?? 0;
+      const height =
+        'totalHeight' in options
+          ? options.totalHeight
+          : _.sumBy(children, (c) => c.size!.height) + options.spacing * (children.length - 1);
       // const top = children.reduce((acc, c) => Math.min(acc, c.position!.y), Infinity);
       // const bottom = children.reduce((acc, c) => Math.max(acc, c.position!.y + c.size!.height), -Infinity);
       // const top = children.reduce((acc, c) => Math.min(acc, 0), Infinity);
@@ -509,6 +670,7 @@ export const col = (options: ColOptions, children: Component[]) =>
             height,
           },
           positions,
+          ownPosition: { x: options.x as number, y: options.y as number },
         };
       } else if ('totalHeight' in options) {
         const occupiedHeight = children.reduce((height, c) => height + c.size!.height, 0);
@@ -532,6 +694,7 @@ export const col = (options: ColOptions, children: Component[]) =>
             height,
           },
           positions,
+          ownPosition: options.x === undefined || options.y === undefined ? undefined : { x: options.x, y: options.y },
         };
       } else {
         throw new Error('never');
@@ -540,7 +703,7 @@ export const col = (options: ColOptions, children: Component[]) =>
     (bbox: BBox, children: Component[]) => {
       return <g transform={`translate(${bbox.x},${bbox.y})`}>{children.map((c) => c.paint())}</g>;
     },
-  ).mod(position({ x: options.x ?? 0, y: options.y ?? 0 }));
+  );
 
 /* inflex - "flex" - inflex - "flex" - inflex */
 /* assumption: inflex sizes are known */

@@ -38,6 +38,8 @@ function App() {
       <div>{render(blobPaperJSTest)}</div> */}
       <br />
       <div>{render(bertinHotel)}</div>
+      <br />
+      <div>{render(annotatedDiagram)}</div>
       {/* <br />
       <div>{render(annotatedEquationRef)}</div>
       <br />
