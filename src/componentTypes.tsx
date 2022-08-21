@@ -90,6 +90,18 @@ export class Component {
   paint() {
     // TODO: remove any
     return this._paint({ ...this.size!, ...this.position! } as any, this.children, this.boundary);
+    // return (
+    //   <>
+    //     <rect
+    //       x1={this.position?.x ?? 0}
+    //       y1={this.position?.y ?? 0}
+    //       x2={(this.position?.x ?? 0) + (this.size!.width ?? 0)}
+    //       y2={(this.position?.y ?? 0) + (this.size!.height ?? 0)}
+    //       stroke="magenta"
+    //     ></rect>
+    //     {this._paint({ ...this.size!, ...this.position! } as any, this.children, this.boundary)}
+    //   </>
+    // );
   }
 
   mod(...modify: ((component: Component) => Component)[]): Component {

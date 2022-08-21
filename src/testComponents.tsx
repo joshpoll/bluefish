@@ -318,13 +318,14 @@ myPath2.insert(2, new Point(dims2.x + dims2.width / 2, dims2.y + (dims2.height *
 myPath2.insert(5, new Point(dims2.x + dims2.width / 2, dims2.y + dims2.height - (dims2.height * 5) / 50));
 
 export const blobPaperJSTest = svg([
-  blobPaperJS(myPath, { fill: 'rgb(225, 248, 226)', stroke: 'black', strokeWidth: 1 }).mod(
-    boundaryLabel('Lebesgue measurable sets', { dy: '-1.5%', fontSize: '16px', startOffset: '20%', method: 'align' }),
-    padding(16),
-  ),
-  blobPaperJS(myPath2, { fill: 'rgb(175, 234, 179)', stroke: 'black', strokeWidth: 1 }).mod((blob) =>
-    //   center([blob, text('Borel sets')]),
-    align('center', [blob, text('Borel sets')]),
-  ),
-  text('Borel sets', { x: dims2.x + 15, y: dims2.y + dims2.height / 2 - 8, fontWeight: 'bold', fontSize: '14px' }),
+  group([
+    blobPaperJS(myPath, { fill: 'rgb(225, 248, 226)', stroke: 'black', strokeWidth: 1 }).mod(
+      boundaryLabel('Lebesgue measurable sets', { dy: '-1.5%', fontSize: '16px', startOffset: '20%', method: 'align' }),
+      padding(16),
+    ),
+    blobPaperJS(myPath2, { fill: 'rgb(175, 234, 179)', stroke: 'black', strokeWidth: 1 }).mod((blob) =>
+      //   center([blob, text('Borel sets')]),
+      align('center', [blob, text('Borel sets', { fontWeight: 'bold', fontSize: '14px' })]),
+    ),
+  ]).mod(padding(16)),
 ]);

@@ -220,13 +220,15 @@ export const blobPaperJS = (path: InstanceType<typeof Path>, svgOptions?: blobs2
         positions: [],
         // boundary: reversePath.normalize(reversePath.reverse(blobPath(blobOptions))),
         boundary: boundary,
+        ownPosition: { x: bounds.x, y: bounds.y },
       };
     },
     (bbox: BBox, children: Component[], boundary?: string) => {
       // translate blobElement by bbox.x and bbox.y
       return (
-        <g transform={`translate(${bbox.x}, ${bbox.y})`}>
+        <g /*  transform={`translate(${bbox.x}, ${bbox.y})`} */>
           <path {...svgOptions} d={boundary}></path>
+          <rect x={bbox.x} y={bbox.y} width={bbox.width} height={bbox.height} stroke={'magenta'} fill={'none'}></rect>
         </g>
       );
     },
@@ -252,8 +254,11 @@ export const align = (options: AlignOptions, children: Component[]) =>
       first.layout(interval);
       if (first.position === undefined) {
         first.position = {};
-        if (first.position.x) {
+        if (first.position.x === undefined) {
           first.position.x = 0;
+        }
+        if (first.position.y === undefined) {
+          first.position.y = 0;
         }
       }
       const second = children[1];
@@ -298,6 +303,10 @@ export const align = (options: AlignOptions, children: Component[]) =>
             ],
           };
         case 'center':
+          console.log('debug center', first.position, first.size, second.size, {
+            x: first.position!.x! + first.size!.width / 2 - second.size!.width / 2,
+            y: first.position!.y! + first.size!.height / 2 - second.size!.height / 2,
+          });
           return {
             size: {
               width: Math.max(first.size!.width, second.size!.width),

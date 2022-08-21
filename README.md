@@ -10,6 +10,7 @@ short-term goals:
   - https://mbostock.github.io/protovis/ex/hotel.html
   - https://observablehq.com/@observablehq/bertin-hotel
 - split up row logic into two separate axis-wise components: align & space
+- tree diagram
 
 longer-term goals:
 - label layout

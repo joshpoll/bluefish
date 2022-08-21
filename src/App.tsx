@@ -34,8 +34,8 @@ function App() {
           Learn React
         </a>
       </header>
-      {/* <br />
-      <div>{render(blobPaperJSTest)}</div> */}
+      <br />
+      <div>{render(blobPaperJSTest)}</div>
       <br />
       <div>{render(bertinHotel)}</div>
       <br />
