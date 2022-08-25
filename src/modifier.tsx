@@ -3,6 +3,8 @@
 
 import { BBox, Component, Modifier, Position, SizeInterval } from './componentTypes';
 import { nanoid } from 'nanoid';
+import { union, inflate } from './bboxUtil';
+import { measureText } from './measureText';
 
 export const position = (position: Position) => (component: Component) =>
   new Modifier(
@@ -159,6 +161,10 @@ type BoundaryLabelOptions = Omit<React.SVGProps<SVGTextPathElement>, 'href'> & R
 
 export const boundaryLabel = (label: string, options: BoundaryLabelOptions) => (component: Component) => {
   const id = nanoid();
+  const textSize = measureText(
+    label,
+    `${options.fontStyle ?? ''} ${options.fontWeight ?? ''} ${options.fontSize ?? ''} ${options.fontFamily ?? ''}`,
+  );
   const labelComponent = new Component(
     [],
     (interval: SizeInterval, children: Component[]) => {
@@ -203,15 +209,12 @@ export const boundaryLabel = (label: string, options: BoundaryLabelOptions) => (
         width: { ub: interval.width.ub, lb: child.size!.width },
         height: { ub: interval.height.ub, lb: child.size!.height },
       });
+      const size = inflate({ x: 0, y: 0, ...child.size! }, textSize.fontHeight);
+      console.log('child size', child.size);
+      console.log('size', size);
       return {
-        size: {
-          width: label.size!.width,
-          height: label.size!.height,
-        },
-        positions: [
-          { x: 0, y: 0 },
-          { x: 0, y: 0 },
-        ],
+        size,
+        positions: [{}, {}],
       };
     },
     (bbox: BBox, children: Component[]) => {

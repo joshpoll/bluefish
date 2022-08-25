@@ -228,7 +228,7 @@ export const blobPaperJS = (path: InstanceType<typeof Path>, svgOptions?: blobs2
       return (
         <g /*  transform={`translate(${bbox.x}, ${bbox.y})`} */>
           <path {...svgOptions} d={boundary}></path>
-          <rect x={bbox.x} y={bbox.y} width={bbox.width} height={bbox.height} stroke={'magenta'} fill={'none'}></rect>
+          {/* <rect x={bbox.x} y={bbox.y} width={bbox.width} height={bbox.height} stroke={'magenta'} fill={'none'}></rect> */}
         </g>
       );
     },

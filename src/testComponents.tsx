@@ -308,8 +308,8 @@ let myPath = new Path.Rectangle(new Point(dims.x, dims.y), new Size(dims.width, 
 myPath.insert(4, new Point(dims.x + dims.width / 2, dims.y + dims.height - (dims.height * 5) / 50));
 
 const dims2 = {
-  x: 50 + 16,
-  y: 50 + 16,
+  x: 50,
+  y: 50,
   width: 100,
   height: 50,
 };
@@ -321,7 +321,6 @@ export const blobPaperJSTest = svg([
   group([
     blobPaperJS(myPath, { fill: 'rgb(225, 248, 226)', stroke: 'black', strokeWidth: 1 }).mod(
       boundaryLabel('Lebesgue measurable sets', { dy: '-1.5%', fontSize: '16px', startOffset: '20%', method: 'align' }),
-      padding(16),
     ),
     blobPaperJS(myPath2, { fill: 'rgb(175, 234, 179)', stroke: 'black', strokeWidth: 1 }).mod((blob) =>
       //   center([blob, text('Borel sets')]),
