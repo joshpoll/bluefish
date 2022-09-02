@@ -48,6 +48,9 @@ function App() {
         <SVG width={500} height={500}>
           <Column>
             <Rect fill={'magenta'} width={100} height={50} />
+            <Column>
+              <Rect fill={'lightgreen'} width={50} height={20} />
+            </Column>
             <Rect fill={'cornflowerblue'} width={50} height={100} />
           </Column>
         </SVG>

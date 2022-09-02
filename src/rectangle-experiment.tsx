@@ -196,7 +196,7 @@ export const Column = forwardRef((props: PropsWithChildren<ColumnProps>, ref) =>
   );
 
   return (
-    <g x={x ?? 0} y={y ?? 0}>
+    <g transform={`translate(${x ?? 0}, ${y ?? 0})`}>
       {React.Children.map(props.children, (child, index) =>
         //   TODO: not sure why this cast is necessary
         React.cloneElement(child as ReactElement, {
