@@ -16,6 +16,8 @@ import {
 import * as _ from 'lodash';
 import { bertinHotel } from './examples/bertinHotel';
 import { blob as test_blob } from './examples/paperjs-test';
+import { Parent } from './react-experiment';
+import { SVG, Rect, Column } from './rectangle-experiment';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -34,6 +36,23 @@ function App() {
           Learn React
         </a>
       </header>
+      <br />
+      {
+        <SVG width={500} height={500}>
+          <Rect fill={'magenta'} width={100} height={50} />
+          <Rect fill={'cornflowerblue'} width={50} height={100} x={150} />
+        </SVG>
+      }
+      <br />
+      {
+        <SVG width={500} height={500}>
+          <Column>
+            <Rect fill={'magenta'} width={100} height={50} />
+            <Rect fill={'cornflowerblue'} width={50} height={100} />
+          </Column>
+        </SVG>
+      }
+      {/* <Parent /> */}
       <br />
       <div>{render(blobPaperJSTest)}</div>
       <br />

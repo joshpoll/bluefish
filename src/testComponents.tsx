@@ -1,4 +1,4 @@
-import { rect, svg, text, row, blob, col, arrow, arrowRef, group, blobPaperJS, align } from './component';
+import { rect, svg, text, row, blob_OLD, col, arrow, arrowRef, group, blob, align } from './component';
 import { Component } from './componentTypes';
 import { background, boundaryLabel, padding, position, position2 } from './modifier';
 import { Path, Point, PaperScope } from 'paper';
@@ -10,7 +10,7 @@ export const testRow = svg([
   row({ totalWidth: 300, alignment: 'top' }, [
     rect({ width: 100, height: 100, fill: 'firebrick' }),
     rect({ width: 50, height: 200, fill: 'cornflowerblue' }),
-    blob(
+    blob_OLD(
       {
         seed: Math.random(),
         extraPoints: 8,
@@ -32,7 +32,7 @@ export const testCol = svg([
   col({ totalHeight: 500, alignment: 'left' }, [
     rect({ width: 100, height: 100, fill: 'firebrick' }),
     rect({ width: 50, height: 200, fill: 'cornflowerblue' }),
-    blob(
+    blob_OLD(
       {
         seed: Math.random(),
         extraPoints: 8,
@@ -98,7 +98,7 @@ type BlobbySetOptions = {
 };
 
 const blobbySet = (name: string, options: BlobbySetOptions) => {
-  return blob(
+  return blob_OLD(
     {
       seed: Math.random(),
       extraPoints: 8,
@@ -317,14 +317,23 @@ let myPath2 = new Path.Rectangle(new Point(dims2.x, dims2.y), new Size(dims2.wid
 myPath2.insert(2, new Point(dims2.x + dims2.width / 2, dims2.y + (dims2.height * 5) / 50));
 myPath2.insert(5, new Point(dims2.x + dims2.width / 2, dims2.y + dims2.height - (dims2.height * 5) / 50));
 
+const X_blob = text('X', { fontWeight: 'bold', fontSize: '20px' });
+const XLabel_blob = text('f^{-1}(N)\nlives here!', { fontSize: '20px' });
+
 export const blobPaperJSTest = svg([
   group([
-    blobPaperJS(myPath, { fill: 'rgb(225, 248, 226)', stroke: 'black', strokeWidth: 1 }).mod(
+    blob(myPath, { fill: 'rgb(225, 248, 226)', stroke: 'black', strokeWidth: 1 }).mod(
       boundaryLabel('Lebesgue measurable sets', { dy: '-1.5%', fontSize: '16px', startOffset: '20%', method: 'align' }),
     ),
-    blobPaperJS(myPath2, { fill: 'rgb(175, 234, 179)', stroke: 'black', strokeWidth: 1 }).mod((blob) =>
+    blob(myPath2, { fill: 'rgb(175, 234, 179)', stroke: 'black', strokeWidth: 1 }).mod((blob) =>
       //   center([blob, text('Borel sets')]),
       align('center', [blob, text('Borel sets', { fontWeight: 'bold', fontSize: '14px' })]),
     ),
   ]).mod(padding(16)),
+  //   X_blob,
+  //   XLabel_blob,
+  //   arrowRef(
+  //     { from: { ref: XLabel_blob, port: 'n' }, to: { ref: X_blob, port: 's' } },
+  //     { padStart: 10, padEnd: 20, flip: true },
+  //   ),
 ]);

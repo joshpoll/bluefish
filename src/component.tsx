@@ -176,7 +176,7 @@ const blobPath = (blobOptions: blobs2.BlobOptions): string => {
 //   );
 // };
 
-export const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): Component => {
+export const blob_OLD = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): Component => {
   //   const path = blobPath(blobOptions);
   //   const reversedPath = reversePath.normalize(reversePath.reverse(path));
   return new Component(
@@ -201,7 +201,7 @@ export const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOpt
   );
 };
 
-export const blobPaperJS = (path: InstanceType<typeof Path>, svgOptions?: blobs2.SvgOptions): Component => {
+export const blob = (path: InstanceType<typeof Path>, svgOptions?: blobs2.SvgOptions): Component => {
   let blobPath = path.clone();
   blobPath.closed = true;
   // apply smoothing twice to make the curves a bit less sharp
