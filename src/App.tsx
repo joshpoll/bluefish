@@ -17,7 +17,7 @@ import * as _ from 'lodash';
 import { bertinHotel } from './examples/bertinHotel';
 import { blob as test_blob } from './examples/paperjs-test';
 import { Parent } from './react-experiment';
-import { SVG, Rect, Column } from './rectangle-experiment';
+import { SVG, Rect, Column, FigColumn, FigColumnHOC } from './rectangle-experiment';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -53,6 +53,28 @@ function App() {
             </Column>
             <Rect fill={'cornflowerblue'} width={50} height={100} />
           </Column>
+        </SVG>
+      }
+      {
+        <SVG width={500} height={500}>
+          <FigColumn>
+            <Rect fill={'magenta'} width={100} height={50} />
+            <FigColumn>
+              <Rect fill={'lightgreen'} width={50} height={20} />
+            </FigColumn>
+            <Rect fill={'cornflowerblue'} width={50} height={100} />
+          </FigColumn>
+        </SVG>
+      }
+      {
+        <SVG width={500} height={500}>
+          <FigColumnHOC>
+            <Rect fill={'magenta'} width={100} height={50} />
+            <FigColumnHOC>
+              <Rect fill={'lightgreen'} width={50} height={20} />
+            </FigColumnHOC>
+            <Rect fill={'cornflowerblue'} width={50} height={100} />
+          </FigColumnHOC>
         </SVG>
       }
       {/* <Parent /> */}
