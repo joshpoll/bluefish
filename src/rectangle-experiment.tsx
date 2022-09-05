@@ -11,8 +11,8 @@ import React, {
   useState,
 } from 'react';
 import { useRef } from 'react';
-import { BBox, Constraints, Placeable, useFigLayout, withFig } from './fig';
-import { Layout, Measure } from './react-experiment';
+import { BBox, Constraints, Placeable, useFigLayout, withFig, Layout } from './fig';
+import { Measure } from './react-experiment';
 
 export type RectProps = {
   x?: number;
@@ -203,3 +203,5 @@ export const FigColumn = forwardRef((props: PropsWithChildren<ColumnProps>, ref)
 export const FigColumnHOC = withFig(colMeasurePolicy, (props: PropsWithChildren<ColumnProps>) => {
   return <g transform={`translate(${props.x ?? 0}, ${props.y ?? 0})`}>{props.children}</g>;
 });
+
+export const FigColumnLayout = Layout(colMeasurePolicy);

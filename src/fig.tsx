@@ -6,6 +6,7 @@ import React, {
   isValidElement,
   ComponentType,
   forwardRef,
+  PropsWithChildren,
 } from 'react';
 import { Measure } from './react-experiment';
 
@@ -30,6 +31,7 @@ export type Placeable = {
   measuredHeight: number;
 };
 
+// a layout hook
 export const useFigLayout = (
   measure: Measure,
   bbox: Partial<BBox>,
@@ -90,6 +92,7 @@ export const useFigLayout = (
   };
 };
 
+// a layout HOC
 export const withFig = (measure: Measure, Component: ComponentType<any>) =>
   forwardRef((props: any, ref: any) => {
     const { x, y, width, height, children } = useFigLayout(
@@ -108,4 +111,10 @@ export const withFig = (measure: Measure, Component: ComponentType<any>) =>
         {children}
       </Component>
     );
+  });
+
+// a pure layout component builder
+export const Layout = (measurePolicy: Measure) =>
+  withFig(measurePolicy, (props: PropsWithChildren<any>) => {
+    return <g transform={`translate(${props.x ?? 0}, ${props.y ?? 0})`}>{props.children}</g>;
   });
