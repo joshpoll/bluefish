@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import React, {
   ComponentType,
   forwardRef,
+  isValidElement,
   PropsWithChildren,
   ReactElement,
   useCallback,
@@ -239,7 +240,6 @@ const useFigLayout = (
     ref,
     () => ({
       measure(constraints: Constraints): Placeable {
-        console.log('measuring col');
         const { width, height } = measure(childrenRef.current, constraints);
         setWidth(width);
         setHeight(height);
@@ -255,12 +255,17 @@ const useFigLayout = (
     y: y!,
     width: width!,
     height: height!,
-    children: React.Children.map(children, (child, index) =>
-      //   TODO: not sure why this cast is necessary
-      React.cloneElement(child as ReactElement, {
-        ref: (ref: any) => (childrenRef.current[index] = ref),
-      }),
-    ),
+    children: React.Children.map(children, (child, index) => {
+      if (isValidElement(child)) {
+        return React.cloneElement(child, {
+          ref: (ref: any) => (childrenRef.current[index] = ref),
+        });
+      } else {
+        // TODO: what to do with non-elements?
+        console.log('warning: non-element child', child);
+        return child;
+      }
+    }),
   };
 };
 
