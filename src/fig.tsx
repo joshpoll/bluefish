@@ -80,7 +80,7 @@ export const useFigLayout = (
     height: height!,
     children: React.Children.map(children, (child, index) => {
       if (isValidElement(child)) {
-        return React.cloneElement(child, {
+        return React.cloneElement(child as React.ReactElement<any>, {
           ref: (ref: any) => (childrenRef.current[index] = ref),
         });
       } else {
