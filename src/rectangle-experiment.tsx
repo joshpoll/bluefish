@@ -11,8 +11,7 @@ import React, {
   useState,
 } from 'react';
 import { useRef } from 'react';
-import { BBox, Constraints, Placeable, useFigLayout, withFig, Layout } from './fig';
-import { Measure } from './react-experiment';
+import { BBox, Constraints, Placeable, useFigLayout, withFig, Layout, Measure } from './grafik';
 
 export type RectProps = {
   x?: number;

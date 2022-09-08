@@ -8,7 +8,14 @@ import React, {
   forwardRef,
   PropsWithChildren,
 } from 'react';
-import { Measure } from './react-experiment';
+
+export type Measurable = any;
+export type MeasureResult = {
+  width: number;
+  height: number;
+};
+
+export type Measure = (measurables: Array<Measurable>, constraints: Constraints) => MeasureResult;
 
 export type BBox = {
   x: number;
@@ -17,12 +24,13 @@ export type BBox = {
   height: number;
 };
 
-export type Constraints = {
-  minWidth: number;
-  maxWidth: number;
-  minHeight: number;
-  maxHeight: number;
-};
+// export type Constraints = {
+//   minWidth: number;
+//   maxWidth: number;
+//   minHeight: number;
+//   maxHeight: number;
+// };
+export type Constraints = any;
 
 export type Placeable = {
   place: (point: { x?: number; y?: number }) => void;

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { forwardRef, useRef, useImperativeHandle } from 'react';
+import { Constraints, Measure } from './grafik';
 
 // We need to wrap component in `forwardRef` in order to gain
 // access to the ref object that is assigned using the `ref` prop.
@@ -17,14 +18,6 @@ const Child = forwardRef((props, ref) => {
 
   return <h1>Hi</h1>;
 });
-
-type Measurable = any;
-type Constraints = any;
-type MeasureResult = {
-  width: number;
-  height: number;
-};
-export type Measure = (measurables: Array<Measurable>, constraints: Constraints) => MeasureResult;
 
 export const useMeasure = (measure: Measure, childrenRef: any = []) => {
   measure(

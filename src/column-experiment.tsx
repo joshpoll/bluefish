@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
-import { Layout, Measure } from './react-experiment';
+import { Measure } from './grafik';
+import { Layout } from './react-experiment';
 
 export type ColumnProps = {
   modifier: any;
