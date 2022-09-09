@@ -16,8 +16,10 @@ import {
 import * as _ from 'lodash';
 import { bertinHotel } from './examples/bertinHotel';
 import { blob as test_blob } from './examples/paperjs-test';
-import { Parent } from './react-experiment';
-import { SVG, Rect, Column, FigColumn, FigColumnHOC } from './rectangle-experiment';
+import { SVG } from './components/SVG';
+import { Col, ColHOC, ColLayout } from './components/Col';
+import { Row } from './components/Row';
+import { Rect } from './components/Rect';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -46,35 +48,46 @@ function App() {
       <br />
       {
         <SVG width={500} height={500}>
-          <Column>
+          <Col spacing={5} alignment={'left'}>
             <Rect fill={'magenta'} width={100} height={50} />
-            <Column>
+            <Col spacing={5} alignment={'left'}>
               <Rect fill={'lightgreen'} width={50} height={20} />
-            </Column>
+            </Col>
             <Rect fill={'cornflowerblue'} width={50} height={100} />
-          </Column>
+          </Col>
         </SVG>
       }
       {
         <SVG width={500} height={500}>
-          <FigColumn>
+          <ColHOC spacing={5} alignment={'left'}>
             <Rect fill={'magenta'} width={100} height={50} />
-            <FigColumn>
+            <ColHOC spacing={5} alignment={'left'}>
               <Rect fill={'lightgreen'} width={50} height={20} />
-            </FigColumn>
+            </ColHOC>
             <Rect fill={'cornflowerblue'} width={50} height={100} />
-          </FigColumn>
+          </ColHOC>
         </SVG>
       }
       {
         <SVG width={500} height={500}>
-          <FigColumnHOC>
+          <ColLayout spacing={5} alignment={'left'}>
             <Rect fill={'magenta'} width={100} height={50} />
-            <FigColumnHOC>
+            <ColLayout spacing={5} alignment={'left'}>
               <Rect fill={'lightgreen'} width={50} height={20} />
-            </FigColumnHOC>
+            </ColLayout>
             <Rect fill={'cornflowerblue'} width={50} height={100} />
-          </FigColumnHOC>
+          </ColLayout>
+        </SVG>
+      }
+      {
+        <SVG width={500} height={500}>
+          <Row spacing={5} alignment={'top'}>
+            <Rect fill={'magenta'} width={100} height={50} />
+            <Row spacing={5} alignment={'top'}>
+              <Rect fill={'lightgreen'} width={50} height={20} />
+            </Row>
+            <Rect fill={'cornflowerblue'} width={50} height={100} />
+          </Row>
         </SVG>
       }
       {/* <Parent /> */}

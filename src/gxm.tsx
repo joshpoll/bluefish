@@ -24,6 +24,8 @@ export type BBox = {
   height: number;
 };
 
+export type BBoxWithChildren = Partial<PropsWithChildren<BBox>>;
+
 // export type Constraints = {
 //   minWidth: number;
 //   maxWidth: number;
@@ -40,12 +42,12 @@ export type Placeable = {
 };
 
 // a layout hook
-export const useFigLayout = (
+export const useGXMLayout = (
   measure: Measure,
   bbox: Partial<BBox>,
   ref: React.ForwardedRef<unknown>,
   children?: React.ReactNode,
-): BBox & { children: any } /* TODO: better type for children */ => {
+): BBoxWithChildren => {
   const childrenRef = useRef<any[]>([]);
 
   const [x, setX] = useState<number | undefined>(bbox.x);
@@ -101,9 +103,12 @@ export const useFigLayout = (
 };
 
 // a layout HOC
-export const withFig = (measure: Measure, Component: ComponentType<any>) =>
-  forwardRef((props: any, ref: any) => {
-    const { x, y, width, height, children } = useFigLayout(
+export const withGXM = <ComponentProps,>(
+  measure: Measure,
+  WrappedComponent: React.ComponentType<ComponentProps & BBoxWithChildren>,
+) =>
+  forwardRef((props: ComponentProps & BBoxWithChildren, ref: any) => {
+    const { x, y, width, height, children } = useGXMLayout(
       measure,
       {
         x: props.x,
@@ -115,14 +120,42 @@ export const withFig = (measure: Measure, Component: ComponentType<any>) =>
       props.children,
     );
     return (
-      <Component x={x} y={y} width={width} height={height}>
+      <WrappedComponent {...props} x={x} y={y} width={width} height={height}>
         {children}
-      </Component>
+      </WrappedComponent>
+    );
+  });
+
+export const withGXMFn = <ComponentProps,>(
+  measureFn: (props: ComponentProps & BBoxWithChildren) => Measure,
+  WrappedComponent: React.ComponentType<ComponentProps & BBoxWithChildren>,
+) =>
+  forwardRef((props: ComponentProps & BBoxWithChildren, ref: any) => {
+    const { x, y, width, height, children } = useGXMLayout(
+      measureFn(props),
+      {
+        x: props.x,
+        y: props.y,
+        width: props.width,
+        height: props.height,
+      },
+      ref,
+      props.children,
+    );
+    return (
+      <WrappedComponent {...props} x={x} y={y} width={width} height={height}>
+        {children}
+      </WrappedComponent>
     );
   });
 
 // a pure layout component builder
 export const Layout = (measurePolicy: Measure) =>
-  withFig(measurePolicy, (props: PropsWithChildren<any>) => {
+  withGXM(measurePolicy, (props: BBoxWithChildren) => {
+    return <g transform={`translate(${props.x ?? 0}, ${props.y ?? 0})`}>{props.children}</g>;
+  });
+
+export const LayoutFn = <T,>(measurePolicyFn: (props: T & BBoxWithChildren) => Measure) =>
+  withGXMFn(measurePolicyFn, (props: BBoxWithChildren) => {
     return <g transform={`translate(${props.x ?? 0}, ${props.y ?? 0})`}>{props.children}</g>;
   });
