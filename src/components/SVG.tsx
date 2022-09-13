@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useRef, useEffect, ReactElement } from 'react';
-import { BBox, Measure } from '../gxm';
+import { BBox, Measure } from '../bluefish';
 
 // SVG is a bit weird, because it initiates layout
 // TODO: it can still probably be cleaned up a bit.

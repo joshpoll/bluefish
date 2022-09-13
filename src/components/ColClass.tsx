@@ -1,6 +1,5 @@
 import _ from 'lodash';
-import { ComponentType, forwardRef, PropsWithChildren } from 'react';
-import { Constraints, Measure, Placeable, Layout, useGXMLayout, withGXM, LayoutFn, withGXMFn } from '../bluefish';
+import { withBluefishLayout, Measure, Constraints, Placeable } from '../bluefishClass';
 
 export type HorizontalAlignment = 'left' | 'center' | 'right';
 
@@ -13,7 +12,9 @@ export type ColProps = ({ spacing: number } | { totalHeight: number }) & {
 const colMeasurePolicy =
   (options: ColProps): Measure =>
   (measurables, constraints: Constraints) => {
+    console.log('colMeasurePolicy: measurables', measurables);
     const placeables = measurables.map((measurable) => measurable.measure(constraints)) as Placeable[];
+    console.log('colMeasurePolicy: placeables', placeables);
 
     // alignment
     const width = _.max(_.map(placeables, 'measuredWidth')) ?? 0;
@@ -58,19 +59,6 @@ const colMeasurePolicy =
     return { width, height };
   };
 
-export const Col = forwardRef((props: PropsWithChildren<ColProps>, ref) => {
-  const { x, y, width, height, children } = useGXMLayout(
-    colMeasurePolicy(props),
-    { x: props.x, y: props.y },
-    ref,
-    props.children,
-  );
-
-  return <g transform={`translate(${x ?? 0}, ${y ?? 0})`}>{children}</g>;
-});
-
-export const ColHOC = withGXMFn(colMeasurePolicy, (props) => {
+export const ColClass = withBluefishLayout(colMeasurePolicy)((props) => {
   return <g transform={`translate(${props.x ?? 0}, ${props.y ?? 0})`}>{props.children}</g>;
 });
-
-export const ColLayout = LayoutFn((props: ColProps) => colMeasurePolicy(props));
