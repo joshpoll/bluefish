@@ -22,6 +22,7 @@ import { Row } from './components/Row';
 import { Rect } from './components/Rect';
 import { Text } from './components/Text';
 import { Char } from './examples/peritext';
+import { CharClass } from './examples/peritextClass';
 import { Bluefish } from './components/Bluefish';
 import { SVGClass } from './components/SVGClass';
 import { RectClass } from './components/RectClass';
@@ -33,6 +34,12 @@ const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | 
 
 function App() {
   test_blob();
+  // console.log(
+  //   'this thing',
+  //   <SVG width={500} height={500}>
+  //     <Char value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
+  //   </SVG>,
+  // );
   return (
     <div className="App">
       <header className="App-header">
@@ -46,6 +53,11 @@ function App() {
       </header>
       <br />
       {
+        <SVG width={500} height={500}>
+          <Char value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
+        </SVG>
+      }
+      {/* {
         <Bluefish width={500} height={500}>
           <SVGClass width={500} height={500}>
             <ColClass spacing={5} alignment={'left'}>
@@ -57,20 +69,15 @@ function App() {
             </ColClass>
           </SVGClass>
         </Bluefish>
-      }
-      {
+      } */}
+      {/* {
         <Bluefish width={500} height={500}>
           <SVGClass width={500} height={500}>
-            <RectClass x={0} y={0} width={100} height={100} fill={'red'}></RectClass>
+            <CharClass value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
           </SVGClass>
         </Bluefish>
-      }
-      {/* {
-        <SVG width={500} height={500}>
-          <Char value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
-        </SVG>
       } */}
-      {
+      {/* {
         <SVG width={500} height={500}>
           <Rect height={65} width={50} rx={5} fill={'#eee'} />
           <Rect height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
@@ -134,7 +141,7 @@ function App() {
             <Rect fill={'cornflowerblue'} width={50} height={100} />
           </Row>
         </SVG>
-      }
+      } */}
       {/* <Parent /> */}
       {/* <br />
       <div>{render(blobPaperJSTest)}</div>

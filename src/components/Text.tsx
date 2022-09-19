@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { withGXMFn } from '../bluefish';
+import { withBluefishFn } from '../bluefish';
 import { measureText } from '../measureText';
 
 // TODO: allow text within the text element instead of on contents arg
@@ -15,7 +15,7 @@ export type TextProps = React.SVGProps<SVGTextElement> & { contents: string } & 
 // a guide
 // TODO: very close to good alignment, but not quite there. Can I use more of the canvas
 // measurements somehow?
-export const Text = withGXMFn(
+export const Text = withBluefishFn(
   (props: TextProps) => {
     const partialNoUndef = _.pickBy(props, (v) => v !== undefined);
     const { fontStyle, fontWeight, fontSize, fontFamily } = {

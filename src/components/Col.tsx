@@ -1,6 +1,15 @@
 import _ from 'lodash';
 import { ComponentType, forwardRef, PropsWithChildren } from 'react';
-import { Constraints, Measure, Placeable, Layout, useGXMLayout, withGXM, LayoutFn, withGXMFn } from '../bluefish';
+import {
+  Constraints,
+  Measure,
+  Placeable,
+  Layout,
+  useBluefishLayout,
+  withBluefish,
+  LayoutFn,
+  withBluefishFn,
+} from '../bluefish';
 
 export type HorizontalAlignment = 'left' | 'center' | 'right';
 
@@ -59,7 +68,7 @@ const colMeasurePolicy =
   };
 
 export const Col = forwardRef((props: PropsWithChildren<ColProps>, ref) => {
-  const { x, y, width, height, children } = useGXMLayout(
+  const { x, y, width, height, children } = useBluefishLayout(
     colMeasurePolicy(props),
     { x: props.x, y: props.y },
     ref,
@@ -69,7 +78,7 @@ export const Col = forwardRef((props: PropsWithChildren<ColProps>, ref) => {
   return <g transform={`translate(${x ?? 0}, ${y ?? 0})`}>{children}</g>;
 });
 
-export const ColHOC = withGXMFn(colMeasurePolicy, (props) => {
+export const ColHOC = withBluefishFn(colMeasurePolicy, (props) => {
   return <g transform={`translate(${props.x ?? 0}, ${props.y ?? 0})`}>{props.children}</g>;
 });
 

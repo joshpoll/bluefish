@@ -42,7 +42,7 @@ export type Placeable = {
 };
 
 // a layout hook
-export const useGXMLayout = (
+export const useBluefishLayout = (
   measure: Measure,
   bbox: Partial<BBox>,
   ref: React.ForwardedRef<unknown>,
@@ -91,7 +91,21 @@ export const useGXMLayout = (
     children: React.Children.map(children, (child, index) => {
       if (isValidElement(child)) {
         return React.cloneElement(child as React.ReactElement<any>, {
-          ref: (ref: any) => (childrenRef.current[index] = ref),
+          // TODO: actually the innerRef we're receiving here is going to be the object with the
+          // measure method on it. So we need to wrap it in another object that has the measure
+          // method and also the ref. (Or maybe we can just use the ref directly?)
+          // TODO: idk why this code is even necessary. See this
+          // https://stackoverflow.com/questions/32370994/how-to-pass-props-to-this-props-children
+          // which is where this code came from. apparently I needed to pass children their refs automatically
+          ref: (innerRef: any) => {
+            childrenRef.current[index] = innerRef;
+            // if (typeof ref === 'function') {
+            //   return ref(innerRef);
+            // } else {
+            //   return ref;
+            // }
+            return innerRef;
+          },
         });
       } else {
         // TODO: what to do with non-elements?
@@ -103,12 +117,12 @@ export const useGXMLayout = (
 };
 
 // a layout HOC
-export const withGXM = <ComponentProps,>(
+export const withBluefish = <ComponentProps,>(
   measure: Measure,
   WrappedComponent: React.ComponentType<ComponentProps & BBoxWithChildren>,
 ) =>
   forwardRef((props: ComponentProps & BBoxWithChildren, ref: any) => {
-    const { x, y, width, height, children } = useGXMLayout(
+    const { x, y, width, height, children } = useBluefishLayout(
       measure,
       {
         x: props.x,
@@ -126,12 +140,12 @@ export const withGXM = <ComponentProps,>(
     );
   });
 
-export const withGXMFn = <ComponentProps,>(
+export const withBluefishFn = <ComponentProps,>(
   measureFn: (props: ComponentProps & BBoxWithChildren) => Measure,
   WrappedComponent: React.ComponentType<ComponentProps & BBoxWithChildren>,
 ) =>
   forwardRef((props: ComponentProps & BBoxWithChildren, ref: any) => {
-    const { x, y, width, height, children } = useGXMLayout(
+    const { x, y, width, height, children } = useBluefishLayout(
       measureFn(props),
       {
         x: props.x,
@@ -151,11 +165,11 @@ export const withGXMFn = <ComponentProps,>(
 
 // a pure layout component builder
 export const Layout = (measurePolicy: Measure) =>
-  withGXM(measurePolicy, (props: BBoxWithChildren) => {
+  withBluefish(measurePolicy, (props: BBoxWithChildren) => {
     return <g transform={`translate(${props.x ?? 0}, ${props.y ?? 0})`}>{props.children}</g>;
   });
 
 export const LayoutFn = <T,>(measurePolicyFn: (props: T & BBoxWithChildren) => Measure) =>
-  withGXMFn(measurePolicyFn, (props: BBoxWithChildren) => {
+  withBluefishFn(measurePolicyFn, (props: BBoxWithChildren) => {
     return <g transform={`translate(${props.x ?? 0}, ${props.y ?? 0})`}>{props.children}</g>;
   });

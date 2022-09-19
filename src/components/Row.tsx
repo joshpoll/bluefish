@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { ComponentType, forwardRef, PropsWithChildren } from 'react';
-import { Constraints, Measure, Placeable, Layout, useGXMLayout, withGXM, LayoutFn } from '../bluefish';
+import { Constraints, Measure, Placeable, Layout, useBluefishLayout, withBluefish, LayoutFn } from '../bluefish';
 
 export type VerticalAlignment = 'top' | 'middle' | 'bottom';
 

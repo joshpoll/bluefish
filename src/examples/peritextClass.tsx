@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Col } from '../components/Col';
 import { Rect } from '../components/Rect';
 import { Text } from '../components/Text';
@@ -6,8 +6,9 @@ import { Row } from '../components/Row';
 import { SVG } from '../components/SVG';
 import { Align } from '../components/Align';
 import { withBluefish } from '../bluefish';
-import { Ref } from '../components/Ref';
-import { Group } from '../components/Group';
+import { RectClass } from '../components/RectClass';
+import { TextClass } from '../components/TextClass';
+import { AlignClass } from '../components/AlignClass';
 
 export type CharProps = {
   value: string;
@@ -16,7 +17,7 @@ export type CharProps = {
   marks: ('italic' | 'bold')[];
 };
 
-export const Char = withBluefish<CharProps>(
+export const CharClass = withBluefish<CharProps>(
   (_measurables, constraints) => {
     return {
       width: constraints.width ?? 0,
@@ -24,42 +25,44 @@ export const Char = withBluefish<CharProps>(
     };
   },
   ({ value, marks, opId }) => {
-    const [tile, setTile] = useState(undefined);
-    const [leftHandle, setLeftHandle] = useState(undefined);
-    const [rightHandle, setRightHandle] = useState(undefined);
-    const [letter, setLetter] = useState(undefined);
-    const [opIdLabel, setOpIdLabel] = useState(undefined);
+    const tile = useRef(null);
+    const leftHandle = useRef(null);
+    const rightHandle = useRef(null);
+    const letter = useRef(null);
+    const opIdLabel = useRef(null);
 
     return (
-      <Group>
-        <Rect ref={setTile} height={65} width={50} rx={5} fill={'#eee'} />
-        <Rect ref={setLeftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
-        <Rect ref={setRightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
-        <Text
-          ref={setLetter}
+      // <Group>
+      <>
+        <RectClass ref={tile} height={65} width={50} rx={5} fill={'#eee'} />
+        <RectClass ref={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
+        <RectClass ref={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
+        <TextClass
+          ref={letter}
           contents={value === ' ' ? '␣' : value.toString()}
           fontSize={'30px'}
           fontWeight={marks.includes('bold') ? 'bold' : 'normal'}
           fontStyle={marks.includes('italic') ? 'italic' : 'normal'}
         />
-        <Text ref={setOpIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
-        <Align center>
-          <Ref to={tile} />
-          <Ref to={letter} />
-        </Align>
-        <Align top>
-          <Ref to={tile} />
-          <Ref to={opIdLabel} />
-        </Align>
-        <Align left /* to={'center'} */>
-          <Ref to={tile} />
-          <Ref to={leftHandle} />
-        </Align>
-        <Align right /* to={'center'} */>
-          <Ref to={tile} />
-          <Ref to={rightHandle} />
-        </Align>
-      </Group>
+        <TextClass ref={opIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
+        <AlignClass center>
+          {tile.current}
+          {letter.current}
+        </AlignClass>
+        {/* <Align top>
+        {tile}
+        {opIdLabel}
+      </Align>
+      <Align left to={'center'}>
+        {tile}
+        {leftHandle}
+      </Align>
+      <Align right to={'center'}>
+        {tile}
+        {rightHandle}
+      </Align> */}
+        {/* </Group> */}
+      </>
     );
   },
 );

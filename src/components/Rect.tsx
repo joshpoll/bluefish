@@ -1,8 +1,8 @@
-import { withGXM, withGXMFn, BBox } from '../bluefish';
+import { withBluefish, withBluefishFn, BBox } from '../bluefish';
 
 export type RectProps = React.SVGProps<SVGRectElement> & Partial<BBox>;
 
-export const Rect = withGXMFn(
+export const Rect = withBluefishFn(
   ({ width, height }) => {
     return () => ({ width: width!, height: height! });
   },
