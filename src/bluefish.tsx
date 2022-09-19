@@ -167,3 +167,34 @@ export const LayoutFn = <T,>(measurePolicyFn: (props: T & BBoxWithChildren) => M
   withBluefishFn(measurePolicyFn, (props: BBoxWithChildren) => {
     return <g transform={`translate(${props.x ?? 0}, ${props.y ?? 0})`}>{props.children}</g>;
   });
+
+// TODO: this HOC doesn't work :/
+export const withBluefishComponent = <ComponentProps,>(
+  WrappedComponent: React.ComponentType<ComponentProps & BBoxWithChildren>,
+) =>
+  forwardRef((props: ComponentProps & BBoxWithChildren, ref: any) => {
+    return (
+      <WrappedComponent {...props}>
+        {React.Children.map(props.children, (child, index) => {
+          if (isValidElement(child)) {
+            return React.cloneElement(child as React.ReactElement<any>, {
+              ref,
+              // store a pointer to every child's ref in an array
+              // also pass through outer refs
+              // see: https://github.com/facebook/react/issues/8873
+              // ref: (node: any) => {
+              //   childrenRef.current[index] = node;
+              //   const { ref } = child as any;
+              //   if (typeof ref === 'function') ref(node);
+              //   else if (ref) ref.current = node;
+              // },
+            });
+          } else {
+            // TODO: what to do with non-elements?
+            console.log('warning: non-element child', child);
+            return child;
+          }
+        })}
+      </WrappedComponent>
+    );
+  });
