@@ -21,7 +21,7 @@ import { Col, ColHOC, ColLayout } from './components/Col';
 import { Row } from './components/Row';
 import { Rect } from './components/Rect';
 import { Text } from './components/Text';
-import { Char } from './examples/peritext';
+import { Char, Peritext } from './examples/peritext';
 import { CharClass } from './examples/peritextClass';
 import { Bluefish } from './components/Bluefish';
 import { SVGClass } from './components/SVGClass';
@@ -70,6 +70,20 @@ function App() {
       {/* </Parent> */}
       {/* <div>width: {width}</div>
       <div>height: {height}</div> */}
+      {
+        <Peritext
+          chars={[
+            { value: 'T', opId: '1@A', deleted: false, marks: ['italic'] },
+            { value: 'h', opId: '2@A', deleted: true, marks: ['italic'] },
+            { value: 'e', opId: '5@B', deleted: false, marks: ['bold', 'italic'] },
+            { value: ' ', opId: '6@B', deleted: false, marks: ['bold', 'italic'] },
+            { value: 'f', opId: '7@A', deleted: false, marks: ['bold'] },
+            { value: 'o', opId: '8@A', deleted: true, marks: [] },
+            { value: 'x', opId: '9@A', deleted: false, marks: [] },
+          ]}
+        />
+      }
+      <br />
       <SVG width={500} height={500}>
         <Col spacing={5} alignment={'left'}>
           <Rect fill={'magenta'} width={100} height={50} />

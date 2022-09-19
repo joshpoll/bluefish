@@ -40,7 +40,7 @@ export const SVG = (props: PropsWithChildren<SVGProps>) => {
   }, [props.height, props.width, childrenRef]);
 
   return (
-    <svg width={width} height={height}>
+    <svg width={props.width} height={props.height}>
       {React.Children.map(props.children, (child, index) =>
         //   TODO: not sure why this cast is necessary
         React.cloneElement(child as ReactElement, {

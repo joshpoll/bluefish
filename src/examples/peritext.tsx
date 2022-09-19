@@ -70,33 +70,34 @@ export const Char = forwardRef(({ value, marks, opId }: CharProps, ref: any) => 
 // //     </Group>)
 // // }
 
-// // export type PeritextProps = {
-// //     chars: CharProps[];
-// // }
+export type PeritextProps = {
+  chars: CharProps[];
+};
 
-// // export const Peritext: React.FC<PeritextProps> = ({ chars }) => {
-// //   return (
-// //     <SVG width={500} height={500}>
-// //         {/* chars */}
-// //         <Row spacing={10} alignment={'middle'}>
-// //             {chars.map((char) => (
-// //               <Char {...char} />
-// //             ))}
-// //         </Row>
-// //       {/* markOps */}
-// //       {/* TODO: need to loosen alignment here or even just switch to a spacing component... */}
-// //       <Col spacing={8}>
-// //         {markOps.map((mo) => (
-// //           <MarkOp from={mo.start} end={mo.end}>
-// //             {mo.text}
-// //           </MarkOp>
-// //         ))}
-// //       </Col>
-// //       {/* markOpsToChars */}
-// //       {rels.map(({ start, op, end }) => (
-// //         <Line from={start} to={op} />
-// //         <Line from={end} to={op} />
-// //       ))}
-// //     </SVG>
-// //   );
-// // };
+export const Peritext: React.FC<PeritextProps> = ({ chars }) => {
+  return (
+    <SVG width={1000} height={500}>
+      {/* chars */}
+      {/* BUG: the spacing is 5 points smaller than the specification */}
+      <Row spacing={15} alignment={'middle'}>
+        {chars.map((char) => (
+          <Char {...char} />
+        ))}
+      </Row>
+      {/* markOps */}
+      {/* TODO: need to loosen alignment here or even just switch to a spacing component... */}
+      {/* <Col spacing={8}>
+        {markOps.map((mo) => (
+          <MarkOp from={mo.start} end={mo.end}>
+            {mo.text}
+          </MarkOp>
+        ))}
+      </Col> */}
+      {/* markOpsToChars */}
+      {/* {rels.map(({ start, op, end }) => (
+        <Line from={start} to={op} />
+        <Line from={end} to={op} />
+      ))} */}
+    </SVG>
+  );
+};

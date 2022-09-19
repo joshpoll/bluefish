@@ -89,8 +89,9 @@ const alignMeasurePolicy =
     console.log('aligning', first, second);
     // second.place({ x: 50, y: 50 });
 
-    const width = Math.max(first.measuredWidth, second.measuredWidth);
-    const height = Math.max(first.measuredHeight, second.measuredHeight);
+    // use anchors to determine the size of the container
+    const width = Math.max(first.measuredWidth, firstAnchor.x - secondAnchor.x + second.measuredWidth);
+    const height = Math.max(first.measuredHeight, firstAnchor.y - secondAnchor.y + second.measuredHeight);
 
     return { width, height };
   };
