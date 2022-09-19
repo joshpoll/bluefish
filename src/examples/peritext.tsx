@@ -17,11 +17,6 @@ export type CharProps = {
 };
 
 export const Char = forwardRef(({ value, marks, opId }: CharProps, ref: any) => {
-  // const [tile, setTile] = useState(undefined);
-  // const [leftHandle, setLeftHandle] = useState(undefined);
-  // const [rightHandle, setRightHandle] = useState(undefined);
-  // const [letter, setLetter] = useState(undefined);
-  // const [opIdLabel, setOpIdLabel] = useState(undefined);
   const tile = useRef(null);
   const leftHandle = useRef(null);
   const rightHandle = useRef(null);
@@ -29,7 +24,7 @@ export const Char = forwardRef(({ value, marks, opId }: CharProps, ref: any) => 
   const opIdLabel = useRef(null);
 
   return (
-    <Group ref={ref}>
+    <Group ref={ref} x={50}>
       <Rect ref={tile} height={65} width={50} rx={5} fill={'#eee'} />
       <Rect ref={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
       <Rect ref={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
@@ -49,11 +44,11 @@ export const Char = forwardRef(({ value, marks, opId }: CharProps, ref: any) => 
         <Ref to={tile} />
         <Ref to={opIdLabel} />
       </Align>
-      <Align left>
+      <Align left to={'center'}>
         <Ref to={tile} />
         <Ref to={leftHandle} />
       </Align>
-      <Align right>
+      <Align right to={'center'}>
         <Ref to={tile} />
         <Ref to={rightHandle} />
       </Align>
