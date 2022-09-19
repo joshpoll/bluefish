@@ -57,7 +57,7 @@ const alignMeasurePolicy =
     }
 
     console.log('aligning', first, second);
-    second.place({ x: 50, y: 50 });
+    // second.place({ x: 50, y: 50 });
 
     const width = Math.max(first.measuredWidth, second.measuredWidth);
     const height = Math.max(first.measuredHeight, second.measuredHeight);

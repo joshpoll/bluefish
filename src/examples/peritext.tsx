@@ -42,10 +42,11 @@ export const Char = forwardRef(({ value, marks, opId }: CharProps, ref: any) => 
       />
       <Text ref={opIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
       <Align center>
-        <Rect height={65} width={50} rx={5} fill={'cornflowerblue'} />
+        {/* <Rect height={65} width={50} rx={5} fill={'cornflowerblue'} /> */}
+        <Ref to={tile} />
         <Rect height={30} width={30} rx={5} fill={'magenta'} />
         {/* <Ref to={tile} />
-          <Ref to={letter} /> */}
+        <Ref to={letter} /> */}
       </Align>
       {/* <Align top>
           <Ref to={tile} />
