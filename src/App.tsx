@@ -27,6 +27,7 @@ import { Bluefish } from './components/Bluefish';
 import { SVGClass } from './components/SVGClass';
 import { RectClass } from './components/RectClass';
 import { ColClass } from './components/ColClass';
+import { Child, Parent } from './components/TestingRefs';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -34,6 +35,17 @@ const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | 
 
 function App() {
   test_blob();
+  const ref = React.useRef<HTMLDivElement>(null);
+  const [width, setWidth] = React.useState(0);
+  const [height, setHeight] = React.useState(0);
+  React.useEffect(() => {
+    const element = ref.current;
+    console.log('element', element);
+    if (element) {
+      setWidth(element.clientWidth);
+      setHeight(element.clientHeight);
+    }
+  }, [ref]);
   // console.log(
   //   'this thing',
   //   <SVG width={500} height={500}>
@@ -52,6 +64,12 @@ function App() {
         </a>
       </header>
       <br />
+      {/* <Parent>
+        <Child ref={ref} /> */}
+      {/* <div>test child</div> */}
+      {/* </Parent> */}
+      {/* <div>width: {width}</div>
+      <div>height: {height}</div> */}
       {
         <SVG width={500} height={500}>
           <Char value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />

@@ -24,25 +24,30 @@ export const Char = withBluefish<CharProps>(
     };
   },
   ({ value, marks, opId }) => {
-    const [tile, setTile] = useState(undefined);
-    const [leftHandle, setLeftHandle] = useState(undefined);
-    const [rightHandle, setRightHandle] = useState(undefined);
-    const [letter, setLetter] = useState(undefined);
-    const [opIdLabel, setOpIdLabel] = useState(undefined);
+    // const [tile, setTile] = useState(undefined);
+    // const [leftHandle, setLeftHandle] = useState(undefined);
+    // const [rightHandle, setRightHandle] = useState(undefined);
+    // const [letter, setLetter] = useState(undefined);
+    // const [opIdLabel, setOpIdLabel] = useState(undefined);
+    const tile = useRef(null);
+    const leftHandle = useRef(null);
+    const rightHandle = useRef(null);
+    const letter = useRef(null);
+    const opIdLabel = useRef(null);
 
     return (
       <Group>
-        <Rect ref={setTile} height={65} width={50} rx={5} fill={'#eee'} />
-        <Rect ref={setLeftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
-        <Rect ref={setRightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
+        <Rect ref={tile} height={65} width={50} rx={5} fill={'#eee'} />
+        <Rect ref={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
+        <Rect ref={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
         <Text
-          ref={setLetter}
+          ref={letter}
           contents={value === ' ' ? '␣' : value.toString()}
           fontSize={'30px'}
           fontWeight={marks.includes('bold') ? 'bold' : 'normal'}
           fontStyle={marks.includes('italic') ? 'italic' : 'normal'}
         />
-        <Text ref={setOpIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
+        <Text ref={opIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
         <Align center>
           <Ref to={tile} />
           <Ref to={letter} />

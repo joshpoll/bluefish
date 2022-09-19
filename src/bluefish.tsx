@@ -91,20 +91,14 @@ export const useBluefishLayout = (
     children: React.Children.map(children, (child, index) => {
       if (isValidElement(child)) {
         return React.cloneElement(child as React.ReactElement<any>, {
-          // TODO: actually the innerRef we're receiving here is going to be the object with the
-          // measure method on it. So we need to wrap it in another object that has the measure
-          // method and also the ref. (Or maybe we can just use the ref directly?)
-          // TODO: idk why this code is even necessary. See this
-          // https://stackoverflow.com/questions/32370994/how-to-pass-props-to-this-props-children
-          // which is where this code came from. apparently I needed to pass children their refs automatically
-          ref: (innerRef: any) => {
-            childrenRef.current[index] = innerRef;
-            // if (typeof ref === 'function') {
-            //   return ref(innerRef);
-            // } else {
-            //   return ref;
-            // }
-            return innerRef;
+          // store a pointer to every child's ref in an array
+          // also pass through outer refs
+          // see: https://github.com/facebook/react/issues/8873
+          ref: (node: any) => {
+            childrenRef.current[index] = node;
+            const { ref } = child as any;
+            if (typeof ref === 'function') ref(node);
+            else if (ref) ref.current = node;
           },
         });
       } else {
