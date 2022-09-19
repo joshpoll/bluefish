@@ -1,10 +1,10 @@
 export type TextMeasurement = {
-  width: number,
-  fontHeight: number,
+  width: number;
+  fontHeight: number;
   // position of text's alphabetic baseline assuming top is the origin
-  baseline: number,
-  fontDescent: number,
-  actualDescent: number,
+  baseline: number;
+  fontDescent: number;
+  actualDescent: number;
 };
 
 export function measureText(text: string, font: string): TextMeasurement {
@@ -26,5 +26,5 @@ export namespace measureText {
   /* element.width = 1000;
   element.height = 1000;
   document.body.appendChild(element); */
-  export const context = element.getContext("2d")!;
+  export const context = element.getContext('2d')!;
 }

@@ -21,7 +21,7 @@ import { Col, ColHOC, ColLayout } from './components/Col';
 import { Row } from './components/Row';
 import { Rect } from './components/Rect';
 import { Text } from './components/Text';
-import { Char, CharSimple, CharSimpleElaborated } from './examples/peritext';
+import { Char } from './examples/peritext';
 import { CharClass } from './examples/peritextClass';
 import { Bluefish } from './components/Bluefish';
 import { SVGClass } from './components/SVGClass';
@@ -70,15 +70,6 @@ function App() {
       {/* </Parent> */}
       {/* <div>width: {width}</div>
       <div>height: {height}</div> */}
-      {/* <SVG width={500} height={500}>
-        <CharSimpleCleanedUp value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
-      </SVG> */}
-      <SVG width={500} height={500}>
-        <CharSimpleElaborated value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
-      </SVG>
-      <SVG width={500} height={500}>
-        <CharSimple value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
-      </SVG>
       <SVG width={500} height={500}>
         <Col spacing={5} alignment={'left'}>
           <Rect fill={'magenta'} width={100} height={50} />
