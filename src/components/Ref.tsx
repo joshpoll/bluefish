@@ -1,5 +1,5 @@
-import { forwardRef, useEffect, useLayoutEffect } from 'react';
-import { LayoutFn, Measure, Placeable, useBluefishLayout, withBluefishFn } from '../bluefish';
+import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect } from 'react';
+import { Constraints, LayoutFn, Measure, Placeable, useBluefishLayout, withBluefishFn } from '../bluefish';
 
 export type RefProps = { to?: React.RefObject<any> };
 
@@ -37,6 +37,18 @@ export type RefProps = { to?: React.RefObject<any> };
 //   return <></>;
 // });
 
+// export const useRefLayout = (ref: React.ForwardedRef<unknown>, to?: React.RefObject<any>): BBoxWithChildren => {
+//   useImperativeHandle(
+//     ref,
+//     () => ({
+//       measure(constraints: Constraints): Placeable {
+//         return to?.current;
+//       },
+//     }),
+//     [to],
+//   );
+// };
+
 const refMeasurePolicy =
   (options: RefProps): Measure =>
   (_measurables, constraints) => {
@@ -55,4 +67,18 @@ const refMeasurePolicy =
     }
   };
 
-export const Ref = LayoutFn((props: RefProps) => refMeasurePolicy(props));
+// export const Ref = LayoutFn((props: RefProps) => refMeasurePolicy(props));
+
+export const Ref = forwardRef((props: RefProps, ref: any) => {
+  useImperativeHandle(
+    ref,
+    () => ({
+      measure(constraints: Constraints): Placeable {
+        return props.to?.current.measure(constraints);
+      },
+    }),
+    [props.to],
+  );
+
+  return <></>;
+});
