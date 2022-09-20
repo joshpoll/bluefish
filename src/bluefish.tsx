@@ -7,6 +7,7 @@ import React, {
   ComponentType,
   forwardRef,
   PropsWithChildren,
+  useContext,
 } from 'react';
 
 export type Measurable = any;
@@ -47,7 +48,10 @@ export const useBluefishLayout = (
   bbox: Partial<BBox>,
   ref: React.ForwardedRef<unknown>,
   children?: React.ReactNode,
+  name?: any,
 ): BBoxWithChildren => {
+  const context = useContext(BluefishContext);
+
   const childrenRef = useRef<any[]>([]);
 
   const [x, setX] = useState<number | undefined>(bbox.x);
@@ -96,6 +100,7 @@ export const useBluefishLayout = (
           // see: https://github.com/facebook/react/issues/8873
           ref: (node: any) => {
             childrenRef.current[index] = node;
+            if (name !== undefined) context.bfMap.set(name, node);
             const { ref } = child as any;
             if (typeof ref === 'function') ref(node);
             else if (ref) ref.current = node;
@@ -115,7 +120,7 @@ export const withBluefish = <ComponentProps,>(
   measure: Measure,
   WrappedComponent: React.ComponentType<ComponentProps & BBoxWithChildren>,
 ) =>
-  forwardRef((props: ComponentProps & BBoxWithChildren, ref: any) => {
+  forwardRef((props: ComponentProps & BBoxWithChildren & { name?: any }, ref: any) => {
     const { x, y, width, height, children } = useBluefishLayout(
       measure,
       {
@@ -126,6 +131,7 @@ export const withBluefish = <ComponentProps,>(
       },
       ref,
       props.children,
+      props.name,
     );
     return (
       <WrappedComponent {...props} x={x} y={y} width={width} height={height}>
@@ -198,3 +204,14 @@ export const withBluefishComponent = <ComponentProps,>(
       </WrappedComponent>
     );
   });
+
+type BluefishContextValue = {
+  bfMap: Map<any, React.MutableRefObject<any>>;
+  setBFMap: React.Dispatch<React.SetStateAction<Map<any, any>>>;
+};
+
+export const BluefishContext = React.createContext<BluefishContextValue>({
+  bfMap: new Map(),
+  setBFMap: () => {},
+});
+export const useBluefishContext = () => useContext(BluefishContext);

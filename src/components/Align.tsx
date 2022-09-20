@@ -86,7 +86,7 @@ const alignMeasurePolicy =
       y: firstAnchor.y - secondAnchor.y,
     });
 
-    console.log('aligning', first, second);
+    console.log('aligning', options, first, second);
     // second.place({ x: 50, y: 50 });
 
     // use anchors to determine the size of the container

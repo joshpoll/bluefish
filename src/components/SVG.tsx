@@ -1,5 +1,5 @@
-import React, { PropsWithChildren, useRef, useEffect, ReactElement } from 'react';
-import { BBox, Measure } from '../bluefish';
+import React, { PropsWithChildren, useRef, useEffect, ReactElement, useState } from 'react';
+import { BBox, BluefishContext, Measure } from '../bluefish';
 
 // SVG is a bit weird, because it initiates layout
 // TODO: it can still probably be cleaned up a bit.
@@ -27,6 +27,9 @@ const svgMeasurePolicy: Measure = (measurables, constraints) => {
 };
 
 export const SVG = (props: PropsWithChildren<SVGProps>) => {
+  const [bfMap, setBFMap] = useState(new Map());
+  const value = { bfMap, setBFMap };
+
   const { width, height } = useMeasure(svgMeasurePolicy);
   // childrenRef is a list of callback refs
   const childrenRef = useRef<any>([]);
@@ -40,21 +43,23 @@ export const SVG = (props: PropsWithChildren<SVGProps>) => {
   }, [props.height, props.width, childrenRef]);
 
   return (
-    <svg width={props.width} height={props.height}>
-      {React.Children.map(props.children, (child, index) =>
-        //   TODO: not sure why this cast is necessary
-        React.cloneElement(child as ReactElement, {
-          ref: (innerRef: any) => {
-            childrenRef.current[index] = innerRef;
-            // if (typeof ref === 'function') {
-            //   return ref(innerRef);
-            // } else {
-            //   return ref;
-            // }
-            return innerRef;
-          },
-        }),
-      )}
-    </svg>
+    <BluefishContext.Provider value={value}>
+      <svg width={props.width} height={props.height}>
+        {React.Children.map(props.children, (child, index) =>
+          //   TODO: not sure why this cast is necessary
+          React.cloneElement(child as ReactElement, {
+            ref: (innerRef: any) => {
+              childrenRef.current[index] = innerRef;
+              // if (typeof ref === 'function') {
+              //   return ref(innerRef);
+              // } else {
+              //   return ref;
+              // }
+              return innerRef;
+            },
+          }),
+        )}
+      </svg>
+    </BluefishContext.Provider>
   );
 };

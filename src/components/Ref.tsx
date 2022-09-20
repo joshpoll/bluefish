@@ -8,7 +8,15 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
     ref,
     () => ({
       measure(constraints: Constraints): Placeable {
-        return props.to?.current.measure(constraints);
+        console.log('props.to', props.to);
+        return (
+          props.to?.current.measure(constraints) ?? {
+            measuredWidth: 0,
+            measuredHeight: 0,
+            place: () => {},
+            placeUnlessDefined: () => {},
+          }
+        );
       },
     }),
     [props.to],

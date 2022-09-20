@@ -27,7 +27,8 @@ import { Bluefish } from './components/Bluefish';
 import { SVGClass } from './components/SVGClass';
 import { RectClass } from './components/RectClass';
 import { ColClass } from './components/ColClass';
-import { Child, Parent } from './components/TestingRefs';
+// import { Child, Parent } from './components/TestingRefs';
+import { Child, Parent } from './components/TestingContext';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -64,6 +65,7 @@ function App() {
         </a>
       </header>
       <br />
+      {/* <Parent /> */}
       {/* <Parent>
         <Child ref={ref} /> */}
       {/* <div>test child</div> */}
@@ -80,6 +82,38 @@ function App() {
             { value: 'f', opId: '7@A', deleted: false, marks: ['bold'] },
             { value: 'o', opId: '8@A', deleted: true, marks: [] },
             { value: 'x', opId: '9@A', deleted: false, marks: [] },
+          ]}
+          markOps={[
+            {
+              action: 'addMark',
+              opId: '18@A',
+              start: { opId: '5@B' },
+              end: { opId: '7@A' },
+              markType: 'bold',
+              backgroundColor: '#F9EEEE',
+              borderColor: '#E57E97',
+            },
+            {
+              action: 'addMark',
+              opId: '10@B',
+              start: { opId: '1@A' },
+              end: { opId: '6@B' },
+              markType: 'italic',
+              backgroundColor: '#E3F2F7',
+              borderColor: '#00C2FF',
+            },
+          ]}
+          rels={[
+            {
+              start: { opId: '5@B' },
+              op: { opId: '18@A' },
+              end: { opId: '7@A' },
+            },
+            {
+              start: { opId: '1@A' },
+              op: { opId: '10@B' },
+              end: { opId: '6@B' },
+            },
           ]}
         />
       }
