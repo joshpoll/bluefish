@@ -128,6 +128,29 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(
       //   <Rect name={'rect'} fill={backgroundColor} stroke={borderColor} rx={5} width={50} height={20} />
       //   <Text name={'text'} contents={`${action} ${markType}`} />
       // </Group>
+
+      <Group ref={ref} name={opId}>
+        {/* TODO: remove width */}
+        <Rect ref={rectRef} fill={backgroundColor} stroke={borderColor} rx={5} width={50} height={20} />
+        <Text ref={textRef} contents={`${action} ${markType}`} />
+        {/* TODO: starting to think the naming is backwards. currently second arg to align mutates, but first doesn't.
+            maybe I should flip them?
+          Rationale: Read it as "align first to second," which implies that the first is mutated. */}
+        <Align left>
+          <Ref to={rectRef} />
+          <Ref to={startRef} />
+        </Align>
+        <Arrow from={startRef} to={rectRef} />
+        <Align right>
+          <Ref to={rectRef} />
+          <Ref to={endRef} />
+        </Align>
+        <Arrow from={rectRef} to={endRef} />
+        <Align center>
+          <Ref to={textRef} />
+          <Ref to={rectRef} />
+        </Align>
+      </Group>
     );
   },
 );

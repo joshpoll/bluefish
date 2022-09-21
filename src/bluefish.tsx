@@ -1,3 +1,4 @@
+import { NewBBoxClass } from './NewBBox';
 import React, {
   useRef,
   useState,
@@ -41,6 +42,8 @@ export type Placeable = {
   measuredWidth: number;
   measuredHeight: number;
 };
+
+export type NewPlaceable = NewBBoxClass;
 
 // a layout hook
 export const useBluefishLayout = (
