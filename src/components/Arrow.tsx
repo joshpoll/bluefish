@@ -1,15 +1,15 @@
 import { withBluefish, withBluefishFn, BBox } from '../bluefish';
 
 export type ArrowProps = {
-  from: React.MutableRefObject<any>;
-  to: React.MutableRefObject<any>;
+  from: React.MutableRefObject<any> | undefined;
+  to: React.MutableRefObject<any> | undefined;
 };
 
 export const Arrow = withBluefishFn(
   ({ from, to }) => {
     return () => {
-      const fromBox = from.current.measure();
-      const toBox = to.current.measure();
+      const fromBox = from?.current.measure();
+      const toBox = to?.current.measure();
       return { width: 0, height: 0 };
     };
   },

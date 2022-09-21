@@ -31,16 +31,8 @@ export const Char = forwardRef(({ value, marks, opId }: CharProps, ref: any) => 
   const rightHandle = useRef(null);
   const letter = useRef(null);
   const opIdLabel = useRef(null);
-  const context = useBluefishContext();
-
-  // useEffect(() => {
-  //   context.setBFMap((prev) => new Map(prev).set(opId, ref));
-  // }, [context, ref, opId]);
 
   return (
-    // <Group ref={ref} x={50}>
-
-    // <Group ref={(ref) => context.setBFMap((prev) => new Map(prev).set(opId, ref))} x={50}>
     <Group ref={ref} name={opId} x={50}>
       <Rect ref={tile} height={65} width={50} rx={5} fill={'#eee'} />
       <Rect ref={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
@@ -93,10 +85,6 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(
     const startRef = context.bfMap.get(start.opId);
     const endRef = context.bfMap.get(end.opId);
 
-    // useEffect(() => {
-    //   context.setBFMap((prev) => new Map(prev).set(opId, ref));
-    // }, [context, ref, opId]);
-
     return (
       <Group ref={ref} name={opId}>
         {/* TODO: remove width */}
@@ -109,12 +97,12 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(
           <Ref to={startRef} />
           <Ref to={rectRef} />
         </Align>
-        <Arrow from={startRef!} to={rectRef} />
+        <Arrow from={startRef} to={rectRef} />
         <Align right>
           <Ref to={endRef} />
           <Ref to={rectRef} />
         </Align>
-        <Arrow from={rectRef} to={endRef!} />
+        <Arrow from={rectRef} to={endRef} />
         <Align center>
           <Ref to={rectRef} />
           <Ref to={textRef} />
@@ -147,10 +135,9 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(
 export type PeritextProps = {
   chars: CharProps[];
   markOps: MarkOpProps[];
-  rels: { start: { opId: string }; op: { opId: string }; end: { opId: string } }[];
 };
 
-export const Peritext: React.FC<PeritextProps> = ({ chars, markOps, rels }) => {
+export const Peritext: React.FC<PeritextProps> = ({ chars, markOps }) => {
   const charsRef = useRef(null);
   const markOpsRef = useRef(null);
 
@@ -174,13 +161,6 @@ export const Peritext: React.FC<PeritextProps> = ({ chars, markOps, rels }) => {
         ))}
       </Group>
       {/* </Col> */}
-      {/* markOpsToChars */}
-      {/* {rels.map(({ start, op, end }) => (
-        <>
-          <Arrow from={context.get(start)!} to={context.get(op)!} />
-          <Arrow from={context.get(end)!} to={context.get(op)!} />
-        </>
-      ))} */}
       {/* <Col spacing={10} alignment={'center'}>
         <Ref to={charsRef} />
         <Ref to={markOpsRef} />

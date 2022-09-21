@@ -103,18 +103,6 @@ function App() {
               borderColor: '#00C2FF',
             },
           ]}
-          rels={[
-            {
-              start: { opId: '5@B' },
-              op: { opId: '18@A' },
-              end: { opId: '7@A' },
-            },
-            {
-              start: { opId: '1@A' },
-              op: { opId: '10@B' },
-              end: { opId: '6@B' },
-            },
-          ]}
         />
       }
       <br />
