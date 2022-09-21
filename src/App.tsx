@@ -17,16 +17,13 @@ import * as _ from 'lodash';
 import { bertinHotel } from './examples/bertinHotel';
 import { blob as test_blob } from './examples/paperjs-test';
 import { SVG } from './components/SVG';
-import { Col, ColHOC, ColLayout } from './components/Col';
+import { Col } from './components/Col';
 import { Row } from './components/Row';
 import { Rect } from './components/Rect';
 import { Text } from './components/Text';
 import { Char, Peritext } from './examples/peritext';
-import { CharClass } from './examples/peritextClass';
 import { Bluefish } from './components/Bluefish';
 import { SVGClass } from './components/SVGClass';
-import { RectClass } from './components/RectClass';
-import { ColClass } from './components/ColClass';
 // import { Child, Parent } from './components/TestingRefs';
 import { Child, Parent } from './components/TestingContext';
 
@@ -72,7 +69,7 @@ function App() {
       {/* </Parent> */}
       {/* <div>width: {width}</div>
       <div>height: {height}</div> */}
-      {
+      {/* {
         <Peritext
           chars={[
             { value: 'T', opId: '1@A', deleted: false, marks: ['italic'] },
@@ -104,7 +101,7 @@ function App() {
             },
           ]}
         />
-      }
+      } */}
       <br />
       <SVG width={500} height={500}>
         <Col spacing={5} alignment={'left'}>
@@ -115,11 +112,11 @@ function App() {
           <Rect fill={'cornflowerblue'} width={50} height={100} />
         </Col>
       </SVG>
-      {
+      {/* {
         <SVG width={500} height={500}>
           <Char value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
         </SVG>
-      }
+      } */}
       {/* {
         <Bluefish width={500} height={500}>
           <SVGClass width={500} height={500}>

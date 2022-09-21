@@ -33,7 +33,8 @@ export const Char = forwardRef(({ value, marks, opId }: CharProps, ref: any) => 
   const opIdLabel = useRef(null);
 
   return (
-    <Group ref={ref} name={opId} x={50}>
+    // TODO: use x and y to position the group
+    <Group ref={ref} name={opId}>
       <Rect ref={tile} height={65} width={50} rx={5} fill={'#eee'} />
       <Rect ref={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
       <Rect ref={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
@@ -129,28 +130,28 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(
       //   <Text name={'text'} contents={`${action} ${markType}`} />
       // </Group>
 
-      <Group ref={ref} name={opId}>
-        {/* TODO: remove width */}
-        <Rect ref={rectRef} fill={backgroundColor} stroke={borderColor} rx={5} width={50} height={20} />
-        <Text ref={textRef} contents={`${action} ${markType}`} />
-        {/* TODO: starting to think the naming is backwards. currently second arg to align mutates, but first doesn't.
-            maybe I should flip them?
-          Rationale: Read it as "align first to second," which implies that the first is mutated. */}
-        <Align left>
-          <Ref to={rectRef} />
-          <Ref to={startRef} />
-        </Align>
-        <Arrow from={startRef} to={rectRef} />
-        <Align right>
-          <Ref to={rectRef} />
-          <Ref to={endRef} />
-        </Align>
-        <Arrow from={rectRef} to={endRef} />
-        <Align center>
-          <Ref to={textRef} />
-          <Ref to={rectRef} />
-        </Align>
-      </Group>
+      // <Group ref={ref} name={opId}>
+      //   {/* TODO: remove width */}
+      //   <Rect ref={rectRef} fill={backgroundColor} stroke={borderColor} rx={5} width={50} height={20} />
+      //   <Text ref={textRef} contents={`${action} ${markType}`} />
+      //   {/* TODO: starting to think the naming is backwards. currently second arg to align mutates, but first doesn't.
+      //       maybe I should flip them?
+      //     Rationale: Read it as "align first to second," which implies that the first is mutated. */}
+      //   <Align left>
+      //     <Ref to={rectRef} />
+      //     <Ref to={startRef} />
+      //   </Align>
+      //   <Align right>
+      //     <Ref to={rectRef} />
+      //     <Ref to={endRef} />
+      //   </Align>
+      //   <Align center>
+      //     <Ref to={textRef} />
+      //     <Ref to={rectRef} />
+      //   </Align>
+      //   <Arrow from={startRef} to={rectRef} />
+      //   <Arrow from={rectRef} to={endRef} />
+      // </Group>
     );
   },
 );

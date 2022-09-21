@@ -21,7 +21,12 @@ const svgMeasurePolicy: Measure = (measurables, constraints) => {
   const placeables = measurables.map((measurable) => measurable.measure(constraints));
   console.log('placeables', placeables);
   placeables.forEach((placeable) => {
-    placeable.placeUnlessDefined({ x: 0, y: 0 });
+    if (placeable.left === undefined) {
+      placeable.left = 0;
+    }
+    if (placeable.top === undefined) {
+      placeable.top = 0;
+    }
   });
   return { width: constraints.width, height: constraints.height };
 };
