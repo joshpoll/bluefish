@@ -26,6 +26,7 @@ import { Bluefish } from './components/Bluefish';
 import { SVGClass } from './components/SVGClass';
 // import { Child, Parent } from './components/TestingRefs';
 import { Child, Parent } from './components/TestingContext';
+import { Align } from './components/AlignNew';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -103,6 +104,18 @@ function App() {
         />
       } */}
       <br />
+      {/* <SVG width={500} height={500}>
+        <Align center>
+          <Rect fill={'lightblue'} width={100} height={100} />
+          <Rect fill={'magenta'} width={20} height={10} />
+        </Align>
+      </SVG>
+      <SVG width={500} height={500}>
+        <Col spacing={5} alignment={'center'}>
+          <Rect fill={'lightblue'} width={100} height={100} />
+          <Rect fill={'magenta'} width={20} height={10} />
+        </Col>
+      </SVG> */}
       <SVG width={500} height={500}>
         <Col spacing={5} alignment={'left'}>
           <Rect fill={'magenta'} width={100} height={50} />
@@ -112,11 +125,11 @@ function App() {
           <Rect fill={'cornflowerblue'} width={50} height={100} />
         </Col>
       </SVG>
-      {/* {
+      {
         <SVG width={500} height={500}>
           <Char value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
         </SVG>
-      } */}
+      }
       {/* {
         <Bluefish width={500} height={500}>
           <SVGClass width={500} height={500}>

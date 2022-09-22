@@ -12,13 +12,16 @@ export const Rect = withBluefishFn(
       height: height !== undefined ? +height : undefined,
     });
   },
-  (props: RectProps & { bbox?: Partial<NewBBox> }) => (
-    <rect
-      {...props}
-      x={props.bbox?.left ?? 0}
-      y={props.bbox?.top ?? 0}
-      width={props.bbox?.width ?? 0}
-      height={props.height ?? 0}
-    />
-  ),
+  (props: RectProps & { $bbox?: Partial<NewBBox> }) => {
+    console.log('rect props', props, props.$bbox);
+    return (
+      <rect
+        {...props}
+        x={props.$bbox?.left ?? 0}
+        y={props.$bbox?.top ?? 0}
+        width={props.$bbox?.width ?? 0}
+        height={props.$bbox?.height ?? 0}
+      />
+    );
+  },
 );

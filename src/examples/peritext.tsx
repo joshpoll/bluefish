@@ -4,7 +4,7 @@ import { Rect } from '../components/Rect';
 import { Text } from '../components/Text';
 import { Row } from '../components/Row';
 import { SVG } from '../components/SVG';
-import { Align } from '../components/Align';
+import { Align } from '../components/AlignNew';
 import {
   BBoxWithChildren,
   Measure,
@@ -38,30 +38,33 @@ export const Char = forwardRef(({ value, marks, opId }: CharProps, ref: any) => 
       <Rect ref={tile} height={65} width={50} rx={5} fill={'#eee'} />
       <Rect ref={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
       <Rect ref={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
-      <Text
+      <Rect ref={letter} height={20} width={20} rx={5} fill={'magenta'} />
+      {/* <Text
         ref={letter}
         contents={value === ' ' ? '␣' : value.toString()}
         fontSize={'30px'}
         fontWeight={marks.includes('bold') ? 'bold' : 'normal'}
         fontStyle={marks.includes('italic') ? 'italic' : 'normal'}
-      />
+      /> */}
       <Text ref={opIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
       <Align center>
-        <Ref to={tile} />
-        <Ref to={letter} />
+        {/* <Ref to={tile} />
+        <Ref to={letter} /> */}
+        <Rect height={65} width={50} rx={5} fill={'#eee'} />
+        <Rect height={20} width={20} rx={5} fill={'magenta'} />
       </Align>
-      <Align top>
+      {/* <Align topCenter>
         <Ref to={tile} />
         <Ref to={opIdLabel} />
       </Align>
-      <Align left to={'center'}>
+      <Align centerLeft to={'center'}>
         <Ref to={tile} />
         <Ref to={leftHandle} />
       </Align>
-      <Align right to={'center'}>
+      <Align centerRight to={'center'}>
         <Ref to={tile} />
         <Ref to={rightHandle} />
-      </Align>
+      </Align> */}
     </Group>
   );
 });

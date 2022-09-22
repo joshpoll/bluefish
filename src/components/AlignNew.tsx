@@ -1,4 +1,5 @@
 import { Measure, Constraints, Placeable, LayoutFn, NewPlaceable } from '../bluefish';
+import { NewBBoxClass } from '../NewBBox';
 
 export type Alignment2D =
   | 'topLeft'
@@ -27,9 +28,52 @@ const alignMeasurePolicy =
   (options: AlignProps): Measure =>
   (measurables, constraints: Constraints) => {
     console.log('entering alignment node');
-    const [mov, fix] = measurables.map((measurable) => measurable.measure(constraints)) as NewPlaceable[];
+    const [fix, mov] = measurables.map((measurable) => measurable.measure(constraints)) as NewBBoxClass[];
 
-    console.log('aligning: before', options, mov, fix);
+    console.log(
+      'aligning: before',
+      options,
+      {
+        top: mov.top,
+        left: mov.left,
+        bottom: mov.bottom,
+        right: mov.right,
+        width: mov.width,
+        height: mov.height,
+      },
+      {
+        top: fix.top,
+        left: fix.left,
+        bottom: fix.bottom,
+        right: fix.right,
+        width: fix.width,
+        height: fix.height,
+      },
+    );
+
+    if (fix.left === undefined) fix.left = 0;
+    if (fix.top === undefined) fix.top = 0;
+
+    console.log(
+      'aligning: after fix placement',
+      options,
+      {
+        top: mov.top,
+        left: mov.left,
+        bottom: mov.bottom,
+        right: mov.right,
+        width: mov.width,
+        height: mov.height,
+      },
+      {
+        top: fix.top,
+        left: fix.left,
+        bottom: fix.bottom,
+        right: fix.right,
+        width: fix.width,
+        height: fix.height,
+      },
+    );
 
     let verticalAlignment: 'top' | 'center' | 'bottom' | undefined;
     let horizontalAlignment: 'left' | 'center' | 'right' | undefined;
@@ -126,6 +170,9 @@ const alignMeasurePolicy =
       toHorizontalAlignment = horizontalAlignment;
     }
 
+    console.log('alignment', verticalAlignment, horizontalAlignment);
+    console.log('toAlignment', toVerticalAlignment, toHorizontalAlignment);
+
     let fixAnchor: { x?: number; y?: number } = {};
     if (toVerticalAlignment === 'top') {
       fixAnchor.y = fix.top ?? 0;
@@ -133,7 +180,9 @@ const alignMeasurePolicy =
       if (fix.height === undefined) {
         throw new Error('cannot center align vertically without height');
       }
-      fixAnchor.y = fix.top ?? 0 + fix.height / 2;
+      console.log('fix.height', fix.height);
+      fixAnchor.y = (fix.top ?? 0) + fix.height / 2;
+      console.log('fixAnchor', fixAnchor, (fix.top ?? 0) + fix.height / 2);
     } else if (toVerticalAlignment === 'bottom') {
       fixAnchor.y = fix.bottom ?? 0;
     }
@@ -143,7 +192,9 @@ const alignMeasurePolicy =
       if (fix.width === undefined) {
         throw new Error('cannot center align horizontally without width');
       }
-      fixAnchor.x = fix.left ?? 0 + fix.width / 2;
+      // console.log('fixwidth', fix.width);
+      // console.log('fixwidth/2', fix.width / 2);
+      fixAnchor.x = (fix.left ?? 0) + fix.width / 2;
     } else if (toHorizontalAlignment === 'right') {
       fixAnchor.x = fix.right ?? 0;
     }
@@ -158,7 +209,10 @@ const alignMeasurePolicy =
           break;
         case 'center':
           if (mov.width !== undefined) {
+            console.log('fix anchor', fixAnchor);
+            console.log('horizontal center', mov, mov.left, mov.width, fixAnchor.x - mov.width / 2);
             mov.left = fixAnchor.x - mov.width / 2;
+            console.log('horizontal center', mov, mov.left, mov.width);
           } else {
             throw new Error('cannot align horizontally');
           }
@@ -188,7 +242,26 @@ const alignMeasurePolicy =
       }
     }
 
-    console.log('aligning: after', options, mov, fix);
+    console.log(
+      'aligning: after',
+      options,
+      {
+        left: mov.left,
+        top: mov.top,
+        right: mov.right,
+        bottom: mov.bottom,
+        width: mov.width,
+        height: mov.height,
+      },
+      {
+        left: fix.left,
+        top: fix.top,
+        right: fix.right,
+        bottom: fix.bottom,
+        width: fix.width,
+        height: fix.height,
+      },
+    );
 
     const left = Math.min(mov.left ?? -Infinity, fix.left ?? -Infinity);
     const top = Math.min(mov.top ?? -Infinity, fix.top ?? -Infinity);

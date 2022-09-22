@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { ComponentType, forwardRef, PropsWithChildren } from 'react';
+import { NewBBoxClass } from '../NewBBox';
 import {
   Constraints,
   Measure,
@@ -23,7 +24,7 @@ export type ColProps = ({ spacing: number } | { totalHeight: number }) & {
 const colMeasurePolicy =
   (options: ColProps): Measure =>
   (measurables, constraints: Constraints) => {
-    const placeables = measurables.map((measurable) => measurable.measure(constraints)) as NewPlaceable[];
+    const placeables = measurables.map((measurable) => measurable.measure(constraints)) as NewBBoxClass[];
 
     // alignment
     const width = _.max(_.map(placeables, 'width')) ?? 0;
@@ -61,8 +62,12 @@ const colMeasurePolicy =
 
     let y = 0;
     placeables.forEach((placeable) => {
+      console.log('placing', placeable, `${placeable.top} -> ${y}`);
       placeable.top = y;
+      console.log('placeable.top', placeable.top);
+      console.log('placed', placeable, 'y', y);
       y += placeable.height! + spacing;
+      console.log('y', y);
     });
 
     return { width, height };
