@@ -1,16 +1,25 @@
 import { Measure, Constraints, Placeable, LayoutFn, NewPlaceable } from '../bluefish';
+import { NewBBoxClass } from '../NewBBox';
 
-export type AlignProps = (
-  | { topLeft: boolean }
-  | { topRight: boolean }
-  | { bottomLeft: boolean }
-  | { bottomRight: boolean }
-  | { top: boolean }
-  | { bottom: boolean }
-  | { left: boolean }
-  | { right: boolean }
-  | { center: boolean }
-) & { to?: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'top' | 'bottom' | 'left' | 'right' | 'center' } & {
+export type Alignment2D =
+  | 'topLeft'
+  | 'topCenter'
+  | 'topRight'
+  | 'centerLeft'
+  | 'center'
+  | 'centerRight'
+  | 'bottomLeft'
+  | 'bottomCenter'
+  | 'bottomRight';
+
+// generate a union of single-key objects using Alignment2D as the keys
+export type Alignment2DObjs = { [K in Alignment2D]: { [k in K]: boolean } }[Alignment2D];
+
+export type Alignment1D = 'top' | 'centerVertically' | 'bottom' | 'left' | 'centerHorizontally' | 'right';
+
+export type Alignment1DObjs = { [K in Alignment1D]: { [k in K]: boolean } }[Alignment1D];
+
+export type AlignProps = (Alignment2DObjs | Alignment1DObjs) & { to?: Alignment2D | Alignment1D } & {
   x?: number;
   y?: number;
 };
@@ -19,77 +28,316 @@ const alignMeasurePolicy =
   (options: AlignProps): Measure =>
   (measurables, constraints: Constraints) => {
     console.log('entering alignment node');
-    const [first, second] = measurables.map((measurable) => measurable.measure(constraints)) as NewPlaceable[];
+    const [mov, fix] = measurables.map((measurable) => measurable.measure(constraints)) as NewBBoxClass[];
 
-    if (first.left === undefined) first.left = 0;
-    if (first.top === undefined) first.top = 0;
-
-    let firstAnchor;
-    let secondAnchor;
-    if ('topLeft' in options) {
-      firstAnchor = { x: 0, y: 0 };
-      secondAnchor = { x: 0, y: 0 };
-    } else if ('topRight' in options) {
-      firstAnchor = { x: first.width!, y: 0 };
-      secondAnchor = { x: second.width!, y: 0 };
-    } else if ('bottomLeft' in options) {
-      firstAnchor = { x: 0, y: first.height! };
-      secondAnchor = { x: 0, y: second.height! };
-    } else if ('bottomRight' in options) {
-      firstAnchor = { x: first.width!, y: first.height! };
-      secondAnchor = { x: second.width!, y: second.height! };
-    } else if ('top' in options) {
-      firstAnchor = { x: first.width! / 2, y: 0 };
-      secondAnchor = { x: second.width! / 2, y: 0 };
-    } else if ('bottom' in options) {
-      firstAnchor = { x: first.width! / 2, y: first.height! };
-      secondAnchor = { x: second.width! / 2, y: second.height! };
-    } else if ('left' in options) {
-      firstAnchor = { x: 0, y: first.height! / 2 };
-      secondAnchor = { x: 0, y: second.height! / 2 };
-    } else if ('right' in options) {
-      firstAnchor = { x: first.width!, y: first.height! / 2 };
-      secondAnchor = { x: second.width!, y: second.height! / 2 };
-    } else if ('center' in options) {
-      firstAnchor = { x: first.width! / 2, y: first.height! / 2 };
-      secondAnchor = { x: second.width! / 2, y: second.height! / 2 };
-    } else {
-      throw new Error('Invalid alignment options');
+    if ('left' in options) {
+      console.log('aligning left', mov, fix);
+    }
+    if ('right' in options) {
+      console.log('aligning right', mov, fix);
     }
 
-    if (options.to) {
+    console.log(
+      'aligning: before',
+      options,
+      {
+        top: mov.top,
+        left: mov.left,
+        bottom: mov.bottom,
+        right: mov.right,
+        width: mov.width,
+        height: mov.height,
+      },
+      {
+        top: fix.top,
+        left: fix.left,
+        bottom: fix.bottom,
+        right: fix.right,
+        width: fix.width,
+        height: fix.height,
+      },
+    );
+
+    if (fix.left === undefined) fix.left = 0;
+    if (fix.top === undefined) fix.top = 0;
+
+    console.log(
+      'aligning: after fix placement',
+      measurables.map((m) => m.name).join(' '),
+      options,
+      {
+        top: mov.top,
+        left: mov.left,
+        bottom: mov.bottom,
+        right: mov.right,
+        width: mov.width,
+        height: mov.height,
+      },
+      {
+        top: fix.top,
+        left: fix.left,
+        bottom: fix.bottom,
+        right: fix.right,
+        width: fix.width,
+        height: fix.height,
+      },
+    );
+
+    let verticalAlignment: 'top' | 'center' | 'bottom' | undefined;
+    let horizontalAlignment: 'left' | 'center' | 'right' | undefined;
+    if ('topLeft' in options) {
+      verticalAlignment = 'top';
+      horizontalAlignment = 'left';
+    } else if ('topCenter' in options) {
+      verticalAlignment = 'top';
+      horizontalAlignment = 'center';
+    } else if ('topRight' in options) {
+      verticalAlignment = 'top';
+      horizontalAlignment = 'right';
+    } else if ('centerLeft' in options) {
+      verticalAlignment = 'center';
+      horizontalAlignment = 'left';
+    } else if ('center' in options) {
+      verticalAlignment = 'center';
+      horizontalAlignment = 'center';
+    } else if ('centerRight' in options) {
+      verticalAlignment = 'center';
+      horizontalAlignment = 'right';
+    } else if ('bottomLeft' in options) {
+      verticalAlignment = 'bottom';
+      horizontalAlignment = 'left';
+    } else if ('bottomCenter' in options) {
+      verticalAlignment = 'bottom';
+      horizontalAlignment = 'center';
+    } else if ('bottomRight' in options) {
+      verticalAlignment = 'bottom';
+      horizontalAlignment = 'right';
+    } else if ('top' in options) {
+      verticalAlignment = 'top';
+    } else if ('centerVertically' in options) {
+      verticalAlignment = 'center';
+    } else if ('bottom' in options) {
+      verticalAlignment = 'bottom';
+    } else if ('left' in options) {
+      horizontalAlignment = 'left';
+    } else if ('centerHorizontally' in options) {
+      horizontalAlignment = 'center';
+    } else if ('right' in options) {
+      horizontalAlignment = 'right';
+    } else {
+      throw new Error('invalid alignment options');
+    }
+
+    let toVerticalAlignment: 'top' | 'center' | 'bottom' | undefined;
+    let toHorizontalAlignment: 'left' | 'center' | 'right' | undefined;
+    if ('to' in options) {
       if (options.to === 'topLeft') {
-        secondAnchor = { x: 0, y: 0 };
+        toVerticalAlignment = 'top';
+        toHorizontalAlignment = 'left';
+      } else if (options.to === 'topCenter') {
+        toVerticalAlignment = 'top';
+        toHorizontalAlignment = 'center';
       } else if (options.to === 'topRight') {
-        secondAnchor = { x: second.width!, y: 0 };
-      } else if (options.to === 'bottomLeft') {
-        secondAnchor = { x: 0, y: second.height! };
-      } else if (options.to === 'bottomRight') {
-        secondAnchor = { x: second.width!, y: second.height! };
-      } else if (options.to === 'top') {
-        secondAnchor = { x: second.width! / 2, y: 0 };
-      } else if (options.to === 'bottom') {
-        secondAnchor = { x: second.width! / 2, y: second.height! };
-      } else if (options.to === 'left') {
-        secondAnchor = { x: 0, y: second.height! / 2 };
-      } else if (options.to === 'right') {
-        secondAnchor = { x: second.width!, y: second.height! / 2 };
+        toVerticalAlignment = 'top';
+        toHorizontalAlignment = 'right';
+      } else if (options.to === 'centerLeft') {
+        toVerticalAlignment = 'center';
+        toHorizontalAlignment = 'left';
       } else if (options.to === 'center') {
-        secondAnchor = { x: second.width! / 2, y: second.height! / 2 };
+        toVerticalAlignment = 'center';
+        toHorizontalAlignment = 'center';
+      } else if (options.to === 'centerRight') {
+        toVerticalAlignment = 'center';
+        toHorizontalAlignment = 'right';
+      } else if (options.to === 'bottomLeft') {
+        toVerticalAlignment = 'bottom';
+        toHorizontalAlignment = 'left';
+      } else if (options.to === 'bottomCenter') {
+        toVerticalAlignment = 'bottom';
+        toHorizontalAlignment = 'center';
+      } else if (options.to === 'bottomRight') {
+        toVerticalAlignment = 'bottom';
+        toHorizontalAlignment = 'right';
+      } else if (options.to === 'top') {
+        toVerticalAlignment = 'top';
+      } else if (options.to === 'centerVertically') {
+        toVerticalAlignment = 'center';
+      } else if (options.to === 'bottom') {
+        toVerticalAlignment = 'bottom';
+      } else if (options.to === 'left') {
+        toHorizontalAlignment = 'left';
+      } else if (options.to === 'centerHorizontally') {
+        toHorizontalAlignment = 'center';
+      } else if (options.to === 'right') {
+        toHorizontalAlignment = 'right';
       } else {
-        throw new Error('Invalid alignment options');
+        throw new Error('invalid alignment options');
+      }
+    } else {
+      toVerticalAlignment = verticalAlignment;
+      toHorizontalAlignment = horizontalAlignment;
+    }
+
+    console.log('alignment', verticalAlignment, horizontalAlignment);
+    console.log('toAlignment', toVerticalAlignment, toHorizontalAlignment);
+
+    let fixAnchor: { x?: number; y?: number } = {};
+    if (toVerticalAlignment === 'top') {
+      fixAnchor.y = fix.top ?? 0;
+    } else if (toVerticalAlignment === 'center') {
+      if (fix.height === undefined) {
+        throw new Error('cannot center align vertically without height');
+      }
+      console.log('fix.height', fix.height);
+      fixAnchor.y = (fix.top ?? 0) + fix.height / 2;
+      console.log('fixAnchor', fixAnchor, (fix.top ?? 0) + fix.height / 2);
+    } else if (toVerticalAlignment === 'bottom') {
+      fixAnchor.y = fix.bottom ?? 0;
+    }
+    if (toHorizontalAlignment === 'left') {
+      fixAnchor.x = fix.left ?? 0;
+    } else if (toHorizontalAlignment === 'center') {
+      if (fix.width === undefined) {
+        throw new Error('cannot center align horizontally without width');
+      }
+      // console.log('fixwidth', fix.width);
+      // console.log('fixwidth/2', fix.width / 2);
+      fixAnchor.x = (fix.left ?? 0) + fix.width / 2;
+    } else if (toHorizontalAlignment === 'right') {
+      console.log('fixins', {
+        fixRight: fix.right,
+        fixLeft: fix.left,
+        fixWidth: fix.width,
+      });
+      fixAnchor.x = fix.right ?? 0;
+      console.log('fixAnchor: right', fixAnchor);
+    }
+
+    if (horizontalAlignment !== undefined) {
+      if (fixAnchor.x === undefined) {
+        throw new Error('cannot align horizontally. fixAnchor.x is undefined');
+      }
+      switch (horizontalAlignment) {
+        case 'left':
+          // console.log(
+          //   'left',
+          //   fixAnchor.x,
+          //   options,
+          //   {
+          //     left: mov.left,
+          //     top: mov.top,
+          //     right: mov.right,
+          //     bottom: mov.bottom,
+          //     width: mov.width,
+          //     height: mov.height,
+          //   },
+          //   {
+          //     left: fix.left,
+          //     top: fix.top,
+          //     right: fix.right,
+          //     bottom: fix.bottom,
+          //     width: fix.width,
+          //     height: fix.height,
+          //   },
+          // );
+          mov.left = fixAnchor.x;
+          // console.log(
+          //   'left-after',
+          //   mov.left,
+          //   options,
+          //   {
+          //     left: mov.left,
+          //     top: mov.top,
+          //     right: mov.right,
+          //     bottom: mov.bottom,
+          //     width: mov.width,
+          //     height: mov.height,
+          //   },
+          //   {
+          //     left: fix.left,
+          //     top: fix.top,
+          //     right: fix.right,
+          //     bottom: fix.bottom,
+          //     width: fix.width,
+          //     height: fix.height,
+          //   },
+          // );
+          break;
+        case 'center':
+          if (mov.width !== undefined) {
+            console.log('fix anchor', fixAnchor);
+            console.log('horizontal center', mov, mov.left, mov.width, fixAnchor.x - mov.width / 2);
+            mov.left = fixAnchor.x - mov.width / 2;
+            console.log('left set to', mov.left, 'in horizontal center');
+            console.log('horizontal center', mov, mov.left, mov.width);
+          } else {
+            throw new Error('cannot align horizontally');
+          }
+          break;
+        case 'right':
+          mov.right = fixAnchor.x;
+          break;
       }
     }
 
-    second.left = firstAnchor.x - secondAnchor.x + (options.x ?? 0);
-    second.top = firstAnchor.y - secondAnchor.y + (options.y ?? 0);
+    if (verticalAlignment !== undefined) {
+      if (fixAnchor.y === undefined) {
+        throw new Error('cannot align vertically. fixAnchor.y is undefined');
+      }
+      switch (verticalAlignment) {
+        case 'top':
+          mov.top = fixAnchor.y;
+          break;
+        case 'center':
+          if (mov.height !== undefined) {
+            mov.top = fixAnchor.y - mov.height / 2;
+          }
+          break;
+        case 'bottom':
+          mov.bottom = fixAnchor.y;
+          break;
+      }
+    }
 
-    console.log('aligning', options, first, second);
-    // second.place({ x: 50, y: 50 });
+    console.log(
+      'aligning: after',
+      options,
+      {
+        left: mov.left,
+        top: mov.top,
+        right: mov.right,
+        bottom: mov.bottom,
+        width: mov.width,
+        height: mov.height,
+      },
+      {
+        left: fix.left,
+        top: fix.top,
+        right: fix.right,
+        bottom: fix.bottom,
+        width: fix.width,
+        height: fix.height,
+      },
+    );
 
-    // use anchors to determine the size of the container
-    const width = Math.max(first.width!, firstAnchor.x - secondAnchor.x + second.width!);
-    const height = Math.max(first.height!, firstAnchor.y - secondAnchor.y + second.height!);
+    const left = Math.min(mov.left ?? -Infinity, fix.left ?? -Infinity);
+    const top = Math.min(mov.top ?? -Infinity, fix.top ?? -Infinity);
+    const right = Math.max(mov.right ?? Infinity, fix.right ?? Infinity);
+    const bottom = Math.max(mov.bottom ?? Infinity, fix.bottom ?? Infinity);
+
+    let width;
+    if (left === -Infinity || right === Infinity) {
+      width = undefined;
+    } else {
+      width = right - left;
+    }
+
+    let height;
+    if (top === -Infinity || bottom === Infinity) {
+      height = undefined;
+    } else {
+      height = bottom - top;
+    }
 
     return { width, height };
   };

@@ -26,7 +26,7 @@ import { Bluefish } from './components/Bluefish';
 import { SVGClass } from './components/SVGClass';
 // import { Child, Parent } from './components/TestingRefs';
 import { Child, Parent } from './components/TestingContext';
-import { Align } from './components/AlignNew';
+import { Align } from './components/Align';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;

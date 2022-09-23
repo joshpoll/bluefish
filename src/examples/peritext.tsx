@@ -4,7 +4,7 @@ import { Rect } from '../components/Rect';
 import { Text } from '../components/Text';
 import { Row } from '../components/Row';
 import { SVG } from '../components/SVG';
-import { Align } from '../components/AlignNew';
+import { Align } from '../components/Align';
 import {
   BBoxWithChildren,
   Measure,
@@ -95,10 +95,10 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(
           // width={50}
           height={20}
         />
+        {/* TODO: text measurement is broken, since the text isn't actually centered */}
         <Text name={opId + '-text'} ref={textRef} contents={`${action} ${markType}`} />
-        {/* TODO: starting to think the naming is backwards. currently second arg to align mutates, but first doesn't.
-            maybe I should flip them?
-          Rationale: Read it as "align first to second," which implies that the first is mutated. */}
+        {/* ...however, using a rect instead results in a properly centered component */}
+        {/* <Rect name={opId + '-text'} ref={textRef} width={50} height={15} fill={'magenta'} /> */}
         <Align name={'align me!'} left>
           <Ref to={rectRef} />
           <Ref to={start.opId} />
