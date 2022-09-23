@@ -70,6 +70,8 @@ export const useBluefishLayout = (
   const [bottom, setBottom] = useState(bbox.bottom);
   const [width, setWidth] = useState(bbox.width);
   const [height, setHeight] = useState(bbox.height);
+  // const [bboxClass, setBBoxClass] = useState<NewBBoxClass | undefined>(undefined);
+  const bboxClassRef = useRef<NewBBoxClass | undefined>(undefined);
 
   useEffect(() => {
     console.log('left updated to', left);
@@ -82,26 +84,56 @@ export const useBluefishLayout = (
   useImperativeHandle(
     ref,
     () => ({
+      name,
       measure(constraints: Constraints): NewBBoxClass {
-        const { width, height } = measure(childrenRef.current, constraints);
-        setWidth(width);
-        setHeight(height);
-        const left = undefined;
-        const top = undefined;
-        const right = undefined;
-        const bottom = undefined;
+        let bbox;
+        if (bboxClassRef.current === undefined) {
+          const { width, height } = measure(childrenRef.current, constraints);
+          setWidth(width);
+          setHeight(height);
+          const left = undefined;
+          const top = undefined;
+          const right = undefined;
+          const bottom = undefined;
 
-        return new NewBBoxClass(
-          { left, top, right, bottom, width, height },
-          {
-            left: setLeft,
-            top: setTop,
-            right: setRight,
-            bottom: setBottom,
-            width: setWidth,
-            height: setHeight,
-          },
-        );
+          bbox = new NewBBoxClass(
+            { left, top, right, bottom, width, height },
+            {
+              left: (left) => {
+                console.log(name, 'left set to', left);
+                return setLeft(left);
+              },
+              top: (top) => {
+                console.log(name, 'top set to', top);
+                return setTop(top);
+              },
+              right: (right) => {
+                console.log(name, 'right set to', right);
+                return setRight(right);
+              },
+              bottom: (bottom) => {
+                console.log(name, 'bottom set to', bottom);
+                return setBottom(bottom);
+              },
+              width: (width) => {
+                console.log(name, 'width set to', width);
+                return setWidth(width);
+              },
+              height: (height) => {
+                console.log(name, 'height set to', height);
+                return setHeight(height);
+              },
+            },
+          );
+          // setBBoxClass(bbox);
+          // this.bbox = 'foo';
+          bboxClassRef.current = bbox;
+        } else {
+          bbox = bboxClassRef.current;
+          // bbox = bboxClass;
+        }
+
+        return bbox;
 
         // return {
         //   get left() {
@@ -211,7 +243,7 @@ export const useBluefishLayout = (
         // };
       },
     }),
-    [measure, childrenRef, setLeft, setTop, setRight, setBottom, setWidth, setHeight],
+    [measure, childrenRef, setLeft, setTop, setRight, setBottom, setWidth, setHeight, name, bboxClassRef],
   );
 
   console.log('returning bbox', { left, top, right, bottom, width, height });
@@ -301,6 +333,7 @@ export const withBluefishFn = <ComponentProps,>(
       },
       ref,
       props.children,
+      props.name,
     );
     return (
       <WrappedComponent

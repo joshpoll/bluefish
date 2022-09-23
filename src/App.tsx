@@ -70,7 +70,7 @@ function App() {
       {/* </Parent> */}
       {/* <div>width: {width}</div>
       <div>height: {height}</div> */}
-      {/* {
+      {
         <Peritext
           chars={[
             { value: 'T', opId: '1@A', deleted: false, marks: ['italic'] },
@@ -102,7 +102,7 @@ function App() {
             },
           ]}
         />
-      } */}
+      }
       <br />
       {/* <SVG width={500} height={500}>
         <Align center>
@@ -116,7 +116,7 @@ function App() {
           <Rect fill={'magenta'} width={20} height={10} />
         </Col>
       </SVG> */}
-      <SVG width={500} height={500}>
+      {/* <SVG width={500} height={500}>
         <Col spacing={5} alignment={'left'}>
           <Rect fill={'magenta'} width={100} height={50} />
           <Col spacing={5} alignment={'left'}>
@@ -124,7 +124,7 @@ function App() {
           </Col>
           <Rect fill={'cornflowerblue'} width={50} height={100} />
         </Col>
-      </SVG>
+      </SVG> */}
       {
         <SVG width={500} height={500}>
           <Char value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />

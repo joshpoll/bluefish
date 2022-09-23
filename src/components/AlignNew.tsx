@@ -28,7 +28,7 @@ const alignMeasurePolicy =
   (options: AlignProps): Measure =>
   (measurables, constraints: Constraints) => {
     console.log('entering alignment node');
-    const [fix, mov] = measurables.map((measurable) => measurable.measure(constraints)) as NewBBoxClass[];
+    const [mov, fix] = measurables.map((measurable) => measurable.measure(constraints)) as NewBBoxClass[];
 
     console.log(
       'aligning: before',
@@ -196,7 +196,13 @@ const alignMeasurePolicy =
       // console.log('fixwidth/2', fix.width / 2);
       fixAnchor.x = (fix.left ?? 0) + fix.width / 2;
     } else if (toHorizontalAlignment === 'right') {
+      console.log('fixins', {
+        fixRight: fix.right,
+        fixLeft: fix.left,
+        fixWidth: fix.width,
+      });
       fixAnchor.x = fix.right ?? 0;
+      console.log('fixAnchor: right', fixAnchor);
     }
 
     if (horizontalAlignment !== undefined) {
@@ -212,6 +218,7 @@ const alignMeasurePolicy =
             console.log('fix anchor', fixAnchor);
             console.log('horizontal center', mov, mov.left, mov.width, fixAnchor.x - mov.width / 2);
             mov.left = fixAnchor.x - mov.width / 2;
+            console.log('left set to', mov.left, 'in horizontal center');
             console.log('horizontal center', mov, mov.left, mov.width);
           } else {
             throw new Error('cannot align horizontally');

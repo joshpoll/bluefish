@@ -48,6 +48,8 @@ export class NewBBoxClass {
     }
     if (this.right !== undefined && this.left !== undefined && this.width !== this.right - this.left) {
       this.width = this.right - this.left;
+    } else if (this.width !== undefined && this.left !== undefined && this.right !== this.left + this.width) {
+      this.right = this.left + this.width;
     }
   }
 
@@ -62,6 +64,8 @@ export class NewBBoxClass {
     }
     if (this.bottom !== undefined && this.top !== undefined && this.height !== this.bottom - this.top) {
       this.height = this.bottom - this.top;
+    } else if (this.height !== undefined && this.top !== undefined && this.bottom !== this.top + this.height) {
+      this.bottom = this.top + this.height;
     }
   }
 
@@ -76,6 +80,8 @@ export class NewBBoxClass {
     }
     if (this.left !== undefined && this.right !== undefined && this.width !== this.right - this.left) {
       this.width = this.right - this.left;
+    } else if (this.width !== undefined && this.right !== undefined && this.left !== this.right - this.width) {
+      this.left = this.right - this.width;
     }
   }
 
@@ -90,6 +96,8 @@ export class NewBBoxClass {
     }
     if (this.top !== undefined && this.bottom !== undefined && this.height !== this.bottom - this.top) {
       this.height = this.bottom - this.top;
+    } else if (this.height !== undefined && this.bottom !== undefined && this.top !== this.bottom - this.height) {
+      this.top = this.bottom - this.height;
     }
   }
 
@@ -104,6 +112,8 @@ export class NewBBoxClass {
     }
     if (this.left !== undefined && this.width !== undefined && this.right !== this.left + this.width) {
       this.right = this.left + this.width;
+    } else if (this.right !== undefined && this.width !== undefined && this.left !== this.right - this.width) {
+      this.left = this.right - this.width;
     }
   }
 
@@ -118,6 +128,8 @@ export class NewBBoxClass {
     }
     if (this.top !== undefined && this.height !== undefined && this.bottom !== this.top + this.height) {
       this.bottom = this.top + this.height;
+    } else if (this.bottom !== undefined && this.height !== undefined && this.top !== this.bottom - this.height) {
+      this.top = this.bottom - this.height;
     }
   }
 }

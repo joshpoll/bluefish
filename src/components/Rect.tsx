@@ -14,14 +14,9 @@ export const Rect = withBluefishFn(
   },
   (props: RectProps & { $bbox?: Partial<NewBBox> }) => {
     console.log('rect props', props, props.$bbox);
+    const { $bbox, ...rest } = props;
     return (
-      <rect
-        {...props}
-        x={props.$bbox?.left ?? 0}
-        y={props.$bbox?.top ?? 0}
-        width={props.$bbox?.width ?? 0}
-        height={props.$bbox?.height ?? 0}
-      />
+      <rect {...rest} x={$bbox?.left ?? 0} y={$bbox?.top ?? 0} width={$bbox?.width ?? 0} height={$bbox?.height ?? 0} />
     );
   },
 );

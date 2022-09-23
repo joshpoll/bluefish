@@ -37,34 +37,31 @@ export const Char = forwardRef(({ value, marks, opId }: CharProps, ref: any) => 
     <Group ref={ref} name={opId}>
       <Rect ref={tile} height={65} width={50} rx={5} fill={'#eee'} />
       <Rect ref={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
-      <Rect ref={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
-      <Rect ref={letter} height={20} width={20} rx={5} fill={'magenta'} />
-      {/* <Text
+      <Rect name={'rightHandle'} ref={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
+      <Text
         ref={letter}
         contents={value === ' ' ? '␣' : value.toString()}
         fontSize={'30px'}
         fontWeight={marks.includes('bold') ? 'bold' : 'normal'}
         fontStyle={marks.includes('italic') ? 'italic' : 'normal'}
-      /> */}
+      />
       <Text ref={opIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
       <Align center>
-        {/* <Ref to={tile} />
-        <Ref to={letter} /> */}
-        <Rect height={65} width={50} rx={5} fill={'#eee'} />
-        <Rect height={20} width={20} rx={5} fill={'magenta'} />
-      </Align>
-      {/* <Align topCenter>
+        <Ref to={letter} />
         <Ref to={tile} />
+      </Align>
+      <Align topCenter>
         <Ref to={opIdLabel} />
-      </Align>
-      <Align centerLeft to={'center'}>
         <Ref to={tile} />
+      </Align>
+      <Align center to={'centerLeft'}>
         <Ref to={leftHandle} />
-      </Align>
-      <Align centerRight to={'center'}>
         <Ref to={tile} />
+      </Align>
+      <Align center to={'centerRight'}>
         <Ref to={rightHandle} />
-      </Align> */}
+        <Ref to={tile} />
+      </Align>
     </Group>
   );
 });
@@ -182,11 +179,11 @@ export const Peritext: React.FC<PeritextProps> = ({ chars, markOps }) => {
       {/* markOps */}
       {/* TODO: need to loosen alignment here or even just switch to a spacing component... */}
       {/* <Col ref={markOpsRef} spacing={8} alignment={'center'}> */}
-      <Group ref={markOpsRef}>
+      {/* <Group ref={markOpsRef}>
         {markOps.map((markOp) => (
           <MarkOp {...markOp} />
         ))}
-      </Group>
+      </Group> */}
       {/* </Col> */}
       {/* <Col spacing={10} alignment={'center'}>
         <Ref to={charsRef} />
