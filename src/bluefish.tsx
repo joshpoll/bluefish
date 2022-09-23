@@ -74,12 +74,19 @@ export const useBluefishLayout = (
   const bboxClassRef = useRef<NewBBoxClass | undefined>(undefined);
 
   useEffect(() => {
-    console.log('left updated to', left);
-  }, [left]);
+    console.log(name, 'left updated to', left);
+  }, [name, left]);
 
   useEffect(() => {
-    console.log('top updated to', top);
-  }, [top]);
+    console.log(name, 'top updated to', top);
+  }, [name, top]);
+
+  // useEffect(() => {
+  //   if (name !== undefined) {
+  //     console.log('setting ref', name, ref);
+  //     context.bfMap.set(name, ref as any);
+  //   }
+  // });
 
   useImperativeHandle(
     ref,
@@ -88,6 +95,7 @@ export const useBluefishLayout = (
       measure(constraints: Constraints): NewBBoxClass {
         let bbox;
         if (bboxClassRef.current === undefined) {
+          console.log('measuring', name);
           const { width, height } = measure(childrenRef.current, constraints);
           setWidth(width);
           setHeight(height);
@@ -130,6 +138,7 @@ export const useBluefishLayout = (
           bboxClassRef.current = bbox;
         } else {
           bbox = bboxClassRef.current;
+          console.log('using cached bbox', name, bbox);
           // bbox = bboxClass;
         }
 
@@ -246,7 +255,7 @@ export const useBluefishLayout = (
     [measure, childrenRef, setLeft, setTop, setRight, setBottom, setWidth, setHeight, name, bboxClassRef],
   );
 
-  console.log('returning bbox', { left, top, right, bottom, width, height });
+  console.log(`returning bbox for ${name}`, { left, top, right, bottom, width, height });
   return {
     left: left,
     top: top,
@@ -262,10 +271,17 @@ export const useBluefishLayout = (
           // see: https://github.com/facebook/react/issues/8873
           ref: (node: any) => {
             childrenRef.current[index] = node;
-            if (name !== undefined) context.bfMap.set(name, node);
+            // console.log('setting child ref', index, node, node.name);
+            if (node !== null && 'name' in node && node.name !== undefined) {
+              console.log('setting ref', node.name, node);
+              context.bfMap.set(node.name, node);
+            }
             const { ref } = child as any;
+            console.log('current ref on child', ref);
             if (typeof ref === 'function') ref(node);
-            else if (ref) ref.current = node;
+            else if (ref) {
+              ref.current = node;
+            }
           },
         });
       } else {

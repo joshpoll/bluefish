@@ -83,30 +83,35 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(
 
     const context = useBluefishContext();
 
-    const startRef = context.bfMap.get(start.opId);
-    const endRef = context.bfMap.get(end.opId);
-
     return (
       <Group ref={ref} name={opId}>
         {/* TODO: remove width */}
-        <Rect ref={rectRef} fill={backgroundColor} stroke={borderColor} rx={5} width={50} height={20} />
-        <Text ref={textRef} contents={`${action} ${markType}`} />
+        <Rect
+          name={opId + '-rect'}
+          ref={rectRef}
+          fill={backgroundColor}
+          stroke={borderColor}
+          rx={5}
+          // width={50}
+          height={20}
+        />
+        <Text name={opId + '-text'} ref={textRef} contents={`${action} ${markType}`} />
         {/* TODO: starting to think the naming is backwards. currently second arg to align mutates, but first doesn't.
             maybe I should flip them?
           Rationale: Read it as "align first to second," which implies that the first is mutated. */}
-        <Align left>
-          <Ref to={startRef} />
+        <Align name={'align me!'} left>
           <Ref to={rectRef} />
+          <Ref to={start.opId} />
         </Align>
-        <Arrow from={startRef} to={rectRef} />
+        {/* <Arrow from={startRef} to={rectRef} /> */}
         <Align right>
-          <Ref to={endRef} />
           <Ref to={rectRef} />
+          <Ref to={end.opId} />
         </Align>
-        <Arrow from={rectRef} to={endRef} />
+        {/* <Arrow from={rectRef} to={endRef} /> */}
         <Align center>
-          <Ref to={rectRef} />
           <Ref to={textRef} />
+          <Ref to={rectRef} />
         </Align>
       </Group>
 
@@ -179,11 +184,11 @@ export const Peritext: React.FC<PeritextProps> = ({ chars, markOps }) => {
       {/* markOps */}
       {/* TODO: need to loosen alignment here or even just switch to a spacing component... */}
       {/* <Col ref={markOpsRef} spacing={8} alignment={'center'}> */}
-      {/* <Group ref={markOpsRef}>
+      <Group ref={markOpsRef}>
         {markOps.map((markOp) => (
           <MarkOp {...markOp} />
         ))}
-      </Group> */}
+      </Group>
       {/* </Col> */}
       {/* <Col spacing={10} alignment={'center'}>
         <Ref to={charsRef} />

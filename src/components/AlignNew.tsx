@@ -30,6 +30,13 @@ const alignMeasurePolicy =
     console.log('entering alignment node');
     const [mov, fix] = measurables.map((measurable) => measurable.measure(constraints)) as NewBBoxClass[];
 
+    if ('left' in options) {
+      console.log('aligning left', mov, fix);
+    }
+    if ('right' in options) {
+      console.log('aligning right', mov, fix);
+    }
+
     console.log(
       'aligning: before',
       options,
@@ -56,6 +63,7 @@ const alignMeasurePolicy =
 
     console.log(
       'aligning: after fix placement',
+      measurables.map((m) => m.name).join(' '),
       options,
       {
         top: mov.top,
@@ -211,7 +219,49 @@ const alignMeasurePolicy =
       }
       switch (horizontalAlignment) {
         case 'left':
+          // console.log(
+          //   'left',
+          //   fixAnchor.x,
+          //   options,
+          //   {
+          //     left: mov.left,
+          //     top: mov.top,
+          //     right: mov.right,
+          //     bottom: mov.bottom,
+          //     width: mov.width,
+          //     height: mov.height,
+          //   },
+          //   {
+          //     left: fix.left,
+          //     top: fix.top,
+          //     right: fix.right,
+          //     bottom: fix.bottom,
+          //     width: fix.width,
+          //     height: fix.height,
+          //   },
+          // );
           mov.left = fixAnchor.x;
+          // console.log(
+          //   'left-after',
+          //   mov.left,
+          //   options,
+          //   {
+          //     left: mov.left,
+          //     top: mov.top,
+          //     right: mov.right,
+          //     bottom: mov.bottom,
+          //     width: mov.width,
+          //     height: mov.height,
+          //   },
+          //   {
+          //     left: fix.left,
+          //     top: fix.top,
+          //     right: fix.right,
+          //     bottom: fix.bottom,
+          //     width: fix.width,
+          //     height: fix.height,
+          //   },
+          // );
           break;
         case 'center':
           if (mov.width !== undefined) {
