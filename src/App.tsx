@@ -17,18 +17,16 @@ import * as _ from 'lodash';
 import { bertinHotel } from './examples/bertinHotel';
 import { blob as test_blob } from './examples/paperjs-test';
 import { SVG } from './components/SVG';
-import { Col, ColHOC, ColLayout } from './components/Col';
+import { Col } from './components/Col';
 import { Row } from './components/Row';
 import { Rect } from './components/Rect';
 import { Text } from './components/Text';
 import { Char, Peritext } from './examples/peritext';
-import { CharClass } from './examples/peritextClass';
 import { Bluefish } from './components/Bluefish';
 import { SVGClass } from './components/SVGClass';
-import { RectClass } from './components/RectClass';
-import { ColClass } from './components/ColClass';
 // import { Child, Parent } from './components/TestingRefs';
 import { Child, Parent } from './components/TestingContext';
+import { Align } from './components/Align';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -103,22 +101,22 @@ function App() {
               borderColor: '#00C2FF',
             },
           ]}
-          rels={[
-            {
-              start: { opId: '5@B' },
-              op: { opId: '18@A' },
-              end: { opId: '7@A' },
-            },
-            {
-              start: { opId: '1@A' },
-              op: { opId: '10@B' },
-              end: { opId: '6@B' },
-            },
-          ]}
         />
       }
       <br />
+      {/* <SVG width={500} height={500}>
+        <Align center>
+          <Rect fill={'lightblue'} width={100} height={100} />
+          <Rect fill={'magenta'} width={20} height={10} />
+        </Align>
+      </SVG>
       <SVG width={500} height={500}>
+        <Col spacing={5} alignment={'center'}>
+          <Rect fill={'lightblue'} width={100} height={100} />
+          <Rect fill={'magenta'} width={20} height={10} />
+        </Col>
+      </SVG> */}
+      {/* <SVG width={500} height={500}>
         <Col spacing={5} alignment={'left'}>
           <Rect fill={'magenta'} width={100} height={50} />
           <Col spacing={5} alignment={'left'}>
@@ -126,7 +124,7 @@ function App() {
           </Col>
           <Rect fill={'cornflowerblue'} width={50} height={100} />
         </Col>
-      </SVG>
+      </SVG> */}
       {
         <SVG width={500} height={500}>
           <Char value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />

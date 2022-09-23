@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { withBluefishFn } from '../bluefish';
 import { measureText } from '../measureText';
+import { NewBBox } from '../NewBBox';
 
 // TODO: allow text within the text element instead of on contents arg
 
@@ -30,15 +31,18 @@ export const Text = withBluefishFn(
     );
     return () => ({ width: measurements.width, height: measurements.fontHeight });
   },
-  (props: TextProps) => (
-    <text
-      {...props}
-      x={props.x ?? 0}
-      // TODO: need some way to pass fontDescent here
-      // TODO: is height always defined?
-      y={(props.y ?? 0) + (props.height !== undefined ? +props.height : 0) /* - measurements.fontDescent */}
-    >
-      {props.contents}
-    </text>
-  ),
+  (props: TextProps & { $bbox?: Partial<NewBBox> }) => {
+    const { $bbox, ...rest } = props;
+    return (
+      <text
+        {...rest}
+        x={$bbox?.left ?? 0}
+        // TODO: need some way to pass fontDescent here
+        // TODO: is height always defined?
+        y={($bbox?.top ?? 0) + ($bbox?.height !== undefined ? +$bbox.height : 0) /* - measurements.fontDescent */}
+      >
+        {props.contents}
+      </text>
+    );
+  },
 );

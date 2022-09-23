@@ -31,20 +31,13 @@ export const Char = forwardRef(({ value, marks, opId }: CharProps, ref: any) => 
   const rightHandle = useRef(null);
   const letter = useRef(null);
   const opIdLabel = useRef(null);
-  const context = useBluefishContext();
-
-  // useEffect(() => {
-  //   context.setBFMap((prev) => new Map(prev).set(opId, ref));
-  // }, [context, ref, opId]);
 
   return (
-    // <Group ref={ref} x={50}>
-
-    // <Group ref={(ref) => context.setBFMap((prev) => new Map(prev).set(opId, ref))} x={50}>
-    <Group ref={ref} name={opId} x={50}>
+    // TODO: use x and y to position the group
+    <Group ref={ref} name={opId}>
       <Rect ref={tile} height={65} width={50} rx={5} fill={'#eee'} />
       <Rect ref={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
-      <Rect ref={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
+      <Rect name={'rightHandle'} ref={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
       <Text
         ref={letter}
         contents={value === ' ' ? '␣' : value.toString()}
@@ -54,20 +47,20 @@ export const Char = forwardRef(({ value, marks, opId }: CharProps, ref: any) => 
       />
       <Text ref={opIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
       <Align center>
-        <Ref to={tile} />
         <Ref to={letter} />
-      </Align>
-      <Align top>
         <Ref to={tile} />
+      </Align>
+      <Align topCenter>
         <Ref to={opIdLabel} />
-      </Align>
-      <Align left to={'center'}>
         <Ref to={tile} />
+      </Align>
+      <Align center to={'centerLeft'}>
         <Ref to={leftHandle} />
-      </Align>
-      <Align right to={'center'}>
         <Ref to={tile} />
+      </Align>
+      <Align center to={'centerRight'}>
         <Ref to={rightHandle} />
+        <Ref to={tile} />
       </Align>
     </Group>
   );
@@ -90,34 +83,35 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(
 
     const context = useBluefishContext();
 
-    const startRef = context.bfMap.get(start.opId);
-    const endRef = context.bfMap.get(end.opId);
-
-    // useEffect(() => {
-    //   context.setBFMap((prev) => new Map(prev).set(opId, ref));
-    // }, [context, ref, opId]);
-
     return (
       <Group ref={ref} name={opId}>
         {/* TODO: remove width */}
-        <Rect ref={rectRef} fill={backgroundColor} stroke={borderColor} rx={5} width={50} height={20} />
-        <Text ref={textRef} contents={`${action} ${markType}`} />
-        {/* TODO: starting to think the naming is backwards. currently second arg to align mutates, but first doesn't.
-            maybe I should flip them?
-          Rationale: Read it as "align first to second," which implies that the first is mutated. */}
-        <Align left>
-          <Ref to={startRef} />
+        <Rect
+          name={opId + '-rect'}
+          ref={rectRef}
+          fill={backgroundColor}
+          stroke={borderColor}
+          rx={5}
+          // width={50}
+          height={20}
+        />
+        {/* TODO: text measurement is broken, since the text isn't actually centered */}
+        <Text name={opId + '-text'} ref={textRef} contents={`${action} ${markType}`} />
+        {/* ...however, using a rect instead results in a properly centered component */}
+        {/* <Rect name={opId + '-text'} ref={textRef} width={50} height={15} fill={'magenta'} /> */}
+        <Align name={'align me!'} left>
           <Ref to={rectRef} />
+          <Ref to={start.opId} />
         </Align>
-        <Arrow from={startRef!} to={rectRef} />
+        {/* <Arrow from={startRef} to={rectRef} /> */}
         <Align right>
-          <Ref to={endRef} />
           <Ref to={rectRef} />
+          <Ref to={end.opId} />
         </Align>
-        <Arrow from={rectRef} to={endRef!} />
+        {/* <Arrow from={rectRef} to={endRef} /> */}
         <Align center>
-          <Ref to={rectRef} />
           <Ref to={textRef} />
+          <Ref to={rectRef} />
         </Align>
       </Group>
 
@@ -140,6 +134,29 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(
       //   <Rect name={'rect'} fill={backgroundColor} stroke={borderColor} rx={5} width={50} height={20} />
       //   <Text name={'text'} contents={`${action} ${markType}`} />
       // </Group>
+
+      // <Group ref={ref} name={opId}>
+      //   {/* TODO: remove width */}
+      //   <Rect ref={rectRef} fill={backgroundColor} stroke={borderColor} rx={5} width={50} height={20} />
+      //   <Text ref={textRef} contents={`${action} ${markType}`} />
+      //   {/* TODO: starting to think the naming is backwards. currently second arg to align mutates, but first doesn't.
+      //       maybe I should flip them?
+      //     Rationale: Read it as "align first to second," which implies that the first is mutated. */}
+      //   <Align left>
+      //     <Ref to={rectRef} />
+      //     <Ref to={startRef} />
+      //   </Align>
+      //   <Align right>
+      //     <Ref to={rectRef} />
+      //     <Ref to={endRef} />
+      //   </Align>
+      //   <Align center>
+      //     <Ref to={textRef} />
+      //     <Ref to={rectRef} />
+      //   </Align>
+      //   <Arrow from={startRef} to={rectRef} />
+      //   <Arrow from={rectRef} to={endRef} />
+      // </Group>
     );
   },
 );
@@ -147,10 +164,9 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(
 export type PeritextProps = {
   chars: CharProps[];
   markOps: MarkOpProps[];
-  rels: { start: { opId: string }; op: { opId: string }; end: { opId: string } }[];
 };
 
-export const Peritext: React.FC<PeritextProps> = ({ chars, markOps, rels }) => {
+export const Peritext: React.FC<PeritextProps> = ({ chars, markOps }) => {
   const charsRef = useRef(null);
   const markOpsRef = useRef(null);
 
@@ -174,13 +190,6 @@ export const Peritext: React.FC<PeritextProps> = ({ chars, markOps, rels }) => {
         ))}
       </Group>
       {/* </Col> */}
-      {/* markOpsToChars */}
-      {/* {rels.map(({ start, op, end }) => (
-        <>
-          <Arrow from={context.get(start)!} to={context.get(op)!} />
-          <Arrow from={context.get(end)!} to={context.get(op)!} />
-        </>
-      ))} */}
       {/* <Col spacing={10} alignment={'center'}>
         <Ref to={charsRef} />
         <Ref to={markOpsRef} />

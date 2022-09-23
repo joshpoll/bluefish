@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { ComponentType, forwardRef, PropsWithChildren } from 'react';
 import { Constraints, Measure, Placeable, Layout, useBluefishLayout, withBluefish, LayoutFn } from '../bluefish';
+import { NewBBoxClass } from '../NewBBox';
 
 export type VerticalAlignment = 'top' | 'middle' | 'bottom';
 
@@ -13,35 +14,35 @@ export type RowProps = ({ spacing: number } | { totalWidth: number }) & {
 const rowMeasurePolicy =
   (options: RowProps): Measure =>
   (measurables, constraints: Constraints) => {
-    const placeables = measurables.map((measurable) => measurable.measure(constraints)) as Placeable[];
+    const placeables = measurables.map((measurable) => measurable.measure(constraints)) as NewBBoxClass[];
 
     // alignment
-    const height = _.max(_.map(placeables, 'measuredHeight')) ?? 0;
+    const height = _.max(_.map(placeables, 'height')) ?? 0;
 
     switch (options.alignment) {
       case 'top':
         placeables.forEach((placeable) => {
-          placeable.place({ y: 0 });
+          placeable.top = 0;
         });
         break;
       case 'middle':
         placeables.forEach((placeable) => {
-          placeable.place({ y: (height - placeable.measuredHeight) / 2 });
+          placeable.top = (height - placeable.height!) / 2;
         });
         break;
       case 'bottom':
         placeables.forEach((placeable) => {
-          placeable.place({ y: height - placeable.measuredHeight });
+          placeable.top = height - placeable.height!;
         });
         break;
     }
 
     // spacing
-    const width = 'totalWidth' in options ? options.totalWidth : _.sumBy(placeables, 'measuredWidth');
+    const width = 'totalWidth' in options ? options.totalWidth : _.sumBy(placeables, 'width');
 
     let spacing: number;
     if ('totalWidth' in options) {
-      const occupiedWidth = _.sumBy(placeables, 'measuredWidth');
+      const occupiedWidth = _.sumBy(placeables, 'width');
       spacing = (options.totalWidth - occupiedWidth) / (placeables.length - 1);
     } else {
       spacing = options.spacing;
@@ -49,8 +50,8 @@ const rowMeasurePolicy =
 
     let x = 0;
     placeables.forEach((placeable) => {
-      placeable.place({ x });
-      x += placeable.measuredWidth + spacing;
+      placeable.left = x;
+      x += placeable.width! + spacing;
     });
 
     return { width, height };

@@ -1,3 +1,4 @@
+import { NewBBox, NewBBoxClass } from './NewBBox';
 import React, {
   useRef,
   useState,
@@ -8,13 +9,12 @@ import React, {
   forwardRef,
   PropsWithChildren,
   useContext,
+  useEffect,
 } from 'react';
+import { isNaN } from 'lodash';
 
 export type Measurable = any;
-export type MeasureResult = {
-  width: number;
-  height: number;
-};
+export type MeasureResult = Partial<NewBBox>;
 
 export type Measure = (measurables: Array<Measurable>, constraints: Constraints) => MeasureResult;
 
@@ -26,6 +26,7 @@ export type BBox = {
 };
 
 export type BBoxWithChildren = Partial<PropsWithChildren<BBox>>;
+export type NewBBoxWithChildren = Partial<PropsWithChildren<NewBBox>>;
 
 // export type Constraints = {
 //   minWidth: number;
@@ -42,56 +43,226 @@ export type Placeable = {
   measuredHeight: number;
 };
 
+export type NewPlaceable = {
+  top?: number;
+  left?: number;
+  right?: number;
+  bottom?: number;
+  width?: number;
+  height?: number;
+};
+
 // a layout hook
 export const useBluefishLayout = (
   measure: Measure,
-  bbox: Partial<BBox>,
+  bbox: Partial<NewBBox>,
   ref: React.ForwardedRef<unknown>,
   children?: React.ReactNode,
   name?: any,
-): BBoxWithChildren => {
+): NewBBoxWithChildren => {
   const context = useContext(BluefishContext);
 
   const childrenRef = useRef<any[]>([]);
 
-  const [x, setX] = useState<number | undefined>(bbox.x);
-  const [y, setY] = useState<number | undefined>(bbox.y);
-  const [width, setWidth] = useState<number | undefined>(bbox.width);
-  const [height, setHeight] = useState<number | undefined>(bbox.height);
+  const [left, setLeft] = useState(bbox.left);
+  const [top, setTop] = useState(bbox.top);
+  const [right, setRight] = useState(bbox.right);
+  const [bottom, setBottom] = useState(bbox.bottom);
+  const [width, setWidth] = useState(bbox.width);
+  const [height, setHeight] = useState(bbox.height);
+  // const [bboxClass, setBBoxClass] = useState<NewBBoxClass | undefined>(undefined);
+  const bboxClassRef = useRef<NewBBoxClass | undefined>(undefined);
 
-  const place = useCallback(({ x, y }: { x?: number; y?: number }) => {
-    if (x !== undefined) setX(x);
-    if (y !== undefined) setY(y);
-  }, []);
+  useEffect(() => {
+    console.log(name, 'left updated to', left);
+  }, [name, left]);
 
-  const placeUnlessDefined = useCallback(
-    (point: { x?: number; y?: number }) => {
-      console.log('placeUnlessDefined', point);
-      if (point.x !== undefined && x !== undefined) setX(x);
-      if (point.y !== undefined && y !== undefined) setY(y);
-    },
-    [x, y],
-  );
+  useEffect(() => {
+    console.log(name, 'top updated to', top);
+  }, [name, top]);
+
+  // useEffect(() => {
+  //   if (name !== undefined) {
+  //     console.log('setting ref', name, ref);
+  //     context.bfMap.set(name, ref as any);
+  //   }
+  // });
 
   useImperativeHandle(
     ref,
     () => ({
-      measure(constraints: Constraints): Placeable {
-        const { width, height } = measure(childrenRef.current, constraints);
-        setWidth(width);
-        setHeight(height);
-        return { measuredWidth: width!, measuredHeight: height!, place, placeUnlessDefined };
+      name,
+      measure(constraints: Constraints): NewBBoxClass {
+        let bbox;
+        if (bboxClassRef.current === undefined) {
+          console.log('measuring', name);
+          const { width, height } = measure(childrenRef.current, constraints);
+          setWidth(width);
+          setHeight(height);
+          const left = undefined;
+          const top = undefined;
+          const right = undefined;
+          const bottom = undefined;
+
+          bbox = new NewBBoxClass(
+            { left, top, right, bottom, width, height },
+            {
+              left: (left) => {
+                console.log(name, 'left set to', left);
+                return setLeft(left);
+              },
+              top: (top) => {
+                console.log(name, 'top set to', top);
+                return setTop(top);
+              },
+              right: (right) => {
+                console.log(name, 'right set to', right);
+                return setRight(right);
+              },
+              bottom: (bottom) => {
+                console.log(name, 'bottom set to', bottom);
+                return setBottom(bottom);
+              },
+              width: (width) => {
+                console.log(name, 'width set to', width);
+                return setWidth(width);
+              },
+              height: (height) => {
+                console.log(name, 'height set to', height);
+                return setHeight(height);
+              },
+            },
+          );
+          // setBBoxClass(bbox);
+          // this.bbox = 'foo';
+          bboxClassRef.current = bbox;
+        } else {
+          bbox = bboxClassRef.current;
+          console.log('using cached bbox', name, bbox);
+          // bbox = bboxClass;
+        }
+
+        return bbox;
+
+        // return {
+        //   get left() {
+        //     return left;
+        //   },
+
+        //   set left(left: number | undefined) {
+        //     if (isNaN(left)) {
+        //       throw new Error(`left is NaN`);
+        //     }
+        //     console.log('set left', left);
+        //     setLeft(left);
+        //     if (right !== undefined && left !== undefined) {
+        //       setWidth(right - left);
+        //     }
+        //     if (left !== undefined && width !== undefined) {
+        //       setRight(left + width);
+        //     }
+        //   },
+
+        //   get top() {
+        //     return top;
+        //   },
+
+        //   set top(top: number | undefined) {
+        //     if (isNaN(top)) {
+        //       throw new Error(`top is NaN`);
+        //     }
+        //     console.log('set top', top);
+        //     setTop(top);
+        //     if (bottom !== undefined && top !== undefined) {
+        //       setHeight(bottom - top);
+        //     }
+        //     if (top !== undefined && height !== undefined) {
+        //       setBottom(top + height);
+        //     }
+        //   },
+
+        //   get right() {
+        //     return right;
+        //   },
+
+        //   set right(right: number | undefined) {
+        //     if (isNaN(right)) {
+        //       throw new Error(`right is NaN`);
+        //     }
+        //     setRight(right);
+        //     if (left !== undefined && right !== undefined) {
+        //       setWidth(right - left);
+        //     }
+        //     if (right !== undefined && width !== undefined) {
+        //       setLeft(right - width);
+        //     }
+        //   },
+
+        //   get bottom() {
+        //     return bottom;
+        //   },
+
+        //   set bottom(bottom: number | undefined) {
+        //     if (isNaN(bottom)) {
+        //       throw new Error(`bottom is NaN`);
+        //     }
+        //     setBottom(bottom);
+        //     if (top !== undefined && bottom !== undefined) {
+        //       setHeight(bottom - top);
+        //     }
+        //     if (bottom !== undefined && height !== undefined) {
+        //       setTop(bottom - height);
+        //     }
+        //   },
+
+        //   get width() {
+        //     return width;
+        //   },
+
+        //   set width(width: number | undefined) {
+        //     if (isNaN(width)) {
+        //       throw new Error(`width is NaN`);
+        //     }
+        //     setWidth(width);
+        //     if (left !== undefined && width !== undefined) {
+        //       setRight(left + width);
+        //     }
+        //     if (right !== undefined && width !== undefined) {
+        //       setLeft(right - width);
+        //     }
+        //   },
+
+        //   get height() {
+        //     return height;
+        //   },
+
+        //   set height(height: number | undefined) {
+        //     if (isNaN(height)) {
+        //       throw new Error(`height is NaN`);
+        //     }
+
+        //     setHeight(height);
+        //     if (top !== undefined && height !== undefined) {
+        //       setBottom(top + height);
+        //     }
+        //     if (bottom !== undefined && height !== undefined) {
+        //       setTop(bottom - height);
+        //     }
+        //   },
+        // };
       },
     }),
-    [place, placeUnlessDefined, measure, childrenRef],
+    [measure, childrenRef, setLeft, setTop, setRight, setBottom, setWidth, setHeight, name, bboxClassRef],
   );
 
-  // TODO: are these fields always defined?
+  console.log(`returning bbox for ${name}`, { left, top, right, bottom, width, height });
   return {
-    x: x!,
-    y: y!,
-    width: width!,
-    height: height!,
+    left: left,
+    top: top,
+    right: right,
+    bottom: bottom,
+    width: width,
+    height: height,
     children: React.Children.map(children, (child, index) => {
       if (isValidElement(child)) {
         return React.cloneElement(child as React.ReactElement<any>, {
@@ -100,10 +271,17 @@ export const useBluefishLayout = (
           // see: https://github.com/facebook/react/issues/8873
           ref: (node: any) => {
             childrenRef.current[index] = node;
-            if (name !== undefined) context.bfMap.set(name, node);
+            // console.log('setting child ref', index, node, node.name);
+            if (node !== null && 'name' in node && node.name !== undefined) {
+              console.log('setting ref', node.name, node);
+              context.bfMap.set(node.name, node);
+            }
             const { ref } = child as any;
+            console.log('current ref on child', ref);
             if (typeof ref === 'function') ref(node);
-            else if (ref) ref.current = node;
+            else if (ref) {
+              ref.current = node;
+            }
           },
         });
       } else {
@@ -118,46 +296,73 @@ export const useBluefishLayout = (
 // a layout HOC
 export const withBluefish = <ComponentProps,>(
   measure: Measure,
-  WrappedComponent: React.ComponentType<ComponentProps & BBoxWithChildren>,
+  WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox> }>,
 ) =>
-  forwardRef((props: ComponentProps & BBoxWithChildren & { name?: any }, ref: any) => {
-    const { x, y, width, height, children } = useBluefishLayout(
-      measure,
+  forwardRef(
+    (props: PropsWithChildren<ComponentProps> /* & { $bbox?: Partial<NewBBox> } */ & { name?: any }, ref: any) => {
+      const { left, top, bottom, right, width, height, children } = useBluefishLayout(
+        measure,
+        {
+          // left: props.bbox?.left,
+          // top: props.bbox?.top,
+          // right: props.bbox?.right,
+          // bottom: props.bbox?.bottom,
+          // width: props.bbox?.width,
+          // height: props.bbox?.height,
+        },
+        ref,
+        props.children,
+        props.name,
+      );
+      return (
+        <WrappedComponent
+          {...props}
+          $bbox={{
+            left,
+            top,
+            bottom,
+            right,
+            width,
+            height,
+          }}
+        >
+          {children}
+        </WrappedComponent>
+      );
+    },
+  );
+
+export const withBluefishFn = <ComponentProps,>(
+  measureFn: (props: ComponentProps & PropsWithChildren<{ $bbox?: Partial<NewBBox> }>) => Measure,
+  WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox> }>,
+) =>
+  forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any }, ref: any) => {
+    const { left, top, bottom, right, width, height, children } = useBluefishLayout(
+      measureFn(props),
       {
-        x: props.x,
-        y: props.y,
-        width: props.width,
-        height: props.height,
+        // left: props.bbox?.left,
+        // top: props.bbox?.top,
+        // right: props.bbox?.right,
+        // bottom: props.bbox?.bottom,
+        // width: props.bbox?.width,
+        // height: props.bbox?.height,
       },
       ref,
       props.children,
       props.name,
     );
     return (
-      <WrappedComponent {...props} x={x} y={y} width={width} height={height}>
-        {children}
-      </WrappedComponent>
-    );
-  });
-
-export const withBluefishFn = <ComponentProps,>(
-  measureFn: (props: ComponentProps & BBoxWithChildren) => Measure,
-  WrappedComponent: React.ComponentType<ComponentProps & BBoxWithChildren>,
-) =>
-  forwardRef((props: ComponentProps & BBoxWithChildren, ref: any) => {
-    const { x, y, width, height, children } = useBluefishLayout(
-      measureFn(props),
-      {
-        x: props.x,
-        y: props.y,
-        width: props.width,
-        height: props.height,
-      },
-      ref,
-      props.children,
-    );
-    return (
-      <WrappedComponent {...props} x={x} y={y} width={width} height={height}>
+      <WrappedComponent
+        {...props}
+        $bbox={{
+          left,
+          top,
+          bottom,
+          right,
+          width,
+          height,
+        }}
+      >
         {children}
       </WrappedComponent>
     );
@@ -165,13 +370,15 @@ export const withBluefishFn = <ComponentProps,>(
 
 // a pure layout component builder
 export const Layout = (measurePolicy: Measure) =>
-  withBluefish(measurePolicy, (props: BBoxWithChildren) => {
-    return <g transform={`translate(${props.x ?? 0}, ${props.y ?? 0})`}>{props.children}</g>;
+  withBluefish(measurePolicy, (props: PropsWithChildren<{ $bbox?: Partial<NewBBox> }>) => {
+    return <g transform={`translate(${props.$bbox?.left ?? 0}, ${props.$bbox?.top ?? 0})`}>{props.children}</g>;
   });
 
-export const LayoutFn = <T,>(measurePolicyFn: (props: T & BBoxWithChildren) => Measure) =>
-  withBluefishFn(measurePolicyFn, (props: BBoxWithChildren) => {
-    return <g transform={`translate(${props.x ?? 0}, ${props.y ?? 0})`}>{props.children}</g>;
+export const LayoutFn = <T,>(
+  measurePolicyFn: (props: T & PropsWithChildren<{ $bbox?: Partial<NewBBox> }>) => Measure,
+) =>
+  withBluefishFn(measurePolicyFn, (props: PropsWithChildren<{ $bbox?: Partial<NewBBox> }>) => {
+    return <g transform={`translate(${props.$bbox?.left ?? 0}, ${props.$bbox?.top ?? 0})`}>{props.children}</g>;
   });
 
 // TODO: this HOC doesn't work :/
