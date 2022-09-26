@@ -17,6 +17,7 @@ import { Ref } from '../components/Ref';
 import { Group } from '../components/Group';
 import { Line } from '../components/Line';
 import { Arrow } from '../components/Arrow';
+import { Space } from '../components/Space';
 
 export type CharProps = {
   value: string;
@@ -174,26 +175,35 @@ export const Peritext: React.FC<PeritextProps> = ({ chars, markOps }) => {
 
   return (
     <SVG width={1000} height={500}>
-      {/* chars */}
-      {/* BUG: the spacing is 5 points smaller than the specification */}
-      <Row ref={charsRef} spacing={15} alignment={'middle'}>
-        {chars.map((char) => (
-          <Char {...char} />
-        ))}
-      </Row>
-      {/* markOps */}
-      {/* TODO: need to loosen alignment here or even just switch to a spacing component... */}
-      {/* <Col ref={markOpsRef} spacing={8} alignment={'center'}> */}
-      <Group ref={markOpsRef}>
-        {markOps.map((markOp) => (
-          <MarkOp {...markOp} />
-        ))}
-      </Group>
-      {/* </Col> */}
-      {/* <Col spacing={10} alignment={'center'}>
+      {/* TODO: if I don't have the group component here, then the refs don't resolve properly... */}
+      <Group>
+        {/* chars */}
+        {/* BUG: the spacing is 5 points smaller than the specification */}
+        <Row ref={charsRef} spacing={15} alignment={'middle'}>
+          {chars.map((char) => (
+            <Char {...char} />
+          ))}
+        </Row>
+        {/* markOps */}
+        {/* TODO: need to loosen alignment here or even just switch to a spacing component... */}
+        {/* <Col ref={markOpsRef} spacing={8} alignment={'center'}> */}
+        {/* <Group ref={markOpsRef}> */}
+        <Space ref={markOpsRef} vertically by={8}>
+          {markOps.map((markOp) => (
+            <MarkOp {...markOp} />
+          ))}
+        </Space>
+        {/* </Group> */}
+        {/* </Col> */}
+        <Space vertically by={8}>
+          <Ref to={charsRef} />
+          <Ref to={markOpsRef} />
+        </Space>
+        {/* <Col spacing={10} alignment={'center'}>
         <Ref to={charsRef} />
         <Ref to={markOpsRef} />
       </Col> */}
+      </Group>
     </SVG>
   );
 };

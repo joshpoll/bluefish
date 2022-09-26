@@ -30,7 +30,7 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
           try {
             return props.to.current.measure(constraints);
           } catch (e) {
-            throw new Error(`Could not find a component with ref ${props.to}`);
+            throw new Error(`Could not find a component with ref ${props.to.current}`);
           }
         }
       },
