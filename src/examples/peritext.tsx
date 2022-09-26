@@ -18,6 +18,7 @@ import { Group } from '../components/Group';
 import { Line } from '../components/Line';
 import { Arrow } from '../components/Arrow';
 import { Space } from '../components/Space';
+import { Connector } from '../components/Connector';
 
 export type CharProps = {
   value: string;
@@ -185,24 +186,29 @@ export const Peritext: React.FC<PeritextProps> = ({ chars, markOps }) => {
           ))}
         </Row>
         {/* markOps */}
-        {/* TODO: need to loosen alignment here or even just switch to a spacing component... */}
-        {/* <Col ref={markOpsRef} spacing={8} alignment={'center'}> */}
-        {/* <Group ref={markOpsRef}> */}
+        {/* BUG: the alignment is subtly off... */}
         <Space ref={markOpsRef} vertically by={8}>
           {markOps.map((markOp) => (
             <MarkOp {...markOp} />
           ))}
         </Space>
-        {/* </Group> */}
-        {/* </Col> */}
+        {/* space markOps from chars */}
         <Space vertically by={8}>
           <Ref to={charsRef} />
           <Ref to={markOpsRef} />
         </Space>
-        {/* <Col spacing={10} alignment={'center'}>
-        <Ref to={charsRef} />
-        <Ref to={markOpsRef} />
-      </Col> */}
+        <Group>
+          {markOps.map((markOp) => (
+            // <Connector
+            //   $from={{ the: 'centerLeft', of: markOp.start.opId }}
+            //   $to={{ the: 'centerLeft', of: markOp.opId }}
+            // />
+            <Connector $from={'centerLeft'} $to={'centerLeft'}>
+              <Ref to={markOp.start.opId} />
+              <Ref to={markOp.opId} />
+            </Connector>
+          ))}
+        </Group>
       </Group>
     </SVG>
   );

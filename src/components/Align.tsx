@@ -15,6 +15,9 @@ export type Alignment2D =
 // generate a union of single-key objects using Alignment2D as the keys
 export type Alignment2DObjs = { [K in Alignment2D]: { [k in K]: boolean } }[Alignment2D];
 
+export type VerticalAlignment = 'top' | 'center' | 'bottom';
+export type HorizontalAlignment = 'left' | 'center' | 'right';
+
 export type Alignment1D = 'top' | 'centerVertically' | 'bottom' | 'left' | 'centerHorizontally' | 'right';
 
 export type Alignment1DObjs = { [K in Alignment1D]: { [k in K]: boolean } }[Alignment1D];
@@ -22,6 +25,50 @@ export type Alignment1DObjs = { [K in Alignment1D]: { [k in K]: boolean } }[Alig
 export type AlignProps = (Alignment2DObjs | Alignment1DObjs) & { to?: Alignment2D | Alignment1D } & {
   x?: number;
   y?: number;
+};
+
+export const splitAlignment = (
+  alignment: Alignment2D | Alignment1D,
+): [VerticalAlignment | undefined, HorizontalAlignment | undefined] => {
+  let verticalAlignment: VerticalAlignment | undefined;
+  let horizontalAlignment: HorizontalAlignment | undefined;
+  switch (alignment) {
+    case 'topLeft':
+    case 'topCenter':
+    case 'topRight':
+      verticalAlignment = 'top';
+      break;
+    case 'centerLeft':
+    case 'center':
+    case 'centerRight':
+      verticalAlignment = 'center';
+      break;
+    case 'bottomLeft':
+    case 'bottomCenter':
+    case 'bottomRight':
+      verticalAlignment = 'bottom';
+      break;
+  }
+
+  switch (alignment) {
+    case 'topLeft':
+    case 'centerLeft':
+    case 'bottomLeft':
+      horizontalAlignment = 'left';
+      break;
+    case 'topCenter':
+    case 'center':
+    case 'bottomCenter':
+      horizontalAlignment = 'center';
+      break;
+    case 'topRight':
+    case 'centerRight':
+    case 'bottomRight':
+      horizontalAlignment = 'right';
+      break;
+  }
+
+  return [verticalAlignment, horizontalAlignment];
 };
 
 const alignMeasurePolicy =
@@ -131,48 +178,7 @@ const alignMeasurePolicy =
     let toVerticalAlignment: 'top' | 'center' | 'bottom' | undefined;
     let toHorizontalAlignment: 'left' | 'center' | 'right' | undefined;
     if ('to' in options) {
-      if (options.to === 'topLeft') {
-        toVerticalAlignment = 'top';
-        toHorizontalAlignment = 'left';
-      } else if (options.to === 'topCenter') {
-        toVerticalAlignment = 'top';
-        toHorizontalAlignment = 'center';
-      } else if (options.to === 'topRight') {
-        toVerticalAlignment = 'top';
-        toHorizontalAlignment = 'right';
-      } else if (options.to === 'centerLeft') {
-        toVerticalAlignment = 'center';
-        toHorizontalAlignment = 'left';
-      } else if (options.to === 'center') {
-        toVerticalAlignment = 'center';
-        toHorizontalAlignment = 'center';
-      } else if (options.to === 'centerRight') {
-        toVerticalAlignment = 'center';
-        toHorizontalAlignment = 'right';
-      } else if (options.to === 'bottomLeft') {
-        toVerticalAlignment = 'bottom';
-        toHorizontalAlignment = 'left';
-      } else if (options.to === 'bottomCenter') {
-        toVerticalAlignment = 'bottom';
-        toHorizontalAlignment = 'center';
-      } else if (options.to === 'bottomRight') {
-        toVerticalAlignment = 'bottom';
-        toHorizontalAlignment = 'right';
-      } else if (options.to === 'top') {
-        toVerticalAlignment = 'top';
-      } else if (options.to === 'centerVertically') {
-        toVerticalAlignment = 'center';
-      } else if (options.to === 'bottom') {
-        toVerticalAlignment = 'bottom';
-      } else if (options.to === 'left') {
-        toHorizontalAlignment = 'left';
-      } else if (options.to === 'centerHorizontally') {
-        toHorizontalAlignment = 'center';
-      } else if (options.to === 'right') {
-        toHorizontalAlignment = 'right';
-      } else {
-        throw new Error('invalid alignment options');
-      }
+      if (options.to !== undefined) [toVerticalAlignment, toHorizontalAlignment] = splitAlignment(options.to);
     } else {
       toVerticalAlignment = verticalAlignment;
       toHorizontalAlignment = horizontalAlignment;

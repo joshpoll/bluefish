@@ -1,3 +1,5 @@
+import { isNaN } from 'lodash';
+
 export type NewBBox = {
   left: number;
   top: number;
@@ -23,18 +25,19 @@ export class NewBBoxClass {
   private _setHeight?(height: number | undefined): void;
 
   constructor(bbox: Partial<NewBBox>, callbacks: { [K in keyof NewBBox]?: (value: number | undefined) => void } = {}) {
-    this._left = bbox.left;
-    this._top = bbox.top;
-    this._right = bbox.right;
-    this._bottom = bbox.bottom;
-    this._width = bbox.width;
-    this._height = bbox.height;
     this._setLeft = callbacks.left;
     this._setTop = callbacks.top;
     this._setRight = callbacks.right;
     this._setBottom = callbacks.bottom;
     this._setWidth = callbacks.width;
     this._setHeight = callbacks.height;
+
+    this.left = bbox.left;
+    this.top = bbox.top;
+    this.right = bbox.right;
+    this.bottom = bbox.bottom;
+    this.width = bbox.width;
+    this.height = bbox.height;
   }
 
   get left() {
@@ -42,6 +45,9 @@ export class NewBBoxClass {
   }
 
   set left(left: number | undefined) {
+    if (isNaN(left)) {
+      throw new Error('left must be a number');
+    }
     this._left = left;
     if (this._setLeft) {
       this._setLeft(left);
@@ -58,6 +64,9 @@ export class NewBBoxClass {
   }
 
   set top(top: number | undefined) {
+    if (isNaN(top)) {
+      throw new Error('top must be a number');
+    }
     this._top = top;
     if (this._setTop) {
       this._setTop(top);
@@ -74,6 +83,9 @@ export class NewBBoxClass {
   }
 
   set right(right: number | undefined) {
+    if (isNaN(right)) {
+      throw new Error('right must be a number');
+    }
     this._right = right;
     if (this._setRight) {
       this._setRight(right);
@@ -90,6 +102,9 @@ export class NewBBoxClass {
   }
 
   set bottom(bottom: number | undefined) {
+    if (isNaN(bottom)) {
+      throw new Error('bottom must be a number');
+    }
     this._bottom = bottom;
     if (this._setBottom) {
       this._setBottom(bottom);
@@ -106,6 +121,9 @@ export class NewBBoxClass {
   }
 
   set width(width: number | undefined) {
+    if (isNaN(width)) {
+      throw new Error('width must be a number');
+    }
     this._width = width;
     if (this._setWidth) {
       this._setWidth(width);
@@ -122,6 +140,9 @@ export class NewBBoxClass {
   }
 
   set height(height: number | undefined) {
+    if (isNaN(height)) {
+      throw new Error('height must be a number');
+    }
     this._height = height;
     if (this._setHeight) {
       this._setHeight(height);

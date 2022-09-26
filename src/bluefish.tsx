@@ -368,6 +368,46 @@ export const withBluefishFn = <ComponentProps,>(
     );
   });
 
+export const withBluefishFnWithContext = <ComponentProps,>(
+  measureFn: (
+    props: ComponentProps & PropsWithChildren<{ $bbox?: Partial<NewBBox> }>,
+    context: BluefishContextValue,
+  ) => Measure,
+  WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox> }>,
+) =>
+  forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any }, ref: any) => {
+    const context = useContext(BluefishContext);
+    const { left, top, bottom, right, width, height, children } = useBluefishLayout(
+      measureFn(props, context),
+      {
+        // left: props.bbox?.left,
+        // top: props.bbox?.top,
+        // right: props.bbox?.right,
+        // bottom: props.bbox?.bottom,
+        // width: props.bbox?.width,
+        // height: props.bbox?.height,
+      },
+      ref,
+      props.children,
+      props.name,
+    );
+    return (
+      <WrappedComponent
+        {...props}
+        $bbox={{
+          left,
+          top,
+          bottom,
+          right,
+          width,
+          height,
+        }}
+      >
+        {children}
+      </WrappedComponent>
+    );
+  });
+
 // a pure layout component builder
 export const Layout = (measurePolicy: Measure) =>
   withBluefish(measurePolicy, (props: PropsWithChildren<{ $bbox?: Partial<NewBBox> }>) => {
@@ -412,7 +452,7 @@ export const withBluefishComponent = <ComponentProps,>(
     );
   });
 
-type BluefishContextValue = {
+export type BluefishContextValue = {
   bfMap: Map<any, React.MutableRefObject<any>>;
   setBFMap: React.Dispatch<React.SetStateAction<Map<any, any>>>;
 };
