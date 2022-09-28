@@ -33,8 +33,8 @@ export const Connector = withBluefishFn(
       const [from, to] = measurables.map((m) => m.measure(constraints));
       const [fromYDir, fromXDir] = splitAlignment(props.$from);
       const [toYDir, toXDir] = splitAlignment(props.$to);
-      console.log('from', from, fromYDir, fromXDir);
-      console.log('to', to, toYDir, toXDir);
+      console.log('[connector] from', from, fromYDir, fromXDir);
+      console.log('[connector] to', to, toYDir, toXDir);
 
       let fromX, fromY, toX, toY;
       if (fromXDir === 'left') {
@@ -69,11 +69,24 @@ export const Connector = withBluefishFn(
         toY = to.top! + to.height! / 2;
       }
 
+      console.log('[connector] from', fromX, fromY);
+      console.log('[connector] to', toX, toY);
+
+      const left = Math.min(fromX!, toX!);
+      const top = Math.min(fromY!, toY!);
+      const right = Math.max(fromX!, toX!);
+      const bottom = Math.max(fromY!, toY!);
+      // TODO: annoying problem where these values don't actually get propagated?
+      const width = right - left;
+      const height = bottom - top;
+
       return {
-        left: Math.min(fromX!, toX!),
-        top: Math.min(fromY!, toY!),
-        right: Math.max(fromX!, toX!),
-        bottom: Math.max(fromY!, toY!),
+        left,
+        top,
+        right,
+        bottom,
+        width,
+        height,
       };
     };
   },

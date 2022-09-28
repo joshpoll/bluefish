@@ -10,12 +10,27 @@ import React, {
   PropsWithChildren,
   useContext,
   useEffect,
+  useId,
 } from 'react';
 import { isNaN } from 'lodash';
+
+// TODO: we need to change this code so that children accumulate the coordinate transformation from
+// the root component down to them. This is necessary so that references can resolve correct positions.
+// To implement these we need to:
+// 1. Change the coordinate transformation to be a stack of transformations.
+// The function we need to update is `placeUnlessDefined`.
+// Incorrect. this function is no longer used. try again.
+// 2. Change the `measure` function to return a coordinate transformation.
+// Ok. But how do we accumulate the coordinate transformation?
+// 3. Change the `measure` function to take a coordinate transformation.
+// Ok. But how do we accumulate the coordinate transformation?
+// 4. Change the `measure` function to take a coordinate transformation and return a coordinate
+//    transformation.
 
 export type Measurable = {
   name: string;
   measure(constraints: Constraints): NewBBoxClass;
+  transformStack: CoordinateTransform[] | undefined;
 };
 export type MeasureResult = Partial<NewBBox>;
 
@@ -37,7 +52,10 @@ export type NewBBoxWithChildren = Partial<PropsWithChildren<NewBBox>>;
 //   minHeight: number;
 //   maxHeight: number;
 // };
-export type Constraints = any;
+export type Constraints = {
+  width?: number;
+  height?: number;
+};
 
 export type Placeable = {
   place: (point: { x?: number; y?: number }) => void;
@@ -74,9 +92,10 @@ export const useBluefishLayout = (
   const [bottom, setBottom] = useState(bbox.bottom);
   const [width, setWidth] = useState(bbox.width);
   const [height, setHeight] = useState(bbox.height);
-  const [_coord, setCoord] = useState<CoordinateTransform | undefined>(coord);
-  // const [bboxClass, setBBoxClass] = useState<NewBBoxClass | undefined>(undefined);
+  // const [_coord, setCoord] = useState<CoordinateTransform | undefined>(coord);
+  const coordRef = useRef<CoordinateTransform>(coord ?? {});
   const bboxClassRef = useRef<NewBBoxClass | undefined>(undefined);
+  const transformStackRef = useRef<CoordinateTransform[] | undefined>(undefined);
 
   useEffect(() => {
     console.log(name, 'left updated to', left);
@@ -97,10 +116,25 @@ export const useBluefishLayout = (
     ref,
     (): Measurable => ({
       name,
+      get transformStack() {
+        return transformStackRef.current;
+      },
+      set transformStack(transforms: CoordinateTransform[] | undefined) {
+        if (transforms === undefined) {
+          transformStackRef.current = [coordRef.current];
+        } else {
+          transformStackRef.current = [...transforms, coordRef.current];
+        }
+      },
       measure(constraints: Constraints): NewBBoxClass {
         let bbox;
         if (bboxClassRef.current === undefined) {
           console.log('measuring', name);
+          childrenRef.current.forEach((child) => {
+            if (child !== undefined) {
+              child.transformStack = transformStackRef.current;
+            }
+          });
           const { width, height, left, top, right, bottom } = measure(childrenRef.current, constraints);
           setWidth(width);
           setHeight(height);
@@ -110,7 +144,7 @@ export const useBluefishLayout = (
           setBottom(bottom);
 
           bbox = new NewBBoxClass(
-            { left, top, right, bottom, width, height, coord: _coord },
+            { left, top, right, bottom, width, height, coord: coordRef.current },
             {
               left: (left) => {
                 console.log(name, 'left set to', left);
@@ -138,130 +172,21 @@ export const useBluefishLayout = (
               },
               coord: (coord) => {
                 console.log(name, 'coord set to', coord);
-                return setCoord(coord);
+                coordRef.current.scale = coord?.scale ?? {};
+                coordRef.current.translate = coord?.translate ?? {};
               },
             },
           );
-          // setBBoxClass(bbox);
-          // this.bbox = 'foo';
           bboxClassRef.current = bbox;
         } else {
           bbox = bboxClassRef.current;
           console.log('using cached bbox', name, bbox);
-          // bbox = bboxClass;
         }
 
         return bbox;
-
-        // return {
-        //   get left() {
-        //     return left;
-        //   },
-
-        //   set left(left: number | undefined) {
-        //     if (isNaN(left)) {
-        //       throw new Error(`left is NaN`);
-        //     }
-        //     console.log('set left', left);
-        //     setLeft(left);
-        //     if (right !== undefined && left !== undefined) {
-        //       setWidth(right - left);
-        //     }
-        //     if (left !== undefined && width !== undefined) {
-        //       setRight(left + width);
-        //     }
-        //   },
-
-        //   get top() {
-        //     return top;
-        //   },
-
-        //   set top(top: number | undefined) {
-        //     if (isNaN(top)) {
-        //       throw new Error(`top is NaN`);
-        //     }
-        //     console.log('set top', top);
-        //     setTop(top);
-        //     if (bottom !== undefined && top !== undefined) {
-        //       setHeight(bottom - top);
-        //     }
-        //     if (top !== undefined && height !== undefined) {
-        //       setBottom(top + height);
-        //     }
-        //   },
-
-        //   get right() {
-        //     return right;
-        //   },
-
-        //   set right(right: number | undefined) {
-        //     if (isNaN(right)) {
-        //       throw new Error(`right is NaN`);
-        //     }
-        //     setRight(right);
-        //     if (left !== undefined && right !== undefined) {
-        //       setWidth(right - left);
-        //     }
-        //     if (right !== undefined && width !== undefined) {
-        //       setLeft(right - width);
-        //     }
-        //   },
-
-        //   get bottom() {
-        //     return bottom;
-        //   },
-
-        //   set bottom(bottom: number | undefined) {
-        //     if (isNaN(bottom)) {
-        //       throw new Error(`bottom is NaN`);
-        //     }
-        //     setBottom(bottom);
-        //     if (top !== undefined && bottom !== undefined) {
-        //       setHeight(bottom - top);
-        //     }
-        //     if (bottom !== undefined && height !== undefined) {
-        //       setTop(bottom - height);
-        //     }
-        //   },
-
-        //   get width() {
-        //     return width;
-        //   },
-
-        //   set width(width: number | undefined) {
-        //     if (isNaN(width)) {
-        //       throw new Error(`width is NaN`);
-        //     }
-        //     setWidth(width);
-        //     if (left !== undefined && width !== undefined) {
-        //       setRight(left + width);
-        //     }
-        //     if (right !== undefined && width !== undefined) {
-        //       setLeft(right - width);
-        //     }
-        //   },
-
-        //   get height() {
-        //     return height;
-        //   },
-
-        //   set height(height: number | undefined) {
-        //     if (isNaN(height)) {
-        //       throw new Error(`height is NaN`);
-        //     }
-
-        //     setHeight(height);
-        //     if (top !== undefined && height !== undefined) {
-        //       setBottom(top + height);
-        //     }
-        //     if (bottom !== undefined && height !== undefined) {
-        //       setTop(bottom - height);
-        //     }
-        //   },
-        // };
       },
     }),
-    [measure, childrenRef, setLeft, setTop, setRight, setBottom, setWidth, setHeight, name, bboxClassRef, _coord],
+    [measure, childrenRef, setLeft, setTop, setRight, setBottom, setWidth, setHeight, name, bboxClassRef],
   );
 
   console.log(`returning bbox for ${name}`, { left, top, right, bottom, width, height });
@@ -272,7 +197,7 @@ export const useBluefishLayout = (
     bottom: bottom,
     width: width,
     height: height,
-    coord: _coord,
+    coord: coordRef.current,
     children: React.Children.map(children, (child, index) => {
       if (isValidElement(child)) {
         return React.cloneElement(child as React.ReactElement<any>, {

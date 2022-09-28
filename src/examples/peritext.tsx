@@ -189,18 +189,36 @@ export const Peritext: React.FC<PeritextProps> = ({ chars, markOps }) => {
           <Ref to={charsRef} />
           <Ref to={markOpsRef} />
         </Space>
-        {/* <Group>
+        <Group>
           {markOps.map((markOp) => (
             // <Connector
             //   $from={{ the: 'centerLeft', of: markOp.start.opId }}
             //   $to={{ the: 'centerLeft', of: markOp.opId }}
             // />
-            <Connector $from={'centerLeft'} $to={'centerLeft'}>
-              <Ref to={markOp.start.opId} />
-              <Ref to={markOp.opId} />
-            </Connector>
+            <Group>
+              <Connector
+                $from={'centerLeft'}
+                $to={'centerLeft'}
+                stroke={markOp.borderColor}
+                strokeWidth={1}
+                strokeDasharray={3}
+              >
+                <Ref to={markOp.start.opId} />
+                <Ref to={markOp.opId} />
+              </Connector>
+              <Connector
+                $from={'centerRight'}
+                $to={'centerRight'}
+                stroke={markOp.borderColor}
+                strokeWidth={1}
+                strokeDasharray={3}
+              >
+                <Ref to={markOp.end.opId} />
+                <Ref to={markOp.opId} />
+              </Connector>
+            </Group>
           ))}
-        </Group> */}
+        </Group>
       </Group>
     </SVG>
   );
