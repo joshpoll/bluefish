@@ -173,19 +173,19 @@ export const Peritext: React.FC<PeritextProps> = ({ chars, markOps }) => {
       {/* TODO: if I don't have the group component here, then the refs don't resolve properly... */}
       <Group>
         {/* chars */}
-        <Row ref={charsRef} spacing={10} alignment={'middle'}>
+        <Row name={'chars'} ref={charsRef} spacing={10} alignment={'middle'}>
           {chars.map((char) => (
             <Char {...char} />
           ))}
         </Row>
         {/* markOps */}
-        <Space ref={markOpsRef} vertically by={8}>
+        <Space name={'markOps'} ref={markOpsRef} vertically by={8}>
           {markOps.map((markOp) => (
             <MarkOp {...markOp} />
           ))}
         </Space>
         {/* space markOps from chars */}
-        <Space vertically by={8}>
+        <Space name={'space test'} vertically by={8}>
           <Ref to={charsRef} />
           <Ref to={markOpsRef} />
         </Space>

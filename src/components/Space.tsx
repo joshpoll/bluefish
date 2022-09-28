@@ -61,7 +61,7 @@ const spaceMeasurePolicy =
       });
 
       // TODO: is the width computation correct? should it take position into account?
-      return { width: _.max(_.map(placeables, 'width')) ?? 0, height };
+      return { top: 0, width: _.max(_.map(placeables, 'width')) ?? 0, height };
     } else if ('horizontally' in options) {
       let width: number;
       let spacing: number;
@@ -83,7 +83,7 @@ const spaceMeasurePolicy =
       });
 
       // TODO: is the height computation correct? should it take position into account?
-      return { width, height: _.max(_.map(placeables, 'height')) ?? 0 };
+      return { left: 0, width, height: _.max(_.map(placeables, 'height')) ?? 0 };
     } else {
       throw new Error('Invalid options for space');
     }
