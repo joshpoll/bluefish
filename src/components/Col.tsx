@@ -24,7 +24,7 @@ export type ColProps = ({ spacing: number } | { totalHeight: number }) & {
 const colMeasurePolicy =
   (options: ColProps): Measure =>
   (measurables, constraints: Constraints) => {
-    const placeables = measurables.map((measurable) => measurable.measure(constraints)) as NewBBoxClass[];
+    const placeables = measurables.map((measurable) => measurable.measure(constraints));
 
     // alignment
     const width = _.max(_.map(placeables, 'width')) ?? 0;

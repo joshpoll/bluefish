@@ -1,4 +1,4 @@
-import { NewBBox, NewBBoxClass } from './NewBBox';
+import { CoordinateTransform, NewBBox, NewBBoxClass } from './NewBBox';
 import React, {
   useRef,
   useState,
@@ -13,7 +13,10 @@ import React, {
 } from 'react';
 import { isNaN } from 'lodash';
 
-export type Measurable = any;
+export type Measurable = {
+  name: string;
+  measure(constraints: Constraints): NewBBoxClass;
+};
 export type MeasureResult = Partial<NewBBox>;
 
 export type Measure = (measurables: Array<Measurable>, constraints: Constraints) => MeasureResult;
@@ -56,6 +59,7 @@ export type NewPlaceable = {
 export const useBluefishLayout = (
   measure: Measure,
   bbox: Partial<NewBBox>,
+  coord: Partial<CoordinateTransform>,
   ref: React.ForwardedRef<unknown>,
   children?: React.ReactNode,
   name?: any,
@@ -70,6 +74,7 @@ export const useBluefishLayout = (
   const [bottom, setBottom] = useState(bbox.bottom);
   const [width, setWidth] = useState(bbox.width);
   const [height, setHeight] = useState(bbox.height);
+  const [_coord, setCoord] = useState<CoordinateTransform | undefined>(coord);
   // const [bboxClass, setBBoxClass] = useState<NewBBoxClass | undefined>(undefined);
   const bboxClassRef = useRef<NewBBoxClass | undefined>(undefined);
 
@@ -90,22 +95,22 @@ export const useBluefishLayout = (
 
   useImperativeHandle(
     ref,
-    () => ({
+    (): Measurable => ({
       name,
       measure(constraints: Constraints): NewBBoxClass {
         let bbox;
         if (bboxClassRef.current === undefined) {
           console.log('measuring', name);
-          const { width, height } = measure(childrenRef.current, constraints);
+          const { width, height, left, top, right, bottom } = measure(childrenRef.current, constraints);
           setWidth(width);
           setHeight(height);
-          const left = undefined;
-          const top = undefined;
-          const right = undefined;
-          const bottom = undefined;
+          setLeft(left);
+          setTop(top);
+          setRight(right);
+          setBottom(bottom);
 
           bbox = new NewBBoxClass(
-            { left, top, right, bottom, width, height },
+            { left, top, right, bottom, width, height, coord: _coord },
             {
               left: (left) => {
                 console.log(name, 'left set to', left);
@@ -130,6 +135,10 @@ export const useBluefishLayout = (
               height: (height) => {
                 console.log(name, 'height set to', height);
                 return setHeight(height);
+              },
+              coord: (coord) => {
+                console.log(name, 'coord set to', coord);
+                return setCoord(coord);
               },
             },
           );
@@ -252,7 +261,7 @@ export const useBluefishLayout = (
         // };
       },
     }),
-    [measure, childrenRef, setLeft, setTop, setRight, setBottom, setWidth, setHeight, name, bboxClassRef],
+    [measure, childrenRef, setLeft, setTop, setRight, setBottom, setWidth, setHeight, name, bboxClassRef, _coord],
   );
 
   console.log(`returning bbox for ${name}`, { left, top, right, bottom, width, height });
@@ -263,6 +272,7 @@ export const useBluefishLayout = (
     bottom: bottom,
     width: width,
     height: height,
+    coord: _coord,
     children: React.Children.map(children, (child, index) => {
       if (isValidElement(child)) {
         return React.cloneElement(child as React.ReactElement<any>, {
@@ -300,7 +310,7 @@ export const withBluefish = <ComponentProps,>(
 ) =>
   forwardRef(
     (props: PropsWithChildren<ComponentProps> /* & { $bbox?: Partial<NewBBox> } */ & { name?: any }, ref: any) => {
-      const { left, top, bottom, right, width, height, children } = useBluefishLayout(
+      const { left, top, bottom, right, width, height, children, coord } = useBluefishLayout(
         measure,
         {
           // left: props.bbox?.left,
@@ -310,6 +320,7 @@ export const withBluefish = <ComponentProps,>(
           // width: props.bbox?.width,
           // height: props.bbox?.height,
         },
+        {},
         ref,
         props.children,
         props.name,
@@ -324,6 +335,7 @@ export const withBluefish = <ComponentProps,>(
             right,
             width,
             height,
+            coord,
           }}
         >
           {children}
@@ -334,10 +346,10 @@ export const withBluefish = <ComponentProps,>(
 
 export const withBluefishFn = <ComponentProps,>(
   measureFn: (props: ComponentProps & PropsWithChildren<{ $bbox?: Partial<NewBBox> }>) => Measure,
-  WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox> }>,
+  WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox>; $coord?: CoordinateTransform }>,
 ) =>
   forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any }, ref: any) => {
-    const { left, top, bottom, right, width, height, children } = useBluefishLayout(
+    const { left, top, bottom, right, width, height, children, coord } = useBluefishLayout(
       measureFn(props),
       {
         // left: props.bbox?.left,
@@ -347,6 +359,7 @@ export const withBluefishFn = <ComponentProps,>(
         // width: props.bbox?.width,
         // height: props.bbox?.height,
       },
+      {},
       ref,
       props.children,
       props.name,
@@ -361,6 +374,7 @@ export const withBluefishFn = <ComponentProps,>(
           right,
           width,
           height,
+          coord,
         }}
       >
         {children}
@@ -368,57 +382,69 @@ export const withBluefishFn = <ComponentProps,>(
     );
   });
 
-export const withBluefishFnWithContext = <ComponentProps,>(
-  measureFn: (
-    props: ComponentProps & PropsWithChildren<{ $bbox?: Partial<NewBBox> }>,
-    context: BluefishContextValue,
-  ) => Measure,
-  WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox> }>,
-) =>
-  forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any }, ref: any) => {
-    const context = useContext(BluefishContext);
-    const { left, top, bottom, right, width, height, children } = useBluefishLayout(
-      measureFn(props, context),
-      {
-        // left: props.bbox?.left,
-        // top: props.bbox?.top,
-        // right: props.bbox?.right,
-        // bottom: props.bbox?.bottom,
-        // width: props.bbox?.width,
-        // height: props.bbox?.height,
-      },
-      ref,
-      props.children,
-      props.name,
-    );
-    return (
-      <WrappedComponent
-        {...props}
-        $bbox={{
-          left,
-          top,
-          bottom,
-          right,
-          width,
-          height,
-        }}
-      >
-        {children}
-      </WrappedComponent>
-    );
-  });
+// export const withBluefishFnWithContext = <ComponentProps,>(
+//   measureFn: (
+//     props: ComponentProps & PropsWithChildren<{ $bbox?: Partial<NewBBox> }>,
+//     context: BluefishContextValue,
+//   ) => Measure,
+//   WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox> }>,
+// ) =>
+//   forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any }, ref: any) => {
+//     const context = useContext(BluefishContext);
+//     const { left, top, bottom, right, width, height, children, coord } = useBluefishLayout(
+//       measureFn(props, context),
+//       {
+//         // left: props.bbox?.left,
+//         // top: props.bbox?.top,
+//         // right: props.bbox?.right,
+//         // bottom: props.bbox?.bottom,
+//         // width: props.bbox?.width,
+//         // height: props.bbox?.height,
+//       },
+//       {},
+//       ref,
+//       props.children,
+//       props.name,
+//     );
+//     return (
+//       <WrappedComponent
+//         {...props}
+//         $bbox={{
+//           left,
+//           top,
+//           bottom,
+//           right,
+//           width,
+//           height,
+//         }}
+//         $coord={coord}
+//       >
+//         {children}
+//       </WrappedComponent>
+//     );
+//   });
 
 // a pure layout component builder
 export const Layout = (measurePolicy: Measure) =>
   withBluefish(measurePolicy, (props: PropsWithChildren<{ $bbox?: Partial<NewBBox> }>) => {
-    return <g transform={`translate(${props.$bbox?.left ?? 0}, ${props.$bbox?.top ?? 0})`}>{props.children}</g>;
+    return (
+      <g transform={`translate(${props.$bbox!.coord?.translate?.x ?? 0}, ${props.$bbox!.coord?.translate?.y ?? 0})`}>
+        {props.children}
+      </g>
+    );
+    // return <g transform={`translate(${props.$bbox?.left ?? 0}, ${props.$bbox?.top ?? 0})`}>{props.children}</g>;
   });
 
 export const LayoutFn = <T,>(
   measurePolicyFn: (props: T & PropsWithChildren<{ $bbox?: Partial<NewBBox> }>) => Measure,
 ) =>
   withBluefishFn(measurePolicyFn, (props: PropsWithChildren<{ $bbox?: Partial<NewBBox> }>) => {
-    return <g transform={`translate(${props.$bbox?.left ?? 0}, ${props.$bbox?.top ?? 0})`}>{props.children}</g>;
+    return (
+      <g transform={`translate(${props.$bbox!.coord?.translate?.x ?? 0}, ${props.$bbox!.coord?.translate?.y ?? 0})`}>
+        {props.children}
+      </g>
+    );
+    // return <g transform={`translate(${props.$bbox?.left ?? 0}, ${props.$bbox?.top ?? 0})`}>{props.children}</g>;
   });
 
 // TODO: this HOC doesn't work :/

@@ -1,5 +1,10 @@
 import { isNaN } from 'lodash';
 
+export type CoordinateTransform = {
+  translate?: { x?: number; y?: number };
+  scale?: { x?: number; y?: number };
+};
+
 export type NewBBox = {
   left: number;
   top: number;
@@ -7,6 +12,7 @@ export type NewBBox = {
   bottom: number;
   width: number;
   height: number;
+  coord: CoordinateTransform;
 };
 
 // an abstract datatype for the NewBBox type that keeps the fields synchronized
@@ -17,34 +23,248 @@ export class NewBBoxClass {
   private _bottom?: number;
   private _width?: number;
   private _height?: number;
+  private _coord?: CoordinateTransform;
   private _setLeft?(left: number | undefined): void;
   private _setTop?(top: number | undefined): void;
   private _setRight?(right: number | undefined): void;
   private _setBottom?(bottom: number | undefined): void;
   private _setWidth?(width: number | undefined): void;
   private _setHeight?(height: number | undefined): void;
+  private _setCoord?(coord: CoordinateTransform | undefined): void;
 
-  constructor(bbox: Partial<NewBBox>, callbacks: { [K in keyof NewBBox]?: (value: number | undefined) => void } = {}) {
+  constructor(
+    bbox: Partial<NewBBox>,
+    callbacks: { [K in keyof NewBBox]?: (value: NewBBox[K] | undefined) => void } = {},
+  ) {
     this._setLeft = callbacks.left;
     this._setTop = callbacks.top;
     this._setRight = callbacks.right;
     this._setBottom = callbacks.bottom;
     this._setWidth = callbacks.width;
     this._setHeight = callbacks.height;
+    this._setCoord = callbacks.coord;
 
-    this.left = bbox.left;
-    this.top = bbox.top;
-    this.right = bbox.right;
-    this.bottom = bbox.bottom;
-    this.width = bbox.width;
-    this.height = bbox.height;
+    this.intrinsicLeft = bbox.left;
+    this.intrinsicTop = bbox.top;
+    this.intrinsicRight = bbox.right;
+    this.intrinsicBottom = bbox.bottom;
+    this.intrinsicWidth = bbox.width;
+    this.intrinsicHeight = bbox.height;
+    this.coord = bbox.coord;
+  }
+
+  get coord() {
+    return this._coord;
+  }
+
+  set coord(coord: CoordinateTransform | undefined) {
+    this._coord = coord;
+    if (this._setCoord) {
+      this._setCoord(coord);
+    }
   }
 
   get left() {
-    return this._left;
+    if (this.intrinsicLeft === undefined) {
+      return undefined;
+    }
+
+    return this.intrinsicLeft + (this.coord?.translate?.x ?? 0);
   }
 
   set left(left: number | undefined) {
+    if (isNaN(left)) {
+      throw new Error('left is NaN');
+    }
+
+    // mutate intrinsicLeft if it hasn't been set yet
+    // otherwise, mutate coord
+
+    if (left === undefined) {
+      this.intrinsicLeft = undefined;
+    } else if (this.intrinsicLeft === undefined) {
+      this.intrinsicLeft = left;
+
+      // initialize coord if it's undefined
+      // TODO: I'm not sure if this.coord updates require spread syntax
+      if (this.coord === undefined) {
+        this.coord = { translate: { x: 0 } };
+      } else if (this.coord.translate === undefined) {
+        this.coord = { ...this.coord, translate: { x: 0 } };
+      } else if (this.coord.translate.x === undefined) {
+        this.coord = { ...this.coord, translate: { ...this.coord.translate, x: 0 } };
+      }
+    } else {
+      // translate the bbox extrinsically
+      this.coord = { ...this.coord, translate: { ...this.coord!.translate, x: left - this.intrinsicLeft } };
+    }
+  }
+
+  get right() {
+    if (this.intrinsicRight === undefined) {
+      return undefined;
+    }
+
+    return this.intrinsicRight + (this.coord?.translate?.x ?? 0);
+  }
+
+  set right(right: number | undefined) {
+    if (isNaN(right)) {
+      throw new Error('right is NaN');
+    }
+
+    if (right === undefined) {
+      this.intrinsicRight = undefined;
+    } else if (this.intrinsicRight === undefined) {
+      this.intrinsicRight = right;
+
+      // initialize coord if it's undefined
+      if (this.coord === undefined) {
+        this.coord = { translate: { x: 0 } };
+      } else if (this.coord.translate === undefined) {
+        this.coord = { ...this.coord, translate: { x: 0 } };
+      } else if (this.coord.translate.x === undefined) {
+        this.coord = { ...this.coord, translate: { ...this.coord.translate, x: 0 } };
+      }
+    } else {
+      // translate the bbox extrinsically
+      this.coord = { ...this.coord, translate: { ...this.coord!.translate, x: right - this.intrinsicRight } };
+    }
+  }
+
+  get top() {
+    if (this.intrinsicTop === undefined) {
+      return undefined;
+    }
+
+    return this.intrinsicTop + (this.coord?.translate?.y ?? 0);
+  }
+
+  set top(top: number | undefined) {
+    if (isNaN(top)) {
+      throw new Error('top is NaN');
+    }
+
+    if (top === undefined) {
+      this.intrinsicTop = undefined;
+    } else if (this.intrinsicTop === undefined) {
+      this.intrinsicTop = top;
+
+      // initialize coord if it's undefined
+      if (this.coord === undefined) {
+        this.coord = { translate: { y: 0 } };
+      } else if (this.coord.translate === undefined) {
+        this.coord = { ...this.coord, translate: { y: 0 } };
+      } else if (this.coord.translate.y === undefined) {
+        this.coord = { ...this.coord, translate: { ...this.coord.translate, y: 0 } };
+      }
+    } else {
+      // translate the bbox extrinsically
+      this.coord = { ...this.coord, translate: { ...this.coord!.translate, y: top - this.intrinsicTop } };
+    }
+  }
+
+  get bottom() {
+    if (this.intrinsicBottom === undefined) {
+      return undefined;
+    }
+
+    return this.intrinsicBottom + (this.coord?.translate?.y ?? 0);
+  }
+
+  set bottom(bottom: number | undefined) {
+    if (isNaN(bottom)) {
+      throw new Error('bottom is NaN');
+    }
+
+    if (bottom === undefined) {
+      this.intrinsicBottom = undefined;
+    } else if (this.intrinsicBottom === undefined) {
+      this.intrinsicBottom = bottom;
+
+      // initialize coord if it's undefined
+      if (this.coord === undefined) {
+        this.coord = { translate: { y: 0 } };
+      } else if (this.coord.translate === undefined) {
+        this.coord = { ...this.coord, translate: { y: 0 } };
+      } else if (this.coord.translate.y === undefined) {
+        this.coord = { ...this.coord, translate: { ...this.coord.translate, y: 0 } };
+      }
+    } else {
+      // translate the bbox extrinsically
+      this.coord = { ...this.coord, translate: { ...this.coord!.translate, y: bottom - this.intrinsicBottom } };
+    }
+  }
+
+  get width() {
+    if (this.intrinsicWidth === undefined) {
+      return undefined;
+    }
+
+    return this.intrinsicWidth * (this.coord?.scale?.x ?? 1);
+  }
+
+  set width(width: number | undefined) {
+    if (isNaN(width)) {
+      throw new Error('width is NaN');
+    }
+
+    if (width === undefined) {
+      this.intrinsicWidth = undefined;
+    } else if (this.intrinsicWidth === undefined) {
+      this.intrinsicWidth = width;
+
+      // initialize coord if it's undefined
+      if (this.coord === undefined) {
+        this.coord = { scale: { x: 1 } };
+      } else if (this.coord.scale === undefined) {
+        this.coord = { ...this.coord, scale: { x: 1 } };
+      } else if (this.coord.scale.x === undefined) {
+        this.coord = { ...this.coord, scale: { ...this.coord.scale, x: 1 } };
+      }
+    } else {
+      // scale the bbox extrinsically
+      this.coord = { ...this.coord, scale: { ...this.coord!.scale, x: width / this.intrinsicWidth } };
+    }
+  }
+
+  get height() {
+    if (this.intrinsicHeight === undefined) {
+      return undefined;
+    }
+
+    return this.intrinsicHeight * (this.coord?.scale?.y ?? 1);
+  }
+
+  set height(height: number | undefined) {
+    if (isNaN(height)) {
+      throw new Error('height is NaN');
+    }
+
+    if (height === undefined) {
+      this.intrinsicHeight = undefined;
+    } else if (this.intrinsicHeight === undefined) {
+      this.intrinsicHeight = height;
+
+      // initialize coord if it's undefined
+      if (this.coord === undefined) {
+        this.coord = { scale: { y: 1 } };
+      } else if (this.coord.scale === undefined) {
+        this.coord = { ...this.coord, scale: { y: 1 } };
+      } else if (this.coord.scale.y === undefined) {
+        this.coord = { ...this.coord, scale: { ...this.coord.scale, y: 1 } };
+      }
+    } else {
+      // scale the bbox extrinsically
+      this.coord = { ...this.coord, scale: { ...this.coord!.scale, y: height / this.intrinsicHeight } };
+    }
+  }
+
+  get intrinsicLeft() {
+    return this._left;
+  }
+
+  set intrinsicLeft(left: number | undefined) {
     if (isNaN(left)) {
       throw new Error('left must be a number');
     }
@@ -52,18 +272,26 @@ export class NewBBoxClass {
     if (this._setLeft) {
       this._setLeft(left);
     }
-    if (this.right !== undefined && this.left !== undefined && this.width !== this.right - this.left) {
-      this.width = this.right - this.left;
-    } else if (this.width !== undefined && this.left !== undefined && this.right !== this.left + this.width) {
-      this.right = this.left + this.width;
+    if (
+      this.intrinsicRight !== undefined &&
+      this.intrinsicLeft !== undefined &&
+      this.intrinsicWidth !== this.intrinsicRight - this.intrinsicLeft
+    ) {
+      this.intrinsicWidth = this.intrinsicRight - this.intrinsicLeft;
+    } else if (
+      this.intrinsicWidth !== undefined &&
+      this.intrinsicLeft !== undefined &&
+      this.intrinsicRight !== this.intrinsicLeft + this.intrinsicWidth
+    ) {
+      this.intrinsicRight = this.intrinsicLeft + this.intrinsicWidth;
     }
   }
 
-  get top() {
+  get intrinsicTop() {
     return this._top;
   }
 
-  set top(top: number | undefined) {
+  set intrinsicTop(top: number | undefined) {
     if (isNaN(top)) {
       throw new Error('top must be a number');
     }
@@ -71,18 +299,26 @@ export class NewBBoxClass {
     if (this._setTop) {
       this._setTop(top);
     }
-    if (this.bottom !== undefined && this.top !== undefined && this.height !== this.bottom - this.top) {
-      this.height = this.bottom - this.top;
-    } else if (this.height !== undefined && this.top !== undefined && this.bottom !== this.top + this.height) {
-      this.bottom = this.top + this.height;
+    if (
+      this.intrinsicBottom !== undefined &&
+      this.intrinsicTop !== undefined &&
+      this.intrinsicHeight !== this.intrinsicBottom - this.intrinsicTop
+    ) {
+      this.intrinsicHeight = this.intrinsicBottom - this.intrinsicTop;
+    } else if (
+      this.intrinsicHeight !== undefined &&
+      this.intrinsicTop !== undefined &&
+      this.intrinsicBottom !== this.intrinsicTop + this.intrinsicHeight
+    ) {
+      this.intrinsicBottom = this.intrinsicTop + this.intrinsicHeight;
     }
   }
 
-  get right() {
+  get intrinsicRight() {
     return this._right;
   }
 
-  set right(right: number | undefined) {
+  set intrinsicRight(right: number | undefined) {
     if (isNaN(right)) {
       throw new Error('right must be a number');
     }
@@ -90,18 +326,26 @@ export class NewBBoxClass {
     if (this._setRight) {
       this._setRight(right);
     }
-    if (this.left !== undefined && this.right !== undefined && this.width !== this.right - this.left) {
-      this.width = this.right - this.left;
-    } else if (this.width !== undefined && this.right !== undefined && this.left !== this.right - this.width) {
-      this.left = this.right - this.width;
+    if (
+      this.intrinsicLeft !== undefined &&
+      this.intrinsicRight !== undefined &&
+      this.intrinsicWidth !== this.intrinsicRight - this.intrinsicLeft
+    ) {
+      this.intrinsicWidth = this.intrinsicRight - this.intrinsicLeft;
+    } else if (
+      this.intrinsicWidth !== undefined &&
+      this.intrinsicRight !== undefined &&
+      this.intrinsicLeft !== this.intrinsicRight - this.intrinsicWidth
+    ) {
+      this.intrinsicLeft = this.intrinsicRight - this.intrinsicWidth;
     }
   }
 
-  get bottom() {
+  get intrinsicBottom() {
     return this._bottom;
   }
 
-  set bottom(bottom: number | undefined) {
+  set intrinsicBottom(bottom: number | undefined) {
     if (isNaN(bottom)) {
       throw new Error('bottom must be a number');
     }
@@ -109,18 +353,26 @@ export class NewBBoxClass {
     if (this._setBottom) {
       this._setBottom(bottom);
     }
-    if (this.top !== undefined && this.bottom !== undefined && this.height !== this.bottom - this.top) {
-      this.height = this.bottom - this.top;
-    } else if (this.height !== undefined && this.bottom !== undefined && this.top !== this.bottom - this.height) {
-      this.top = this.bottom - this.height;
+    if (
+      this.intrinsicTop !== undefined &&
+      this.intrinsicBottom !== undefined &&
+      this.intrinsicHeight !== this.intrinsicBottom - this.intrinsicTop
+    ) {
+      this.intrinsicHeight = this.intrinsicBottom - this.intrinsicTop;
+    } else if (
+      this.intrinsicHeight !== undefined &&
+      this.intrinsicBottom !== undefined &&
+      this.intrinsicTop !== this.intrinsicBottom - this.intrinsicHeight
+    ) {
+      this.intrinsicTop = this.intrinsicBottom - this.intrinsicHeight;
     }
   }
 
-  get width() {
+  get intrinsicWidth() {
     return this._width;
   }
 
-  set width(width: number | undefined) {
+  set intrinsicWidth(width: number | undefined) {
     if (isNaN(width)) {
       throw new Error('width must be a number');
     }
@@ -128,18 +380,26 @@ export class NewBBoxClass {
     if (this._setWidth) {
       this._setWidth(width);
     }
-    if (this.left !== undefined && this.width !== undefined && this.right !== this.left + this.width) {
-      this.right = this.left + this.width;
-    } else if (this.right !== undefined && this.width !== undefined && this.left !== this.right - this.width) {
-      this.left = this.right - this.width;
+    if (
+      this.intrinsicLeft !== undefined &&
+      this.intrinsicWidth !== undefined &&
+      this.intrinsicRight !== this.intrinsicLeft + this.intrinsicWidth
+    ) {
+      this.intrinsicRight = this.intrinsicLeft + this.intrinsicWidth;
+    } else if (
+      this.intrinsicRight !== undefined &&
+      this.intrinsicWidth !== undefined &&
+      this.intrinsicLeft !== this.intrinsicRight - this.intrinsicWidth
+    ) {
+      this.intrinsicLeft = this.intrinsicRight - this.intrinsicWidth;
     }
   }
 
-  get height() {
+  get intrinsicHeight() {
     return this._height;
   }
 
-  set height(height: number | undefined) {
+  set intrinsicHeight(height: number | undefined) {
     if (isNaN(height)) {
       throw new Error('height must be a number');
     }
@@ -147,10 +407,18 @@ export class NewBBoxClass {
     if (this._setHeight) {
       this._setHeight(height);
     }
-    if (this.top !== undefined && this.height !== undefined && this.bottom !== this.top + this.height) {
-      this.bottom = this.top + this.height;
-    } else if (this.bottom !== undefined && this.height !== undefined && this.top !== this.bottom - this.height) {
-      this.top = this.bottom - this.height;
+    if (
+      this.intrinsicTop !== undefined &&
+      this.intrinsicHeight !== undefined &&
+      this.intrinsicBottom !== this.intrinsicTop + this.intrinsicHeight
+    ) {
+      this.intrinsicBottom = this.intrinsicTop + this.intrinsicHeight;
+    } else if (
+      this.intrinsicBottom !== undefined &&
+      this.intrinsicHeight !== undefined &&
+      this.intrinsicTop !== this.intrinsicBottom - this.intrinsicHeight
+    ) {
+      this.intrinsicTop = this.intrinsicBottom - this.intrinsicHeight;
     }
   }
 }

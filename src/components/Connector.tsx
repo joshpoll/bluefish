@@ -6,7 +6,6 @@ import {
   useBluefishContext,
   Constraints,
   MeasureResult,
-  withBluefishFnWithContext,
   Measure,
 } from '../bluefish';
 import { NewBBox, NewBBoxClass } from '../NewBBox';
@@ -43,7 +42,7 @@ export const Connector = withBluefishFn(
       } else if (fromXDir === 'right') {
         fromX = from.right;
       } else {
-        fromX = from.left + from.width! / 2;
+        fromX = from.left! + from.width! / 2;
       }
 
       if (fromYDir === 'top') {
@@ -51,7 +50,7 @@ export const Connector = withBluefishFn(
       } else if (fromYDir === 'bottom') {
         fromY = from.bottom;
       } else {
-        fromY = from.top + from.height! / 2;
+        fromY = from.top! + from.height! / 2;
       }
 
       if (toXDir === 'left') {
@@ -59,7 +58,7 @@ export const Connector = withBluefishFn(
       } else if (toXDir === 'right') {
         toX = to.right;
       } else {
-        toX = to.left + to.width! / 2;
+        toX = to.left! + to.width! / 2;
       }
 
       if (toYDir === 'top') {
@@ -67,14 +66,14 @@ export const Connector = withBluefishFn(
       } else if (toYDir === 'bottom') {
         toY = to.bottom;
       } else {
-        toY = to.top + to.height! / 2;
+        toY = to.top! + to.height! / 2;
       }
 
       return {
-        left: Math.min(fromX, toX),
-        top: Math.min(fromY, toY),
-        right: Math.max(fromX, toX),
-        bottom: Math.max(fromY, toY),
+        left: Math.min(fromX!, toX!),
+        top: Math.min(fromY!, toY!),
+        right: Math.max(fromX!, toX!),
+        bottom: Math.max(fromY!, toY!),
       };
     };
   },

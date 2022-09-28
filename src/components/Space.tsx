@@ -33,8 +33,11 @@ export type SpaceProps = SpaceVerticalProps | SpaceHorizontalProps;
 const spaceMeasurePolicy =
   (options: SpaceProps): Measure =>
   (measurables, constraints: Constraints) => {
-    console.log('entering spacing node');
-    const placeables = measurables.map((measurable) => measurable.measure(constraints)) as NewBBoxClass[];
+    console.log(
+      'entering spacing node',
+      measurables.map((m) => m.name),
+    );
+    const placeables = measurables.map((measurable) => measurable.measure(constraints));
 
     if ('vertically' in options) {
       let height: number;
@@ -50,6 +53,7 @@ const spaceMeasurePolicy =
         throw new Error('invalid options');
       }
 
+      // let y = placeables[0].top ?? 0;
       let y = 0;
       placeables.forEach((placeable) => {
         placeable.top = y;

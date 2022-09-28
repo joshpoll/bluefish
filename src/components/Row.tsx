@@ -14,7 +14,7 @@ export type RowProps = ({ spacing: number } | { totalWidth: number }) & {
 const rowMeasurePolicy =
   (options: RowProps): Measure =>
   (measurables, constraints: Constraints) => {
-    const placeables = measurables.map((measurable) => measurable.measure(constraints)) as NewBBoxClass[];
+    const placeables = measurables.map((measurable) => measurable.measure(constraints));
 
     // alignment
     const height = _.max(_.map(placeables, 'height')) ?? 0;

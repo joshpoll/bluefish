@@ -40,23 +40,16 @@ export const Char = forwardRef(({ value, marks, opId }: CharProps, ref: any) => 
       <Rect ref={tile} height={65} width={50} rx={5} fill={'#eee'} />
       <Rect ref={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
       <Rect name={'rightHandle'} ref={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
-      {/* <Text
+      <Text
         ref={letter}
         contents={value === ' ' ? '␣' : value.toString()}
         fontSize={'30px'}
         fontWeight={marks.includes('bold') ? 'bold' : 'normal'}
         fontStyle={marks.includes('italic') ? 'italic' : 'normal'}
-      /> */}
+      />
       <Text ref={opIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
       <Align center>
-        {/* <Ref to={letter} /> */}
-        <Text
-          ref={letter}
-          contents={value === ' ' ? '␣' : value.toString()}
-          fontSize={'30px'}
-          fontWeight={marks.includes('bold') ? 'bold' : 'normal'}
-          fontStyle={marks.includes('italic') ? 'italic' : 'normal'}
-        />
+        <Ref to={letter} />
         <Ref to={tile} />
       </Align>
       <Align topCenter>
@@ -93,10 +86,7 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(
     return (
       <Group ref={ref} name={opId}>
         <Rect name={opId + '-rect'} ref={rectRef} fill={backgroundColor} stroke={borderColor} rx={5} height={20} />
-        {/* TODO: text measurement is broken, since the text isn't actually centered */}
         <Text name={opId + '-text'} ref={textRef} contents={`${action} ${markType}`} />
-        {/* ...however, using a rect instead results in a properly centered component */}
-        {/* <Rect name={opId + '-text'} ref={textRef} width={50} height={15} fill={'magenta'} /> */}
         <Align name={'align me!'} left>
           <Ref to={rectRef} />
           <Ref to={start.opId} />
@@ -110,49 +100,6 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(
           <Ref to={rectRef} />
         </Align>
       </Group>
-
-      // proposed API:
-      // <Group rels={({ rect, text }) => (<>
-      //   <Align left>
-      //       <Ref to={startRef} />
-      //       {rect}
-      //     </Align>
-      //     <Align right>
-      //       <Ref to={endRef} />
-      //       {rect}
-      //     </Align>
-      //     <Align center>
-      //       {rect}
-      //       {text}
-      //     </Align>
-      //   </>)}>
-      //   {/* TODO: remove width */}
-      //   <Rect name={'rect'} fill={backgroundColor} stroke={borderColor} rx={5} width={50} height={20} />
-      //   <Text name={'text'} contents={`${action} ${markType}`} />
-      // </Group>
-
-      // <Group ref={ref} name={opId}>
-      //   {/* TODO: remove width */}
-      //   <Rect ref={rectRef} fill={backgroundColor} stroke={borderColor} rx={5} width={50} height={20} />
-      //   <Text ref={textRef} contents={`${action} ${markType}`} />
-      //   {/* TODO: starting to think the naming is backwards. currently second arg to align mutates, but first doesn't.
-      //       maybe I should flip them?
-      //     Rationale: Read it as "align first to second," which implies that the first is mutated. */}
-      //   <Align left>
-      //     <Ref to={rectRef} />
-      //     <Ref to={startRef} />
-      //   </Align>
-      //   <Align right>
-      //     <Ref to={rectRef} />
-      //     <Ref to={endRef} />
-      //   </Align>
-      //   <Align center>
-      //     <Ref to={textRef} />
-      //     <Ref to={rectRef} />
-      //   </Align>
-      //   <Arrow from={startRef} to={rectRef} />
-      //   <Arrow from={rectRef} to={endRef} />
-      // </Group>
     );
   },
 );
@@ -166,41 +113,38 @@ export const Peritext: React.FC<PeritextProps> = ({ chars, markOps }) => {
   const charsRef = useRef(null);
   const markOpsRef = useRef(null);
 
-  const context = useBluefishContext();
-
   return (
     <SVG width={1000} height={500}>
-      {/* TODO: if I don't have the group component here, then the refs don't resolve properly... */}
+      {/* chars */}
+      <Row ref={charsRef} spacing={15} alignment={'middle'}>
+        {chars.map((char) => (
+          <Char {...char} />
+        ))}
+      </Row>
+      {/* markOps */}
+      <Space ref={markOpsRef} vertically by={8}>
+        {markOps.map((markOp) => (
+          <MarkOp {...markOp} />
+        ))}
+      </Space>
+      {/* space markOps from chars */}
+      <Space vertically by={8}>
+        <Ref to={charsRef} />
+        <Ref to={markOpsRef} />
+      </Space>
       <Group>
-        {/* chars */}
-        <Row ref={charsRef} spacing={10} alignment={'middle'}>
-          {chars.map((char) => (
-            <Char {...char} />
-          ))}
-        </Row>
-        {/* markOps */}
-        <Space ref={markOpsRef} vertically by={8}>
-          {markOps.map((markOp) => (
-            <MarkOp {...markOp} />
-          ))}
-        </Space>
-        {/* space markOps from chars */}
-        <Space vertically by={8}>
-          <Ref to={charsRef} />
-          <Ref to={markOpsRef} />
-        </Space>
-        {/* <Group>
-          {markOps.map((markOp) => (
-            // <Connector
-            //   $from={{ the: 'centerLeft', of: markOp.start.opId }}
-            //   $to={{ the: 'centerLeft', of: markOp.opId }}
-            // />
+        {markOps.map((markOp) => (
+          <Group>
             <Connector $from={'centerLeft'} $to={'centerLeft'}>
               <Ref to={markOp.start.opId} />
               <Ref to={markOp.opId} />
             </Connector>
-          ))}
-        </Group> */}
+            <Connector $from={'centerRight'} $to={'centerRight'}>
+              <Ref to={markOp.end.opId} />
+              <Ref to={markOp.opId} />
+            </Connector>
+          </Group>
+        ))}
       </Group>
     </SVG>
   );

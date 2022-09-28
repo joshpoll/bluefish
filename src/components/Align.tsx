@@ -75,7 +75,7 @@ const alignMeasurePolicy =
   (options: AlignProps): Measure =>
   (measurables, constraints: Constraints) => {
     console.log('entering alignment node');
-    const [mov, fix] = measurables.map((measurable) => measurable.measure(constraints)) as NewBBoxClass[];
+    const [mov, fix] = measurables.map((measurable) => measurable.measure(constraints));
 
     if ('left' in options) {
       console.log('aligning left', mov, fix);
