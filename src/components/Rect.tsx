@@ -8,8 +8,8 @@ export const Rect = withBluefishFn(
     return () => {
       console.log('measuring rect', x, y, width, height);
       return {
-        x: x !== undefined ? +x : undefined,
-        y: y !== undefined ? +y : undefined,
+        left: x !== undefined ? +x : undefined,
+        top: y !== undefined ? +y : undefined,
         width: width !== undefined ? +width : undefined,
         height: height !== undefined ? +height : undefined,
       };
