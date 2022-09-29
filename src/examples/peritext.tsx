@@ -40,23 +40,23 @@ export const Char = forwardRef(({ value, marks, opId }: CharProps, ref: any) => 
       <Rect ref={tile} height={65} width={50} rx={5} fill={'#eee'} />
       <Rect ref={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
       <Rect name={'rightHandle'} ref={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
-      {/* <Text
+      <Text
         ref={letter}
         contents={value === ' ' ? '␣' : value.toString()}
         fontSize={'30px'}
         fontWeight={marks.includes('bold') ? 'bold' : 'normal'}
         fontStyle={marks.includes('italic') ? 'italic' : 'normal'}
-      /> */}
+      />
       <Text ref={opIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
       <Align center>
-        {/* <Ref to={letter} /> */}
-        <Text
+        <Ref to={letter} />
+        {/* <Text
           ref={letter}
           contents={value === ' ' ? '␣' : value.toString()}
           fontSize={'30px'}
           fontWeight={marks.includes('bold') ? 'bold' : 'normal'}
           fontStyle={marks.includes('italic') ? 'italic' : 'normal'}
-        />
+        /> */}
         <Ref to={tile} />
       </Align>
       <Align topCenter>
@@ -162,7 +162,7 @@ export type PeritextProps = {
   markOps: MarkOpProps[];
 };
 
-export const Peritext: React.FC<PeritextProps> = ({ chars, markOps }) => {
+export const Peritext: React.FC<PeritextProps & { spacing?: number }> = ({ chars, markOps, spacing }) => {
   const charsRef = useRef(null);
   const markOpsRef = useRef(null);
 
@@ -173,7 +173,7 @@ export const Peritext: React.FC<PeritextProps> = ({ chars, markOps }) => {
       {/* TODO: if I don't have the group component here, then the refs don't resolve properly... */}
       <Group>
         {/* chars */}
-        <Row name={'chars'} ref={charsRef} spacing={10} alignment={'middle'}>
+        <Row name={'chars'} ref={charsRef} spacing={spacing ?? 10} alignment={'middle'}>
           {chars.map((char) => (
             <Char {...char} />
           ))}
