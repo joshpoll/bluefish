@@ -35,7 +35,7 @@ const accumulateTransforms = (transforms: CoordinateTransform[]): CoordinateTran
   console.log('[ref] accumulating transforms', transforms);
   return transforms.reduce(
     (acc: CoordinateTransform, t: CoordinateTransform) => {
-      return {
+      const newTransform = {
         translate: {
           x: (acc.translate?.x ?? 0) + (t.translate?.x ?? 0),
           y: (acc.translate?.y ?? 0) + (t.translate?.y ?? 0),
@@ -45,6 +45,22 @@ const accumulateTransforms = (transforms: CoordinateTransform[]): CoordinateTran
           y: (acc.scale?.y ?? 1) * (t.scale?.y ?? 1),
         },
       };
+      // console.log(
+      //   '[ref] accumulated transform',
+      //   'acc',
+      //   acc,
+      //   't',
+      //   JSON.stringify(t),
+      //   'translate',
+      //   {
+      //     acc: acc.translate,
+      //     t: t.translate,
+      //     x: (acc.translate?.x ?? 0) + (t.translate?.x ?? 0),
+      //     y: (acc.translate?.y ?? 0) + (t.translate?.y ?? 0),
+      //   },
+      //   newTransform,
+      // );
+      return newTransform;
     },
     {
       translate: { x: 0, y: 0 },
@@ -58,11 +74,33 @@ const accumulateTransforms = (transforms: CoordinateTransform[]): CoordinateTran
 export class RefBBox extends NewBBoxClass {
   private _ref: NewBBoxClass;
   private _transform: CoordinateTransform;
+  private _name: string | undefined;
 
-  constructor(ref: NewBBoxClass, transform: CoordinateTransform) {
+  constructor(ref: NewBBoxClass, transform: CoordinateTransform, name: string | undefined) {
     super({ ...ref });
     this._transform = transform;
     this._ref = ref;
+    this._name = name;
+    console.log(
+      '[ref] asdfs created ref bbox',
+      this._name,
+      JSON.stringify({
+        left: this._ref.left,
+        top: this._ref.top,
+        right: this._ref.right,
+        bottom: this._ref.bottom,
+        width: this._ref.width,
+        height: this._ref.height,
+      }),
+      JSON.stringify({
+        left: this.left,
+        top: this.top,
+        right: this.right,
+        bottom: this.bottom,
+        width: this.width,
+        height: this.height,
+      }),
+    );
   }
 
   get left() {
@@ -185,8 +223,17 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
       measure(constraints: Constraints): NewBBoxClass {
         try {
           const measurable = resolveRef(props.to, context.bfMap);
-          const thisTransform = accumulateTransforms(transformStackRef.current ?? []);
-          const otherTransform = accumulateTransforms(measurable.transformStack ?? []);
+          // TODO: we might not need the slice here
+          // console.log(
+          //   '[ref] transform stacks for',
+          //   measurable.name,
+          //   'this',
+          //   transformStackRef.current,
+          //   'ref',
+          //   measurable.transformStack,
+          // );
+          const thisTransform = accumulateTransforms(transformStackRef.current?.slice(0, -1) ?? []);
+          const otherTransform = accumulateTransforms(measurable.transformStack?.slice(0, -1) ?? []);
 
           // transform other into this coordinate system
           const otherTransformInThisCoordinateSystem = {
@@ -201,7 +248,31 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
             },
           };
 
-          return new RefBBox(measurable.measure(constraints), otherTransformInThisCoordinateSystem);
+          // console.log(
+          //   '[ref] other transform in this coordinate system',
+          //   measurable.name,
+          //   {
+          //     left: measurable.measure(constraints).left,
+          //     top: measurable.measure(constraints).top,
+          //     right: measurable.measure(constraints).right,
+          //     bottom: measurable.measure(constraints).bottom,
+          //     width: measurable.measure(constraints).width,
+          //     height: measurable.measure(constraints).height,
+          //   },
+          //   {
+          //     otherStack: measurable.transformStack,
+          //     otherStackWithoutLast: measurable.transformStack?.slice(0, -1),
+          //     otherTransform,
+          //   },
+          //   {
+          //     thisStack: transformStackRef.current,
+          //     thisStackWithoutLast: transformStackRef.current?.slice(0, -1),
+          //     thisTransform,
+          //   },
+          //   otherTransformInThisCoordinateSystem,
+          // );
+
+          return new RefBBox(measurable.measure(constraints), otherTransformInThisCoordinateSystem, measurable.name);
         } catch (e) {
           console.error('Error while measuring', props.to, e);
           throw e;

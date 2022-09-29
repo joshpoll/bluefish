@@ -97,15 +97,15 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(
         <Text name={opId + '-text'} ref={textRef} contents={`${action} ${markType}`} />
         {/* ...however, using a rect instead results in a properly centered component */}
         {/* <Rect name={opId + '-text'} ref={textRef} width={50} height={15} fill={'magenta'} /> */}
-        <Align name={'align me!'} left>
+        <Align name={opId + '-align-1'} left>
           <Ref to={rectRef} />
           <Ref to={start.opId} />
         </Align>
-        <Align right>
+        <Align name={opId + '-align-2'} right>
           <Ref to={rectRef} />
           <Ref to={end.opId} />
         </Align>
-        <Align center>
+        <Align name={opId + '-align-3'} center>
           <Ref to={textRef} />
           <Ref to={rectRef} />
         </Align>

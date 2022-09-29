@@ -136,6 +136,7 @@ export const useBluefishLayout = (
             }
           });
           const { width, height, left, top, right, bottom } = measure(childrenRef.current, constraints);
+          console.log('measured', name, JSON.stringify({ width, height, left, top, right, bottom }));
           setWidth(width);
           setHeight(height);
           setLeft(left);

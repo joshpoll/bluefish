@@ -53,6 +53,17 @@ export const Connector = withBluefishFn(
         fromY = from.top! + from.height! / 2;
       }
 
+      console.log(
+        '[connector] to BBox',
+        JSON.stringify({
+          left: to.left,
+          right: to.right,
+          top: to.top,
+          bottom: to.bottom,
+          width: to.width,
+          height: to.height,
+        }),
+      );
       if (toXDir === 'left') {
         toX = to.left;
       } else if (toXDir === 'right') {
