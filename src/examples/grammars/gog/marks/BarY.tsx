@@ -1,10 +1,11 @@
 import _ from 'lodash';
 import { Rect } from '../../../../components/Rect';
+import { Mark } from '../Plot';
 
 export const barY = <T,>(
   data: T[],
   { x, y, color }: { x: (d: T) => number; y: (d: T) => number; color: (d: T) => string },
-) => ({
+): Mark => ({
   data,
   encodings: { x, y, color },
   scale: (
