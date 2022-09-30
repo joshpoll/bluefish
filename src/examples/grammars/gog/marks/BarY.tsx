@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React, { forwardRef } from 'react';
 import { Group } from '../../../../components/Group';
 import { Rect } from '../../../../components/Rect';
+import { Row } from '../../../../components/Row';
 import { Mark, PlotContext, plotMarkReified } from '../Plot';
 
 export const barY = <T,>(data: T[], { x, y, color }: { x: string; y: string; color: string }): Mark => ({
@@ -17,19 +18,28 @@ export const barY = <T,>(data: T[], { x, y, color }: { x: string; y: string; col
     const { xScale, yScale, colorScale } = scales;
 
     const indices = _.range(X.length);
-    return indices.map((i) => ({
-      x: xScale(X[i]),
-      // y: dimensions.height - yScale(Y[i]),
-      y: yScale(Y[i]),
-      width: xScale.bandwidth(),
-      // height: yScale(Y[i]),
-      height: yScale(0) - yScale(Y[i]),
-      fill: colorScale(COLOR[i]),
-    }));
+    // TODO: derive lengths from spacing and totalWidth. need to modify Row component to do this.
+    //  could also grab available width from constraints
+    return {
+      spacing: xScale.step() - xScale.bandwidth(),
+      // totalWidth: xScale.range()[1] - xScale.range()[0],
+      points: indices.map((i) => ({
+        width: xScale.bandwidth(),
+        // height: yScale(Y[i]),
+        height: yScale(0) - yScale(Y[i]),
+        fill: colorScale(COLOR[i]),
+      })),
+    };
   },
-  render: ({ x, y, width, height, fill }: { x: number; y: number; width: any; height: number; fill: string }) => (
-    <Rect x={x} y={y} width={width} height={height} fill={fill} />
-  ),
+  render: (data: { spacing: number; points: any[] }) => {
+    return (
+      <Row spacing={data.spacing} alignment={'bottom'}>
+        {data.points.map(({ width, height, fill }: { width: any; height: number; fill: string }) => (
+          <Rect width={width} height={height} fill={fill} />
+        ))}
+      </Row>
+    );
+  },
 });
 
 export const BarY: React.FC<{ data?: any[]; encodings: { x: string; y: string; color: string } }> = forwardRef(

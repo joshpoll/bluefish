@@ -58,56 +58,6 @@ const ordinalScale = scaleBand(ordinalDomain, ordinalRange);
 export const GoGTest: React.FC<{}> = ({}) => {
   return (
     <div>
-      <SVG width={width} height={500}>
-        <Group>
-          <Col spacing={20} alignment={'center'}>
-            <Group>
-              {alphabet.map((d, i) => {
-                console.log(
-                  '[data]',
-                  abstractSpace.X[i],
-                  abstractSpace.Y[i],
-                  ordinalScale(abstractSpace.X[i]),
-                  linearScale(+abstractSpace.Y[i]),
-                );
-                return (
-                  <Rect
-                    x={ordinalScale(abstractSpace.X[i])}
-                    y={linearScale(+abstractSpace.Y[i])}
-                    width={ordinalScale.bandwidth()}
-                    height={linearScale(0) - linearScale(+abstractSpace.Y[i])}
-                    fill={'steelblue'}
-                  />
-                );
-              })}
-            </Group>
-            <Group>
-              {plotMark(
-                barY(alphabet, { x: 'letter', y: 'frequency', color: 'frequency' }),
-                {
-                  xScale: ({ width }) =>
-                    scaleBand(
-                      alphabet.map((d) => d.letter),
-                      [0, width],
-                    ).padding(0.1),
-                  yScale: ({ height }) => scaleLinear([0, _.max(alphabet.map((d) => +d.frequency))!], [height, 0]),
-                  // colorScale: () => () => 'black',
-                  colorScale: () =>
-                    scaleSequential(interpolateBlues).domain([
-                      _.min(alphabet.map((d) => +d.frequency))!,
-                      _.max(alphabet.map((d) => +d.frequency))!,
-                    ]),
-                },
-                { width: width, height: 200 },
-              )}
-            </Group>
-            {/* <Group> */}
-            {/* <Plot data={alphabet} mark={barY} encoding={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
-            {/* </Group> */}
-          </Col>
-        </Group>
-      </SVG>
-      <br />
       {/* TODO: marks should be children like in victory charts. grab scales from context */}
       {/* TODO: margin shouldn't be baked in, but should use a separate margin/padding component */}
       {/* TODO: switch ordinal scales to use Bluefish components? */}

@@ -1,5 +1,6 @@
 import React, { PropsWithChildren } from 'react';
 import { Group } from '../../../components/Group';
+import { Padding } from '../../../components/Padding';
 import { SVG } from '../../../components/SVG';
 
 export type Dimensions = {
@@ -15,7 +16,7 @@ export const extractChannels = (data: any, encodings: any) => {
   return channels;
 };
 
-export const reifyScales = (scales: { [key in string]: Scale }, dimensions: any) => {
+export const reifyScales = (scales: { [key in string]: Scale }, dimensions: Dimensions) => {
   let reifiedScales: { [key in string]: any } = {};
   for (const [name, scale] of Object.entries(scales)) {
     reifiedScales[name] = scale(dimensions);
@@ -25,11 +26,8 @@ export const reifyScales = (scales: { [key in string]: Scale }, dimensions: any)
 
 export const plotMark = (mark: Mark, scales: { [key in string]: Scale }, dimensions: Dimensions) => {
   const { data, encodings, scale, render } = mark;
-  // 1. Use the encoding functions to extract channels from the data
   const channels = extractChannels(data, encodings);
-  // 2. Reify the scales by feeding them the dimensions of the container.
   const reifiedScales = reifyScales(scales, dimensions);
-  // 3. Call the mark's scale function get the screen space coordinates.
   const scaledData = scale(channels, reifiedScales, dimensions);
   // 4. Call the mark's render function on the scaled data.
   return scaledData.map(render);
@@ -66,11 +64,13 @@ export const renameScales = (scales: { [key in string]: Scale }) => {
 
 export const plotMarkReified = (mark: Mark, scales: { [key in string]: Scale }, dimensions: Dimensions) => {
   const { data, encodings, scale, render } = mark;
+  // 1. Use the encoding functions to extract channels from the data
   const channels = extractChannels(data, encodings);
   console.log('channels', channels);
+  // 2. Call the mark's scale function get the screen space coordinates.
   const scaledData = scale(channels, scales, dimensions);
   console.log('scaledData', scaledData);
-  return scaledData.map(render);
+  return render(scaledData);
 };
 
 export type PlotContextValue = {
@@ -98,7 +98,10 @@ export const Plot: React.FC<PropsWithChildren<PlotProps>> = (props) => {
     // TODO: contexts don't work inside Bluefish components...
     <PlotContext.Provider value={{ dimensions, scales: renamedScales, data }}>
       <SVG width={width} height={height}>
-        <Group /* x={margin.left} y={margin.top} */>{children}</Group>
+        {/* Can't do this yet, because the scale logic has to take into account padding as well... */}
+        {/* <Padding left={margin.left} top={margin.top} right={margin.right} bottom={margin.bottom}> */}
+        <Group>{children}</Group>
+        {/* </Padding> */}
       </SVG>
     </PlotContext.Provider>
   );
