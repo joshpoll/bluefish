@@ -4,9 +4,10 @@ import { Col } from '../../../../components/Col';
 import { Group } from '../../../../components/Group';
 import { Rect } from '../../../../components/Rect';
 import { SVG } from '../../../../components/SVG';
-import { barY } from '../marks/BarY';
+import { BarY, barY } from '../marks/BarY';
 import { Plot, plotMark } from '../Plot';
 import { interpolateBlues } from 'd3-scale-chromatic';
+import { Padding } from '../../../../components/Padding';
 
 // see https://observablehq.com/@joshpoll/vvt-gog
 
@@ -82,14 +83,14 @@ export const GoGTest: React.FC<{}> = ({}) => {
             </Group>
             <Group>
               {plotMark(
-                barY(alphabet, { x: 'letter', y: 'frequency', color: 'frequency' } as any),
+                barY(alphabet, { x: 'letter', y: 'frequency', color: 'frequency' }),
                 {
-                  xScale: ({ width }: any) =>
+                  xScale: ({ width }) =>
                     scaleBand(
                       alphabet.map((d) => d.letter),
                       [0, width],
                     ).padding(0.1),
-                  yScale: ({ height }: any) => scaleLinear([0, _.max(alphabet.map((d) => +d.frequency))!], [height, 0]),
+                  yScale: ({ height }) => scaleLinear([0, _.max(alphabet.map((d) => +d.frequency))!], [height, 0]),
                   // colorScale: () => () => 'black',
                   colorScale: () =>
                     scaleSequential(interpolateBlues).domain([
@@ -110,25 +111,39 @@ export const GoGTest: React.FC<{}> = ({}) => {
       {/* TODO: marks should be children like in victory charts. grab scales from context */}
       {/* TODO: margin shouldn't be baked in, but should use a separate margin/padding component */}
       {/* TODO: switch ordinal scales to use Bluefish components? */}
+      {/* TODO: stronger notion of local, abstract(?) coordinate system. similar to ggplot */}
       <Plot
+        data={alphabet}
         width={width}
         height={200}
         margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
-        x={({ width }: any) =>
+        x={({ width }) =>
           scaleBand(
             alphabet.map((d) => d.letter),
             [0, width],
           ).padding(0.1)
         }
-        y={({ height }: any) => scaleLinear([0, _.max(alphabet.map((d) => +d.frequency))!], [height, 0])}
+        y={({ height }) => scaleLinear([0, _.max(alphabet.map((d) => +d.frequency))!], [height, 0])}
         color={() =>
           scaleSequential(interpolateBlues).domain([
             _.min(alphabet.map((d) => +d.frequency))!,
             _.max(alphabet.map((d) => +d.frequency))!,
           ])
         }
-        marks={[barY(alphabet, { x: 'letter', y: 'frequency', color: 'frequency' } as any)]}
-      />
+      >
+        <BarY encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} />
+      </Plot>
+      <br />
+      <SVG width={1000} height={1000}>
+        <Col spacing={0} alignment={'left'}>
+          <Rect width={100} height={100} fill={'steelblue'} />
+          <Padding all={20}>
+            <Rect width={100} height={100} fill={'magenta'} />
+          </Padding>
+          <Rect width={100} height={100} fill={'steelblue'} />
+          <Rect width={100} height={100} fill={'magenta'} />
+        </Col>
+      </SVG>
     </div>
   );
 };

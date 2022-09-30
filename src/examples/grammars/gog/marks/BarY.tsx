@@ -1,11 +1,10 @@
 import _ from 'lodash';
+import React, { forwardRef } from 'react';
+import { Group } from '../../../../components/Group';
 import { Rect } from '../../../../components/Rect';
-import { Mark } from '../Plot';
+import { Mark, PlotContext, plotMarkReified } from '../Plot';
 
-export const barY = <T,>(
-  data: T[],
-  { x, y, color }: { x: (d: T) => number; y: (d: T) => number; color: (d: T) => string },
-): Mark => ({
+export const barY = <T,>(data: T[], { x, y, color }: { x: string; y: string; color: string }): Mark => ({
   data,
   encodings: { x, y, color },
   scale: (
@@ -32,3 +31,15 @@ export const barY = <T,>(
     <Rect x={x} y={y} width={width} height={height} fill={fill} />
   ),
 });
+
+export const BarY: React.FC<{ data?: any[]; encodings: { x: string; y: string; color: string } }> = forwardRef(
+  (props, ref) => {
+    const context = React.useContext(PlotContext);
+
+    const { encodings } = props;
+    const data = props.data ?? context.data;
+    const { x, y, color } = encodings;
+    const mark = barY(data, { x, y, color });
+    return <Group ref={ref}>{plotMarkReified(mark, context.scales, context.dimensions)}</Group>;
+  },
+);
