@@ -11,6 +11,7 @@ import { Padding } from '../../../../components/Padding';
 import { Path } from '../../../../components/Path';
 import { Line } from '../marks/Line';
 import { driving } from './driving';
+import { Dot } from '../marks/Dot';
 
 // see https://observablehq.com/@joshpoll/vvt-gog
 
@@ -112,7 +113,21 @@ export const GoGTest: React.FC<{}> = ({}) => {
       >
         {/* TODO: remove color field */}
         <Line encodings={{ x: 'miles', y: 'gas', color: 'side' }} />
+        <Dot encodings={{ x: 'miles', y: 'gas', color: 'side' }} />
       </Plot>
+      {/* <SVG width={width} height={300}>
+        <Padding top={10} bottom={30} left={40} right={20}>
+          <Plot
+            data={driving}
+            x={scaleLinear([0, _.max(driving.map((d) => +d.miles))!])}
+            y={scaleLinear([0, _.max(driving.map((d) => +d.gas))!])}
+            color={'black'}
+          >
+            <Line encodings={{ x: 'miles', y: 'gas', color: 'side' }} />
+            <Dot encodings={{ x: 'miles', y: 'gas', color: 'side' }} />
+          </Plot>
+        </Padding>
+      </SVG> */}
     </div>
   );
 };

@@ -98,10 +98,10 @@ export const Plot: React.FC<PropsWithChildren<PlotProps>> = (props) => {
     // TODO: contexts don't work inside Bluefish components...
     <PlotContext.Provider value={{ dimensions, scales: renamedScales, data }}>
       <SVG width={width} height={height}>
-        {/* Can't do this yet, because the scale logic has to take into account padding as well... */}
-        {/* <Padding left={margin.left} top={margin.top} right={margin.right} bottom={margin.bottom}> */}
-        <Group>{children}</Group>
-        {/* </Padding> */}
+        {/* TODO: the scale logic has to take into account padding as well... */}
+        <Padding left={margin.left} top={margin.top} right={margin.right} bottom={margin.bottom}>
+          <Group>{children}</Group>
+        </Padding>
       </SVG>
     </PlotContext.Provider>
   );
