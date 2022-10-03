@@ -11,30 +11,27 @@ export const barY = <T,>(data: T[], { x, y, color }: { x: string; y: string; col
   scale: (
     channels: { X: number[]; Y: number[]; COLOR: string[] },
     scales: { xScale: any; yScale: (y: number) => number; colorScale: (color: string) => string },
-    _dimensions: any,
+    dimensions: any,
   ) => {
     const { X, Y, COLOR } = channels;
 
     const { xScale, yScale, colorScale } = scales;
 
     const indices = _.range(X.length);
-    // TODO: derive lengths from spacing and totalWidth. need to modify Row component to do this.
-    //  could also grab available width from constraints
     return {
       spacing: xScale.step() - xScale.bandwidth(),
-      // totalWidth: xScale.range()[1] - xScale.range()[0],
+      totalWidth: dimensions.width,
       points: indices.map((i) => ({
-        width: xScale.bandwidth(),
         height: yScale(Y[i]),
         fill: colorScale(COLOR[i]),
       })),
     };
   },
-  render: (data: { spacing: number; points: any[] }) => {
+  render: (data: { spacing: number; totalWidth: number; points: any[] }) => {
     return (
-      <Row spacing={data.spacing} alignment={'bottom'}>
-        {data.points.map(({ width, height, fill }: { width: any; height: number; fill: string }) => (
-          <Rect width={width} height={height} fill={fill} />
+      <Row totalWidth={data.totalWidth} spacing={data.spacing} alignment={'bottom'}>
+        {data.points.map(({ height, fill }: { width: any; height: number; fill: string }) => (
+          <Rect height={height} fill={fill} />
         ))}
       </Row>
     );
