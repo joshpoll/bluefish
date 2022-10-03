@@ -8,6 +8,9 @@ import { BarY, barY } from '../marks/BarY';
 import { Plot, plotMark } from '../Plot';
 import { interpolateBlues } from 'd3-scale-chromatic';
 import { Padding } from '../../../../components/Padding';
+import { Path } from '../../../../components/Path';
+import { Line } from '../marks/Line';
+import { driving } from './driving';
 
 // see https://observablehq.com/@joshpoll/vvt-gog
 
@@ -83,7 +86,7 @@ export const GoGTest: React.FC<{}> = ({}) => {
       >
         <BarY encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} />
       </Plot>
-      <br />
+      {/* <br />
       <SVG width={1000} height={1000}>
         <Col spacing={0} alignment={'left'}>
           <Rect width={100} height={100} fill={'steelblue'} />
@@ -93,7 +96,23 @@ export const GoGTest: React.FC<{}> = ({}) => {
           <Rect width={100} height={100} fill={'steelblue'} />
           <Rect width={100} height={100} fill={'magenta'} />
         </Col>
-      </SVG>
+      </SVG> */}
+      {/* <SVG width={1000} height={1000}>
+        <Path d="M 10 10 H 90 V 90 H 10 L 10 10" fill="none" stroke="black" />
+      </SVG> */}
+      <br />
+      <Plot
+        data={driving}
+        width={width}
+        height={300}
+        margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
+        x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
+        y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
+        color={() => () => 'black'}
+      >
+        {/* TODO: remove color field */}
+        <Line encodings={{ x: 'miles', y: 'gas', color: 'side' }} />
+      </Plot>
     </div>
   );
 };
