@@ -25,8 +25,7 @@ export const barY = <T,>(data: T[], { x, y, color }: { x: string; y: string; col
       // totalWidth: xScale.range()[1] - xScale.range()[0],
       points: indices.map((i) => ({
         width: xScale.bandwidth(),
-        // height: yScale(Y[i]),
-        height: yScale(0) - yScale(Y[i]),
+        height: yScale(Y[i]),
         fill: colorScale(COLOR[i]),
       })),
     };

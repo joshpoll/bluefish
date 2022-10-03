@@ -30,13 +30,9 @@ export const dot = <T,>(data: T[], { x, y, color }: { x: string; y: string; colo
     };
   },
   render: (data: { stroke: string; points: { x: number; y: number }[]; r: number }) => {
-    return (
-      <Group>
-        {data.points.map(({ x, y }) => (
-          <Circle cx={x} cy={y} r={data.r} stroke={data.stroke} fill={'white'} strokeWidth={1} />
-        ))}
-      </Group>
-    );
+    return data.points.map(({ x, y }) => (
+      <Circle cx={x} cy={y} r={data.r} stroke={data.stroke} fill={'white'} strokeWidth={1} />
+    ));
   },
 });
 

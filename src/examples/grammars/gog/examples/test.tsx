@@ -62,31 +62,30 @@ const ordinalScale = scaleBand(ordinalDomain, ordinalRange);
 export const GoGTest: React.FC<{}> = ({}) => {
   return (
     <div>
-      {/* TODO: marks should be children like in victory charts. grab scales from context */}
-      {/* TODO: margin shouldn't be baked in, but should use a separate margin/padding component */}
-      {/* TODO: switch ordinal scales to use Bluefish components? */}
       {/* TODO: stronger notion of local, abstract(?) coordinate system. similar to ggplot */}
-      <Plot
-        data={alphabet}
-        width={width}
-        height={200}
-        margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
-        x={({ width }) =>
-          scaleBand(
-            alphabet.map((d) => d.letter),
-            [0, width],
-          ).padding(0.1)
-        }
-        y={({ height }) => scaleLinear([0, _.max(alphabet.map((d) => +d.frequency))!], [height, 0])}
-        color={() =>
-          scaleSequential(interpolateBlues).domain([
-            _.min(alphabet.map((d) => +d.frequency))!,
-            _.max(alphabet.map((d) => +d.frequency))!,
-          ])
-        }
-      >
-        <BarY encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} />
-      </Plot>
+      <SVG width={width} height={200}>
+        <Plot
+          data={alphabet}
+          width={width}
+          height={200}
+          margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
+          x={({ width }) =>
+            scaleBand(
+              alphabet.map((d) => d.letter),
+              [0, width],
+            ).padding(0.1)
+          }
+          y={({ height }) => scaleLinear([0, _.max(alphabet.map((d) => +d.frequency))!], [0, height])}
+          color={() =>
+            scaleSequential(interpolateBlues).domain([
+              _.min(alphabet.map((d) => +d.frequency))!,
+              _.max(alphabet.map((d) => +d.frequency))!,
+            ])
+          }
+        >
+          <BarY encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} />
+        </Plot>
+      </SVG>
       {/* <br />
       <SVG width={1000} height={1000}>
         <Col spacing={0} alignment={'left'}>
@@ -102,19 +101,21 @@ export const GoGTest: React.FC<{}> = ({}) => {
         <Path d="M 10 10 H 90 V 90 H 10 L 10 10" fill="none" stroke="black" />
       </SVG> */}
       <br />
-      <Plot
-        data={driving}
-        width={width}
-        height={300}
-        margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
-        x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
-        y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
-        color={() => () => 'black'}
-      >
-        {/* TODO: remove color field */}
-        <Line encodings={{ x: 'miles', y: 'gas', color: 'side' }} />
-        <Dot encodings={{ x: 'miles', y: 'gas', color: 'side' }} />
-      </Plot>
+      <SVG width={width} height={300}>
+        <Plot
+          data={driving}
+          width={width}
+          height={300}
+          margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
+          x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
+          y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
+          color={() => () => 'black'}
+        >
+          {/* TODO: remove color field */}
+          <Line encodings={{ x: 'miles', y: 'gas', color: 'side' }} />
+          <Dot encodings={{ x: 'miles', y: 'gas', color: 'side' }} />
+        </Plot>
+      </SVG>
       {/* <SVG width={width} height={300}>
         <Padding top={10} bottom={30} left={40} right={20}>
           <Plot

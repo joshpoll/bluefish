@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react';
+import React, { forwardRef, PropsWithChildren } from 'react';
 import { Group } from '../../../components/Group';
 import { Padding } from '../../../components/Padding';
 import { SVG } from '../../../components/SVG';
@@ -84,7 +84,7 @@ export const PlotContext = React.createContext<PlotContextValue>({
   scales: {},
 });
 
-export const Plot: React.FC<PropsWithChildren<PlotProps>> = (props) => {
+export const Plot: React.FC<PropsWithChildren<PlotProps>> = forwardRef((props, ref) => {
   let { width, height, margin, data, children, ...scales } = props;
   // compute dimensions from outer width, height, and margins
   const dimensions = { width: width - margin.left - margin.right, height: height - margin.bottom - margin.top };
@@ -94,15 +94,13 @@ export const Plot: React.FC<PropsWithChildren<PlotProps>> = (props) => {
   const renamedScales = renameScales(reifiedScales);
   console.log('[renamedScales]', renamedScales);
   const { xScale, yScale, colorScale } = renamedScales;
+
+  /* TODO: the scale logic has to take into account padding as well... */
   return (
-    // TODO: contexts don't work inside Bluefish components...
-    <PlotContext.Provider value={{ dimensions, scales: renamedScales, data }}>
-      <SVG width={width} height={height}>
-        {/* TODO: the scale logic has to take into account padding as well... */}
-        <Padding left={margin.left} top={margin.top} right={margin.right} bottom={margin.bottom}>
-          <Group>{children}</Group>
-        </Padding>
-      </SVG>
-    </PlotContext.Provider>
+    <Padding ref={ref} left={margin.left} top={margin.top} right={margin.right} bottom={margin.bottom}>
+      <PlotContext.Provider value={{ dimensions, scales: renamedScales, data }}>
+        <Group>{children}</Group>
+      </PlotContext.Provider>
+    </Padding>
   );
-};
+});
