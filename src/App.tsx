@@ -27,6 +27,7 @@ import { SVGClass } from './components/SVGClass';
 // import { Child, Parent } from './components/TestingRefs';
 import { Child, Parent } from './components/TestingContext';
 import { Align } from './components/Align';
+import { Node } from './examples/basic-tree';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -97,6 +98,7 @@ function App() {
         ]}
       />
       <br />
+      <Node value={"3"} opId={"node1"} />
       {/* <SVG width={500} height={500}>
         <Align center>
           <Rect fill={'lightblue'} width={100} height={100} />
