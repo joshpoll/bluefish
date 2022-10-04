@@ -27,10 +27,14 @@ import { SVGClass } from './components/SVGClass';
 // import { Child, Parent } from './components/TestingRefs';
 import { Child, Parent } from './components/TestingContext';
 import { Align } from './components/Align';
+<<<<<<< HEAD
 import { Node } from './examples/basic-tree';
 import { Tree } from './examples/basic-tree';
 
 
+=======
+import { Node, Tree } from './examples/basic-tree';
+>>>>>>> 348a142 (start implementing basic tree)
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -42,7 +46,7 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
+      {/* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
@@ -50,7 +54,7 @@ function App() {
         <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
           Learn React
         </a>
-      </header>
+      </header> */}
       <br />
       <input
         type="range"
@@ -101,16 +105,21 @@ function App() {
         ]}
       />
       <br />
-      <Tree nodes={[
-        { value: "3", opId: "node1" },
-        { value: "4", opId: "node2" },
-        { value: "5", opId: "node3" },
-      ]}
-        parentChild={[
-          { opId: 'con1', parent: { opId: 'node1' }, child: { opId: 'node2' } },
-          { opId: 'con2', parent: { opId: 'node2' }, child: { opId: 'node3' } },
+      {/* <Node value={'3'} opId={'node1'} /> */}
+      <Tree
+        nodes={[
+          { value: '3', opId: 'node1' },
+          { value: '4', opId: 'node2' },
+          { value: '5', opId: 'node3' },
         ]}
-        opId="tree1"
+        parentChild={[
+          { parent: { opId: 'node1' }, child: { opId: 'node2' } },
+          { parent: { opId: 'node1' }, child: { opId: 'node3' } },
+        ]}
+        levels={[
+          { depth: 0, nodes: ['node1'] },
+          { depth: 1, nodes: ['node2', 'node3'] },
+        ]}
       />
       {/* <SVG width={500} height={500}>
         <Align center>
