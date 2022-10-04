@@ -27,14 +27,7 @@ import { SVGClass } from './components/SVGClass';
 // import { Child, Parent } from './components/TestingRefs';
 import { Child, Parent } from './components/TestingContext';
 import { Align } from './components/Align';
-<<<<<<< HEAD
-import { Node } from './examples/basic-tree';
-import { Tree } from './examples/basic-tree';
-
-
-=======
 import { Node, Tree } from './examples/basic-tree';
->>>>>>> 348a142 (start implementing basic tree)
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;

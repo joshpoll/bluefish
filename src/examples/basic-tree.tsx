@@ -53,7 +53,7 @@ export const Link = forwardRef(({ opId, start, end }: LinkProps, ref: any) => {
 
   return (
     <Connector
-      ref={linkRef}
+      ref={ref}
       name={opId}
       $from={'bottomCenter'}
       $to={'topCenter'}
@@ -121,13 +121,13 @@ export const Tree = forwardRef(({ nodes, parentChild, levels }: TreeProps, ref: 
             <Node {...node} />
           ))}
         </Col> */}
-        {/* {links.map((link) => (
+        {links.map((link) => (
           <Link {...link} />
-        ))} */}
+        ))}
 
         {/* not exactly sure why the connector from to doesn't work correctly */}
 
-        {links.map((link) => (
+        {/* {links.map((link) => (
           <Connector
             name={link.opId}
             $from={'bottomCenter'}
@@ -139,7 +139,7 @@ export const Tree = forwardRef(({ nodes, parentChild, levels }: TreeProps, ref: 
             <Ref to={link.start.opId} />
             <Ref to={link.end.opId} />
           </Connector>
-        ))}
+        ))} */}
       </Group>
     </SVG>
   );
