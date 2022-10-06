@@ -5,6 +5,8 @@ import { Group } from '../../../../components/Group';
 import { Rect } from '../../../../components/Rect';
 import { Row } from '../../../../components/Row';
 import { Mark, PlotContext, plotMarkReified } from '../Plot';
+import { Scale } from '../Scale';
+import { Scale as ScaleFn } from '../Plot';
 
 export const dot = <T,>(data: T[], { x, y, color }: { x: string; y: string; color: string }): Mark => ({
   data,
@@ -24,14 +26,26 @@ export const dot = <T,>(data: T[], { x, y, color }: { x: string; y: string; colo
       stroke: colorScale(COLOR[0]),
       r: 3,
       points: indices.map((i) => ({
+        // x: X[i],
+        // y: Y[i],
         x: xScale(X[i]),
         y: yScale(Y[i]),
       })),
+      xScale: () => xScale,
+      yScale: () => yScale,
     };
   },
-  render: (data: { stroke: string; points: { x: number; y: number }[]; r: number }) => {
+  render: (data: {
+    stroke: string;
+    points: { x: number; y: number }[];
+    r: number;
+    xScale: ScaleFn;
+    yScale: ScaleFn;
+  }) => {
     return data.points.map(({ x, y }) => (
+      // <Scale xScale={data.xScale} yScale={data.yScale} width={false} height={false} right={false} bottom={false}>
       <Circle cx={x} cy={y} r={data.r} stroke={data.stroke} fill={'white'} strokeWidth={1} />
+      // </Scale>
     ));
   },
 });

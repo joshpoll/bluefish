@@ -14,7 +14,18 @@ export type RowProps = ({ spacing: number } | { totalWidth: number } | { spacing
 const rowMeasurePolicy =
   (options: RowProps): Measure =>
   (measurables, constraints: Constraints) => {
-    const placeables = measurables.map((measurable) => measurable.measure(constraints));
+    let placeables;
+    if ('totalWidth' in options && 'spacing' in options) {
+      // width is completely determined by the totalWidth and spacing, so update the constraints
+      placeables = measurables.map((measurable) =>
+        measurable.measure({
+          ...constraints,
+          width: (options.totalWidth - options.spacing * (measurables.length - 1)) / measurables.length,
+        }),
+      );
+    } else {
+      placeables = measurables.map((measurable) => measurable.measure(constraints));
+    }
 
     // alignment
     const height = _.max(_.map(placeables, 'height')) ?? 0;

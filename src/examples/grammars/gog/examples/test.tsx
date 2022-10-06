@@ -4,8 +4,8 @@ import { Col } from '../../../../components/Col';
 import { Group } from '../../../../components/Group';
 import { Rect } from '../../../../components/Rect';
 import { SVG } from '../../../../components/SVG';
-import { BarY, barY } from '../marks/BarY';
-import { Plot, plotMark } from '../Plot';
+import { BarY, barY, BarYWithBFN } from '../marks/BarY';
+import { Plot, Plot2, plotMark } from '../Plot';
 import { interpolateBlues } from 'd3-scale-chromatic';
 import { Padding } from '../../../../components/Padding';
 import { Path } from '../../../../components/Path';
@@ -64,27 +64,30 @@ export const GoGTest: React.FC<{}> = ({}) => {
     <div>
       {/* TODO: stronger notion of local, abstract(?) coordinate system. similar to ggplot */}
       <SVG width={width} height={200}>
-        <Plot
-          data={alphabet}
-          width={width}
-          height={200}
-          margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
-          x={({ width }) =>
-            scaleBand(
-              alphabet.map((d) => d.letter),
-              [0, width],
-            ).padding(0.1)
-          }
-          y={({ height }) => scaleLinear([0, _.max(alphabet.map((d) => +d.frequency))!], [0, height])}
-          color={() =>
-            scaleSequential(interpolateBlues).domain([
-              _.min(alphabet.map((d) => +d.frequency))!,
-              _.max(alphabet.map((d) => +d.frequency))!,
-            ])
-          }
-        >
-          <BarY encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} />
-        </Plot>
+        <Padding left={40} top={10} right={20} bottom={30}>
+          <Plot2
+            data={alphabet}
+            width={width}
+            height={200}
+            margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
+            x={({ width }) =>
+              scaleBand(
+                alphabet.map((d) => d.letter),
+                [0, width],
+              ).padding(0.1)
+            }
+            y={({ height }) => scaleLinear([0, _.max(alphabet.map((d) => +d.frequency))!], [0, height])}
+            color={() =>
+              scaleSequential(interpolateBlues).domain([
+                _.min(alphabet.map((d) => +d.frequency))!,
+                _.max(alphabet.map((d) => +d.frequency))!,
+              ])
+            }
+          >
+            <BarY encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} />
+            {/* <BarYWithBFN encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
+          </Plot2>
+        </Padding>
       </SVG>
       {/* <br />
       <SVG width={1000} height={1000}>
@@ -101,20 +104,23 @@ export const GoGTest: React.FC<{}> = ({}) => {
         <Path d="M 10 10 H 90 V 90 H 10 L 10 10" fill="none" stroke="black" />
       </SVG> */}
       <br />
+      {/* TODO: Plot2 breaks on this example */}
       <SVG width={width} height={300}>
-        <Plot
-          data={driving}
-          width={width}
-          height={300}
-          margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
-          x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
-          y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
-          color={() => () => 'black'}
-        >
-          {/* TODO: remove color field */}
-          <Line encodings={{ x: 'miles', y: 'gas', color: 'side' }} />
-          <Dot encodings={{ x: 'miles', y: 'gas', color: 'side' }} />
-        </Plot>
+        <Padding left={40} top={10} right={20} bottom={30}>
+          <Plot
+            data={driving}
+            width={width}
+            height={300}
+            margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
+            x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
+            y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
+            color={() => () => 'black'}
+          >
+            {/* TODO: remove color field */}
+            <Line encodings={{ x: 'miles', y: 'gas', color: 'side' }} />
+            <Dot encodings={{ x: 'miles', y: 'gas', color: 'side' }} />
+          </Plot>
+        </Padding>
       </SVG>
       {/* <SVG width={width} height={300}>
         <Padding top={10} bottom={30} left={40} right={20}>
