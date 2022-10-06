@@ -99,7 +99,7 @@ function App() {
       />
       <br />
       {/* <Node value={'3'} opId={'node1'} /> */}
-      <Tree
+      {/* <Tree
         nodes={[
           { value: '3', opId: 'node1' },
           { value: '4', opId: 'node2' },
@@ -113,8 +113,9 @@ function App() {
           { depth: 0, nodes: ['node1'] },
           { depth: 1, nodes: ['node2', 'node3'] },
         ]}
-      />
+      /> */}
       <FlexTree
+        spacing={200}
         nodes={[
           { value: 'a', opId: 'node1' },
           { value: 'b', opId: 'node2' },

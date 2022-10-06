@@ -99,6 +99,12 @@ export type TreeProps = {
   levels: Level[];
 };
 
+export type FlexTreeProps = {
+  spacing: number; // spacing between each level of tree
+  nodes: NodeProps[];
+  parentChild: ParentChild[];
+  levels: Level[];
+};
 export const Tree = forwardRef(({ nodes, parentChild, levels }: TreeProps, ref: any) => {
   const nodesRef = useRef(null);
   const links = parentChild.map((pair, index) => {
@@ -139,61 +145,36 @@ export const Tree = forwardRef(({ nodes, parentChild, levels }: TreeProps, ref: 
   );
 });
 
-export const FlexTree = forwardRef(({ nodes, parentChild, levels }: TreeProps, ref: any) => {
+export const FlexTree = forwardRef(({ spacing, nodes, parentChild, levels }: FlexTreeProps, ref: any) => {
   // const nodesRef = useRef(null);
   const links = parentChild.map((pair, index) => {
     return { opId: `link${index}`, start: { opId: pair.parent.opId }, end: { opId: pair.child.opId } };
   });
+  console.log(links);
   const nodesMap: Map<string, NodeProps> = new Map();
 
   nodes.forEach((node) => nodesMap.set(node.opId, node));
-
-  console.log('level keys: ', levels.keys());
+  console.log(nodesMap);
 
   return (
     <SVG width={2000} height={2000}>
       <Group>
         {levels.map((level, index: number) => (
-          <Group name={`level${index}`}>
-            <Col name={`col${index}`} spacing={20} alignment={'center'}>
-              {level.nodes.map((node) => (
-                <Node {...nodesMap.get(node)!} />
-              ))}
-            </Col>
+          <Group>
+            <Group name={`level${index}`}>
+              <Col name={`col${index}`} spacing={20} alignment={'center'}>
+                {level.nodes.map((node) => (
+                  <Node {...nodesMap.get(node)!} />
+                ))}
+              </Col>
+            </Group>
+            <Space name={`space-between-level-${index}`} horizontally by={index * spacing}>
+              <Ref to={`level0`} />
+              <Ref to={`level${index}`} />
+            </Space>
           </Group>
         ))}
 
-        {/* {Array.from(Array(levels.length - 1).keys()).map((level: number) => (
-          <Space name={`space-level-${level}`} horizontally by={200}>
-            <Ref to={`level${level + 1}`} />
-            <Ref to={`level${level}`} />
-          </Space>
-        ))} */}
-
-        {/* extract this out into actual logic */}
-        <Space name={'space-levels-0'} horizontally by={600}>
-          <Ref to={'level0'} />
-          <Ref to={'level3'} />
-        </Space>
-        <Space name={'space-levels-1'} horizontally by={400}>
-          <Ref to={'level0'} />
-          <Ref to={'level2'} />
-        </Space>
-        <Space name={'space-levels-2'} horizontally by={200}>
-          <Ref to={'level0'} />
-          <Ref to={'level1'} />
-        </Space>
-
-        {/* <Space name={'space-levels-2'} horizontally by={200}>
-          <Ref to={'level3'} />
-          <Ref to={'level2'} />
-        </Space> */}
-
-        {/* <Col name={'nodes'} ref={nodesRef} spacing={20} alignment={'center'}>
-          {nodes.map((node) => (
-            <Node {...node} />
-          ))}
-        </Col> */}
         {links.map((link) => (
           <FlexLink {...link} />
         ))}
