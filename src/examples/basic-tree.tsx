@@ -159,21 +159,17 @@ export const FlexTree = forwardRef(({ spacing, nodes, parentChild, levels }: Fle
   return (
     <SVG width={2000} height={2000}>
       <Group>
-        {levels.map((level, index: number) => (
-          <Group>
-            <Group name={`level${index}`}>
+        <Row spacing={spacing} alignment={'top'}>
+          {levels.map((level, index: number) => (
+            <Group>
               <Col name={`col${index}`} spacing={20} alignment={'center'}>
                 {level.nodes.map((node) => (
                   <Node {...nodesMap.get(node)!} />
                 ))}
               </Col>
             </Group>
-            <Space name={`space-between-level-${index}`} horizontally by={index * spacing}>
-              <Ref to={`level0`} />
-              <Ref to={`level${index}`} />
-            </Space>
-          </Group>
-        ))}
+          ))}
+        </Row>
 
         {links.map((link) => (
           <FlexLink {...link} />
