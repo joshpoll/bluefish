@@ -27,7 +27,7 @@ import { SVGClass } from './components/SVGClass';
 // import { Child, Parent } from './components/TestingRefs';
 import { Child, Parent } from './components/TestingContext';
 import { Align } from './components/Align';
-import { FlexTree, Node, Tree } from './examples/basic-tree';
+import { FlexTree, Node, Tree, ParseTree } from './examples/basic-tree';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -114,21 +114,18 @@ function App() {
           { depth: 1, nodes: ['node2', 'node3'] },
         ]}
       /> */}
-      <FlexTree
+      <ParseTree
         spacing={200}
         nodes={[
-          { value: 'a', opId: 'node1' },
-          { value: 'b', opId: 'node2' },
-          { value: 'c', opId: 'node3' },
-          { value: 'd', opId: 'node4' },
-          { value: 'e', opId: 'node5' },
-          { value: 'f', opId: 'node6' },
-          { value: 'g', opId: 'node7' },
-          { value: 'h', opId: 'node8' },
-          { value: 'i', opId: 'node9' },
-          { value: 'j', opId: 'node10' },
-          { value: 'k', opId: 'node11' },
-          { value: 'l', opId: 'node12' },
+          { value: '1', opId: 'node1' },
+          { value: '2', opId: 'node2' },
+          { value: '3', opId: 'node3' },
+          { value: '4', opId: 'node4' },
+          { value: '5', opId: 'node5' },
+          { value: '6', opId: 'node6' },
+          { value: '7', opId: 'node7' },
+          { value: '8', opId: 'node8' },
+          { value: '9', opId: 'node9' },
         ]}
         parentChild={[
           { parent: { opId: 'node1' }, child: { opId: 'node2' } },
@@ -139,15 +136,40 @@ function App() {
           { parent: { opId: 'node2' }, child: { opId: 'node7' } },
           { parent: { opId: 'node4' }, child: { opId: 'node8' } },
           { parent: { opId: 'node4' }, child: { opId: 'node9' } },
-          { parent: { opId: 'node6' }, child: { opId: 'node10' } },
-          { parent: { opId: 'node7' }, child: { opId: 'node11' } },
-          { parent: { opId: 'node7' }, child: { opId: 'node12' } },
         ]}
         levels={[
           { depth: 0, nodes: ['node1'] },
           { depth: 1, nodes: ['node2', 'node3', 'node4'] },
           { depth: 2, nodes: ['node5', 'node6', 'node7', 'node8', 'node9'] },
-          { depth: 3, nodes: ['node10', 'node11', 'node12'] },
+        ]}
+      />
+      <FlexTree
+        spacing={200}
+        nodes={[
+          { value: '1', opId: 'node1' },
+          { value: '2', opId: 'node2' },
+          { value: '3', opId: 'node3' },
+          { value: '4', opId: 'node4' },
+          { value: '5', opId: 'node5' },
+          { value: '6', opId: 'node6' },
+          { value: '7', opId: 'node7' },
+          { value: '8', opId: 'node8' },
+          { value: '9', opId: 'node9' },
+        ]}
+        parentChild={[
+          { parent: { opId: 'node1' }, child: { opId: 'node2' } },
+          { parent: { opId: 'node1' }, child: { opId: 'node3' } },
+          { parent: { opId: 'node1' }, child: { opId: 'node4' } },
+          { parent: { opId: 'node2' }, child: { opId: 'node5' } },
+          { parent: { opId: 'node2' }, child: { opId: 'node6' } },
+          { parent: { opId: 'node2' }, child: { opId: 'node7' } },
+          { parent: { opId: 'node4' }, child: { opId: 'node8' } },
+          { parent: { opId: 'node4' }, child: { opId: 'node9' } },
+        ]}
+        levels={[
+          { depth: 0, nodes: ['node1'] },
+          { depth: 1, nodes: ['node2', 'node3', 'node4'] },
+          { depth: 2, nodes: ['node5', 'node6', 'node7', 'node8', 'node9'] },
         ]}
       />
       {/* <SVG width={500} height={500}>

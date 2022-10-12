@@ -178,3 +178,47 @@ export const FlexTree = forwardRef(({ spacing, nodes, parentChild, levels }: Fle
     </SVG>
   );
 });
+
+
+export const ParseTree = forwardRef(({ spacing, nodes, parentChild, levels }: FlexTreeProps, ref: any) => {
+  // const nodesRef = useRef(null);
+  const links = parentChild.map((pair, index) => {
+    return { opId: `link${index}`, start: { opId: pair.parent.opId }, end: { opId: pair.child.opId } };
+  });
+  console.log(links);
+  const nodesMap: Map<string, NodeProps> = new Map();
+
+  nodes.forEach((node) => nodesMap.set(node.opId, node));
+  console.log(nodesMap);
+
+  return (
+    <SVG width={1500} height={1500}>
+      <Group>
+        {levels.map((level, index) => (
+          <Group name={`level${index}`}>
+            <Row name={`row${index}`} spacing={20} alignment={'middle'}>
+              {level.nodes.map((node) => (
+                <Node {...nodesMap.get(node)!} />
+              ))}
+            </Row>
+          </Group>
+        ))}
+        <Group>
+          <Space name={'space-level1'} vertically by={130}>
+            <Ref to={"level0"} />
+            <Ref to={"level1"} />
+          </Space>
+
+          <Space name={'space-level2'} vertically by={260}>
+            <Ref to={"level0"} />
+            <Ref to={"level2"} />
+          </Space>
+        </Group>
+
+        {links.map((link) => (
+          <Link {...link} />
+        ))}
+      </Group>
+    </SVG>
+  );
+});
