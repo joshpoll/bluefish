@@ -116,31 +116,26 @@ export const Tree = forwardRef(({ nodes, parentChild, levels }: TreeProps, ref: 
 
   return (
     <SVG width={1500} height={1500}>
-      <Group>
-        {/* hacky, fix later ; also not exactly sure why i need a group*/}
-        {levels.map((level, index) => (
-          <Group name={`level${index}`}>
-            <Row name={`row${index}`} spacing={20} alignment={'middle'}>
-              {level.nodes.map((node) => (
-                <Node {...nodesMap.get(node)!} />
-              ))}
-            </Row>
-          </Group>
-        ))}
-        <Space name={'space-levels'} vertically by={200}>
-          <Ref to={'level0'} />
-          <Ref to={'level1'} />
-        </Space>
+      {levels.map((level, index) => (
+        <Row name={`level${index}`} spacing={20} alignment={'middle'}>
+          {level.nodes.map((node) => (
+            <Node {...nodesMap.get(node)!} />
+          ))}
+        </Row>
+      ))}
+      <Space name={'space-levels'} vertically by={200}>
+        <Ref to={'level0'} />
+        <Ref to={'level1'} />
+      </Space>
 
-        {/* <Col name={'nodes'} ref={nodesRef} spacing={20} alignment={'center'}>
+      {/* <Col name={'nodes'} ref={nodesRef} spacing={20} alignment={'center'}>
           {nodes.map((node) => (
             <Node {...node} />
           ))}
         </Col> */}
-        {links.map((link) => (
-          <Link {...link} />
-        ))}
-      </Group>
+      {links.map((link) => (
+        <Link {...link} />
+      ))}
     </SVG>
   );
 });
@@ -158,27 +153,22 @@ export const FlexTree = forwardRef(({ spacing, nodes, parentChild, levels }: Fle
 
   return (
     <SVG width={2000} height={2000}>
-      <Group>
-        <Row spacing={spacing} alignment={'top'}>
-          {levels.map((level, index: number) => (
-            <Group>
-              <Col name={`col${index}`} spacing={20} alignment={'center'}>
-                {level.nodes.map((node) => (
-                  <Node {...nodesMap.get(node)!} />
-                ))}
-              </Col>
-            </Group>
-          ))}
-        </Row>
-
-        {links.map((link) => (
-          <FlexLink {...link} />
+      <Row spacing={spacing} alignment={'top'}>
+        {levels.map((level, index: number) => (
+          <Col name={`col${index}`} spacing={20} alignment={'center'}>
+            {level.nodes.map((node) => (
+              <Node {...nodesMap.get(node)!} />
+            ))}
+          </Col>
         ))}
-      </Group>
+      </Row>
+
+      {links.map((link) => (
+        <FlexLink {...link} />
+      ))}
     </SVG>
   );
 });
-
 
 export const ParseTree = forwardRef(({ spacing, nodes, parentChild, levels }: FlexTreeProps, ref: any) => {
   // const nodesRef = useRef(null);
@@ -205,13 +195,13 @@ export const ParseTree = forwardRef(({ spacing, nodes, parentChild, levels }: Fl
         ))}
         <Group>
           <Space name={'space-level1'} vertically by={130}>
-            <Ref to={"level0"} />
-            <Ref to={"level1"} />
+            <Ref to={'level0'} />
+            <Ref to={'level1'} />
           </Space>
 
           <Space name={'space-level2'} vertically by={260}>
-            <Ref to={"level0"} />
-            <Ref to={"level2"} />
+            <Ref to={'level0'} />
+            <Ref to={'level2'} />
           </Space>
         </Group>
 

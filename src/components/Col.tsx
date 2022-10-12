@@ -70,7 +70,10 @@ const colMeasurePolicy =
       console.log('y', y);
     });
 
-    return { width, height };
+    const left = _.min(_.map(placeables, 'left')) ?? 0;
+    const top = _.min(_.map(placeables, 'top')) ?? 0;
+
+    return { left, top, width, height };
   };
 
 // export const Col = forwardRef((props: PropsWithChildren<ColProps>, ref) => {

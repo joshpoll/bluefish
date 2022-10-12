@@ -54,7 +54,10 @@ const rowMeasurePolicy =
       x += placeable.width! + spacing;
     });
 
-    return { width, height };
+    const left = _.min(_.map(placeables, 'left')) ?? 0;
+    const top = _.max(_.map(placeables, 'top')) ?? 0;
+
+    return { left, top, width, height };
   };
 
 export const Row = LayoutFn((props: RowProps) => rowMeasurePolicy(props));
