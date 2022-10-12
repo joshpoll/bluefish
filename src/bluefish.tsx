@@ -13,6 +13,7 @@ import React, {
   useId,
 } from 'react';
 import { isNaN } from 'lodash';
+import ReactIs from 'react-is';
 
 // TODO: we need to change this code so that children accumulate the coordinate transformation from
 // the root component down to them. This is necessary so that references can resolve correct positions.
@@ -71,6 +72,56 @@ export type NewPlaceable = {
   bottom?: number;
   width?: number;
   height?: number;
+};
+
+// TODO: this is almost correct except that the index is going to be wrong if visit nested children
+// such as in the fragment and contextprovider cases.
+// I think the most robust way to do this is to create new Bluefish components that wrap the
+// fragment and contextprovider components. This way we can use the Bluefish component's index
+// to determine the order of the children.
+
+// this currently works if a fragment or a context provider is the only child of a component
+// but it doesn't work if there are multiple children and one of them is a fragment or a context
+// provider.
+const processChildren = (
+  children: React.ReactNode,
+  callbackRef: (child: any, index: number) => (node: any) => void,
+): any => {
+  return React.Children.map(children, (child, index) => {
+    if (ReactIs.isFragment(child)) {
+      return React.cloneElement(child, { children: processChildren(child.props.children, callbackRef) });
+    } else if (ReactIs.isContextProvider(child)) {
+      // process children like in fragment, but still render the provider, so that the context is
+      // available to the children.
+      // TODO: this is the same as the fragment case... can we combine them?
+      return React.cloneElement(child, { children: processChildren(child.props.children, callbackRef) });
+    } else if (isValidElement(child)) {
+      return React.cloneElement(child as React.ReactElement<any>, {
+        // store a pointer to every child's ref in an array
+        // also pass through outer refs
+        // see: https://github.com/facebook/react/issues/8873
+        // ref: (node: any) => {
+        //   childrenRef.current[index] = node;
+        //   // console.log('setting child ref', index, node, node.name);
+        //   if (node !== null && 'name' in node && node.name !== undefined) {
+        //     console.log('setting ref', node.name, node);
+        //     context.bfMap.set(node.name, node);
+        //   }
+        //   const { ref } = child as any;
+        //   console.log('current ref on child', ref);
+        //   if (typeof ref === 'function') ref(node);
+        //   else if (ref) {
+        //     ref.current = node;
+        //   }
+        // },
+        ref: callbackRef(child, index),
+      });
+    } else {
+      // TODO: what to do with non-elements?
+      console.log('warning: non-element child', child);
+      return child;
+    }
+  });
 };
 
 // a layout hook
@@ -199,33 +250,47 @@ export const useBluefishLayout = (
     width: width,
     height: height,
     coord: coordRef.current,
-    children: React.Children.map(children, (child, index) => {
-      if (isValidElement(child)) {
-        return React.cloneElement(child as React.ReactElement<any>, {
-          // store a pointer to every child's ref in an array
-          // also pass through outer refs
-          // see: https://github.com/facebook/react/issues/8873
-          ref: (node: any) => {
-            childrenRef.current[index] = node;
-            // console.log('setting child ref', index, node, node.name);
-            if (node !== null && 'name' in node && node.name !== undefined) {
-              console.log('setting ref', node.name, node);
-              context.bfMap.set(node.name, node);
-            }
-            const { ref } = child as any;
-            console.log('current ref on child', ref);
-            if (typeof ref === 'function') ref(node);
-            else if (ref) {
-              ref.current = node;
-            }
-          },
-        });
-      } else {
-        // TODO: what to do with non-elements?
-        console.log('warning: non-element child', child);
-        return child;
+    children: processChildren(children, (child, index) => (node: any) => {
+      childrenRef.current[index] = node;
+      // console.log('setting child ref', index, node, node.name);
+      if (node !== null && 'name' in node && node.name !== undefined) {
+        console.log('setting ref', node.name, node);
+        context.bfMap.set(node.name, node);
+      }
+      const { ref } = child as any;
+      console.log('current ref on child', ref);
+      if (typeof ref === 'function') ref(node);
+      else if (ref) {
+        ref.current = node;
       }
     }),
+    // children: React.Children.map(children, (child, index) => {
+    //   if (isValidElement(child)) {
+    //     return React.cloneElement(child as React.ReactElement<any>, {
+    //       // store a pointer to every child's ref in an array
+    //       // also pass through outer refs
+    //       // see: https://github.com/facebook/react/issues/8873
+    //       ref: (node: any) => {
+    //         childrenRef.current[index] = node;
+    //         // console.log('setting child ref', index, node, node.name);
+    //         if (node !== null && 'name' in node && node.name !== undefined) {
+    //           console.log('setting ref', node.name, node);
+    //           context.bfMap.set(node.name, node);
+    //         }
+    //         const { ref } = child as any;
+    //         console.log('current ref on child', ref);
+    //         if (typeof ref === 'function') ref(node);
+    //         else if (ref) {
+    //           ref.current = node;
+    //         }
+    //       },
+    //     });
+    //   } else {
+    //     // TODO: what to do with non-elements?
+    //     console.log('warning: non-element child', child);
+    //     return child;
+    //   }
+    // }),
   };
 };
 

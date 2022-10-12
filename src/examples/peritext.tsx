@@ -50,13 +50,6 @@ export const Char = forwardRef(({ value, marks, opId }: CharProps, ref: any) => 
       <Text ref={opIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
       <Align center>
         <Ref to={letter} />
-        {/* <Text
-          ref={letter}
-          contents={value === ' ' ? '␣' : value.toString()}
-          fontSize={'30px'}
-          fontWeight={marks.includes('bold') ? 'bold' : 'normal'}
-          fontStyle={marks.includes('italic') ? 'italic' : 'normal'}
-        /> */}
         <Ref to={tile} />
       </Align>
       <Align topCenter>
