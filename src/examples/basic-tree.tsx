@@ -248,7 +248,7 @@ export const ParseTree = forwardRef(({ spacing, nodes, parentChild, levels }: Fl
         <Col name={'combiner'} alignment={'center'} spacing={100}>
           {levels.map((level, index) => (
             <Group name={`level${index}`}>
-              <Row name={`row${index}`} spacing={20} alignment={'middle'}>
+              <Row name={`row${index}`} spacing={25} alignment={'middle'}>
                 {level.nodes.map((node) => (
                   <Node {...nodesMap.get(node)!} />
                 ))}

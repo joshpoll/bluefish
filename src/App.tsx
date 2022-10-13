@@ -123,7 +123,6 @@ function App() {
           { value: '4', opId: 'node4' },
           { value: '5', opId: 'node5' },
           { value: '6', opId: 'node6' },
-          { value: '7', opId: 'node7' },
           { value: '8', opId: 'node8' },
           { value: '9', opId: 'node9' },
         ]}
@@ -133,14 +132,13 @@ function App() {
           { parent: { opId: 'node1' }, child: { opId: 'node4' } },
           { parent: { opId: 'node2' }, child: { opId: 'node5' } },
           { parent: { opId: 'node2' }, child: { opId: 'node6' } },
-          { parent: { opId: 'node2' }, child: { opId: 'node7' } },
           { parent: { opId: 'node4' }, child: { opId: 'node8' } },
           { parent: { opId: 'node4' }, child: { opId: 'node9' } },
         ]}
         levels={[
           { depth: 0, nodes: ['node1'] },
-          { depth: 1, nodes: ['node2', 'node3', 'node4'] },
-          { depth: 2, nodes: ['node5', 'node6', 'node7', 'node8', 'node9'] },
+          { depth: 1, nodes: ['node2', 'node4'] },
+          { depth: 2, nodes: ['node5', 'node6', 'node3', 'node8', 'node9'] },
         ]}
       />
       <FlexTree
