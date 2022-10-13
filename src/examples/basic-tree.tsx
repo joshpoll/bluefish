@@ -4,7 +4,7 @@ import { Rect } from '../components/Rect';
 import { Text } from '../components/Text';
 import { Row } from '../components/Row';
 import { SVG } from '../components/SVG';
-import { Align } from '../components/Align';
+import { Align, Alignment2D, splitAlignment } from '../components/Align';
 import {
   BBoxWithChildren,
   Measure,
@@ -12,6 +12,7 @@ import {
   withBluefish,
   withBluefishComponent,
   useBluefishContext,
+  withBluefishFn,
 } from '../bluefish';
 import { Ref } from '../components/Ref';
 import { Group } from '../components/Group';
@@ -20,6 +21,7 @@ import { Arrow } from '../components/Arrow';
 import { Space } from '../components/Space';
 import { Connector } from '../components/Connector';
 import { Rectangle } from 'paper/dist/paper-core';
+import { NewBBox } from '../NewBBox';
 
 export type NodeProps = {
   value: string;
@@ -50,7 +52,7 @@ export type LinkProps = {
 
 export const Link = forwardRef(({ opId, start, end }: LinkProps, ref: any) => {
   return (
-    <Connector
+    <LinkV2
       ref={ref}
       name={opId}
       $from={'bottomCenter'}
@@ -61,7 +63,7 @@ export const Link = forwardRef(({ opId, start, end }: LinkProps, ref: any) => {
     >
       <Ref to={start.opId} />
       <Ref to={end.opId} />
-    </Connector>
+    </LinkV2>
   );
 });
 
@@ -170,6 +172,65 @@ export const FlexTree = forwardRef(({ spacing, nodes, parentChild, levels }: Fle
   );
 });
 
+export type LinkV2Props = React.SVGProps<SVGLineElement> & {
+  $from: Alignment2D;
+  $to: Alignment2D;
+};
+
+export const LinkV2 = withBluefishFn(
+  (props): Measure => {
+    return (measurables, constraints: any) => {
+      const [from, to] = measurables.map((m) => m.measure(constraints));
+      const [fromYDir, fromXDir] = splitAlignment(props.$from);
+      const [toYDir, toXDir] = splitAlignment(props.$to);
+
+      let fromX, fromY, toX, toY;
+      if (fromXDir === 'left') {
+        fromX = from.left;
+      } else if (fromXDir === 'right') {
+        fromX = from.right;
+      } else {
+        fromX = from.left! + from.width! / 2;
+      }
+
+      if (fromYDir === 'top') {
+        fromY = from.top;
+      } else if (fromYDir === 'bottom') {
+        fromY = from.bottom;
+      } else {
+        fromY = from.top! + from.height! / 2;
+      }
+
+      if (toXDir === 'left') {
+        toX = to.left;
+      } else if (toXDir === 'right') {
+        toX = to.right;
+      } else {
+        toX = to.left! + to.width! / 2;
+      }
+
+      if (toYDir === 'top') {
+        toY = to.top;
+      } else if (toYDir === 'bottom') {
+        toY = to.bottom;
+      } else {
+        toY = to.top! + to.height! / 2;
+      }
+
+      return {
+        left: fromX,
+        top: fromY,
+        right: toX,
+        bottom: toY,
+      };
+    };
+  },
+  (props: LinkV2Props & { $bbox?: Partial<NewBBox> }) => {
+    const { $bbox, $from, $to, ...rest } = props;
+    return <line {...rest} x1={$bbox?.left ?? 0} x2={$bbox?.right ?? 0} y1={$bbox?.top ?? 0} y2={$bbox?.bottom ?? 0} />;
+  },
+);
+
 export const ParseTree = forwardRef(({ spacing, nodes, parentChild, levels }: FlexTreeProps, ref: any) => {
   // const nodesRef = useRef(null);
   const links = parentChild.map((pair, index) => {
@@ -184,16 +245,19 @@ export const ParseTree = forwardRef(({ spacing, nodes, parentChild, levels }: Fl
   return (
     <SVG width={1500} height={1500}>
       <Group>
-        {levels.map((level, index) => (
-          <Group name={`level${index}`}>
-            <Row name={`row${index}`} spacing={20} alignment={'middle'}>
-              {level.nodes.map((node) => (
-                <Node {...nodesMap.get(node)!} />
-              ))}
-            </Row>
-          </Group>
-        ))}
-        <Group>
+        <Col name={'combiner'} alignment={'center'} spacing={100}>
+          {levels.map((level, index) => (
+            <Group name={`level${index}`}>
+              <Row name={`row${index}`} spacing={20} alignment={'middle'}>
+                {level.nodes.map((node) => (
+                  <Node {...nodesMap.get(node)!} />
+                ))}
+              </Row>
+            </Group>
+          ))}
+        </Col>
+
+        {/* <Group>
           <Space name={'space-level1'} vertically by={130}>
             <Ref to={'level0'} />
             <Ref to={'level1'} />
@@ -203,7 +267,7 @@ export const ParseTree = forwardRef(({ spacing, nodes, parentChild, levels }: Fl
             <Ref to={'level0'} />
             <Ref to={'level2'} />
           </Space>
-        </Group>
+        </Group> */}
 
         {links.map((link) => (
           <Link {...link} />
