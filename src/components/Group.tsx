@@ -11,18 +11,18 @@ const groupMeasurePolicy: Measure = (measurables, constraints) => {
     console.log(`placed measurable ${idx}`, placeable);
     return placeable;
   });
-  // placeables.forEach((placeable, idx) => {
-  //   console.log(`placeable ${idx}`, placeable);
-  //   if (placeable.left === undefined) {
-  //     console.log('placeable.left set to before', placeable.left);
-  //     placeable.left = 0;
-  //     console.log('placeable.left set to after', placeable.left);
-  //   }
-  //   if (placeable.top === undefined) {
-  //     placeable.top = 0;
-  //   }
-  //   console.log(`group after: placed placeable ${idx}`, placeable);
-  // });
+  placeables.forEach((placeable, idx) => {
+    console.log(`placeable ${idx}`, placeable);
+    if (placeable.left === undefined) {
+      console.log('placeable.left set to before', placeable.left);
+      placeable.left = 0;
+      console.log('placeable.left set to after', placeable.left);
+    }
+    if (placeable.top === undefined) {
+      placeable.top = 0;
+    }
+    console.log(`group after: placed placeable ${idx}`, placeable);
+  });
 
   // TODO: might need to preserve "natural" position so I can figure out what the translation should be.
 

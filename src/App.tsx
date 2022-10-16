@@ -43,7 +43,7 @@ function App() {
       <br />
       <br />
       <br />
-      <GoGTest />
+      {/* <GoGTest /> */}
       <br />
       <input
         type="range"
@@ -61,6 +61,13 @@ function App() {
       </select>
       "OP ID": {startOpId}
       <br />
+      {/* <SVG width={1000} height={1000}>
+        <Row name={'test-row'} spacing={rangeval ? +rangeval : 10} alignment={'middle'}>
+          <Rect fill={'red'} width={100} height={100} />
+          <Rect fill={'blue'} width={100} height={100} />
+          <Rect fill={'green'} width={100} height={100} />
+        </Row>
+      </SVG> */}
       <Peritext
         spacing={rangeval}
         chars={[
@@ -115,11 +122,11 @@ function App() {
           <Rect fill={'cornflowerblue'} width={50} height={100} />
         </Col>
       </SVG> */}
-      {
+      {/* {
         <SVG width={500} height={500}>
           <Char value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
         </SVG>
-      }
+      } */}
       {/* {
         <Bluefish width={500} height={500}>
           <SVGClass width={500} height={500}>

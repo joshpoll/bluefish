@@ -19,6 +19,7 @@ import { Line } from '../components/Line';
 import { Arrow } from '../components/Arrow';
 import { Space } from '../components/Space';
 import { Connector } from '../components/Connector';
+import _ from 'lodash';
 
 export type CharProps = {
   value: string;
@@ -166,7 +167,7 @@ export const Peritext: React.FC<PeritextProps & { spacing?: number }> = ({ chars
       {/* TODO: if I don't have the group component here, then the refs don't resolve properly... */}
       <Group>
         {/* chars */}
-        <Row name={'chars'} ref={charsRef} spacing={spacing ?? 10} alignment={'middle'}>
+        <Row name={'chars'} ref={charsRef} spacing={spacing ? +spacing : 10} alignment={'middle'}>
           {chars.map((char) => (
             <Char {...char} />
           ))}

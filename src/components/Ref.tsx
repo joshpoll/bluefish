@@ -221,6 +221,7 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
         }
       },
       measure(constraints: Constraints): NewBBoxClass {
+        console.log('[ref] measure', constraints, props.to);
         try {
           const measurable = resolveRef(props.to, context.bfMap);
           // TODO: we might not need the slice here
@@ -272,7 +273,11 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
           //   otherTransformInThisCoordinateSystem,
           // );
 
-          return new RefBBox(measurable.measure(constraints), otherTransformInThisCoordinateSystem, measurable.name);
+          return new RefBBox(
+            measurable.measure(constraints, true),
+            otherTransformInThisCoordinateSystem,
+            measurable.name,
+          );
         } catch (e) {
           console.error('Error while measuring', props.to, e);
           throw e;

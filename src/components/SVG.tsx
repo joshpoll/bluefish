@@ -18,6 +18,7 @@ export const useMeasure = (measure: Measure, childrenRef?: any): BBox => {
 };
 
 const svgMeasurePolicy: Measure = (measurables, constraints) => {
+  console.log('[svg] measure policy called');
   const placeables = measurables.map((measurable) => measurable.measure(constraints));
   console.log('placeables', placeables);
   placeables.forEach((placeable) => {
@@ -43,9 +44,12 @@ export const SVG = (props: PropsWithChildren<SVGProps>) => {
   //     console.log('childrenRef', childrenRef.current);
   //     return svgMeasurePolicy(childrenRef.current, { width: props.width, height: props.height });
   //   }, [props.height, props.width]);
-  useEffect(() => {
-    svgMeasurePolicy(childrenRef.current, { width: props.width, height: props.height });
-  }, [props.height, props.width, childrenRef]);
+  useEffect(
+    () => {
+      console.log('[svg] measuring');
+      svgMeasurePolicy(childrenRef.current, { width: props.width, height: props.height });
+    } /* , [props.height, props.width, childrenRef] */,
+  );
 
   return (
     <BluefishContext.Provider value={value}>
