@@ -14,7 +14,7 @@ export type RowProps = ({ spacing: number } | { totalWidth: number } | { spacing
 const rowMeasurePolicy =
   (options: RowProps): Measure =>
   (measurables, constraints: Constraints) => {
-    console.log('[row] measure policy called');
+    console.log('[row] measure policy called', options);
     let placeables;
     if ('totalWidth' in options && 'spacing' in options) {
       // width is completely determined by the totalWidth and spacing, so update the constraints
@@ -66,9 +66,14 @@ const rowMeasurePolicy =
       });
     }
 
+    console.log('[row] width', width);
+    console.log('[row] spacing', spacing);
+
     let x = 0;
     placeables.forEach((placeable) => {
+      console.log('[row] placing before', placeable.left);
       placeable.left = x;
+      console.log('[row] placing after', placeable.left);
       x += placeable.width! + spacing;
     });
 
@@ -76,3 +81,4 @@ const rowMeasurePolicy =
   };
 
 export const Row = LayoutFn((props: RowProps) => rowMeasurePolicy(props));
+Row.displayName = 'Row';

@@ -35,6 +35,7 @@ const svgMeasurePolicy: Measure = (measurables, constraints) => {
 export const SVG = (props: PropsWithChildren<SVGProps>) => {
   const [bfMap, setBFMap] = useState(new Map());
   const value = { bfMap, setBFMap };
+  const [rerender, setRerender] = useState(false);
 
   const { width, height } = useMeasure(svgMeasurePolicy);
   // childrenRef is a list of callback refs
@@ -44,12 +45,23 @@ export const SVG = (props: PropsWithChildren<SVGProps>) => {
   //     console.log('childrenRef', childrenRef.current);
   //     return svgMeasurePolicy(childrenRef.current, { width: props.width, height: props.height });
   //   }, [props.height, props.width]);
+
+  // TODO: this is wrong because useEffect is called after render
   useEffect(
     () => {
       console.log('[svg] measuring');
       svgMeasurePolicy(childrenRef.current, { width: props.width, height: props.height });
+
+      return () => {
+        // forces rerender so that props are actually propagated
+        // this is a hack, but it works
+        setRerender(!rerender);
+      };
     } /* , [props.height, props.width, childrenRef] */,
   );
+  // TODO: this is also wrong because childrenRef is not updated
+  // console.log('[svg] measuring');
+  // svgMeasurePolicy(childrenRef.current, { width: props.width, height: props.height });
 
   return (
     <BluefishContext.Provider value={value}>

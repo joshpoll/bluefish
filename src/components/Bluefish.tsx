@@ -1,12 +1,13 @@
 import React, { ReactElement } from 'react';
 import { PropsWithChildren, useEffect, useRef } from 'react';
-import { Measure } from '../bluefishClass';
+import { Measure } from '../bluefish';
 
 const bluefishMeasurePolicy: Measure = (measurables, constraints) => {
   const placeables = measurables.map((measurable) => measurable.measure(constraints));
-  placeables.forEach((placeable) => {
-    placeable.placeUnlessDefined({ x: 0, y: 0 });
-  });
+  /* TODO: add back! */
+  // placeables.forEach((placeable) => {
+  //   placeable.placeUnlessDefined({ x: 0, y: 0 });
+  // });
   return { width: constraints.width, height: constraints.height };
 };
 

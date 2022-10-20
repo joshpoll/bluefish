@@ -349,3 +349,4 @@ const alignMeasurePolicy =
   };
 
 export const Align = LayoutFn((props: AlignProps) => alignMeasurePolicy(props));
+Align.displayName = 'Align';

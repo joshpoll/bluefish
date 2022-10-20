@@ -46,6 +46,7 @@ const groupMeasurePolicy: Measure = (measurables, constraints) => {
 };
 
 export const Group = Layout(groupMeasurePolicy);
+Group.displayName = 'Group';
 
 // export const Group = withBluefish(groupMeasurePolicy, (props: PropsWithChildren<{ $bbox?: Partial<NewBBox> }>) => {
 //   return <g transform={`translate(${props.$bbox?.left ?? 0}, ${props.$bbox?.top ?? 0})`}>{props.children}</g>;

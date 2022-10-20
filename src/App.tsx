@@ -23,7 +23,6 @@ import { Rect } from './components/Rect';
 import { Text } from './components/Text';
 import { Char, Peritext } from './examples/peritext';
 import { Bluefish } from './components/Bluefish';
-import { SVGClass } from './components/SVGClass';
 // import { Child, Parent } from './components/TestingRefs';
 import { Child, Parent } from './components/TestingContext';
 import { Align } from './components/Align';
@@ -50,6 +49,7 @@ function App() {
         className="custom-range"
         min="0"
         max="20"
+        // step="0.25"
         onChange={(event) => setRangeval(event.target.value as any)}
       />
       <h4>The range value is {rangeval}</h4>
