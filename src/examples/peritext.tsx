@@ -28,7 +28,7 @@ export type CharProps = {
   marks: ('italic' | 'bold')[];
 };
 
-export const Char = forwardRef(({ value, marks, opId }: CharProps, ref: any) => {
+export const Char = forwardRef(function Char({ value, marks, opId }: CharProps, ref: any) {
   const tile = useRef(null);
   const leftHandle = useRef(null);
   const rightHandle = useRef(null);
@@ -38,7 +38,7 @@ export const Char = forwardRef(({ value, marks, opId }: CharProps, ref: any) => 
   return (
     // TODO: use x and y to position the group
     <Group ref={ref} name={opId}>
-      <Rect ref={tile} height={65} width={50} rx={5} fill={'#eee'} />
+      <Rect ref={tile} name={opId + '-rect'} height={65} width={50} rx={5} fill={'#eee'} />
       <Rect ref={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
       <Rect name={'rightHandle'} ref={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
       <Text
@@ -79,77 +79,78 @@ export type MarkOpProps = {
   end: { opId: string };
 };
 
-export const MarkOp: React.FC<MarkOpProps> = forwardRef(
-  ({ action, markType, backgroundColor, borderColor, start, end, opId }, ref: any) => {
-    const rectRef = useRef(null);
-    const textRef = useRef(null);
+export const MarkOp: React.FC<MarkOpProps> = forwardRef(function MarkOp(
+  { action, markType, backgroundColor, borderColor, start, end, opId },
+  ref: any,
+) {
+  const rectRef = useRef(null);
+  const textRef = useRef(null);
 
-    return (
-      <Group ref={ref} name={opId}>
-        <Rect name={opId + '-rect'} ref={rectRef} fill={backgroundColor} stroke={borderColor} rx={5} height={20} />
-        {/* TODO: text measurement is broken, since the text isn't actually centered */}
-        <Text name={opId + '-text'} ref={textRef} contents={`${action} ${markType}`} />
-        {/* ...however, using a rect instead results in a properly centered component */}
-        {/* <Rect name={opId + '-text'} ref={textRef} width={50} height={15} fill={'magenta'} /> */}
-        <Align name={opId + '-align-1'} left>
-          <Ref to={rectRef} />
-          <Ref to={start.opId} />
-        </Align>
-        <Align name={opId + '-align-2'} right>
-          <Ref to={rectRef} />
-          <Ref to={end.opId} />
-        </Align>
-        <Align name={opId + '-align-3'} center>
-          <Ref to={textRef} />
-          <Ref to={rectRef} />
-        </Align>
-      </Group>
+  return (
+    <Group ref={ref} name={opId}>
+      <Rect name={opId + '-rect'} ref={rectRef} fill={backgroundColor} stroke={borderColor} rx={5} height={20} />
+      {/* TODO: text measurement is broken, since the text isn't actually centered */}
+      <Text name={opId + '-text'} ref={textRef} contents={`${action} ${markType}`} />
+      {/* ...however, using a rect instead results in a properly centered component */}
+      {/* <Rect name={opId + '-text'} ref={textRef} width={50} height={15} fill={'magenta'} /> */}
+      <Align name={opId + '-align-1'} left>
+        <Ref to={rectRef} />
+        <Ref to={start.opId} />
+      </Align>
+      <Align name={opId + '-align-2'} right>
+        <Ref to={rectRef} />
+        <Ref to={end.opId} />
+      </Align>
+      <Align name={opId + '-align-3'} center>
+        <Ref to={textRef} />
+        <Ref to={rectRef} />
+      </Align>
+    </Group>
 
-      // proposed API:
-      // <Group rels={({ rect, text }) => (<>
-      //   <Align left>
-      //       <Ref to={startRef} />
-      //       {rect}
-      //     </Align>
-      //     <Align right>
-      //       <Ref to={endRef} />
-      //       {rect}
-      //     </Align>
-      //     <Align center>
-      //       {rect}
-      //       {text}
-      //     </Align>
-      //   </>)}>
-      //   {/* TODO: remove width */}
-      //   <Rect name={'rect'} fill={backgroundColor} stroke={borderColor} rx={5} width={50} height={20} />
-      //   <Text name={'text'} contents={`${action} ${markType}`} />
-      // </Group>
+    // proposed API:
+    // <Group rels={({ rect, text }) => (<>
+    //   <Align left>
+    //       <Ref to={startRef} />
+    //       {rect}
+    //     </Align>
+    //     <Align right>
+    //       <Ref to={endRef} />
+    //       {rect}
+    //     </Align>
+    //     <Align center>
+    //       {rect}
+    //       {text}
+    //     </Align>
+    //   </>)}>
+    //   {/* TODO: remove width */}
+    //   <Rect name={'rect'} fill={backgroundColor} stroke={borderColor} rx={5} width={50} height={20} />
+    //   <Text name={'text'} contents={`${action} ${markType}`} />
+    // </Group>
 
-      // <Group ref={ref} name={opId}>
-      //   {/* TODO: remove width */}
-      //   <Rect ref={rectRef} fill={backgroundColor} stroke={borderColor} rx={5} width={50} height={20} />
-      //   <Text ref={textRef} contents={`${action} ${markType}`} />
-      //   {/* TODO: starting to think the naming is backwards. currently second arg to align mutates, but first doesn't.
-      //       maybe I should flip them?
-      //     Rationale: Read it as "align first to second," which implies that the first is mutated. */}
-      //   <Align left>
-      //     <Ref to={rectRef} />
-      //     <Ref to={startRef} />
-      //   </Align>
-      //   <Align right>
-      //     <Ref to={rectRef} />
-      //     <Ref to={endRef} />
-      //   </Align>
-      //   <Align center>
-      //     <Ref to={textRef} />
-      //     <Ref to={rectRef} />
-      //   </Align>
-      //   <Arrow from={startRef} to={rectRef} />
-      //   <Arrow from={rectRef} to={endRef} />
-      // </Group>
-    );
-  },
-);
+    // <Group ref={ref} name={opId}>
+    //   {/* TODO: remove width */}
+    //   <Rect ref={rectRef} fill={backgroundColor} stroke={borderColor} rx={5} width={50} height={20} />
+    //   <Text ref={textRef} contents={`${action} ${markType}`} />
+    //   {/* TODO: starting to think the naming is backwards. currently second arg to align mutates, but first doesn't.
+    //       maybe I should flip them?
+    //     Rationale: Read it as "align first to second," which implies that the first is mutated. */}
+    //   <Align left>
+    //     <Ref to={rectRef} />
+    //     <Ref to={startRef} />
+    //   </Align>
+    //   <Align right>
+    //     <Ref to={rectRef} />
+    //     <Ref to={endRef} />
+    //   </Align>
+    //   <Align center>
+    //     <Ref to={textRef} />
+    //     <Ref to={rectRef} />
+    //   </Align>
+    //   <Arrow from={startRef} to={rectRef} />
+    //   <Arrow from={rectRef} to={endRef} />
+    // </Group>
+  );
+});
 
 export type PeritextProps = {
   chars: CharProps[];
@@ -165,7 +166,7 @@ export const Peritext: React.FC<PeritextProps & { spacing?: number }> = ({ chars
   return (
     <SVG width={1000} height={500}>
       {/* TODO: if I don't have the group component here, then the refs don't resolve properly... */}
-      <Group>
+      <Group name={'group'}>
         {/* chars */}
         <Row name={'chars'} ref={charsRef} spacing={spacing ? +spacing : 10} alignment={'middle'}>
           {chars.map((char) => (
