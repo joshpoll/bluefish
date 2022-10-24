@@ -345,7 +345,23 @@ const alignMeasurePolicy =
       height = bottom - top;
     }
 
-    return { width, height };
+    console.log('aligning: result', {
+      left,
+      top,
+      right,
+      bottom,
+      width,
+      height,
+    });
+
+    return {
+      left: left === -Infinity ? undefined : left,
+      top: top === -Infinity ? undefined : top,
+      right: right === Infinity ? undefined : right,
+      bottom: bottom === Infinity ? undefined : bottom,
+      width,
+      height,
+    };
   };
 
 export const Align = LayoutFn((props: AlignProps) => alignMeasurePolicy(props));
