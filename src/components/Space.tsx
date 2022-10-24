@@ -90,3 +90,4 @@ const spaceMeasurePolicy =
   };
 
 export const Space = LayoutFn((props: SpaceProps) => spaceMeasurePolicy(props));
+Space.displayName = 'Space';

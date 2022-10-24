@@ -35,3 +35,4 @@ scale(${$bbox?.coord?.scale?.x ?? 1} ${$bbox?.coord?.scale?.y ?? 1})`}
     );
   },
 );
+Rect.displayName = 'Rect';

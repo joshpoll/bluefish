@@ -12,7 +12,7 @@ import React, {
   useEffect,
   useId,
 } from 'react';
-import { isNaN } from 'lodash';
+import { isEqual, isNaN } from 'lodash';
 import ReactIs from 'react-is';
 
 // TODO: we need to change this code so that children accumulate the coordinate transformation from
@@ -30,7 +30,7 @@ import ReactIs from 'react-is';
 
 export type Measurable = {
   name: string;
-  measure(constraints: Constraints): NewBBoxClass;
+  measure(constraints: Constraints, isRef?: boolean): NewBBoxClass;
   transformStack: CoordinateTransform[] | undefined;
 };
 export type MeasureResult = Partial<NewBBox>;
@@ -130,6 +130,7 @@ export const useBluefishLayout = (
   bbox: Partial<NewBBox>,
   coord: Partial<CoordinateTransform>,
   ref: React.ForwardedRef<unknown>,
+  props: any,
   children?: React.ReactNode,
   name?: any,
 ): NewBBoxWithChildren => {
@@ -147,6 +148,10 @@ export const useBluefishLayout = (
   const coordRef = useRef<CoordinateTransform>(coord ?? {});
   const bboxClassRef = useRef<NewBBoxClass | undefined>(undefined);
   const transformStackRef = useRef<CoordinateTransform[] | undefined>(undefined);
+  // remember constraints so we can re-measure if they change
+  const constraintRef = useRef<Constraints | undefined>(undefined);
+  // remember props so we can re-measure if they change
+  const propsRef = useRef<any>(undefined);
 
   useEffect(() => {
     console.log(name, 'left updated to', left);
@@ -177,9 +182,16 @@ export const useBluefishLayout = (
           transformStackRef.current = [...transforms, coordRef.current];
         }
       },
-      measure(constraints: Constraints): NewBBoxClass {
+      measure(constraints: Constraints, isRef?: boolean): NewBBoxClass {
+        console.log('measuring', name, 'with constraints', constraints);
         let bbox;
-        if (bboxClassRef.current === undefined) {
+        if (
+          isRef !== true &&
+          (bboxClassRef.current === undefined ||
+            !isEqual(constraintRef.current, constraints) ||
+            propsRef.current !== props)
+        ) {
+          constraintRef.current = constraints;
           console.log('measuring', name);
           childrenRef.current.forEach((child) => {
             if (child !== undefined) {
@@ -235,10 +247,10 @@ export const useBluefishLayout = (
           console.log('using cached bbox', name, bbox);
         }
 
-        return bbox;
+        return bbox!;
       },
     }),
-    [measure, childrenRef, setLeft, setTop, setRight, setBottom, setWidth, setHeight, name, bboxClassRef],
+    [measure, childrenRef, setLeft, setTop, setRight, setBottom, setWidth, setHeight, name, bboxClassRef, props],
   );
 
   console.log(`returning bbox for ${name}`, { left, top, right, bottom, width, height });
@@ -313,6 +325,7 @@ export const withBluefish = <ComponentProps,>(
         },
         {},
         ref,
+        props,
         props.children,
         props.name,
       );
@@ -352,6 +365,7 @@ export const withBluefishFn = <ComponentProps,>(
       },
       {},
       ref,
+      props,
       props.children,
       props.name,
     );
