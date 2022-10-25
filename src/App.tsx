@@ -171,15 +171,15 @@ function App() {
           { depth: 2, nodes: ['node5', 'node6', 'node7', 'node8', 'node9'] },
         ]}
       />
-      <GlobalFrame
+      {/* <GlobalFrame
         variables={[
           { pointObject: { opId: 'list1' }, value: 'c', opId: 'c' },
           { pointObject: { opId: 'list2' }, value: 'd', opId: 'd' },
           { pointObject: { opId: 'list3' }, value: 'x', opId: 'x' },
         ]}
         opId={'pythonTutor'}
-      />
-      <Objects nextObject={{ opId: '2' }} objectType={'tuple'} value={'1'} opId={'firstElm'} />
+      /> */}
+      {/* <Objects nextObject={{ opId: '2' }} objectType={'tuple'} value={'1'} opId={'firstElm'} /> */}
       <PythonTutor
         variables={[
           { pointObject: { opId: 'list1' }, value: 'c', opId: 'c' },
