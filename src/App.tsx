@@ -172,20 +172,23 @@ function App() {
         ]}
       />
       <GlobalFrame
-        variables={[{ pointObject: { opId: 'list1' }, value: 'c', opId: 'c' },
-        { pointObject: { opId: 'list2' }, value: 'd', opId: 'd' },
-        { pointObject: { opId: 'list3' }, value: 'x', opId: 'x' }]}
-        opId={'pythonTutor'} />
-
+        variables={[
+          { pointObject: { opId: 'list1' }, value: 'c', opId: 'c' },
+          { pointObject: { opId: 'list2' }, value: 'd', opId: 'd' },
+          { pointObject: { opId: 'list3' }, value: 'x', opId: 'x' },
+        ]}
+        opId={'pythonTutor'}
+      />
       <Objects nextObject={{ opId: '2' }} objectType={'tuple'} value={'1'} opId={'firstElm'} />
-
-      <PythonTutor variables={[
-        { pointObject: { opId: 'list1' }, value: 'c', opId: 'c' },
-        { pointObject: { opId: 'list2' }, value: 'd', opId: 'd' },
-        { pointObject: { opId: 'list3' }, value: 'x', opId: 'x' }
-      ]}
+      <PythonTutor
+        variables={[
+          { pointObject: { opId: 'list1' }, value: 'c', opId: 'c' },
+          { pointObject: { opId: 'list2' }, value: 'd', opId: 'd' },
+          { pointObject: { opId: 'list3' }, value: 'x', opId: 'x' },
+        ]}
         opId={'pythonTutorFrame1'}
-        objects={[{ nextObject: { opId: '2' }, objectType: 'tuple', value: '1', opId: 'firstElm' }]} />
+        objects={[{ nextObject: { opId: '2' }, objectType: 'tuple', value: '1', opId: 'firstElm' }]}
+      />
       {/* <SVG width={500} height={500}>
         <Align center>
           <Rect fill={'lightblue'} width={100} height={100} />
