@@ -59,24 +59,22 @@ export const Objects = forwardRef(({ nextObject, objectType, value, opId }: Obje
     const labelRef = useRef(null);
 
     return (
-        <SVG width={500} height={500}>
-            <Group ref={ref} name={opId}>
-                <Rect ref={boxRef} height={60} width={80} fill={'#ffffc6'} stroke={'grey'} />
-                <Rect ref={itemRef} height={60} width={80} fill={'#ffffc6'} stroke={'grey'} />
-                <Text ref={valueRef} contents={value} fontSize={'24px'} fill={'black'} />
-                <Text ref={labelRef} contents={objectType} fontSize={'16px'} fill={'grey'} />
+        <Group ref={ref} name={opId}>
+            <Rect ref={boxRef} height={60} width={80} fill={'#ffffc6'} stroke={'grey'} />
+            <Rect ref={itemRef} height={60} width={80} fill={'#ffffc6'} stroke={'grey'} />
+            <Text ref={valueRef} contents={value} fontSize={'24px'} fill={'black'} />
+            <Text ref={labelRef} contents={objectType} fontSize={'16px'} fill={'grey'} />
 
-                <Align center>
-                    <Ref to={valueRef} />
-                    <Ref to={itemRef} />
-                </Align>
+            <Align center>
+                <Ref to={valueRef} />
+                <Ref to={itemRef} />
+            </Align>
 
-                <Align left to={'centerRight'}>
-                    <Ref to={boxRef} />
-                    <Ref to={itemRef} />
-                </Align>
-            </Group>
-        </SVG>
+            <Align left to={'centerRight'}>
+                <Ref to={boxRef} />
+                <Ref to={itemRef} />
+            </Align>
+        </Group>
     );
 });
 
@@ -94,25 +92,63 @@ export const GlobalFrame = forwardRef(({ variables, opId }: GlobalFrameProps, re
     const frameVariables = useRef(null);
 
     return (
+        <Group ref={ref} name={opId}>
+            <Rect ref={frame} height={300} width={200} fill={'#e2ebf6'} />
+            <Text ref={opIdLabel} contents={'Global Frame'} fontSize={'24px'} fill={'black'} />
+            <Col name={`frameVariables`} ref={frameVariables} spacing={20} alignment={'center'}>
+                {variables.map(
+                    (point) => (<Variable {...point} />)
+                )}
+            </Col>
+
+            <Align topCenter>
+                <Ref to={opIdLabel} />
+                <Ref to={frame} />
+            </Align>
+            <Align centerRight>
+                <Ref to={frameVariables} />
+                <Ref to={frame} />
+            </Align>
+        </Group>
+    );
+});
+
+// Puts together objects and Global frame
+
+export type PythonTutorProps = {
+    variables: Point[];
+    opId: string;
+    objects: ObjectProps[];
+};
+export const PythonTutor = forwardRef(({ variables, opId, objects }: PythonTutorProps, ref: any) => {
+    const globalFrame = useRef(null);
+    const rowRef = useRef(null);
+
+    return (
         <SVG width={500} height={500}>
             <Group ref={ref} name={opId}>
-                <Rect ref={frame} height={300} width={200} fill={'#e2ebf6'} />
-                <Text ref={opIdLabel} contents={'Global Frame'} fontSize={'24px'} fill={'black'} />
-                <Col name={`frameVariables`} ref={frameVariables} spacing={20} alignment={'center'}>
-                    {variables.map(
-                        (point) => (<Variable {...point} />)
-                    )}
-                </Col>
+                <GlobalFrame variables={variables} opId={'globalFrame'} ref={globalFrame} />
+                <Row ref={rowRef} spacing={50} alignment={'middle'} name={'objectRects'}>
+                    {objects.map((obj) => (<Objects {...obj} />))}
+                </Row>
 
-                <Align topCenter>
-                    <Ref to={opIdLabel} />
-                    <Ref to={frame} />
-                </Align>
-                <Align centerRight>
-                    <Ref to={frameVariables} />
-                    <Ref to={frame} />
-                </Align>
+                {/* <Align left to={'centerRight'}>
+                    <Ref to={rowRef} />
+                    <Ref to={globalFrame} />
+                </Align> */}
+
+                <Space name={'space1'} horizontally by={120}>
+                    <Ref to={globalFrame} />
+                    <Ref to={rowRef} />
+                </Space>
+
+                <Space name={'space2'} vertically by={-60}>
+                    <Ref to={globalFrame} />
+                    <Ref to={rowRef} />
+                </Space>
+
             </Group>
         </SVG>
     );
 });
+

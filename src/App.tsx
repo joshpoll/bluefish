@@ -28,7 +28,7 @@ import { SVGClass } from './components/SVGClass';
 import { Child, Parent } from './components/TestingContext';
 import { Align } from './components/Align';
 import { FlexTree, Node, Tree, ParseTree } from './examples/basic-tree';
-import { Point, GlobalFrame, Variable, Objects } from './examples/python-tutor';
+import { Point, GlobalFrame, Variable, Objects, PythonTutor } from './examples/python-tutor';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -178,6 +178,14 @@ function App() {
         opId={'pythonTutor'} />
 
       <Objects nextObject={{ opId: '2' }} objectType={'tuple'} value={'1'} opId={'firstElm'} />
+
+      <PythonTutor variables={[
+        { pointObject: { opId: 'list1' }, value: 'c', opId: 'c' },
+        { pointObject: { opId: 'list2' }, value: 'd', opId: 'd' },
+        { pointObject: { opId: 'list3' }, value: 'x', opId: 'x' }
+      ]}
+        opId={'pythonTutorFrame1'}
+        objects={[{ nextObject: { opId: '2' }, objectType: 'tuple', value: '1', opId: 'firstElm' }]} />
       {/* <SVG width={500} height={500}>
         <Align center>
           <Rect fill={'lightblue'} width={100} height={100} />
@@ -199,11 +207,11 @@ function App() {
           <Rect fill={'cornflowerblue'} width={50} height={100} />
         </Col>
       </SVG> */}
-      {
+      {/* {
         <SVG width={500} height={500}>
           <Char value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
         </SVG>
-      }
+      } */}
       {/* {
         <Bluefish width={500} height={500}>
           <SVGClass width={500} height={500}>
