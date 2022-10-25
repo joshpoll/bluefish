@@ -28,6 +28,7 @@ import { SVGClass } from './components/SVGClass';
 import { Child, Parent } from './components/TestingContext';
 import { Align } from './components/Align';
 import { FlexTree, Node, Tree, ParseTree } from './examples/basic-tree';
+import { Point, GlobalFrame } from './examples/python-tutor';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -170,6 +171,11 @@ function App() {
           { depth: 2, nodes: ['node5', 'node6', 'node7', 'node8', 'node9'] },
         ]}
       />
+      <GlobalFrame
+        variables={[{ pointObject: { opId: 'list1' }, value: 'c', opId: 'c' },
+        { pointObject: { opId: 'list2' }, value: 'd', opId: 'd' },
+        { pointObject: { opId: 'list3' }, value: 'x', opId: 'x' }]}
+        opId={'pythonTutor'} />
       {/* <SVG width={500} height={500}>
         <Align center>
           <Rect fill={'lightblue'} width={100} height={100} />
