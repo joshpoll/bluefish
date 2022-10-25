@@ -187,7 +187,10 @@ function App() {
           { pointObject: { opId: 'list3' }, value: 'x', opId: 'x' },
         ]}
         opId={'pythonTutorFrame1'}
-        objects={[{ nextObject: { opId: '2' }, objectType: 'tuple', value: '1', opId: 'firstElm' }]}
+        objects={[
+          { nextObject: { opId: '2' }, objectType: 'tuple', value: '1', opId: 'first' },
+          { nextObject: { opId: '3' }, objectType: 'tuple', value: '2', opId: 'second' }
+        ]}
       />
       {/* <SVG width={500} height={500}>
         <Align center>

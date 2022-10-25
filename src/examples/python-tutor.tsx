@@ -86,25 +86,22 @@ export const Objects = forwardRef(({ nextObject, objectType, value, opId }: Obje
   const linkRef = useRef(null);
 
   return (
-    <SVG width={500} height={500}>
-      <Group ref={ref} name={opId}>
-        <Rect ref={boxRef} height={60} width={80} fill={'#ffffc6'} stroke={'grey'} />
-        <Rect ref={itemRef} height={60} width={80} fill={'#ffffc6'} stroke={'grey'} />
-        <Text ref={valueRef} contents={value} fontSize={'24px'} fill={'black'} />
-        <Text ref={labelRef} contents={objectType} fontSize={'16px'} fill={'grey'} />
+    <Group ref={ref} name={opId}>
+      <Rect ref={boxRef} height={60} width={80} fill={'#ffffc6'} stroke={'grey'} />
+      <Rect ref={itemRef} height={60} width={80} fill={'#ffffc6'} stroke={'grey'} />
+      <Text ref={valueRef} contents={value} fontSize={'24px'} fill={'black'} />
+      <Text ref={labelRef} contents={objectType} fontSize={'16px'} fill={'grey'} />
 
-        <Align center>
-          <Ref to={valueRef} />
-          <Ref to={itemRef} />
-        </Align>
+      <Align center>
+        <Ref to={valueRef} />
+        <Ref to={itemRef} />
+      </Align>
 
-        <Align left to={'centerRight'}>
-          <Ref to={boxRef} />
-          <Ref to={itemRef} />
-        </Align>
-      </Group>
-      {/* <Link ref={linkRef} opId={'objectLink'} start={{ opId: opId }} end={{ opId: nextObject.opId }} /> */}
-    </SVG>
+      <Align left to={'centerRight'}>
+        <Ref to={boxRef} />
+        <Ref to={itemRef} />
+      </Align>
+    </Group>
   );
 });
 
@@ -156,7 +153,7 @@ export const PythonTutor = forwardRef(({ variables, opId, objects }: PythonTutor
   const rowRef = useRef(null);
 
   return (
-    <SVG width={500} height={500}>
+    <SVG width={1000} height={500}>
       <Group ref={ref} name={opId}>
         <GlobalFrame variables={variables} opId={'globalFrame'} ref={globalFrame} />
         <Row ref={rowRef} spacing={50} alignment={'middle'} name={'objectRects'}>
