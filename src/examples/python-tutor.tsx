@@ -44,6 +44,43 @@ export const Variable = forwardRef(({ pointObject, value, opId }: Point, ref: an
     );
 });
 
+
+export type ObjectProps = {
+    nextObject: { opId: string };
+    objectType: string;
+    value: string;
+    opId: string;
+};
+
+export const Objects = forwardRef(({ nextObject, objectType, value, opId }: ObjectProps, ref: any) => {
+    const itemRef = useRef(null);
+    const boxRef = useRef(null);
+    const valueRef = useRef(null);
+    const labelRef = useRef(null);
+
+    return (
+        <SVG width={500} height={500}>
+            <Group ref={ref} name={opId}>
+                <Rect ref={boxRef} height={60} width={80} fill={'#ffffc6'} stroke={'grey'} />
+                <Rect ref={itemRef} height={60} width={80} fill={'#ffffc6'} stroke={'grey'} />
+                <Text ref={valueRef} contents={value} fontSize={'24px'} fill={'black'} />
+                <Text ref={labelRef} contents={objectType} fontSize={'16px'} fill={'grey'} />
+
+                <Align center>
+                    <Ref to={valueRef} />
+                    <Ref to={itemRef} />
+                </Align>
+
+                <Align left to={'centerRight'}>
+                    <Ref to={boxRef} />
+                    <Ref to={itemRef} />
+                </Align>
+            </Group>
+        </SVG>
+    );
+});
+
+
 // Global frame contains list of variables
 // Each variable has either reference to object or value
 export type GlobalFrameProps = {
