@@ -195,14 +195,14 @@ function App() {
       {/* <Objects nextObject={{ opId: '2' }} objectType={'tuple'} value={'1'} opId={'firstElm'} /> */}
       <PythonTutor
         variables={[
-          { pointObject: { opId: 'list1' }, value: 'c', opId: 'c' },
-          { pointObject: { opId: 'list2' }, value: 'd', opId: 'd' },
-          { pointObject: { opId: 'list3' }, value: 'x', opId: 'x' },
+          { pointObject: { opId: 'o1' }, value: 'c', opId: 'v1' },
+          { pointObject: { opId: 'o2' }, value: 'd', opId: 'v2' },
+          { pointObject: { opId: 'o3' }, value: 'x', opId: 'v3' },
         ]}
         opId={'pythonTutorFrame1'}
         objects={[
-          { nextObject: { opId: '2' }, objectType: 'tuple', value: '1', opId: 'first' },
-          { nextObject: { opId: '3' }, objectType: 'tuple', value: '2', opId: 'second' }
+          { nextObject: { opId: '2' }, objectType: 'tuple', value: '1', opId: 'o1' },
+          { nextObject: { opId: '3' }, objectType: 'tuple', value: '2', opId: 'o2' }
         ]}
       />
       {/* <SVG width={500} height={500}>

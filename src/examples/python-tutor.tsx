@@ -131,7 +131,7 @@ export const GlobalFrame = forwardRef(({ variables, opId }: GlobalFrameProps, re
         <Ref to={opIdLabel} />
         <Ref to={frame} />
       </Align>
-      <Align right to={'centerRight'}>
+      <Align centerRight to={'centerRight'}>
         <Ref to={frame} />
         <Ref to={frameVariables} />
       </Align>
