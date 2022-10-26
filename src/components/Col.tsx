@@ -53,11 +53,17 @@ const colMeasurePolicy =
         : _.sumBy(placeables, (p) => p.height!) + options.spacing * (placeables.length - 1);
 
     let spacing: number;
-    if ('totalHeight' in options) {
+    if ('spacing' in options) {
+      spacing = options.spacing;
+    } else {
       const occupiedHeight = _.sumBy(placeables, 'height');
       spacing = (options.totalHeight - occupiedHeight) / (placeables.length - 1);
-    } else {
-      spacing = options.spacing;
+    }
+
+    if ('totalHeight' in options && 'spacing' in options) {
+      placeables.forEach((placeable, index) => {
+        placeable.height = (height - spacing * (placeables.length - 1)) / placeables.length;
+      });
     }
 
     let y = 0;

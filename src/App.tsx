@@ -23,12 +23,12 @@ import { Rect } from './components/Rect';
 import { Text } from './components/Text';
 import { Char, Peritext } from './examples/peritext';
 import { Bluefish } from './components/Bluefish';
-import { SVGClass } from './components/SVGClass';
 // import { Child, Parent } from './components/TestingRefs';
 import { Child, Parent } from './components/TestingContext';
 import { Align } from './components/Align';
 import { FlexTree, Node, Tree, ParseTree } from './examples/basic-tree';
 import { Point, GlobalFrame, Variable, Objects, PythonTutor } from './examples/python-tutor';
+import { GoGTest } from './examples/grammars/gog/examples/test';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -50,11 +50,17 @@ function App() {
         </a>
       </header> */}
       <br />
+      <br />
+      <br />
+      <br />
+      {/* <GoGTest /> */}
+      <br />
       <input
         type="range"
         className="custom-range"
         min="0"
         max="20"
+        // step="0.25"
         onChange={(event) => setRangeval(event.target.value as any)}
       />
       <h4>The range value is {rangeval}</h4>
@@ -66,6 +72,13 @@ function App() {
       </select>
       "OP ID": {startOpId}
       <br />
+      {/* <SVG width={1000} height={1000}>
+        <Row name={'test-row'} spacing={rangeval ? +rangeval : 10} alignment={'middle'}>
+          <Rect fill={'red'} width={100} height={100} />
+          <Rect fill={'blue'} width={100} height={100} />
+          <Rect fill={'green'} width={100} height={100} />
+        </Row>
+      </SVG> */}
       <Peritext
         spacing={rangeval}
         chars={[
