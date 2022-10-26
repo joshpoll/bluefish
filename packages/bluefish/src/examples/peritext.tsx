@@ -87,23 +87,39 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(function MarkOp(
   const textRef = useRef(null);
 
   return (
-    <Group ref={ref} name={opId}>
-      <Rect name={opId + '-rect'} ref={rectRef} fill={backgroundColor} stroke={borderColor} rx={5} height={20} />
-      {/* TODO: text measurement is broken, since the text isn't actually centered */}
-      <Text name={opId + '-text'} ref={textRef} contents={`${action} ${markType}`} />
-      {/* ...however, using a rect instead results in a properly centered component */}
-      {/* <Rect name={opId + '-text'} ref={textRef} width={50} height={15} fill={'magenta'} /> */}
-      <Align name={opId + '-align-1'} left>
-        <Ref to={rectRef} />
-        <Ref to={start.opId} />
-      </Align>
-      <Align name={opId + '-align-2'} right>
-        <Ref to={rectRef} />
-        <Ref to={end.opId} />
-      </Align>
-      <Align name={opId + '-align-3'} center>
-        <Ref to={textRef} />
-        <Ref to={rectRef} />
+    <Group>
+      <Group ref={ref} name={opId}>
+        <Rect name={opId + '-rect'} ref={rectRef} fill={backgroundColor} stroke={borderColor} rx={5} height={20} />
+        {/* TODO: text measurement is broken, since the text isn't actually centered */}
+        <Text name={opId + '-text'} ref={textRef} contents={`${action} ${markType}`} />
+        {/* ...however, using a rect instead results in a properly centered component */}
+        {/* <Rect name={opId + '-text'} ref={textRef} width={50} height={15} fill={'magenta'} /> */}
+        <Align name={opId + '-align-1'} left>
+          <Ref to={rectRef} />
+          <Ref to={start.opId} />
+        </Align>
+        <Align name={opId + '-align-2'} right>
+          <Ref to={rectRef} />
+          <Ref to={end.opId} />
+        </Align>
+        <Align name={opId + '-align-3'} center>
+          <Ref to={textRef} />
+          <Ref to={rectRef} />
+        </Align>
+      </Group>
+      {/* make a row component and a column component */}
+      <Row spacing={10} alignment={'bottom'} name={opId + '-row'}>
+        <Rect name={opId + '-row-rect'} fill={'#eee'} />
+        <Rect name={opId + '-row-rect-2'} fill={'#eee'} />
+      </Row>
+      <Col totalHeight={50} alignment={'center'} name={opId + '-col'}>
+        <Rect name={opId + '-col-rect'} fill={'#eee'} />
+        <Rect name={opId + '-col-rect-2'} fill={'#eee'} />
+      </Col>
+      {/* align the two components */}
+      <Align name={opId + '-align-4'} center>
+        <Ref to={opId + '-row'} />
+        <Ref to={opId + '-col'} />
       </Align>
     </Group>
 
