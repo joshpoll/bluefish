@@ -36,10 +36,10 @@ export const Variable = forwardRef(({ pointObject, value, opId }: Point, ref: an
   const variableRef = useRef(null);
   return (
     <Group ref={ref} name={opId}>
-      <Row name={variableRef} alignment={'middle'} spacing={8}>
+      <Space name={variableRef} horizontally by={5}>
         <Text ref={textRef} contents={value.toString()} fontSize={'24px'} fill={'black'} />
         <Rect ref={boxRef} height={40} width={40} fill={'#e2ebf6'} stroke={'grey'} />
-      </Row>
+      </Space>
       {/* <Align centerLeft>
         <Ref to={boxRef} />
         <Ref to={textRef} />
@@ -121,19 +121,19 @@ export const GlobalFrame = forwardRef(({ variables, opId }: GlobalFrameProps, re
     <Group ref={ref} name={opId}>
       <Rect ref={frame} height={300} width={200} fill={'#e2ebf6'} />
       <Text ref={opIdLabel} contents={'Global Frame'} fontSize={'24px'} fill={'black'} />
-      <Col name={`frameVariables`} ref={frameVariables} spacing={20} alignment={'right'}>
+      <Space name={`frameVariables`} ref={frameVariables} vertically by={10}>
         {variables.map((point) => (
           <Variable {...point} />
         ))}
-      </Col>
+      </Space>
 
       <Align topCenter>
         <Ref to={opIdLabel} />
         <Ref to={frame} />
       </Align>
-      <Align centerRight>
-        <Ref to={frameVariables} />
+      <Align right to={'centerRight'}>
         <Ref to={frame} />
+        <Ref to={frameVariables} />
       </Align>
     </Group>
   );
