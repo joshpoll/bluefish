@@ -24,23 +24,31 @@ import { Rectangle } from 'paper/dist/paper-core';
 import { NewBBox } from '../NewBBox';
 import { LinkV2 } from './basic-tree';
 import { stringify } from 'querystring';
+import { Circle } from '../components/Circle';
 
 export type Point = {
-  pointObject: { opId: string };
-  value: string;
+  pointObject: { opId: string } | null;
+  name: string;
+  value?: string;
   opId: string;
 };
 
-export const Variable = forwardRef(({ pointObject, value, opId }: Point, ref: any) => {
+export const Variable = forwardRef(({ pointObject, name, value, opId }: Point, ref: any) => {
   const textRef = useRef(null);
+  const valueRef = useRef(null);
   const boxRef = useRef(null);
   const variableRef = useRef(null);
   return (
     <Group ref={ref} name={opId}>
       <Space name={variableRef} horizontally by={5}>
-        <Text ref={textRef} contents={value.toString()} fontSize={'24px'} fill={'black'} />
+        <Text ref={textRef} contents={name.toString()} fontSize={'24px'} fill={'black'} />
         <Rect ref={boxRef} height={40} width={40} fill={'#e2ebf6'} stroke={'grey'} />
       </Space>
+      <Text ref={valueRef} contents={value?.toString() ?? ''} fontSize={'24px'} fill={'black'} />
+      <Align center>
+        <Ref to={valueRef} />
+        <Ref to={boxRef} />
+      </Align>
       {/* <Align centerLeft>
         <Ref to={boxRef} />
         <Ref to={textRef} />
@@ -56,24 +64,32 @@ export type LinkProps = {
 };
 
 export const Link = forwardRef(({ opId, start, end }: LinkProps, ref: any) => {
+  const circleRef = useRef(null);
+  const groupRef = useRef(null);
   return (
-    <LinkV2
-      ref={ref}
-      name={opId}
-      $from={'centerRight'}
-      $to={'centerLeft'}
-      stroke={'#000000'}
-      strokeWidth={5}
-      strokeDasharray={0}
-    >
-      <Ref to={start.opId} />
-      <Ref to={end.opId} />
-    </LinkV2>
+    <Group ref={groupRef}>
+      <LinkV2
+        ref={ref}
+        $from={'center'}
+        $to={'centerLeft'}
+        stroke={'cornflowerblue'}
+        strokeWidth={5}
+        strokeDasharray={0}
+      >
+        <Ref to={start.opId} />
+        <Ref to={end.opId} />
+      </LinkV2>
+      {/* <Circle fill={'#394850'} r={20} /> */}
+      {/* <Align center to={'centerLeft'}>
+        <Ref to={start.opId} />
+        <Ref to={circleRef} />
+      </Align> */}
+    </Group>
   );
 });
 
 export type ObjectProps = {
-  nextObject: { opId: string };
+  nextObject: { opId: string } | null;
   objectType: string;
   value: string;
   opId: string;
@@ -84,24 +100,44 @@ export const Objects = forwardRef(({ nextObject, objectType, value, opId }: Obje
   const boxRef = useRef(null);
   const valueRef = useRef(null);
   const labelRef = useRef(null);
-  const linkRef = useRef(null);
+  const zeroRef = useRef(null);
+  const oneRef = useRef(null);
+  const elemRef = useRef(null);
+
+  const fontFamily = 'Fira Code';
 
   return (
     <Group ref={ref} name={opId}>
-      <Rect ref={boxRef} height={60} width={80} fill={'#ffffc6'} stroke={'grey'} />
-      <Rect ref={itemRef} height={60} width={80} fill={'#ffffc6'} stroke={'grey'} />
-      <Text ref={valueRef} contents={value} fontSize={'24px'} fill={'black'} />
-      <Text ref={labelRef} contents={objectType} fontSize={'16px'} fill={'grey'} />
+      <Text ref={labelRef} contents={objectType} fontFamily={fontFamily} fontSize={'16px'} fill={'grey'} />
 
-      <Align center>
-        <Ref to={valueRef} />
-        <Ref to={itemRef} />
-      </Align>
+      {/* separate names for each rectangle so that the arrow can go from the center of pointer to the center left of pointed */}
+      <Group ref={elemRef}>
+        <Rect ref={boxRef} name={`pointer${opId}`} height={60} width={80} fill={'#ffffc6'} stroke={'grey'} />
+        <Rect ref={itemRef} name={`pointed${opId}`} height={60} width={80} fill={'#ffffc6'} stroke={'grey'} />
+        <Text ref={valueRef} contents={value} fontSize={'24px'} fill={'black'} />
+        <Text ref={zeroRef} contents={'0'} fontFamily={fontFamily} fontSize={'16px'} fill={'grey'} />
+        <Text ref={oneRef} contents={'1'} fontFamily={fontFamily} fontSize={'16px'} fill={'grey'} />
 
-      <Align left to={'centerRight'}>
-        <Ref to={boxRef} />
-        <Ref to={itemRef} />
-      </Align>
+        <Align center>
+          <Ref to={valueRef} />
+          <Ref to={itemRef} />
+        </Align>
+
+        <Align left to={'centerRight'}>
+          <Ref to={boxRef} />
+          <Ref to={itemRef} />
+        </Align>
+
+        <Align topLeft>
+          <Ref to={oneRef} />
+          <Ref to={boxRef} />
+        </Align>
+      </Group>
+
+      <Space vertically by={10}>
+        <Ref to={labelRef} />
+        <Ref to={elemRef} />
+      </Space>
     </Group>
   );
 });
@@ -150,6 +186,10 @@ export const GlobalFrame = forwardRef(({ variables, opId }: GlobalFrameProps, re
         <Ref to={frame} />
         <Ref to={frameVariables} />
       </Align>
+      {/* <Align left>
+        <Ref to={frame} />
+        <Ref to={line} />
+      </Align> */}
     </Group>
   );
 });
@@ -176,9 +216,24 @@ export const PythonTutor = forwardRef(({ variables, opId, objects, rows }: Pytho
   const objMap: Map<string, ObjectProps> = new Map();
   objects.forEach((obj) => objMap.set(obj.opId, obj));
   console.log(objMap);
-  const links = objects.map((object, index) => {
-    return { opId: `link${index}`, start: { opId: object.opId }, end: object.nextObject };
-  });
+  const objectLinks = objects
+    .filter((object) => object.nextObject !== null)
+    .map((object, index) => {
+      return {
+        opId: `objectLink${index}`,
+        start: { opId: `pointer${object.opId}` },
+        end: { opId: `pointed${object.nextObject!.opId}` },
+      };
+    });
+  const variableLinks = variables
+    .filter((variable) => variable.pointObject !== null)
+    .map((variable, index) => {
+      return {
+        opId: `variableLink${index}`,
+        start: { opId: variable.opId },
+        end: { opId: `pointed${variable.pointObject!.opId}` },
+      };
+    });
 
   // For object structure:
   // Rows -> nodes in row; if no node at position, then input is '' in which case Filler object is used
@@ -211,7 +266,10 @@ export const PythonTutor = forwardRef(({ variables, opId, objects, rows }: Pytho
           <Ref to={rowRef} />
         </Space>
 
-        {links.map((link) => (
+        {objectLinks.map((link) => (
+          <Link {...link} />
+        ))}
+        {variableLinks.map((link) => (
           <Link {...link} />
         ))}
       </Group>

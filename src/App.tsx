@@ -29,6 +29,7 @@ import { Align } from './components/Align';
 import { FlexTree, Node, Tree, ParseTree } from './examples/basic-tree';
 import { Point, GlobalFrame, Variable, Objects, PythonTutor } from './examples/python-tutor';
 import { GoGTest } from './examples/grammars/gog/examples/test';
+import { Circle } from './components/Circle';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -195,19 +196,19 @@ function App() {
       {/* <Objects nextObject={{ opId: '2' }} objectType={'tuple'} value={'1'} opId={'firstElm'} /> */}
       <PythonTutor
         variables={[
-          { pointObject: { opId: 'o1' }, value: 'c', opId: 'v1' },
-          { pointObject: { opId: 'o2' }, value: 'd', opId: 'v2' },
-          { pointObject: { opId: 'o3' }, value: 'x', opId: 'v3' },
+          { pointObject: { opId: 'o1' }, name: 'c', opId: 'v1' },
+          { pointObject: { opId: 'o2' }, name: 'd', opId: 'v2' },
+          { pointObject: null, name: 'x', value: '5', opId: 'v3' },
         ]}
         opId={'pythonTutorFrame1'}
         objects={[
-          { nextObject: { opId: '2' }, objectType: 'tuple', value: '1', opId: 'o1' },
-          { nextObject: { opId: '3' }, objectType: 'tuple', value: '2', opId: 'o2' },
-          { nextObject: { opId: '3' }, objectType: 'tuple', value: '3', opId: 'o3' },
+          { nextObject: { opId: 'o2' }, objectType: 'tuple', value: '1', opId: 'o1' },
+          { nextObject: { opId: 'o3' }, objectType: 'tuple', value: '2', opId: 'o2' },
+          { nextObject: null, objectType: 'tuple', value: '3', opId: 'o3' },
         ]}
         rows={[
-          { depth: 0, nodes: ['', 'o3', ''] },
-          { depth: 1, nodes: ['o1', '', 'o2'] },
+          { depth: 0, nodes: ['', 'o2', 'o3'] },
+          { depth: 1, nodes: ['o1', '', ''] },
         ]}
       />
       {/* <SVG width={500} height={500}>
