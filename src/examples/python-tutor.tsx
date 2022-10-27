@@ -173,9 +173,16 @@ export const PythonTutor = forwardRef(({ variables, opId, objects, rows }: Pytho
   const globalFrame = useRef(null);
   const rowRef = useRef(null);
 
+  // lookup map for the yellow objects
   const objMap: Map<string, ObjectProps> = new Map();
   objects.forEach((obj) => objMap.set(obj.opId, obj));
   console.log(objMap);
+
+  // For object structure:
+  // Rows -> nodes in row; if no node at position, then input is '' in which case Filler object is used
+  // Rows (with filler and object components) are wrapped in space components
+  // Entire collection of rows / spaces are wrapped in group
+  // Group is offset from global frame
 
   return (
     <SVG width={1000} height={500}>
