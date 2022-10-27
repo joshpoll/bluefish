@@ -48,13 +48,6 @@ export const Variable = forwardRef(({ pointObject, value, opId }: Point, ref: an
   );
 });
 
-export type ObjectProps = {
-  nextObject: { opId: string };
-  objectType: string;
-  value: string;
-  opId: string;
-};
-
 export type LinkProps = {
   opId: string;
   start: { opId: string };
@@ -77,6 +70,14 @@ export const Link = forwardRef(({ opId, start, end }: LinkProps, ref: any) => {
     </LinkV2>
   );
 });
+
+
+export type ObjectProps = {
+  nextObject: { opId: string };
+  objectType: string;
+  value: string;
+  opId: string;
+};
 
 export const Objects = forwardRef(({ nextObject, objectType, value, opId }: ObjectProps, ref: any) => {
   const itemRef = useRef(null);
@@ -101,6 +102,21 @@ export const Objects = forwardRef(({ nextObject, objectType, value, opId }: Obje
         <Ref to={boxRef} />
         <Ref to={itemRef} />
       </Align>
+    </Group>
+  );
+});
+
+
+export type FillerProp = {
+  opId: string;
+};
+
+export const Filler = forwardRef(({ opId }: FillerProp, ref: any) => {
+  const boxRef = useRef(null);
+
+  return (
+    <Group ref={ref} name={opId}>
+      <Rect ref={boxRef} height={60} width={160} fill={'#FFFFFF'} />
     </Group>
   );
 });
@@ -139,6 +155,10 @@ export const GlobalFrame = forwardRef(({ variables, opId }: GlobalFrameProps, re
   );
 });
 
+export type Level = {
+  depth: number;
+  nodes: string[]; // id's of nodes
+};
 
 // Puts together objects and Global frame
 
@@ -146,31 +166,39 @@ export type PythonTutorProps = {
   variables: Point[];
   opId: string;
   objects: ObjectProps[];
+  rows: Level[];
 };
 
-export const PythonTutor = forwardRef(({ variables, opId, objects }: PythonTutorProps, ref: any) => {
+export const PythonTutor = forwardRef(({ variables, opId, objects, rows }: PythonTutorProps, ref: any) => {
   const globalFrame = useRef(null);
   const rowRef = useRef(null);
+
+  const objMap: Map<string, ObjectProps> = new Map();
+  objects.forEach((obj) => objMap.set(obj.opId, obj));
+  console.log(objMap);
 
   return (
     <SVG width={1000} height={500}>
       <Group ref={ref} name={opId}>
         <GlobalFrame variables={variables} opId={'globalFrame'} ref={globalFrame} />
-        <Row ref={rowRef} spacing={50} alignment={'middle'} name={'objectRects'}>
-          {objects.map((obj) => (<Objects {...obj} />))}
-        </Row>
 
-        {/* <Align left to={'centerRight'}>
-                    <Ref to={rowRef} />
-                    <Ref to={globalFrame} />
-                </Align> */}
+        <Group ref={rowRef} name={'rows'}>
+          <Space name={'rowSpace'} vertically by={100}>
+            {rows.map((level, index) => (
+              <Row name={`row${index}`} spacing={50} alignment={'middle'}>
+                {level.nodes.map((obj) => ((obj == '') ? <Filler opId={'fill'} /> : <Objects {...objMap.get(obj)!} />))}
+              </Row>
+            ))}
+
+          </Space>
+        </Group>
 
         <Space name={'space1'} horizontally by={120}>
           <Ref to={globalFrame} />
           <Ref to={rowRef} />
         </Space>
 
-        <Space name={'space2'} vertically by={-60}>
+        <Space name={'space2'} vertically by={-250}>
           <Ref to={globalFrame} />
           <Ref to={rowRef} />
         </Space>

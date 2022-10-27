@@ -202,7 +202,12 @@ function App() {
         opId={'pythonTutorFrame1'}
         objects={[
           { nextObject: { opId: '2' }, objectType: 'tuple', value: '1', opId: 'o1' },
-          { nextObject: { opId: '3' }, objectType: 'tuple', value: '2', opId: 'o2' }
+          { nextObject: { opId: '3' }, objectType: 'tuple', value: '2', opId: 'o2' },
+          { nextObject: { opId: '3' }, objectType: 'tuple', value: '3', opId: 'o3' },
+        ]}
+        rows={[
+          { depth: 0, nodes: ['', 'o3', ''] },
+          { depth: 1, nodes: ['o1', '', 'o2'] },
         ]}
       />
       {/* <SVG width={500} height={500}>
