@@ -23,6 +23,7 @@ import { Connector } from '../components/Connector';
 import { Rectangle } from 'paper/dist/paper-core';
 import { NewBBox } from '../NewBBox';
 import { LinkV2 } from './basic-tree';
+import { stringify } from 'querystring';
 
 export type Point = {
   pointObject: { opId: string };
@@ -71,7 +72,6 @@ export const Link = forwardRef(({ opId, start, end }: LinkProps, ref: any) => {
   );
 });
 
-
 export type ObjectProps = {
   nextObject: { opId: string };
   objectType: string;
@@ -105,7 +105,6 @@ export const Objects = forwardRef(({ nextObject, objectType, value, opId }: Obje
     </Group>
   );
 });
-
 
 export type FillerProp = {
   opId: string;
@@ -177,6 +176,9 @@ export const PythonTutor = forwardRef(({ variables, opId, objects, rows }: Pytho
   const objMap: Map<string, ObjectProps> = new Map();
   objects.forEach((obj) => objMap.set(obj.opId, obj));
   console.log(objMap);
+  const links = objects.map((object, index) => {
+    return { opId: `link${index}`, start: { opId: object.opId }, end: object.nextObject };
+  });
 
   // For object structure:
   // Rows -> nodes in row; if no node at position, then input is '' in which case Filler object is used
@@ -193,10 +195,9 @@ export const PythonTutor = forwardRef(({ variables, opId, objects, rows }: Pytho
           <Space name={'rowSpace'} vertically by={100}>
             {rows.map((level, index) => (
               <Row name={`row${index}`} spacing={50} alignment={'middle'}>
-                {level.nodes.map((obj) => ((obj == '') ? <Filler opId={'fill'} /> : <Objects {...objMap.get(obj)!} />))}
+                {level.nodes.map((obj) => (obj == '' ? <Filler opId={'fill'} /> : <Objects {...objMap.get(obj)!} />))}
               </Row>
             ))}
-
           </Space>
         </Group>
 
@@ -210,6 +211,9 @@ export const PythonTutor = forwardRef(({ variables, opId, objects, rows }: Pytho
           <Ref to={rowRef} />
         </Space>
 
+        {links.map((link) => (
+          <Link {...link} />
+        ))}
       </Group>
     </SVG>
   );
