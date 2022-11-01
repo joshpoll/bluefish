@@ -14,7 +14,7 @@ import {
   useBluefishContext,
   withBluefishFn,
 } from '../bluefish';
-import { Ref } from '../components/Ref';
+import { Ref, resolveRef } from '../components/Ref';
 import { Group } from '../components/Group';
 import { Line } from '../components/Line';
 import { Arrow } from '../components/Arrow';
@@ -37,22 +37,39 @@ export const Variable = forwardRef(({ pointObject, name, value, opId }: Point, r
   const textRef = useRef(null);
   const valueRef = useRef(null);
   const boxRef = useRef(null);
+  const boxRefBorderLeft = useRef(null);
+  const boxRefBorderBottom = useRef(null);
+
   const variableRef = useRef(null);
+  const fontFamily = 'verdana, arial, helvetica, sans-serif';
   return (
     <Group ref={ref} name={opId}>
       <Space name={variableRef} horizontally by={5}>
-        <Text ref={textRef} contents={name.toString()} fontSize={'24px'} fill={'black'} />
-        <Rect ref={boxRef} height={40} width={40} fill={'#e2ebf6'} stroke={'grey'} />
+        <Text ref={textRef} contents={name.toString()} fontSize={'24px'} fontFamily={fontFamily} fill={'black'} />
+        <Rect ref={boxRef} height={40} width={40} fill={'#e2ebf6'} />
       </Space>
-      <Text ref={valueRef} contents={value?.toString() ?? ''} fontSize={'24px'} fill={'black'} />
+
+      <Rect ref={boxRefBorderLeft} height={40} width={2} fill={'#a6b3b6'} />
+      <Rect ref={boxRefBorderBottom} height={2} width={40} fill={'#a6b3b6'} />
+      <Text
+        ref={valueRef}
+        contents={value?.toString() ?? ''}
+        fontFamily={fontFamily}
+        fontSize={'24px'}
+        fill={'black'}
+      />
+      <Align bottomCenter>
+        <Ref to={boxRefBorderBottom} />
+        <Ref to={boxRef} />
+      </Align>
+      <Align centerLeft>
+        <Ref to={boxRefBorderLeft} />
+        <Ref to={boxRef} />
+      </Align>
       <Align center>
         <Ref to={valueRef} />
         <Ref to={boxRef} />
       </Align>
-      {/* <Align centerLeft>
-        <Ref to={boxRef} />
-        <Ref to={textRef} />
-      </Align> */}
     </Group>
   );
 });
@@ -70,16 +87,17 @@ export const Link = forwardRef(({ opId, start, end }: LinkProps, ref: any) => {
     <Group ref={groupRef}>
       <LinkV2
         ref={ref}
+        name={opId}
         $from={'center'}
         $to={'centerLeft'}
         stroke={'cornflowerblue'}
-        strokeWidth={5}
+        strokeWidth={3}
         strokeDasharray={0}
       >
         <Ref to={start.opId} />
         <Ref to={end.opId} />
       </LinkV2>
-      {/* <Circle fill={'#394850'} r={20} /> */}
+      {/* <Circle ref={circleRef} fill={'#394850'} r={20} cx={20} cy={20} /> */}
       {/* <Align center to={'centerLeft'}>
         <Ref to={start.opId} />
         <Ref to={circleRef} />
@@ -104,7 +122,7 @@ export const Objects = forwardRef(({ nextObject, objectType, value, opId }: Obje
   const oneRef = useRef(null);
   const elemRef = useRef(null);
 
-  const fontFamily = 'Fira Code';
+  const fontFamily = 'verdana, arial, helvetica, sans-serif';
 
   return (
     <Group ref={ref} name={opId}>
@@ -167,17 +185,23 @@ export const GlobalFrame = forwardRef(({ variables, opId }: GlobalFrameProps, re
   const frame = useRef(null);
   const opIdLabel = useRef(null);
   const frameVariables = useRef(null);
+  const frameBorder = useRef(null);
+  const fontFamily = 'Andale mono, monospace';
 
   return (
     <Group ref={ref} name={opId}>
       <Rect ref={frame} height={300} width={200} fill={'#e2ebf6'} />
-      <Text ref={opIdLabel} contents={'Global Frame'} fontSize={'24px'} fill={'black'} />
+      <Rect ref={frameBorder} height={300} width={5} fill={'#a6b3b6'} />
+      <Text ref={opIdLabel} contents={'Global Frame'} fontSize={'24px'} fontFamily={fontFamily} fill={'black'} />
       <Space name={`frameVariables`} ref={frameVariables} vertically by={10}>
         {variables.map((point) => (
           <Variable {...point} />
         ))}
       </Space>
-
+      <Align centerLeft>
+        <Ref to={frameBorder} />
+        <Ref to={frame} />
+      </Align>
       <Align topCenter>
         <Ref to={opIdLabel} />
         <Ref to={frame} />
@@ -186,10 +210,6 @@ export const GlobalFrame = forwardRef(({ variables, opId }: GlobalFrameProps, re
         <Ref to={frame} />
         <Ref to={frameVariables} />
       </Align>
-      {/* <Align left>
-        <Ref to={frame} />
-        <Ref to={line} />
-      </Align> */}
     </Group>
   );
 });
@@ -215,7 +235,6 @@ export const PythonTutor = forwardRef(({ variables, opId, objects, rows }: Pytho
   // lookup map for the yellow objects
   const objMap: Map<string, ObjectProps> = new Map();
   objects.forEach((obj) => objMap.set(obj.opId, obj));
-  console.log(objMap);
   const objectLinks = objects
     .filter((object) => object.nextObject !== null)
     .map((object, index) => {
@@ -267,10 +286,24 @@ export const PythonTutor = forwardRef(({ variables, opId, objects, rows }: Pytho
         </Space>
 
         {objectLinks.map((link) => (
-          <Link {...link} />
+          <Group>
+            <Link {...link} />
+            {/* <Circle name={link.opId + 'circle'} fill={'#394850'} r={20} /> */}
+            {/* <Align left>
+              <Ref to={link.opId + 'circle'} />
+              <Ref to={link.opId} />
+            </Align> */}
+          </Group>
         ))}
         {variableLinks.map((link) => (
-          <Link {...link} />
+          <Group>
+            <Link {...link} />
+            {/* <Circle name={link.opId + 'circle'} fill={'#394850'} r={20} /> */}
+            {/* <Align left to={'centerLeft'}>
+              <Ref to={link.opId + 'circle'} />
+              <Ref to={link.opId} />
+            </Align> */}
+          </Group>
         ))}
       </Group>
     </SVG>
