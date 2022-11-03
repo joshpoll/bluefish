@@ -5,7 +5,7 @@ import {
   scaleSequential,
 } from "d3-scale";
 import _ from "lodash";
-import { Col, Group, Rect, SVG, Padding } from "bluefish";
+import { Col, Group, Rect, SVG, Padding } from "@bluefish-js/core";
 import { BarY, barY, BarYWithBFN } from "../marks/BarY";
 import { Plot, Plot2, plotMark } from "../Plot";
 import { interpolateBlues } from "d3-scale-chromatic";

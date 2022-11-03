@@ -1,6 +1,6 @@
 import _ from "lodash";
 import React, { forwardRef } from "react";
-import { Group /* Path */ } from "bluefish";
+import { Group /* Path */ } from "@bluefish-js/core";
 import { Mark, PlotContext, plotMarkReified } from "../Plot";
 import { curveCatmullRom, line as d3Line } from "d3-shape";
 

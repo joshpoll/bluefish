@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { PropsWithChildren } from "react";
-import { Layout, LayoutFn, Measure } from "bluefish";
+import { Layout, LayoutFn, Measure } from "@bluefish-js/core";
 import { Scale as ScaleType } from "./Plot";
 
 export type ScaleProps = {

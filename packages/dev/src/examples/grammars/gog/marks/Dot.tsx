@@ -1,6 +1,6 @@
 import _ from "lodash";
 import React, { forwardRef } from "react";
-import { Circle, Group, Rect, Row } from "bluefish";
+import { Circle, Group, Rect, Row } from "@bluefish-js/core";
 import { Mark, PlotContext, plotMarkReified } from "../Plot";
 import { Scale } from "../Scale";
 import { Scale as ScaleFn } from "../Plot";

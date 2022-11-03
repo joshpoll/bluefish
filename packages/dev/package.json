@@ -15,7 +15,7 @@
     "react-scripts": "5.0.1",
     "typescript": "^4.8.4",
     "web-vitals": "^2.1.4",
-    "bluefish": "0.1.0"
+    "@bluefish-js/core": "0.1.0"
   },
   "scripts": {
     "start": "react-scripts start",

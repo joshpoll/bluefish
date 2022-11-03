@@ -16,7 +16,7 @@ import {
   Row,
   SVG,
   Align,
-} from "bluefish";
+} from "@bluefish-js/core";
 
 export type CharProps = {
   value: string;

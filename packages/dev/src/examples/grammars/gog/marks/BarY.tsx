@@ -8,7 +8,7 @@ import {
   Group,
   Rect,
   Row,
-} from "bluefish";
+} from "@bluefish-js/core";
 import { Mark, PlotContext, plotMarkReified } from "../Plot";
 import { Scale } from "../Scale";
 import { Scale as ScaleFn } from "../Plot";

@@ -8,7 +8,7 @@ import {
   Padding,
   SVG,
   NewBBox,
-} from "bluefish";
+} from "@bluefish-js/core";
 
 export type Dimensions = {
   width: number;

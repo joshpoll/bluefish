@@ -1,4 +1,4 @@
-import { withBluefishFn, NewBBox } from "bluefish";
+import { withBluefishFn, NewBBox } from "@bluefish-js/core";
 import { Scale } from "../Plot";
 
 export type RectScaleProps = React.SVGProps<SVGRectElement> & {

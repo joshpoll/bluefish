@@ -1,7 +1,6 @@
 {
-  "name": "bluefish",
+  "name": "@bluefish-js/core",
   "version": "0.1.0",
-  "private": true,
   "main": "./dist/main.js",
   "types": "./dist/main.d.ts",
   "license": "MIT",
