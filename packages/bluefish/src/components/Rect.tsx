@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { withBluefish, withBluefishFn, BBox } from '../bluefish';
 import { NewBBox } from '../NewBBox';
 
@@ -15,12 +16,13 @@ export const Rect = withBluefishFn(
       };
     };
   },
-  (props: RectProps & { $bbox?: Partial<NewBBox> }) => {
+  forwardRef((props: RectProps & { $bbox?: Partial<NewBBox> }, ref: any) => {
     console.log('rect props', props, props.$bbox);
     const { $bbox, ...rest } = props;
     return (
       // translate and scale based on $bbox.coord
       <g
+        ref={ref}
         transform={`translate(${$bbox?.coord?.translate?.x ?? 0} ${$bbox?.coord?.translate?.y ?? 0})
 scale(${$bbox?.coord?.scale?.x ?? 1} ${$bbox?.coord?.scale?.y ?? 1})`}
       >
@@ -33,6 +35,6 @@ scale(${$bbox?.coord?.scale?.x ?? 1} ${$bbox?.coord?.scale?.y ?? 1})`}
         />
       </g>
     );
-  },
+  }),
 );
 Rect.displayName = 'Rect';

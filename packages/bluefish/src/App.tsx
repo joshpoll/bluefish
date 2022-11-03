@@ -27,6 +27,9 @@ import { Bluefish } from './components/Bluefish';
 import { Child, Parent } from './components/TestingContext';
 import { Align } from './components/Align';
 import { GoGTest } from './examples/grammars/gog/examples/test';
+import { rasterize } from './rasterize';
+import { Label, LabelTest } from './examples/label';
+import { Group } from './components/Group';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -36,6 +39,22 @@ function App() {
   const [startOpId, setStartOpId] = React.useState('5@B');
   const [rangeval, setRangeval] = React.useState(undefined);
 
+  const [circle, setCircle] = React.useState<SVGCircleElement | null>(null);
+  const [pngUrl, setPngUrl] = React.useState<string | null>(null);
+
+  // use canvg to convert circle to png
+  React.useEffect(() => {
+    async function convert() {
+      if (circle !== null) {
+        const canvas = await rasterize(circle, { width: 100, height: 100 });
+        const blob = await canvas.convertToBlob();
+        const pngUrl = URL.createObjectURL(blob);
+        setPngUrl(pngUrl);
+      }
+    }
+    convert();
+  }, [circle]);
+
   return (
     <div className="App">
       <br />
@@ -43,6 +62,31 @@ function App() {
       <br />
       <br />
       {/* <GoGTest /> */}
+      {/* <LabelTest /> */}
+      {/* <SVG width={500} height={500}>
+        <Group>
+          <Label>
+            <Rect height={65} width={50} rx={5} fill={'#eee'} />
+          </Label>
+        </Group>
+      </SVG> */}
+      <svg width="100" height="100">
+        <circle
+          ref={(node) => {
+            setCircle(node as any);
+          }}
+          cx="50"
+          cy="50"
+          r="40"
+          stroke="green"
+          strokeWidth="4"
+          fill="yellow"
+        />
+      </svg>
+      <br />
+      {`${circle?.outerHTML}`}
+      <br />
+      <img src={pngUrl ?? undefined} alt={''} />
       <br />
       <input
         type="range"
