@@ -4,6 +4,9 @@
   "main": "./dist/main.js",
   "types": "./dist/main.d.ts",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@rollup/plugin-typescript": "^9.0.2",
     "@testing-library/jest-dom": "^5.14.1",
