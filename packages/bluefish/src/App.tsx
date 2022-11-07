@@ -117,27 +117,12 @@ function App() {
           <Rect name={'rect1'} x={50} y={50} width={10} height={10} fill={'cornflowerblue'} />
           <Rect name={'rect2'} x={100} y={50} width={10} height={10} fill={'cornflowerblue'} />
           <Rect name={'rect3'} x={100} y={100} width={10} height={10} fill={'cornflowerblue'} />
-          {/* <Group>
-            <Text name={'text1'} contents={'test label 1'} />
-            <Text name={'text2'} contents={'test label 2'} />
-            <Text name={'text3'} contents={'test label 3'} />
-          </Group> */}
           <PointLabel
-            value={'a'}
-            opId={'8@A'}
-            marks={['bold', 'italic']}
-            deleted={false}
             texts={[
-              /* This version *should* work b/c the label positions haven't been set! */
-              { label: <Text name={'test label 1'} contents={'test label 1'} />, ref: 'rect1' },
+              { label: <Text contents={'test label 1'} />, ref: 'rect1' },
               { label: <Text contents={'test label 2'} />, ref: 'rect2' },
               { label: <Text contents={'test label 3'} />, ref: 'rect3' },
-              /* This version *shouldn't* work b/c the label positions will have already been set! */
-              // { label: <Ref to={'text1'} />, ref: 'rect1' },
-              // { label: <Ref to={'text2'} />, ref: 'rect2' },
-              // { label: <Ref to={'text3'} />, ref: 'rect3' },
             ]}
-            size={[500, 500]}
             compare={undefined}
             offset={[1]}
             anchor={Anchors}

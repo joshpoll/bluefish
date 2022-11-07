@@ -44,12 +44,7 @@ export const Anchors = [
 ] as const;
 
 export type PointLabelProps = {
-  value: string;
-  opId: string;
-  deleted: boolean;
-  marks: ('italic' | 'bold')[];
   texts: { label: any; ref: any }[];
-  size: [number, number];
   compare: ((a: any, b: any) => number) | undefined;
   offset: number[];
   anchor: readonly (keyof typeof anchorCode)[];
@@ -58,7 +53,7 @@ export type PointLabelProps = {
   padding: number;
 };
 
-export const PointLabel = forwardRef(function PointLabel({ texts, value, marks, opId }: PointLabelProps, ref: any) {
+export const PointLabel = forwardRef(function PointLabel({ texts }: PointLabelProps, ref: any) {
   return (
     <PointLabelAux ref={ref}>
       {texts[0].label}
@@ -74,6 +69,7 @@ export const PointLabelAux = LayoutFn(
       const [labelBBox, refBBox] = measurables.map((m) => m.measure(constraints));
       const refDomRef: SVGElement | null = ref.domRef;
 
+      // early return if we don't have refs yet
       if (refDomRef === null || refDomRef === undefined) {
         return {
           width: 0,
