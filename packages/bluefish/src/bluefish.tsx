@@ -29,6 +29,7 @@ import ReactIs from 'react-is';
 //    transformation.
 
 export type Measurable = {
+  domRef: SVGElement | null;
   name: string;
   measure(constraints: Constraints, isRef?: boolean): NewBBoxClass;
   transformStack: CoordinateTransform[] | undefined;
@@ -130,6 +131,7 @@ export const useBluefishLayout = (
   bbox: Partial<NewBBox>,
   coord: Partial<CoordinateTransform>,
   ref: React.ForwardedRef<unknown>,
+  domRef: React.RefObject<SVGElement>,
   props: any,
   children?: React.ReactNode,
   name?: any,
@@ -171,6 +173,7 @@ export const useBluefishLayout = (
   useImperativeHandle(
     ref,
     (): Measurable => ({
+      domRef: domRef.current,
       name,
       get transformStack() {
         return transformStackRef.current;
@@ -250,7 +253,20 @@ export const useBluefishLayout = (
         return bbox!;
       },
     }),
-    [measure, childrenRef, setLeft, setTop, setRight, setBottom, setWidth, setHeight, name, bboxClassRef, props],
+    [
+      measure,
+      childrenRef,
+      setLeft,
+      setTop,
+      setRight,
+      setBottom,
+      setWidth,
+      setHeight,
+      name,
+      bboxClassRef,
+      props,
+      domRef,
+    ],
   );
 
   console.log(`returning bbox for ${name}`, { left, top, right, bottom, width, height });
@@ -313,6 +329,8 @@ export const withBluefish = <ComponentProps,>(
 ) =>
   forwardRef(
     (props: PropsWithChildren<ComponentProps> /* & { $bbox?: Partial<NewBBox> } */ & { name?: any }, ref: any) => {
+      const domRef = useRef<SVGElement>(null);
+
       const { left, top, bottom, right, width, height, children, coord } = useBluefishLayout(
         measure,
         {
@@ -325,6 +343,7 @@ export const withBluefish = <ComponentProps,>(
         },
         {},
         ref,
+        domRef,
         props,
         props.children,
         props.name,
@@ -332,6 +351,7 @@ export const withBluefish = <ComponentProps,>(
       return (
         <WrappedComponent
           {...props}
+          ref={domRef}
           $bbox={{
             left,
             top,
@@ -353,6 +373,8 @@ export const withBluefishFn = <ComponentProps,>(
   WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox>; $coord?: CoordinateTransform }>,
 ) =>
   forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any }, ref: any) => {
+    const domRef = useRef<SVGElement>(null);
+
     const { left, top, bottom, right, width, height, children, coord } = useBluefishLayout(
       measureFn(props),
       {
@@ -365,6 +387,7 @@ export const withBluefishFn = <ComponentProps,>(
       },
       {},
       ref,
+      domRef,
       props,
       props.children,
       props.name,
@@ -372,6 +395,7 @@ export const withBluefishFn = <ComponentProps,>(
     return (
       <WrappedComponent
         {...props}
+        ref={domRef}
         $bbox={{
           left,
           top,

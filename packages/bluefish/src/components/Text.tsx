@@ -29,20 +29,26 @@ export const Text = withBluefishFn(
       props.contents,
       `${fontStyle ?? ''} ${fontWeight ?? ''} ${fontSize ?? ''} ${fontFamily ?? ''}`,
     );
-    return () => ({ width: measurements.width, height: measurements.fontHeight });
+    return () => ({ left: 0, top: 0, width: measurements.width, height: measurements.fontHeight });
   },
   (props: TextProps & { $bbox?: Partial<NewBBox> }) => {
     const { $bbox, ...rest } = props;
     return (
-      <text
-        {...rest}
-        x={$bbox?.left ?? 0}
-        // TODO: need some way to pass fontDescent here
-        // TODO: is height always defined?
-        y={($bbox?.top ?? 0) + ($bbox?.height !== undefined ? +$bbox.height : 0) /* - measurements.fontDescent */}
+      <g
+        // ref={ref}
+        transform={`translate(${$bbox?.coord?.translate?.x ?? 0} ${$bbox?.coord?.translate?.y ?? 0})
+scale(${$bbox?.coord?.scale?.x ?? 1} ${$bbox?.coord?.scale?.y ?? 1})`}
       >
-        {props.contents}
-      </text>
+        <text
+          {...rest}
+          x={$bbox?.left ?? 0}
+          // TODO: need some way to pass fontDescent here
+          // TODO: is height always defined?
+          y={($bbox?.top ?? 0) + ($bbox?.height !== undefined ? +$bbox.height : 0) /* - measurements.fontDescent */}
+        >
+          {props.contents}
+        </text>
+      </g>
     );
   },
 );

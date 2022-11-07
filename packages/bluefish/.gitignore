@@ -27,3 +27,4 @@ yarn-error.log*
 .rollup.cache
 
 tsconfig.tsbuildinfo
+.vscode

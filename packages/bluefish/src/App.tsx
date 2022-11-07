@@ -15,7 +15,7 @@ import {
 } from './testComponents';
 import * as _ from 'lodash';
 import { bertinHotel } from './examples/bertinHotel';
-import { blob as test_blob } from './examples/paperjs-test';
+// import { blob as test_blob } from './examples/paperjs-test';
 import { SVG } from './components/SVG';
 import { Col } from './components/Col';
 import { Row } from './components/Row';
@@ -26,10 +26,13 @@ import { Bluefish } from './components/Bluefish';
 // import { Child, Parent } from './components/TestingRefs';
 import { Child, Parent } from './components/TestingContext';
 import { Align } from './components/Align';
-import { GoGTest } from './examples/grammars/gog/examples/test';
+// import { GoGTest } from './examples/grammars/gog/examples/test';
 import { rasterize } from './rasterize';
 import { Label, LabelTest } from './examples/label';
 import { Group } from './components/Group';
+import labelLayout, { Anchors } from './components/Label/LabelLayout';
+import { PointLabel } from './components/Label/PointLabel';
+import { Circle, Ref } from './main';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -41,6 +44,51 @@ function App() {
 
   const [circle, setCircle] = React.useState<SVGCircleElement | null>(null);
   const [pngUrl, setPngUrl] = React.useState<string | null>(null);
+
+  const [text1, setText1] = React.useState<SVGTextElement | null>(null);
+  const [text2, setText2] = React.useState<SVGTextElement | null>(null);
+  const [text3, setText3] = React.useState<SVGTextElement | null>(null);
+  const [circle1, setCircle1] = React.useState<SVGCircleElement | null>(null);
+  const [circle2, setCircle2] = React.useState<SVGCircleElement | null>(null);
+  const [circle3, setCircle3] = React.useState<SVGCircleElement | null>(null);
+
+  // React.useEffect(() => {
+  //   if (
+  //     text1 === null ||
+  //     text2 === null ||
+  //     text3 === null ||
+  //     circle1 === null ||
+  //     circle2 === null ||
+  //     circle3 === null
+  //   ) {
+  //     return;
+  //   }
+
+  //   console.log('layout', text1);
+
+  //   labelLayout({
+  //     // labels and anchor points
+  //     texts: [
+  //       { label: text1, ref: circle1 },
+  //       { label: text2, ref: circle2 },
+  //       { label: text3, ref: circle3 },
+  //     ],
+  //     // canvas size (provided by parent in Bluefish)
+  //     size: [500, 500],
+  //     // optional sorting function to determine label layout priority order
+  //     compare: undefined,
+  //     // label offset from anchor point
+  //     offset: [1],
+  //     // offset orientation (e.g. 'top-left')
+  //     anchor: Anchors,
+  //     // optional list of elements to avoid (like a line mark)
+  //     avoidElements: [],
+  //     // whether or not we should avoid the anchor points (circle1, circle2, circle3)
+  //     avoidRefElements: true,
+  //     // padding around canvas to allow labels to be partially offscreen
+  //     padding: 0,
+  //   });
+  // }, [text1, text2, text3, circle1, circle2, circle3]);
 
   // use canvg to convert circle to png
   React.useEffect(() => {
@@ -61,8 +109,103 @@ function App() {
       <br />
       <br />
       <br />
+      <SVG width={200} height={200}>
+        <Group>
+          {/* <Circle name={'circle1'} cx={50} cy={50} r={10} fill={'cornflowerblue'} />
+          <Circle name={'circle2'} cx={100} cy={50} r={10} fill={'cornflowerblue'} />
+          <Circle name={'circle3'} cx={100} cy={100} r={10} fill={'cornflowerblue'} /> */}
+          <Rect name={'rect1'} x={50} y={50} width={10} height={10} fill={'cornflowerblue'} />
+          <Rect name={'rect2'} x={100} y={50} width={10} height={10} fill={'cornflowerblue'} />
+          <Rect name={'rect3'} x={100} y={100} width={10} height={10} fill={'cornflowerblue'} />
+          {/* <Group>
+            <Text name={'text1'} contents={'test label 1'} />
+            <Text name={'text2'} contents={'test label 2'} />
+            <Text name={'text3'} contents={'test label 3'} />
+          </Group> */}
+          <PointLabel
+            value={'a'}
+            opId={'8@A'}
+            marks={['bold', 'italic']}
+            deleted={false}
+            texts={[
+              /* This version *should* work b/c the label positions haven't been set! */
+              { label: <Text name={'test label 1'} contents={'test label 1'} />, ref: 'rect1' },
+              { label: <Text contents={'test label 2'} />, ref: 'rect2' },
+              { label: <Text contents={'test label 3'} />, ref: 'rect3' },
+              /* This version *shouldn't* work b/c the label positions will have already been set! */
+              // { label: <Ref to={'text1'} />, ref: 'rect1' },
+              // { label: <Ref to={'text2'} />, ref: 'rect2' },
+              // { label: <Ref to={'text3'} />, ref: 'rect3' },
+            ]}
+            size={[500, 500]}
+            compare={undefined}
+            offset={[1]}
+            anchor={Anchors}
+            avoidElements={[]}
+            avoidRefElements
+            padding={0}
+          />
+        </Group>
+      </SVG>
+      <br />
+      <svg width="200" height="200">
+        <text
+          ref={(node) => {
+            setText1(node as any);
+          }}
+          x={25}
+          y={25}
+        >
+          text1
+        </text>
+        <circle
+          ref={(node) => {
+            setCircle1(node as any);
+          }}
+          cx={25}
+          cy={25}
+          fill={'black'}
+          r={5}
+        />
+        <text
+          ref={(node) => {
+            setText2(node as any);
+          }}
+          x={40}
+          y={25}
+        >
+          text2
+        </text>
+        <circle
+          ref={(node) => {
+            setCircle2(node as any);
+          }}
+          cx={40}
+          cy={25}
+          fill={'black'}
+          r={5}
+        />
+        <text
+          ref={(node) => {
+            setText3(node as any);
+          }}
+          x={50}
+          y={50}
+        >
+          text3
+        </text>
+        <circle
+          ref={(node) => {
+            setCircle3(node as any);
+          }}
+          cx={50}
+          cy={50}
+          fill={'black'}
+          r={5}
+        />
+      </svg>
       {/* <GoGTest /> */}
-      {/* <LabelTest /> */}
+      <LabelTest />
       {/* <SVG width={500} height={500}>
         <Group>
           <Label>

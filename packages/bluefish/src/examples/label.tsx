@@ -71,7 +71,7 @@ const labelMeasurePolicy =
     const { width: labelWidth, height: labelHeight } = label.measure(constraints);
     const domRef: SVGElement | null = (label as any).domRef;
 
-    console.log('[label test]');
+    console.log('[label test]', domRef);
 
     async function render() {
       if (domRef === null) {

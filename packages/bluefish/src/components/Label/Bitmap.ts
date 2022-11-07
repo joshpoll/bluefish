@@ -11,7 +11,18 @@ for (let i = 1; i <= SIZE; ++i) {
   RIGHT0[i] = ~RIGHT1[i];
 }
 
-export default function Bitmap(w: number, h: number) {
+export type BitmapType = {
+  array: Uint32Array;
+  get: (x: number, y: number) => number;
+  set: (x: number, y: number) => void;
+  clear: (x: number, y: number) => void;
+  getRange: (x: number, y: number, x2: number, y2: number) => boolean;
+  setRange: (x: number, y: number, x2: number, y2: number) => void;
+  clearRange: (x: number, y: number, x2: number, y2: number) => void;
+  outOfBounds: (x: number, y: number, x2: number, y2: number) => boolean;
+};
+
+export default function Bitmap(w: number, h: number): BitmapType {
   const array = new Uint32Array(~~((w * h + SIZE) / SIZE));
 
   function _set(index: number, mask: number) {

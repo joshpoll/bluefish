@@ -205,10 +205,13 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
   const context = useBluefishContext();
 
   const transformStackRef = useRef<CoordinateTransform[] | undefined>(undefined);
+  const measurable = useRef<Measurable | null>(null);
 
   useImperativeHandle(
     ref,
-    () => ({
+    (): Measurable => ({
+      name: measurable.current?.name + '-ref' /* TODO: come up with a better name? this one will collide */,
+      domRef: measurable.current?.domRef!,
       get transformStack() {
         return transformStackRef.current;
       },
@@ -223,7 +226,7 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
       measure(constraints: Constraints): NewBBoxClass {
         console.log('[ref] measure', constraints, props.to);
         try {
-          const measurable = resolveRef(props.to, context.bfMap);
+          measurable.current = resolveRef(props.to, context.bfMap);
           // TODO: we might not need the slice here
           // console.log(
           //   '[ref] transform stacks for',
@@ -234,7 +237,7 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
           //   measurable.transformStack,
           // );
           const thisTransform = accumulateTransforms(transformStackRef.current?.slice(0, -1) ?? []);
-          const otherTransform = accumulateTransforms(measurable.transformStack?.slice(0, -1) ?? []);
+          const otherTransform = accumulateTransforms(measurable.current.transformStack?.slice(0, -1) ?? []);
 
           // transform other into this coordinate system
           const otherTransformInThisCoordinateSystem = {
@@ -274,9 +277,9 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
           // );
 
           return new RefBBox(
-            measurable.measure(constraints, true),
+            measurable.current.measure(constraints, true),
             otherTransformInThisCoordinateSystem,
-            measurable.name,
+            measurable.current.name,
           );
         } catch (e) {
           console.error('Error while measuring', props.to, e);
