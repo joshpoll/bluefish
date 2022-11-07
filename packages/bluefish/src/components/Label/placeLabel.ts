@@ -70,7 +70,6 @@ export default function placeLabel(
       insideFactor = offsets[i] < 0 ? -1 : 1;
 
       x1 = boundary[1 + dx] + offsets[i] * dx * sizeFactor;
-      console.log('x1', x1, boundary[1 + dx], offsets[i], dx, sizeFactor);
       yc = boundary[4 + dy] + (insideFactor * bbox.height! * dy) / 2 + offsets[i] * dy * sizeFactor;
       y1 = yc - bbox.height! / 2;
       y2 = yc + bbox.height! / 2;
@@ -102,22 +101,27 @@ export default function placeLabel(
 
       if (test(_x1, _x2, _y1, _y2, bm0, bm1, x1, x2, y1, y2, boundary, isInside)) {
         // place label if the position is placeable
-        // d.x = !dx ? xc : dx * insideFactor < 0 ? x2 : x1;
-        console.log('[placeLabel] before', bbox);
-        bbox.left = !dx ? xc : dx * insideFactor < 0 ? x2 : x1;
-        // d.datum.setAttribute('x', `${!dx ? xc : dx * insideFactor < 0 ? x2 : x1}`);
-        // d.y = !dy ? yc : dy * insideFactor < 0 ? y2 : y1;
-        bbox.top = !dy ? yc : dy * insideFactor < 0 ? y2 : y1;
-        console.log('[placeLabel] after', bbox);
-        // d.datum.setAttribute('y', `${!dy ? yc : dy * insideFactor < 0 ? y2 : y1}`);
 
-        // console.log('computed', d.datum.getAttribute('x'), d.datum.getAttribute('y'));
+        const x = !dx ? xc : dx * insideFactor < 0 ? x2 : x1;
+        const y = !dy ? yc : dy * insideFactor < 0 ? y2 : y1;
+        const align = Aligns[dx * insideFactor + 1];
+        const baseline = Baselines[dy * insideFactor + 1];
 
-        /* TODO: reintegrate anchor and baseline somehow to account for different locations of text */
-        // d.align = Aligns[dx * insideFactor + 1];
-        // d.datum.setAttribute('text-anchor', Aligns[dx * insideFactor + 1]);
-        // d.baseline = Baselines[dy * insideFactor + 1];
-        // d.datum.setAttribute('dominant-baseline', Baselines[dy * insideFactor + 1]);
+        if (align === 'right') {
+          bbox.right = x;
+        } else if (align === 'center') {
+          bbox.left = x - bbox.width! / 2;
+        } else if (align === 'left') {
+          bbox.left = x;
+        }
+
+        if (baseline === 'bottom') {
+          bbox.bottom = y;
+        } else if (baseline === 'middle') {
+          bbox.top = y - bbox.height! / 2;
+        } else if (baseline === 'top') {
+          bbox.top = y;
+        }
 
         bm0.setRange(_x1, _y1, _x2, _y2);
         return true;
