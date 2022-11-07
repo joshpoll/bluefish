@@ -57,20 +57,12 @@ export type PointLabelProps = {
 export const PointLabel = forwardRef(function PointLabel({ texts }: PointLabelProps, ref: any) {
   return (
     <PointLabelAux ref={ref}>
-      {/* TODO: in order to generalize this, I need to fix the fragment bug... */}
-      {texts[0].label}
-      <Ref to={texts[0].ref} />
-      {texts[1].label}
-      <Ref to={texts[1].ref} />
-      {texts[2].label}
-      <Ref to={texts[2].ref} />
-      {/* generalize the above code to the whole array */}
-      {/* {texts.map((text) => (
+      {texts.map((text) => (
         <>
           {text.label}
           <Ref to={text.ref} />
         </>
-      ))} */}
+      ))}
     </PointLabelAux>
   );
 });
