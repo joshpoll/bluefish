@@ -41,10 +41,11 @@ export const Anchors = [
 
 /* ONLY POINT LABELS */
 
-const boundary = (bbox: NewBBoxClass): number[] => {
+/* TODO: maybe, for consistency, use actual bluefish bbox here instead of calculating on the fly */
+const boundary = (d: SVGElement): number[] => {
   // const bbox = d.getBoundingClientRect();
   // getBoundingClientRect() returns the wrong thing! using getBBox() instead
-  // const bbox = (d as SVGGraphicsElement).getBBox();
+  const bbox = (d as SVGGraphicsElement).getBBox();
   // console.log(`[bbox] ${d.textContent} @ (${d.getAttribute('x')}, ${d.getAttribute('y')})`,
   // JSON.stringify(bbox));
 
@@ -62,12 +63,12 @@ const boundary = (bbox: NewBBoxClass): number[] => {
   // };
 
   // TODO: this might be wrong...
-  if (bbox.left === undefined) bbox.left = 0;
-  if (bbox.top === undefined) bbox.top = 0;
-  if (bbox.right === undefined) bbox.right = 0;
-  if (bbox.bottom === undefined) bbox.bottom = 0;
+  // if (bbox.left === undefined) bbox.left = 0;
+  // if (bbox.top === undefined) bbox.top = 0;
+  // if (bbox.right === undefined) bbox.right = 0;
+  // if (bbox.bottom === undefined) bbox.bottom = 0;
 
-  return [bbox.left, (bbox.left + bbox.right) / 2, bbox.right, bbox.top, (bbox.top + bbox.bottom) / 2, bbox.bottom];
+  return [bbox.x, bbox.width, bbox.x + bbox.width, bbox.y, bbox.height, bbox.x + bbox.height];
 };
 
 export default function labelLayout({
@@ -105,11 +106,11 @@ export default function labelLayout({
 
   // prepare text mark data for placing
   const data = texts
-    .map((d) => d.label)
+    // .map((d) => d.label)
     .map((d) => ({
-      datum: d,
+      datum: d.label,
       opacity: 0,
-      boundary: boundary(d),
+      boundary: boundary(d.ref),
     }));
 
   console.log('data', data);
@@ -167,40 +168,4 @@ function getAnchors(_: any, count: number) {
   for (let i = 0; i < n; ++i) anchors[i] |= anchorCode[_[i] as keyof typeof anchorCode];
   for (let i = n; i < count; ++i) anchors[i] = anchors[n - 1];
   return anchors;
-}
-
-function markType(item: any) {
-  return item && item.mark && item.mark.marktype;
-}
-
-/**
- * Factory function for function for getting base mark boundary, depending
- * on mark and group type. When mark type is undefined, line or area: boundary
- * is the coordinate of each data point. When base mark is grouped line,
- * boundary is either at the beginning or end of the line depending on the
- * value of lineAnchor. Otherwise, use bounds of base mark.
- */
-function markBoundary(marktype: any /* grouptype: any,  */ /* lineAnchor: any, markIndex: number */) {
-  const xy = (d: { x: number; y: number }) => [d.x, d.x, d.x, d.y, d.y, d.y];
-
-  if (!marktype) {
-    return xy; // no reactive geometry
-  } else if (marktype === 'line' || marktype === 'area') {
-    return (d: any) => xy(d.datum);
-  }
-
-  // else if (grouptype === 'line') {
-  //   return (d: any) => {
-  //     const items = d.datum.items[markIndex].items;
-  //     return xy(items.length
-  //       ? items[lineAnchor === 'start' ? 0 : items.length - 1]
-  //       : {x: NaN, y: NaN});
-  //   };
-  // }
-  else {
-    return (d: { datum: { bounds: { x1: number; x2: number; y1: number; y2: number } } }) => {
-      const b = d.datum.bounds;
-      return [b.x1, (b.x1 + b.x2) / 2, b.x2, b.y1, (b.y1 + b.y2) / 2, b.y2];
-    };
-  }
 }

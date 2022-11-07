@@ -83,7 +83,9 @@ export const PointLabelAux = LayoutFn(
 
       // early return if we don't have refs yet
       if (refDomRefs.some((refDomRef) => refDomRef === null || refDomRef === undefined)) {
-        return { width: 0, height: 0 };
+        return {
+          /* width: 0, height: 0 */
+        };
       }
 
       // if (refDomRef === null || refDomRef === undefined) {
