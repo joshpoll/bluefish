@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { forwardRef, useRef } from 'react';
 import { LayoutFn, Measure, withBluefishFn } from '../../bluefish';
 import { NewBBox } from '../../NewBBox';
@@ -56,8 +57,20 @@ export type PointLabelProps = {
 export const PointLabel = forwardRef(function PointLabel({ texts }: PointLabelProps, ref: any) {
   return (
     <PointLabelAux ref={ref}>
+      {/* TODO: in order to generalize this, I need to fix the fragment bug... */}
       {texts[0].label}
       <Ref to={texts[0].ref} />
+      {texts[1].label}
+      <Ref to={texts[1].ref} />
+      {texts[2].label}
+      <Ref to={texts[2].ref} />
+      {/* generalize the above code to the whole array */}
+      {/* {texts.map((text) => (
+        <>
+          {text.label}
+          <Ref to={text.ref} />
+        </>
+      ))} */}
     </PointLabelAux>
   );
 });
@@ -65,21 +78,35 @@ export const PointLabel = forwardRef(function PointLabel({ texts }: PointLabelPr
 export const PointLabelAux = LayoutFn(
   (props): Measure => {
     return (measurables, constraints) => {
-      const [_label, ref] = measurables;
-      const [labelBBox, refBBox] = measurables.map((m) => m.measure(constraints));
-      const refDomRef: SVGElement | null = ref.domRef;
+      // const [_label, ref] = measurables;
+      // const [labelBBox, refBBox] = measurables.map((m) => m.measure(constraints));
+      // const refDomRef: SVGElement | null = ref.domRef;
+      // generalize this to the whole array
+      // https://stackoverflow.com/a/44656332
+      let i = -1;
+      const [labels, refs] = _.partition(measurables, (_) => i++ % 2);
+      const labelBBoxes = labels.map((m) => m.measure(constraints));
+      const refBBoxes = refs.map((m) => m.measure(constraints));
+      const refDomRefs: (SVGElement | null | undefined)[] = refs.map((m) => m.domRef);
 
       // early return if we don't have refs yet
-      if (refDomRef === null || refDomRef === undefined) {
-        return {
-          width: 0,
-          height: 0,
-        };
+      if (refDomRefs.some((refDomRef) => refDomRef === null || refDomRef === undefined)) {
+        return { width: 0, height: 0 };
       }
+
+      // if (refDomRef === null || refDomRef === undefined) {
+      //   return {
+      //     width: 0,
+      //     height: 0,
+      //   };
+      // }
 
       labelLayout({
         // labels and anchor points
-        texts: [{ label: labelBBox, ref: refDomRef }],
+        texts: _.zipWith(labelBBoxes, refDomRefs, (labelBBox, refDomRef) => ({
+          label: labelBBox,
+          ref: refDomRef as SVGElement /* early return guarantees this */,
+        })),
         // canvas size (provided by parent in Bluefish)
         size: [constraints.width!, constraints.height!],
         // optional sorting function to determine label layout priority order
@@ -101,10 +128,26 @@ export const PointLabelAux = LayoutFn(
       // const top = Math.min(fromY!, toY!);
       // const right = Math.max(fromX!, toX!);
       // const bottom = Math.max(fromY!, toY!);
-      const left = Math.min(labelBBox.left!, refBBox.left!);
-      const top = Math.min(labelBBox.top!, refBBox.top!);
-      const right = Math.max(labelBBox.right!, refBBox.right!);
-      const bottom = Math.max(labelBBox.bottom!, refBBox.bottom!);
+      // const left = Math.min(labelBBox.left!, refBBox.left!);
+      // const top = Math.min(labelBBox.top!, refBBox.top!);
+      // const right = Math.max(labelBBox.right!, refBBox.right!);
+      // const bottom = Math.max(labelBBox.bottom!, refBBox.bottom!);
+      const left = Math.min(
+        ...labelBBoxes.map((labelBBox) => labelBBox.left!),
+        ...refBBoxes.map((refBBox) => refBBox.left!),
+      );
+      const top = Math.min(
+        ...labelBBoxes.map((labelBBox) => labelBBox.top!),
+        ...refBBoxes.map((refBBox) => refBBox.top!),
+      );
+      const right = Math.max(
+        ...labelBBoxes.map((labelBBox) => labelBBox.right!),
+        ...refBBoxes.map((refBBox) => refBBox.right!),
+      );
+      const bottom = Math.max(
+        ...labelBBoxes.map((labelBBox) => labelBBox.bottom!),
+        ...refBBoxes.map((refBBox) => refBBox.bottom!),
+      );
       // TODO: annoying problem where these values don't actually get propagated?
       const width = right - left;
       const height = bottom - top;

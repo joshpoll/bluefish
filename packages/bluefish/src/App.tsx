@@ -114,9 +114,9 @@ function App() {
           {/* <Circle name={'circle1'} cx={50} cy={50} r={10} fill={'cornflowerblue'} />
           <Circle name={'circle2'} cx={100} cy={50} r={10} fill={'cornflowerblue'} />
           <Circle name={'circle3'} cx={100} cy={100} r={10} fill={'cornflowerblue'} /> */}
-          <Rect name={'rect1'} x={50} y={50} width={10} height={10} fill={'cornflowerblue'} />
-          <Rect name={'rect2'} x={100} y={50} width={10} height={10} fill={'cornflowerblue'} />
-          <Rect name={'rect3'} x={100} y={100} width={10} height={10} fill={'cornflowerblue'} />
+          <Rect name={'rect1'} x={25} y={25} width={10} height={10} fill={'cornflowerblue'} />
+          <Rect name={'rect2'} x={40} y={25} width={10} height={10} fill={'cornflowerblue'} />
+          <Rect name={'rect3'} x={50} y={50} width={10} height={10} fill={'cornflowerblue'} />
           <PointLabel
             texts={[
               { label: <Text contents={'test label 1'} />, ref: 'rect1' },
