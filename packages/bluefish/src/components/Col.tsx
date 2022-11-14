@@ -50,7 +50,7 @@ const colMeasurePolicy =
     const height =
       'totalHeight' in options
         ? options.totalHeight
-        : _.sumBy(placeables, (p) => p.height!) + options.spacing * (placeables.length - 1);
+        : _.sumBy(placeables, 'height') + options.spacing * (placeables.length - 1);
 
     let spacing: number;
     if ('spacing' in options) {
@@ -76,7 +76,12 @@ const colMeasurePolicy =
       console.log('y', y);
     });
 
-    return { width, height };
+    return {
+      left: _.minBy(placeables, 'left')?.left ?? 0,
+      top: 0,
+      width,
+      height,
+    };
   };
 
 // export const Col = forwardRef((props: PropsWithChildren<ColProps>, ref) => {

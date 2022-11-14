@@ -50,7 +50,10 @@ const rowMeasurePolicy =
     }
 
     // spacing
-    const width = 'totalWidth' in options ? options.totalWidth : _.sumBy(placeables, 'width');
+    const width =
+      'totalWidth' in options
+        ? options.totalWidth
+        : _.sumBy(placeables, 'width') + options.spacing * (placeables.length - 1);
 
     let spacing: number;
     if ('spacing' in options) {
@@ -77,7 +80,12 @@ const rowMeasurePolicy =
       x += placeable.width! + spacing;
     });
 
-    return { width, height };
+    return {
+      left: 0,
+      top: _.minBy(placeables, 'top')?.top ?? 0,
+      width,
+      height,
+    };
   };
 
 export const Row = LayoutFn((props: RowProps) => rowMeasurePolicy(props));
