@@ -326,7 +326,10 @@ export const withBluefish = <ComponentProps,>(
   WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox> }>,
 ) =>
   forwardRef(
-    (props: PropsWithChildren<ComponentProps> /* & { $bbox?: Partial<NewBBox> } */ & { name?: any }, ref: any) => {
+    (
+      props: PropsWithChildren<ComponentProps> /* & { $bbox?: Partial<NewBBox> } */ & { name?: any; debug?: boolean },
+      ref: any,
+    ) => {
       const domRef = useRef<SVGElement>(null);
 
       const { left, top, bottom, right, width, height, children, coord } = useBluefishLayout(
@@ -347,21 +350,32 @@ export const withBluefish = <ComponentProps,>(
         props.name,
       );
       return (
-        <WrappedComponent
-          {...props}
-          ref={domRef}
-          $bbox={{
-            left,
-            top,
-            bottom,
-            right,
-            width,
-            height,
-            coord,
-          }}
-        >
-          {children}
-        </WrappedComponent>
+        <>
+          <WrappedComponent
+            {...props}
+            ref={domRef}
+            $bbox={{
+              left,
+              top,
+              bottom,
+              right,
+              width,
+              height,
+              coord,
+            }}
+          >
+            {children}
+          </WrappedComponent>
+          {props.debug && (
+            <g
+              ref={ref}
+              transform={`translate(${coord?.translate?.x ?? 0} ${coord?.translate?.y ?? 0})
+    scale(${coord?.scale?.x ?? 1} ${coord?.scale?.y ?? 1})`}
+            >
+              <rect x={left} y={top} width={width} height={height} fill="none" stroke="magenta" strokeWidth="1" />
+            </g>
+          )}
+        </>
       );
     },
   );
@@ -370,7 +384,7 @@ export const withBluefishFn = <ComponentProps,>(
   measureFn: (props: ComponentProps & PropsWithChildren<{ $bbox?: Partial<NewBBox> }>) => Measure,
   WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox>; $coord?: CoordinateTransform }>,
 ) =>
-  forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any }, ref: any) => {
+  forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any; debug?: boolean }, ref: any) => {
     const domRef = useRef<SVGElement>(null);
 
     const { left, top, bottom, right, width, height, children, coord } = useBluefishLayout(
@@ -391,21 +405,32 @@ export const withBluefishFn = <ComponentProps,>(
       props.name,
     );
     return (
-      <WrappedComponent
-        {...props}
-        ref={domRef}
-        $bbox={{
-          left,
-          top,
-          bottom,
-          right,
-          width,
-          height,
-          coord,
-        }}
-      >
-        {children}
-      </WrappedComponent>
+      <>
+        <WrappedComponent
+          {...props}
+          ref={domRef}
+          $bbox={{
+            left,
+            top,
+            bottom,
+            right,
+            width,
+            height,
+            coord,
+          }}
+        >
+          {children}
+        </WrappedComponent>
+        {props.debug && (
+          <g
+            ref={ref}
+            transform={`translate(${coord?.translate?.x ?? 0} ${coord?.translate?.y ?? 0})
+scale(${coord?.scale?.x ?? 1} ${coord?.scale?.y ?? 1})`}
+          >
+            <rect x={left} y={top} width={width} height={height} fill="none" stroke="magenta" strokeWidth="1" />
+          </g>
+        )}
+      </>
     );
   });
 
