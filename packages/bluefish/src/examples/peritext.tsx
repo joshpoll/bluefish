@@ -60,24 +60,28 @@ export const Char = forwardRef(function Char({ value, marks, opId }: CharProps, 
       {/* <Align center>
         <Ref to={letter} />
         <Ref to={tile} />
-      </Align>
-      <Align topCenter>
+      </Align> */}
+      <Align2 center={[<Ref to={letter} />, <Ref to={tile} />]} />
+      {/* <Align topCenter>
         <Ref to={opIdLabel} />
         <Ref to={tile} />
-      </Align>
-      <Align center to={'centerLeft'}>
+      </Align> */}
+      <Align2 topCenter={[<Ref to={opIdLabel} />, <Ref to={tile} />]} />
+      {/* <Align center to={'centerLeft'}>
         <Ref to={leftHandle} />
         <Ref to={tile} />
-      </Align>
-      <Align center to={'centerRight'}>
+      </Align> */}
+      <Align2 center={<Ref to={leftHandle} />} centerLeft={<Ref to={tile} />} />
+      {/* <Align center to={'centerRight'}>
         <Ref to={rightHandle} />
         <Ref to={tile} />
       </Align> */}
+      <Align2 center={<Ref to={rightHandle} />} centerRight={<Ref to={tile} />} />
       {/* rewrite the above using Align2 */}
-      <Align2 center={[<Ref to={letter} />, <Ref to={tile} />]} />
+      {/* <Align2 center={[<Ref to={letter} />, <Ref to={tile} />]} />
       <Align2 topCenter={[<Ref to={opIdLabel} />, <Ref to={tile} />]} />
       <Align2 center={<Ref to={leftHandle} />} centerLeft={<Ref to={tile} />} />
-      <Align2 center={<Ref to={rightHandle} />} centerRight={<Ref to={tile} />} />
+      <Align2 center={<Ref to={rightHandle} />} centerRight={<Ref to={tile} />} /> */}
     </Group>
   );
 });

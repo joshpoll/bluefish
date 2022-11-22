@@ -160,12 +160,18 @@ export class RefBBox extends NewBBoxClass {
     const transform = this._transform;
     return {
       translate: {
-        x: (refCoord.translate?.x ?? 0) * (transform.scale?.x ?? 1) + (transform.translate?.x ?? 0),
-        y: (refCoord.translate?.y ?? 0) * (transform.scale?.y ?? 1) + (transform.translate?.y ?? 0),
+        x:
+          refCoord.translate?.x === undefined
+            ? undefined
+            : refCoord.translate.x * (transform.scale?.x ?? 1) + (transform.translate?.x ?? 0),
+        y:
+          refCoord.translate?.y === undefined
+            ? undefined
+            : refCoord.translate.y * (transform.scale?.y ?? 1) + (transform.translate?.y ?? 0),
       },
       scale: {
-        x: (refCoord.scale?.x ?? 1) * (transform.scale?.x ?? 1),
-        y: (refCoord.scale?.y ?? 1) * (transform.scale?.y ?? 1),
+        x: refCoord.scale?.x === undefined ? undefined : refCoord.scale.x * (transform.scale?.x ?? 1),
+        y: refCoord.scale?.y === undefined ? undefined : refCoord.scale.y * (transform.scale?.y ?? 1),
       },
     };
   }

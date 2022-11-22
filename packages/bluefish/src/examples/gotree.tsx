@@ -52,26 +52,10 @@ export const Tree = forwardRef(function TreeFn<T>({ name, value, treeChildren }:
     <Group ref={ref}>
       <Group name={name + '-node'}>
         <Rect ref={tile} height={65} width={50} rx={5} fill={'#eee'} />
-        {/* <Rect ref={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} /> */}
-        {/* <Rect name={'rightHandle'} ref={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} /> */}
         <Text ref={letter} contents={value === ' ' ? '␣' : `${value}`} fontSize={'30px'} />
-        {/* <Rect ref={letter} height={20} width={20} fill={'red'} /> */}
-        {/* <Text ref={opIdLabel} contents={name} fontSize={'12px'} fill={'#999'} /> */}
-        {/* <Align center>
-          <Ref to={letter} />
-          <Ref to={tile} />
-        </Align> */}
         <Align2 center={[<Ref to={letter} />, <Ref to={tile} />]} />
-        {/* <Align topCenter>
-          <Ref to={opIdLabel} />
-          <Ref to={tile} />
-        </Align> */}
         <Align2
-          topCenter={[
-            <Text ref={opIdLabel} contents={name} fontSize={'12px'} fill={'#999'} />,
-            // <Rect debug ref={opIdLabel} height={20} width={20} fill={'red'} />,
-            <Ref to={tile} />,
-          ]}
+          topCenter={[<Text ref={opIdLabel} contents={name} fontSize={'12px'} fill={'#999'} />, <Ref to={tile} />]}
         />
         {/* <Align center to={'centerLeft'}>
         <Ref to={leftHandle} />

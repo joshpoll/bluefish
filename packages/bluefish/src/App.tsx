@@ -330,7 +330,7 @@ function App() {
           <Rect fill={'green'} width={100} height={100} />
         </Row>
       </SVG> */}
-      {/* <Peritext
+      <Peritext
         spacing={rangeval}
         chars={[
           { value: 'T', opId: '1@A', deleted: false, marks: ['italic'] },
@@ -362,7 +362,7 @@ function App() {
             borderColor: '#00C2FF',
           },
         ]}
-      /> */}
+      />
       <br />
       {/* <SVG width={500} height={500}>
         <Align center>
