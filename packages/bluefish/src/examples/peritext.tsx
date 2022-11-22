@@ -57,31 +57,10 @@ export const Char = forwardRef(function Char({ value, marks, opId }: CharProps, 
         fontStyle={marks.includes('italic') ? 'italic' : 'normal'}
       />
       <Text ref={opIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
-      {/* <Align center>
-        <Ref to={letter} />
-        <Ref to={tile} />
-      </Align> */}
       <Align2 center={[<Ref to={letter} />, <Ref to={tile} />]} />
-      {/* <Align topCenter>
-        <Ref to={opIdLabel} />
-        <Ref to={tile} />
-      </Align> */}
       <Align2 topCenter={[<Ref to={opIdLabel} />, <Ref to={tile} />]} />
-      {/* <Align center to={'centerLeft'}>
-        <Ref to={leftHandle} />
-        <Ref to={tile} />
-      </Align> */}
       <Align2 center={<Ref to={leftHandle} />} centerLeft={<Ref to={tile} />} />
-      {/* <Align center to={'centerRight'}>
-        <Ref to={rightHandle} />
-        <Ref to={tile} />
-      </Align> */}
       <Align2 center={<Ref to={rightHandle} />} centerRight={<Ref to={tile} />} />
-      {/* rewrite the above using Align2 */}
-      {/* <Align2 center={[<Ref to={letter} />, <Ref to={tile} />]} />
-      <Align2 topCenter={[<Ref to={opIdLabel} />, <Ref to={tile} />]} />
-      <Align2 center={<Ref to={leftHandle} />} centerLeft={<Ref to={tile} />} />
-      <Align2 center={<Ref to={rightHandle} />} centerRight={<Ref to={tile} />} /> */}
     </Group>
   );
 });
@@ -111,22 +90,9 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(function MarkOp(
         <Text name={opId + '-text'} ref={textRef} contents={`${action} ${markType}`} />
         {/* ...however, using a rect instead results in a properly centered component */}
         {/* <Rect name={opId + '-text'} ref={textRef} width={50} height={15} fill={'magenta'} /> */}
-        <Align name={opId + '-align-1'} left>
-          <Ref to={rectRef} />
-          <Ref to={start.opId} />
-        </Align>
-        <Align name={opId + '-align-2'} right>
-          <Ref to={rectRef} />
-          <Ref to={end.opId} />
-        </Align>
-        <Align name={opId + '-align-3'} center>
-          <Ref to={textRef} />
-          <Ref to={rectRef} />
-        </Align>
-        {/* rewrite the above using Align2 */}
-        {/* <Align2 left={[<Ref to={rectRef} />, <Ref to={start.opId} />]} /> */}
-        {/* <Align2 right={[<Ref to={rectRef} />, <Ref to={end.opId} />]} /> */}
-        {/* <Align2 center={[<Ref to={textRef} />, <Ref to={rectRef} />]} /> */}
+        <Align2 left={[<Ref to={rectRef} />, <Ref to={start.opId} />]} />
+        <Align2 right={[<Ref to={rectRef} />, <Ref to={end.opId} />]} />
+        <Align2 center={[<Ref to={textRef} />, <Ref to={rectRef} />]} />
       </Group>
       {/* make a row component and a column component */}
       <Row spacing={10} alignment={'bottom'} name={opId + '-row'}>
