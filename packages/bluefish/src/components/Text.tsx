@@ -29,6 +29,7 @@ export const Text = withBluefishFn(
       props.contents,
       `${fontStyle ?? ''} ${fontWeight ?? ''} ${fontSize ?? ''} ${fontFamily ?? ''}`,
     );
+    // TODO: really need to figure out semantics of intrinsic vs. extrinsic dimensions
     return () => ({ left: 0, top: 0, width: measurements.width, height: measurements.fontHeight });
   },
   (props: TextProps & { $bbox?: Partial<NewBBox> }) => {

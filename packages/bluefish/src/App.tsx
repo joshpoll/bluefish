@@ -33,6 +33,7 @@ import { Group } from './components/Group';
 import labelLayout, { Anchors } from './components/Label/LabelLayout';
 import { PointLabel } from './components/Label/PointLabel';
 import { Circle, Ref } from './main';
+import { GoTree } from './examples/gotree';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -109,12 +110,101 @@ function App() {
       <br />
       <br />
       <br />
-      <SVG width={200} height={200}>
+      {/* <SVG width={200} height={200}>
+        <Text name={'text'} contents={'b'} fontSize={'30px'} />
+        <Rect name={'rect'} x={20} y={50} width={50} height={65} rx={5} fill={'cornflowerblue'} />
+        <Text name={'label'} contents={'@A'} fontSize={'12px'} fill={'#999'} />
+        <Align>
+          {{
+            the: 'center',
+            of: <Ref to={'text'} />,
+            to: <Ref to={'rect'} />,
+          }}
+        </Align>
+        <Align
+          {...{
+            the: 'center',
+            of: <Ref to={'label'} />,
+            to: {
+              the: 'topCenter',
+              of: <Ref to={'rect'} />,
+            },
+          }}
+        />
+      </SVG> */}
+      <GoTree
+        tree={
+          {
+            name: 'A',
+            value: 7,
+            treeChildren: [
+              {
+                name: 'B',
+                value: 4,
+                treeChildren: [
+                  { name: 'C', value: 2 },
+                  { name: 'D', value: 2 },
+                ],
+              },
+              {
+                name: 'E',
+                value: 3,
+                treeChildren: [
+                  { name: 'F', value: 2 },
+                  { name: 'G', value: 1 },
+                ],
+              },
+            ],
+          }
+          // {
+          //   name: 'E',
+          //   value: 3,
+          //   treeChildren: [
+          //     { name: 'F', value: 2 },
+          //     { name: 'G', value: 1 },
+          //   ],
+          // }
+        }
+      />
+      <br />
+      {/* <SVG width={200} height={200}>
         <Group>
-          {/* <Circle name={'circle1'} cx={50} cy={50} r={10} fill={'cornflowerblue'} />
+          <Rect name={'rect1'} x={25} y={25} width={20} height={15} fill={'cornflowerblue'} />
+          <Rect name={'rect2'} x={70} y={55} width={20} height={20} fill={'cornflowerblue'} />
+          <Rect name={'rect3'} x={95} y={60} width={10} height={10} fill={'cornflowerblue'} />
+          <PointLabel
+            texts={[
+              { label: <Text contents={'test label 1'} />, ref: 'rect1' },
+              {
+                label: (
+                  <Group>
+                    <Align center>
+                      <Circle r={7} fill={'firebrick'} />
+                      <Circle r={4} fill={'coral'} /> */}
+      {/* <Text contents={'2'} fill={'white'} fontSize={'12px'} /> */}
+      {/* </Align>
+                  </Group>
+                ),
+                ref: 'rect2',
+              },
+              { label: <Text contents={'test label 3'} />, ref: 'rect3' },
+            ]}
+            compare={undefined}
+            offset={[1]}
+            anchor={Anchors}
+            avoidElements={[]}
+            avoidRefElements
+            padding={0}
+          />
+        </Group>
+      </SVG> */}
+      <br />
+      {/* <SVG width={200} height={200}>
+        <Group> */}
+      {/* <Circle name={'circle1'} cx={50} cy={50} r={10} fill={'cornflowerblue'} />
           <Circle name={'circle2'} cx={100} cy={50} r={10} fill={'cornflowerblue'} />
           <Circle name={'circle3'} cx={100} cy={100} r={10} fill={'cornflowerblue'} /> */}
-          <Rect name={'rect1'} x={25} y={25} width={10} height={10} fill={'cornflowerblue'} />
+      {/* <Rect name={'rect1'} x={25} y={25} width={10} height={10} fill={'cornflowerblue'} />
           <Rect name={'rect2'} x={40} y={55} width={10} height={10} fill={'cornflowerblue'} />
           <Rect name={'rect3'} x={75} y={60} width={10} height={10} fill={'cornflowerblue'} />
           <PointLabel
@@ -131,7 +221,7 @@ function App() {
             padding={0}
           />
         </Group>
-      </SVG>
+      </SVG> */}
       <br />
       <svg width="200" height="200">
         <text
@@ -190,7 +280,7 @@ function App() {
         />
       </svg>
       {/* <GoGTest /> */}
-      <LabelTest />
+      {/* <LabelTest /> */}
       {/* <SVG width={500} height={500}>
         <Group>
           <Label>
@@ -240,11 +330,12 @@ function App() {
           <Rect fill={'green'} width={100} height={100} />
         </Row>
       </SVG> */}
-      <Peritext
+      {/* <Peritext
         spacing={rangeval}
         chars={[
           { value: 'T', opId: '1@A', deleted: false, marks: ['italic'] },
           { value: 'h', opId: '2@A', deleted: true, marks: ['italic'] },
+          { value: 'r', opId: '20@A', deleted: true, marks: ['italic'] },
           { value: 'e', opId: '5@B', deleted: false, marks: ['bold', 'italic'] },
           { value: ' ', opId: '6@B', deleted: false, marks: ['bold', 'italic'] },
           { value: 'f', opId: '7@A', deleted: false, marks: ['bold'] },
@@ -271,7 +362,7 @@ function App() {
             borderColor: '#00C2FF',
           },
         ]}
-      />
+      /> */}
       <br />
       {/* <SVG width={500} height={500}>
         <Align center>

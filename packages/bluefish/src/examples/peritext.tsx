@@ -20,12 +20,20 @@ import { Arrow } from '../components/Arrow';
 import { Space } from '../components/Space';
 import { Connector } from '../components/Connector';
 import _ from 'lodash';
+import { Align2 } from '../components/Align2';
 
 export type CharProps = {
   value: string;
   opId: string;
   deleted: boolean;
   marks: ('italic' | 'bold')[];
+};
+
+const foo = {
+  the: 'center',
+  of: 'A',
+  // to: 'B',
+  to: { the: 'center', of: 'B' },
 };
 
 export const Char = forwardRef(function Char({ value, marks, opId }: CharProps, ref: any) {
@@ -49,7 +57,7 @@ export const Char = forwardRef(function Char({ value, marks, opId }: CharProps, 
         fontStyle={marks.includes('italic') ? 'italic' : 'normal'}
       />
       <Text ref={opIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
-      <Align center>
+      {/* <Align center>
         <Ref to={letter} />
         <Ref to={tile} />
       </Align>
@@ -64,7 +72,12 @@ export const Char = forwardRef(function Char({ value, marks, opId }: CharProps, 
       <Align center to={'centerRight'}>
         <Ref to={rightHandle} />
         <Ref to={tile} />
-      </Align>
+      </Align> */}
+      {/* rewrite the above using Align2 */}
+      <Align2 center={[<Ref to={letter} />, <Ref to={tile} />]} />
+      <Align2 topCenter={[<Ref to={opIdLabel} />, <Ref to={tile} />]} />
+      <Align2 center={<Ref to={leftHandle} />} centerLeft={<Ref to={tile} />} />
+      <Align2 center={<Ref to={rightHandle} />} centerRight={<Ref to={tile} />} />
     </Group>
   );
 });
@@ -106,6 +119,10 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(function MarkOp(
           <Ref to={textRef} />
           <Ref to={rectRef} />
         </Align>
+        {/* rewrite the above using Align2 */}
+        {/* <Align2 left={[<Ref to={rectRef} />, <Ref to={start.opId} />]} /> */}
+        {/* <Align2 right={[<Ref to={rectRef} />, <Ref to={end.opId} />]} /> */}
+        {/* <Align2 center={[<Ref to={textRef} />, <Ref to={rectRef} />]} /> */}
       </Group>
       {/* make a row component and a column component */}
       <Row spacing={10} alignment={'bottom'} name={opId + '-row'}>

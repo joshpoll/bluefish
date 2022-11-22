@@ -151,6 +151,25 @@ export class RefBBox extends NewBBoxClass {
     }
   }
 
+  get coord() {
+    // compose this._ref.coord with this._transform
+    const refCoord = this._ref.coord;
+    if (refCoord === undefined) {
+      return undefined;
+    }
+    const transform = this._transform;
+    return {
+      translate: {
+        x: (refCoord.translate?.x ?? 0) * (transform.scale?.x ?? 1) + (transform.translate?.x ?? 0),
+        y: (refCoord.translate?.y ?? 0) * (transform.scale?.y ?? 1) + (transform.translate?.y ?? 0),
+      },
+      scale: {
+        x: (refCoord.scale?.x ?? 1) * (transform.scale?.x ?? 1),
+        y: (refCoord.scale?.y ?? 1) * (transform.scale?.y ?? 1),
+      },
+    };
+  }
+
   set left(value: number | undefined) {
     // transform back to ref coordinates
     if (value === undefined) {
@@ -197,6 +216,34 @@ export class RefBBox extends NewBBoxClass {
       this._ref.height = undefined;
     } else {
       this._ref.height = value / (this._transform.scale?.y ?? 1);
+    }
+  }
+
+  set coord(value: CoordinateTransform | undefined) {
+    if (this._ref === undefined) {
+      // HACK! do parent class behavior here
+      (this as any)._coord = value;
+      if ((this as any)._setCoord) {
+        (this as any)._setCoord(value);
+      }
+      return;
+    }
+    console.log('[ref] setting coord', this._name, JSON.stringify(value), this._ref);
+    if (value === undefined) {
+      this._ref.coord = undefined;
+    } else {
+      // transform back to ref coordinates
+      const transform = this._transform;
+      this._ref.coord = {
+        translate: {
+          x: (value.translate?.x ?? 0) - (transform.translate?.x ?? 0),
+          y: (value.translate?.y ?? 0) - (transform.translate?.y ?? 0),
+        },
+        scale: {
+          x: (value.scale?.x ?? 1) / (transform.scale?.x ?? 1),
+          y: (value.scale?.y ?? 1) / (transform.scale?.y ?? 1),
+        },
+      };
     }
   }
 }

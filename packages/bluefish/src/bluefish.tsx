@@ -153,13 +153,13 @@ export const useBluefishLayout = (
   // remember props so we can re-measure if they change
   const propsRef = useRef<any>(undefined);
 
-  useEffect(() => {
-    console.log(name, 'left updated to', left);
-  }, [name, left]);
+  // useEffect(() => {
+  //   console.log(name, 'left updated to', left);
+  // }, [name, left]);
 
-  useEffect(() => {
-    console.log(name, 'top updated to', top);
-  }, [name, top]);
+  // useEffect(() => {
+  //   console.log(name, 'top updated to', top);
+  // }, [name, top]);
 
   // useEffect(() => {
   //   if (name !== undefined) {
@@ -184,7 +184,7 @@ export const useBluefishLayout = (
         }
       },
       measure(constraints: Constraints, isRef?: boolean): NewBBoxClass {
-        console.log('measuring', name, 'with constraints', constraints);
+        // console.log('measuring', name, 'with constraints', constraints);
         let bbox;
         if (
           isRef !== true &&
@@ -193,7 +193,7 @@ export const useBluefishLayout = (
             propsRef.current !== props)
         ) {
           constraintRef.current = constraints;
-          console.log('measuring', name);
+          // console.log('measuring', name);
           childrenRef.current.forEach((child) => {
             if (child !== undefined) {
               child.transformStack = transformStackRef.current;
@@ -212,31 +212,31 @@ export const useBluefishLayout = (
             { left, top, right, bottom, width, height, coord: coordRef.current },
             {
               left: (left) => {
-                console.log(name, 'left set to', left);
+                // console.log(name, 'left set to', left);
                 return setLeft(left);
               },
               top: (top) => {
-                console.log(name, 'top set to', top);
+                // console.log(name, 'top set to', top);
                 return setTop(top);
               },
               right: (right) => {
-                console.log(name, 'right set to', right);
+                // console.log(name, 'right set to', right);
                 return setRight(right);
               },
               bottom: (bottom) => {
-                console.log(name, 'bottom set to', bottom);
+                // console.log(name, 'bottom set to', bottom);
                 return setBottom(bottom);
               },
               width: (width) => {
-                console.log(name, 'width set to', width);
+                // console.log(name, 'width set to', width);
                 return setWidth(width);
               },
               height: (height) => {
-                console.log(name, 'height set to', height);
+                // console.log(name, 'height set to', height);
                 return setHeight(height);
               },
               coord: (coord) => {
-                console.log(name, 'coord set to', coord);
+                // console.log(name, 'coord set to', coord);
                 coordRef.current.scale = coord?.scale ?? {};
                 coordRef.current.translate = coord?.translate ?? {};
               },
@@ -284,7 +284,7 @@ export const useBluefishLayout = (
         context.bfMap.set(node.name, node);
       }
       const { ref } = child as any;
-      console.log('current ref on child', ref);
+      // console.log('current ref on child', ref);
       if (typeof ref === 'function') ref(node);
       else if (ref) {
         ref.current = node;
