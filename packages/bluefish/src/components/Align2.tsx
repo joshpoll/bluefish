@@ -129,6 +129,8 @@ const isHeightFixed = (placeable: NewBBoxClass): boolean => {
   return placeable.height !== undefined && placeable.coord !== undefined && placeable.coord.scale?.y !== undefined;
 };
 
+// COMBAK: this implementation is brittle. a more robust implementation would probably be to use some
+// version of the blue constraint solver here to locally propagate the equality constraints
 const alignMeasurePolicy =
   (options: Align2AuxProps): Measure =>
   (measurables, constraints: Constraints) => {
