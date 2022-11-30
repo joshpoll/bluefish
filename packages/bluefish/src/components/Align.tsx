@@ -33,16 +33,19 @@ export const splitAlignment = (
   let verticalAlignment: VerticalAlignment | undefined;
   let horizontalAlignment: HorizontalAlignment | undefined;
   switch (alignment) {
+    case 'top':
     case 'topLeft':
     case 'topCenter':
     case 'topRight':
       verticalAlignment = 'top';
       break;
+    case 'centerVertically':
     case 'centerLeft':
     case 'center':
     case 'centerRight':
       verticalAlignment = 'center';
       break;
+    case 'bottom':
     case 'bottomLeft':
     case 'bottomCenter':
     case 'bottomRight':
@@ -51,16 +54,19 @@ export const splitAlignment = (
   }
 
   switch (alignment) {
+    case 'left':
     case 'topLeft':
     case 'centerLeft':
     case 'bottomLeft':
       horizontalAlignment = 'left';
       break;
+    case 'centerHorizontally':
     case 'topCenter':
     case 'center':
     case 'bottomCenter':
       horizontalAlignment = 'center';
       break;
+    case 'right':
     case 'topRight':
     case 'centerRight':
     case 'bottomRight':
@@ -221,6 +227,7 @@ const alignMeasurePolicy =
 
     if (horizontalAlignment !== undefined) {
       if (fixAnchor.x === undefined) {
+        debugger;
         throw new Error('cannot align horizontally. fixAnchor.x is undefined');
       }
       switch (horizontalAlignment) {

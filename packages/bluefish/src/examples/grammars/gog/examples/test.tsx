@@ -12,6 +12,7 @@ import { Path } from '../../../../components/Path';
 import { Line } from '../marks/Line';
 import { driving } from './driving';
 import { Dot } from '../marks/Dot';
+import { NewBarY } from '../marks/NewBarY';
 
 // see https://observablehq.com/@joshpoll/vvt-gog
 
@@ -63,6 +64,20 @@ export const GoGTest: React.FC<{}> = ({}) => {
   return (
     <div>
       {/* TODO: stronger notion of local, abstract(?) coordinate system. similar to ggplot */}
+      {/* <SVG width={width} height={200}>
+        <Group>
+          {alphabet.map((d, i) => (
+            <Rect
+              key={i}
+              x={ordinalScale(d.letter)!}
+              y={linearScale(+d.frequency)}
+              width={ordinalScale.bandwidth()}
+              height={linearScale(0) - linearScale(+d.frequency)}
+              fill="steelblue"
+            />
+          ))}
+        </Group>
+      </SVG> */}
       <SVG width={width} height={200}>
         <Padding left={40} top={10} right={20} bottom={30}>
           <Plot2
@@ -84,7 +99,8 @@ export const GoGTest: React.FC<{}> = ({}) => {
               ])
             }
           >
-            <BarY encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} />
+            {/* <BarY encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
+            <NewBarY spacing={5} x={'letter'} y={'frequency'} color={'frequency'} />
             {/* <BarYWithBFN encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
           </Plot2>
         </Padding>

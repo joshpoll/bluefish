@@ -26,7 +26,7 @@ import { Bluefish } from './components/Bluefish';
 // import { Child, Parent } from './components/TestingRefs';
 import { Child, Parent } from './components/TestingContext';
 import { Align } from './components/Align';
-// import { GoGTest } from './examples/grammars/gog/examples/test';
+import { GoGTest } from './examples/grammars/gog/examples/test';
 import { rasterize } from './rasterize';
 import { Label, LabelTest } from './examples/label';
 import { Group } from './components/Group';
@@ -34,6 +34,12 @@ import labelLayout, { Anchors } from './components/Label/LabelLayout';
 import { PointLabel } from './components/Label/PointLabel';
 import { Circle, Ref } from './main';
 import { GoTree } from './examples/gotree';
+import { driving } from './examples/grammars/gog/examples/driving';
+import { Plot2 as Plot } from './examples/grammars/gog/Plot';
+import { scaleLinear } from 'd3-scale';
+import { GlobalFrame } from './python-tutor';
+import { NewLine } from './examples/grammars/gog/marks/NewLine';
+import { NewDot } from './examples/grammars/gog/marks/NewDot';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -106,6 +112,72 @@ function App() {
 
   return (
     <div className="App">
+      {/* <SVG width={500} height={300}>
+        <GlobalFrame
+          variables={[
+            { pointObject: { opId: 'list1' }, name: 'c', value: '4', opId: 'cID' },
+            { pointObject: { opId: 'list2' }, name: 'd', value: '1', opId: 'dID' },
+            { pointObject: { opId: 'list3' }, name: 'x', value: '5', opId: 'xID' },
+          ]}
+          opId={'globalFrame'}
+        />
+      </SVG> */}
+      {/* <SVG width={500} height={300}>
+        <Plot
+          data={driving}
+          width={500}
+          height={300}
+          margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
+          x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
+          y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
+          color={() => () => 'black'}
+        >
+          <Plot.Line x={'miles'} y={'gas'} />
+          <Plot.Dot x={'miles'} y={'gas'} label={'year'} />
+        </Plot>
+      </SVG>
+      <br />
+      <SVG width={500} height={300}>
+        <Plot
+          data={driving}
+          width={500}
+          height={300}
+          margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
+          x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
+          y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
+          color={() => () => 'black'}
+        >
+          <Plot.Line x={'miles'} y={'gas'} />
+          <Plot.Dot x={'miles'} y={'gas'} />
+        </Plot>
+      </SVG>
+      <br /> */}
+      <SVG width={500} height={300}>
+        <Plot
+          data={driving}
+          width={500}
+          height={300}
+          margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
+          x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
+          y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
+          color={() => () => 'black'}
+        >
+          <NewLine name={'line'} x={'miles'} y={'gas'} />
+          <NewDot x={'miles'} y={'gas'} label={'year'} />
+        </Plot>
+      </SVG>
+      <br />
+      <SVG width={500} height={300}>
+        <Plot
+          data={driving}
+          width={500}
+          height={300}
+          margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
+          x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
+          y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
+          color={() => () => 'black'}
+        ></Plot>
+      </SVG>
       <br />
       <br />
       <br />
@@ -167,7 +239,7 @@ function App() {
         }
       />
       <br />
-      {/* <SVG width={200} height={200}>
+      <SVG width={200} height={200}>
         <Group>
           <Rect name={'rect1'} x={25} y={25} width={20} height={15} fill={'cornflowerblue'} />
           <Rect name={'rect2'} x={70} y={55} width={20} height={20} fill={'cornflowerblue'} />
@@ -180,9 +252,9 @@ function App() {
                   <Group>
                     <Align center>
                       <Circle r={7} fill={'firebrick'} />
-                      <Circle r={4} fill={'coral'} /> */}
-      {/* <Text contents={'2'} fill={'white'} fontSize={'12px'} /> */}
-      {/* </Align>
+                      <Circle r={4} fill={'coral'} />
+                      {/* <Text contents={'2'} fill={'white'} fontSize={'12px'} /> */}
+                    </Align>
                   </Group>
                 ),
                 ref: 'rect2',
@@ -197,7 +269,7 @@ function App() {
             padding={0}
           />
         </Group>
-      </SVG> */}
+      </SVG>
       <br />
       {/* <SVG width={200} height={200}>
         <Group> */}
@@ -280,7 +352,7 @@ function App() {
         />
       </svg>
       {/* <GoGTest /> */}
-      {/* <LabelTest /> */}
+      <LabelTest />
       {/* <SVG width={500} height={500}>
         <Group>
           <Label>

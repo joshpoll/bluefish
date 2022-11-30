@@ -310,34 +310,36 @@ const alignMeasurePolicy =
         if (horizontalAlignment !== undefined) {
           switch (horizontalAlignment) {
             case 'left':
-              if (!isLeftFixed(placeable)) {
-                placeable.left = fixAnchor.x;
-              } else {
-                // check that the left is the same as the fixed anchor
-                if (placeable.left !== fixAnchor.x) {
-                  throw new Error(
-                    `I expected ${'a component'} to have the same left as the fixed anchor (${
-                      fixAnchor.x
-                    }), but it was ${placeable.left} instead`,
-                  );
-                }
-              }
+              placeable.left = fixAnchor.x;
+              // if (!isLeftFixed(placeable)) {
+              //   placeable.left = fixAnchor.x;
+              // } else {
+              //   // check that the left is the same as the fixed anchor
+              //   if (placeable.left !== fixAnchor.x) {
+              //     throw new Error(
+              //       `I expected ${'a component'} to have the same left as the fixed anchor (${
+              //         fixAnchor.x
+              //       }), but it was ${placeable.left} instead`,
+              //     );
+              //   }
+              // }
               break;
             case 'center':
               if (placeable.width === undefined) {
                 throw new Error('cannot center align horizontally without width');
               }
-              if (!isLeftFixed(placeable)) {
-                placeable.left = fixAnchor.x! - placeable.width! / 2;
-              } else {
-                if (placeable.left! + placeable.width! / 2 !== fixAnchor.x) {
-                  throw new Error(
-                    `I expected ${'a component'} to have the same horizontal center as the fixed anchor (${
-                      fixAnchor.x
-                    }), but it was ${placeable.left! + placeable.width! / 2} instead`,
-                  );
-                }
-              }
+              placeable.left = fixAnchor.x! - placeable.width! / 2;
+              // if (!isLeftFixed(placeable)) {
+              //   placeable.left = fixAnchor.x! - placeable.width! / 2;
+              // } else {
+              //   if (placeable.left! + placeable.width! / 2 !== fixAnchor.x) {
+              //     throw new Error(
+              //       `I expected ${'a component'} to have the same horizontal center as the fixed anchor (${
+              //         fixAnchor.x
+              //       }), but it was ${placeable.left! + placeable.width! / 2} instead`,
+              //     );
+              //   }
+              // }
               break;
             case 'right':
               console.log(
@@ -348,23 +350,25 @@ const alignMeasurePolicy =
                   right: placeable.right,
                 }),
               );
-              if (!isRightFixed(placeable)) {
-                placeable.right = fixAnchor.x;
-              } else {
-                if (placeable.right !== fixAnchor.x) {
-                  throw new Error(
-                    `I expected ${'a component'} to have the same right as the fixed anchor (${
-                      fixAnchor.x
-                    }), but it was ${placeable.right} instead`,
-                  );
-                }
-                break;
-              }
+              placeable.right = fixAnchor.x;
+            // if (!isRightFixed(placeable)) {
+            //   placeable.right = fixAnchor.x;
+            // } else {
+            //   if (placeable.right !== fixAnchor.x) {
+            //     throw new Error(
+            //       `I expected ${'a component'} to have the same right as the fixed anchor (${
+            //         fixAnchor.x
+            //       }), but it was ${placeable.right} instead`,
+            //     );
+            //   }
+            //   break;
+            // }
           }
 
           if (verticalAlignment !== undefined) {
             switch (verticalAlignment) {
               case 'top':
+                placeable.top = fixAnchor.y;
                 if (!isTopFixed(placeable)) {
                   placeable.top = fixAnchor.y;
                 } else {
@@ -381,6 +385,7 @@ const alignMeasurePolicy =
                 if (placeable.height === undefined) {
                   throw new Error('cannot center align vertically without height');
                 }
+                placeable.top = fixAnchor.y! - placeable.height! / 2;
                 if (!isTopFixed(placeable)) {
                   placeable.top = fixAnchor.y! - placeable.height! / 2;
                 } else {
@@ -394,6 +399,7 @@ const alignMeasurePolicy =
                 }
                 break;
               case 'bottom':
+                placeable.bottom = fixAnchor.y;
                 if (!isBottomFixed(placeable)) {
                   placeable.bottom = fixAnchor.y;
                 } else {

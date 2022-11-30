@@ -154,8 +154,8 @@ export const Plot: React.FC<PropsWithChildren<PlotProps>> = forwardRef((props, r
 // composed with the marks.
 export const Plot2 = withBluefishFn(
   () => groupMeasurePolicy,
-  (props: PropsWithChildren<PlotProps> & { $bbox?: Partial<NewBBox> }) => {
-    let { width, height, margin, data, children, $bbox, ...scales } = props;
+  (props: PropsWithChildren<PlotProps> & { $bbox?: Partial<NewBBox>; $boundary?: paper.Path }) => {
+    let { width, height, margin, data, children, $bbox, $boundary, ...scales } = props;
     // compute dimensions from outer width, height, and margins
     const oldDimensions = { width: width - margin.left - margin.right, height: height - margin.bottom - margin.top };
     const dimensions = { width: $bbox!.width!, height: $bbox!.height! };

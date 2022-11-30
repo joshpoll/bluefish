@@ -35,7 +35,7 @@ export type Measurable = {
   measure(constraints: Constraints, isRef?: boolean): NewBBoxClass;
   transformStack: CoordinateTransform[] | undefined;
 };
-export type MeasureResult = Partial<NewBBox>;
+export type MeasureResult = Partial<NewBBox> & { boundary?: paper.Path };
 
 export type Measure = (measurables: Array<Measurable>, constraints: Constraints) => MeasureResult;
 
@@ -133,7 +133,7 @@ export const useBluefishLayout = (
   props: any,
   children?: React.ReactNode,
   name?: any,
-): NewBBoxWithChildren => {
+): NewBBoxWithChildren & { boundary?: paper.Path } => {
   const context = useContext(BluefishContext);
 
   const childrenRef = useRef<any[]>([]);
@@ -144,6 +144,7 @@ export const useBluefishLayout = (
   const [bottom, setBottom] = useState(bbox.bottom);
   const [width, setWidth] = useState(bbox.width);
   const [height, setHeight] = useState(bbox.height);
+  const [boundary, setBoundary] = useState<paper.Path | undefined>(undefined);
   // const [_coord, setCoord] = useState<CoordinateTransform | undefined>(coord);
   const coordRef = useRef<CoordinateTransform>(coord ?? {});
   const bboxClassRef = useRef<NewBBoxClass | undefined>(undefined);
@@ -199,7 +200,7 @@ export const useBluefishLayout = (
               child.transformStack = transformStackRef.current;
             }
           });
-          const { width, height, left, top, right, bottom } = measure(childrenRef.current, constraints);
+          const { width, height, left, top, right, bottom, boundary } = measure(childrenRef.current, constraints);
           console.log('measured', name, JSON.stringify({ width, height, left, top, right, bottom }));
           setWidth(width);
           setHeight(height);
@@ -207,6 +208,7 @@ export const useBluefishLayout = (
           setTop(top);
           setRight(right);
           setBottom(bottom);
+          setBoundary(boundary);
 
           bbox = new NewBBoxClass(
             { left, top, right, bottom, width, height, coord: coordRef.current },
@@ -276,6 +278,7 @@ export const useBluefishLayout = (
     width: width,
     height: height,
     coord: coordRef.current,
+    boundary,
     children: processChildren(children, (child, index) => (node: any) => {
       childrenRef.current[index] = node;
       // console.log('setting child ref', index, node, node.name);
@@ -387,7 +390,7 @@ export const withBluefishFn = <ComponentProps,>(
   forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any; debug?: boolean }, ref: any) => {
     const domRef = useRef<SVGElement>(null);
 
-    const { left, top, bottom, right, width, height, children, coord } = useBluefishLayout(
+    const { left, top, bottom, right, width, height, children, coord, boundary } = useBluefishLayout(
       measureFn(props),
       {
         // left: props.bbox?.left,
@@ -418,6 +421,7 @@ export const withBluefishFn = <ComponentProps,>(
             height,
             coord,
           }}
+          $boundary={boundary}
         >
           {children}
         </WrappedComponent>
