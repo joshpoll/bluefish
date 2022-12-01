@@ -68,7 +68,7 @@ const boundary = (d: SVGElement): number[] => {
   // if (bbox.right === undefined) bbox.right = 0;
   // if (bbox.bottom === undefined) bbox.bottom = 0;
 
-  return [bbox.x, bbox.width, bbox.x + bbox.width, bbox.y, bbox.height, bbox.x + bbox.height];
+  return [bbox.x, bbox.x + bbox.width / 2, bbox.x + bbox.width, bbox.y, bbox.y + bbox.height / 2, bbox.y + bbox.height];
 };
 
 export default function labelLayout({
