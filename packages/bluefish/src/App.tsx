@@ -32,7 +32,7 @@ import { Label, LabelTest } from './examples/label';
 import { Group } from './components/Group';
 import labelLayout, { Anchors } from './components/Label/LabelLayout';
 import { PointLabel } from './components/Label/PointLabel';
-import { Circle, Ref } from './main';
+import { Circle, Ref, useBluefishContext } from './main';
 import { GoTree } from './examples/gotree';
 import { driving } from './examples/grammars/gog/examples/driving';
 import { Plot2 as Plot } from './examples/grammars/gog/Plot';
@@ -40,9 +40,18 @@ import { scaleLinear } from 'd3-scale';
 import { GlobalFrame } from './python-tutor';
 import { NewLine } from './examples/grammars/gog/marks/NewLine';
 import { NewDot } from './examples/grammars/gog/marks/NewDot';
+import { resolveRef } from './components/Ref';
+import { BluefishContextValue } from './bluefish';
+import { Rect as Rect2 } from './components/Rect2';
+import { Col as Col2 } from './components/Col2';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
+};
+
+const copyAttr = <T,>(context: BluefishContextValue, name: string, prop: string): T => {
+  const measurable = resolveRef(name, context.bfMap);
+  return measurable.props[prop] as T;
 };
 
 function App() {
@@ -112,6 +121,19 @@ function App() {
 
   return (
     <div className="App">
+      <SVG width={300} height={300}>
+        <Group>
+          <Col2 name={'$2 col2'} spacing={5} alignment={'center'}>
+            <Rect2 name={'$2 rect2-1'} width={20} height={10} fill="cornflowerblue" />
+            <Rect2 name={'$2 rect2-2'} width={10} height={20} fill="green" />
+          </Col2>
+        </Group>
+      </SVG>
+      <br />
+      <SVG width={300} height={300}>
+        <Rect2 x={30} y={50} width={20} height={10} fill="cornflowerblue" />
+      </SVG>
+      <br />
       {/* <SVG width={500} height={300}>
         <GlobalFrame
           variables={[
@@ -153,8 +175,54 @@ function App() {
       </SVG>
       <br /> */}
       <SVG width={500} height={300}>
+        <Rect name={'rect'} x={10} y={10} width={40} height={20} fill={'cornflowerblue'} />
+        {/* <CopyAttr<number> name={'rect'} prop={'y'}>
+          {(y) => <Rect x={10} y={y} width={40} height={20} fill={'cornflowerblue'} />}
+        </CopyAttr>
+        <Rect x={10} y={copyAttr<number>('rect', 'y')} width={40} height={20} fill={'cornflowerblue'} /> */}
+        {/* do the above, but place the callback in the props instead of the children */}
+        {/* <CopyAttr<number>
+          name={'rect'}
+          prop={'y'}
+          callback={(y: number) => <Rect x={10} y={y} width={40} height={20} fill={'cornflowerblue'} />}
+        />
+        <Copy name={'rect'} /> */}
+      </SVG>
+      <br />
+      <SVG width={500} height={300}>
+        <Col spacing={5} alignment={'center'}>
+          <Plot
+            data={driving /* .slice(0, 16) */}
+            width={500}
+            height={300}
+            margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
+            x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
+            y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
+            color={() => () => 'black'}
+          >
+            <NewLine name={'line'} x={'miles'} y={'gas'} />
+            <NewDot x={'miles'} y={'gas'} label={'year'} />
+          </Plot>
+          <Row spacing={5} alignment={'top'}>
+            <Col spacing={2} alignment={'center'}>
+              <Text contents={'Cheap gas'} fontSize={'10pt'} />
+              <Text contents={'1956-1972'} />
+            </Col>
+            <Col spacing={2} alignment={'center'}>
+              <Text contents={'Oil embargo'} fontSize={'10pt'} />
+              <Text contents={'1973-1974'} />
+            </Col>
+            <Col spacing={2} alignment={'center'}>
+              <Text contents={'Energy crisis'} fontSize={'10pt'} />
+              <Text contents={'1978-1981'} />
+            </Col>
+          </Row>
+        </Col>
+      </SVG>
+      <br />
+      <SVG width={500} height={300}>
         <Plot
-          data={driving}
+          data={driving /* .slice(0, 16) */}
           width={500}
           height={300}
           margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
@@ -239,7 +307,7 @@ function App() {
         }
       />
       <br />
-      <SVG width={200} height={200}>
+      {/* <SVG width={200} height={200}>
         <Group>
           <Rect name={'rect1'} x={25} y={25} width={20} height={15} fill={'cornflowerblue'} />
           <Rect name={'rect2'} x={70} y={55} width={20} height={20} fill={'cornflowerblue'} />
@@ -252,9 +320,9 @@ function App() {
                   <Group>
                     <Align center>
                       <Circle r={7} fill={'firebrick'} />
-                      <Circle r={4} fill={'coral'} />
-                      {/* <Text contents={'2'} fill={'white'} fontSize={'12px'} /> */}
-                    </Align>
+                      <Circle r={4} fill={'coral'} /> */}
+      {/* <Text contents={'2'} fill={'white'} fontSize={'12px'} /> */}
+      {/* </Align>
                   </Group>
                 ),
                 ref: 'rect2',
@@ -269,7 +337,7 @@ function App() {
             padding={0}
           />
         </Group>
-      </SVG>
+      </SVG> */}
       <br />
       {/* <SVG width={200} height={200}>
         <Group> */}
@@ -352,7 +420,7 @@ function App() {
         />
       </svg>
       {/* <GoGTest /> */}
-      <LabelTest />
+      {/* <LabelTest /> */}
       {/* <SVG width={500} height={500}>
         <Group>
           <Label>

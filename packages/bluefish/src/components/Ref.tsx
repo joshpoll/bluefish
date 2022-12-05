@@ -264,6 +264,7 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
     ref,
     (): Measurable => ({
       name: measurable.current?.name + '-ref' /* TODO: come up with a better name? this one will collide */,
+      props: measurable.current?.props,
       domRef: measurable.current?.domRef!,
       get transformStack() {
         return transformStackRef.current;

@@ -1,7 +1,7 @@
 /* Copied from https://github.com/marigold-ui/marigold/pull/1798, which fixes a bug in
 react-keyed-flatten-children (see below) */
 import { ReactNode, ReactElement, Children, isValidElement, cloneElement } from 'react';
-import { isFragment } from 'react-is';
+import { isContextProvider, isFragment } from 'react-is';
 
 // jmp addition: inlining b/c ReactChild is deprecated
 type ReactChild = ReactElement | string | number;
@@ -29,6 +29,14 @@ export const flattenChildren = (children: ReactNode, depth: number = 0, keys: (s
            */
           keys.concat(node.key!),
         ),
+      );
+    } else if (isContextProvider(node)) {
+      // like fragment case, but still renders the provider
+      acc.push(
+        cloneElement(node, {
+          key: keys.concat(String(node.key)).join('.'),
+          children: flattenChildren(node.props.children, depth + 1, keys.concat(node.key!)),
+        }),
       );
     } else {
       if (isValidElement(node)) {

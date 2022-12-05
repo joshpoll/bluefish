@@ -31,6 +31,7 @@ import { flattenChildren } from './flatten-children';
 
 export type Measurable = {
   domRef: SVGElement | null;
+  props: any;
   name: string;
   measure(constraints: Constraints, isRef?: boolean): NewBBoxClass;
   transformStack: CoordinateTransform[] | undefined;
@@ -76,25 +77,20 @@ export type NewPlaceable = {
   height?: number;
 };
 
-// TODO: this is almost correct except that the index is going to be wrong if visit nested children
-// such as in the contextprovider case.
-// I think the most robust way to do this is to create new Bluefish components that wrap the
-// fragment and contextprovider components. This way we can use the Bluefish component's index
-// to determine the order of the children.
-
-// this currently works if a context provider is the only child of a component
-// but it doesn't work if there are multiple children and one of them is a context
-// provider.
-const processChildren = (
+export const processChildren = (
   children: React.ReactNode,
   callbackRef: (child: any, index: number) => (node: any) => void,
+  name?: string,
 ): any => {
+  // if (name !== undefined && name.startsWith('$')) console.log('processChildren', name, children);
   return React.Children.map(flattenChildren(children), (child, index) => {
-    if (ReactIs.isContextProvider(child)) {
+    /* if (ReactIs.isContextProvider(child)) {
       // TODO: try to push this into the flattenChildren function. the difference between dealing
       // with Context and with Fragment is that we still want to render ContextProviders.
       return React.cloneElement(child, { children: processChildren(child.props.children, callbackRef) });
-    } else if (isValidElement(child)) {
+    } else  */
+    if (isValidElement(child)) {
+      // if (name !== undefined && name.startsWith('$')) console.log('processChildren', name, 'valid element', child);
       return React.cloneElement(child as React.ReactElement<any>, {
         // store a pointer to every child's ref in an array
         // also pass through outer refs
@@ -154,6 +150,7 @@ export const useBluefishLayout = (
   // remember props so we can re-measure if they change
   const propsRef = useRef<any>(undefined);
 
+  // console.log('useBluefishLayout', children);
   // useEffect(() => {
   //   console.log(name, 'left updated to', left);
   // }, [name, left]);
@@ -172,6 +169,7 @@ export const useBluefishLayout = (
   useImperativeHandle(
     ref,
     (): Measurable => ({
+      props: propsRef.current,
       domRef: domRef.current,
       name,
       get transformStack() {
@@ -185,7 +183,7 @@ export const useBluefishLayout = (
         }
       },
       measure(constraints: Constraints, isRef?: boolean): NewBBoxClass {
-        // console.log('measuring', name, 'with constraints', constraints);
+        console.log('measuring', name, 'with constraints', constraints, 'and children', childrenRef.current);
         let bbox;
         if (
           isRef !== true &&
@@ -269,7 +267,7 @@ export const useBluefishLayout = (
     ],
   );
 
-  console.log(`returning bbox for ${name}`, { left, top, right, bottom, width, height });
+  // console.log(`returning bbox for ${name}`, { left, top, right, bottom, width, height });
   return {
     left: left,
     top: top,
@@ -279,20 +277,24 @@ export const useBluefishLayout = (
     height: height,
     coord: coordRef.current,
     boundary,
-    children: processChildren(children, (child, index) => (node: any) => {
-      childrenRef.current[index] = node;
-      // console.log('setting child ref', index, node, node.name);
-      if (node !== null && 'name' in node && node.name !== undefined) {
-        console.log('setting ref', node.name, node);
-        context.bfMap.set(node.name, node);
-      }
-      const { ref } = child as any;
-      // console.log('current ref on child', ref);
-      if (typeof ref === 'function') ref(node);
-      else if (ref) {
-        ref.current = node;
-      }
-    }),
+    children: processChildren(
+      children,
+      (child, index) => (node: any) => {
+        childrenRef.current[index] = node;
+        // console.log('setting child ref', index, node, node.name);
+        if (node !== null && 'name' in node && node.name !== undefined) {
+          console.log('setting ref', node.name, node);
+          context.bfMap.set(node.name, node);
+        }
+        const { ref } = child as any;
+        // console.log('current ref on child', ref);
+        if (typeof ref === 'function') ref(node);
+        else if (ref) {
+          ref.current = node;
+        }
+      },
+      name,
+    ),
     // children: React.Children.map(children, (child, index) => {
     //   if (isValidElement(child)) {
     //     return React.cloneElement(child as React.ReactElement<any>, {
@@ -388,6 +390,7 @@ export const withBluefishFn = <ComponentProps,>(
   WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox>; $coord?: CoordinateTransform }>,
 ) =>
   forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any; debug?: boolean }, ref: any) => {
+    // console.log('withBluefishFn', props.name, props, ref);
     const domRef = useRef<SVGElement>(null);
 
     const { left, top, bottom, right, width, height, children, coord, boundary } = useBluefishLayout(
@@ -435,6 +438,81 @@ scale(${coord?.scale?.x ?? 1} ${coord?.scale?.y ?? 1})`}
           </g>
         )}
       </>
+    );
+  });
+
+export const useBluefishLayout2 = <T extends { children?: any; name?: string }>(
+  init: {
+    bbox?: Partial<NewBBox>;
+    coord?: CoordinateTransform;
+  },
+  props: T,
+  measure: Measure,
+) => {
+  const ref = useContext(RefContext);
+
+  const domRef = useRef<any>(null);
+
+  // console.log('useBluefishLayout2', props.name, props.children, ref, domRef);
+  const { left, top, bottom, right, width, height, children, coord } = useBluefishLayout(
+    measure,
+    init?.bbox ?? {},
+    init?.coord ?? {},
+    ref,
+    domRef,
+    props,
+    props.children,
+    props.name,
+  );
+
+  // console.log('useBluefishLayout2 after', props.name, children, ref, domRef);
+
+  return {
+    domRef,
+    bbox: {
+      left,
+      top,
+      bottom,
+      right,
+      width,
+      height,
+      coord,
+    },
+    children,
+  };
+};
+
+// create a higher order component that uses a forwardRef, but places the ref in a context so it can
+// be looked up by the useBluefishLayout2 hook
+export const RefContext = React.createContext<React.RefObject<SVGElement> | null>(null);
+
+export const withBluefish2 = <ComponentProps,>(
+  measure: Measure,
+  WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox> }>,
+) =>
+  forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any }, ref: any) => {
+    const { domRef, bbox, children } = useBluefishLayout2({}, props, measure);
+    return (
+      <RefContext.Provider value={ref}>
+        <WrappedComponent {...props} ref={domRef} $bbox={bbox}>
+          {children}
+        </WrappedComponent>
+      </RefContext.Provider>
+    );
+  });
+
+// injects name (and debug. still todo)
+// injects ref
+export const withBluefish3 = <ComponentProps,>(
+  WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox> }>,
+) =>
+  forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any }, ref: any) => {
+    // console.log('withBluefish3', props.name, props.children, ref);
+    return (
+      // TODO: I think I also need to pass domRef here & I need to attach domRef to the WrappedComponent
+      <RefContext.Provider value={ref}>
+        <WrappedComponent {...props} />
+      </RefContext.Provider>
     );
   });
 
