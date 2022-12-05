@@ -44,6 +44,7 @@ import { resolveRef } from './components/Ref';
 import { BluefishContextValue } from './bluefish';
 import { Rect as Rect2 } from './components/Rect2';
 import { Col as Col2 } from './components/Col2';
+import { Test2 } from './components/Test2';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -122,12 +123,14 @@ function App() {
   return (
     <div className="App">
       <SVG width={300} height={300}>
-        <Group>
-          <Col2 name={'$2 col2'} spacing={5} alignment={'center'}>
-            <Rect2 name={'$2 rect2-1'} width={20} height={10} fill="cornflowerblue" />
-            <Rect2 name={'$2 rect2-2'} width={10} height={20} fill="green" />
-          </Col2>
-        </Group>
+        <Test2 />
+      </SVG>
+      <br />
+      <SVG width={300} height={300}>
+        <Col2 name={'$2 col2'} spacing={5} alignment={'center'}>
+          <Rect2 name={'$2 rect2-1'} width={20} height={10} fill="cornflowerblue" />
+          <Rect2 name={'$2 rect2-2'} width={10} height={20} fill="green" />
+        </Col2>
       </SVG>
       <br />
       <SVG width={300} height={300}>

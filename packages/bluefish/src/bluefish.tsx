@@ -507,10 +507,16 @@ export const withBluefish3 = <ComponentProps,>(
   WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox> }>,
 ) =>
   forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any }, ref: any) => {
-    // console.log('withBluefish3', props.name, props.children, ref);
+    const contextRef = useContext(RefContext);
+    const mergedRef = ref ?? contextRef;
+    console.log('withBluefish3', props.name, props.children, {
+      ref,
+      contextRef,
+      mergedRef,
+    });
     return (
       // TODO: I think I also need to pass domRef here & I need to attach domRef to the WrappedComponent
-      <RefContext.Provider value={ref}>
+      <RefContext.Provider value={mergedRef}>
         <WrappedComponent {...props} />
       </RefContext.Provider>
     );
