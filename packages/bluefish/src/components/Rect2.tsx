@@ -13,7 +13,6 @@ export const Rect = withBluefish3((props: RectProps) => {
     };
   });
 
-  console.log('rect props', props, bbox);
   return (
     // translate and scale based on $bbox.coord
     <g

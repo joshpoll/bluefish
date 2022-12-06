@@ -1,7 +1,9 @@
 import { forwardRef, useEffect, useId, useRef, useState } from 'react';
 import { Col } from '../components/Col';
 import { Rect } from '../components/Rect';
+import { Rect as Rect2 } from '../components/Rect2';
 import { Text } from '../components/Text';
+import { Text as Text2 } from '../components/Text2';
 import { Row } from '../components/Row';
 import { SVG } from '../components/SVG';
 import { Align } from '../components/Align';
@@ -15,12 +17,15 @@ import {
 } from '../bluefish';
 import { Ref } from '../components/Ref';
 import { Group } from '../components/Group';
+import { Group as Group2 } from '../components/Group2';
 import { Line } from '../components/Line';
 import { Arrow } from '../components/Arrow';
 import { Space } from '../components/Space';
 import { Connector } from '../components/Connector';
 import _ from 'lodash';
 import { Align2 } from '../components/Align2';
+import { Align2 as Align3 } from '../components/Align3';
+import { withBluefish3 } from '../bluefish';
 
 export type CharProps = {
   value: string;
@@ -36,32 +41,32 @@ const foo = {
   to: { the: 'center', of: 'B' },
 };
 
-export const Char = forwardRef(function Char({ value, marks, opId }: CharProps, ref: any) {
-  const tile = useRef(null);
-  const leftHandle = useRef(null);
-  const rightHandle = useRef(null);
-  const letter = useRef(null);
-  const opIdLabel = useRef(null);
+export const Char = withBluefish3(function Char({ value, marks, opId }: CharProps) {
+  const tile = opId + '-tile';
+  const opIdLabel = opId + '-label';
+  const leftHandle = opId + '-leftHandle';
+  const rightHandle = opId + '-rightHandle';
+  const letter = opId + '-letter';
 
   return (
     // TODO: use x and y to position the group
-    <Group ref={ref} name={opId}>
-      <Rect ref={tile} name={opId + '-rect'} height={65} width={50} rx={5} fill={'#eee'} />
-      <Rect ref={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
-      <Rect name={'rightHandle'} ref={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
-      <Text
-        ref={letter}
+    <Group2 name={opId}>
+      <Rect2 name={tile} height={65} width={50} rx={5} fill={'#eee'} />
+      <Rect2 name={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
+      <Rect2 name={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
+      <Text2
+        name={letter}
         contents={value === ' ' ? '␣' : value.toString()}
         fontSize={'30px'}
         fontWeight={marks.includes('bold') ? 'bold' : 'normal'}
         fontStyle={marks.includes('italic') ? 'italic' : 'normal'}
       />
-      <Text ref={opIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
-      <Align2 center={[<Ref to={letter} />, <Ref to={tile} />]} />
-      <Align2 topCenter={[<Ref to={opIdLabel} />, <Ref to={tile} />]} />
-      <Align2 center={<Ref to={leftHandle} />} centerLeft={<Ref to={tile} />} />
-      <Align2 center={<Ref to={rightHandle} />} centerRight={<Ref to={tile} />} />
-    </Group>
+      <Text2 name={opIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
+      <Align3 center={[<Ref to={letter} />, <Ref to={tile} />]} />
+      <Align3 topCenter={[<Ref to={opIdLabel} />, <Ref to={tile} />]} />
+      <Align3 center={<Ref to={leftHandle} />} centerLeft={<Ref to={tile} />} />
+      <Align3 center={<Ref to={rightHandle} />} centerRight={<Ref to={tile} />} />
+    </Group2>
   );
 });
 

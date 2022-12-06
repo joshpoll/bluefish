@@ -503,17 +503,11 @@ export const withBluefish2 = <ComponentProps,>(
 
 // injects name (and debug. still todo)
 // injects ref
-export const withBluefish3 = <ComponentProps,>(
-  WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox> }>,
-) =>
+export const withBluefish3 = <ComponentProps,>(WrappedComponent: React.ComponentType<ComponentProps>) =>
   forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any }, ref: any) => {
     const contextRef = useContext(RefContext);
+    // TODO: I definitely wrote this code, but I also definitely don't understand it.
     const mergedRef = ref ?? contextRef;
-    console.log('withBluefish3', props.name, props.children, {
-      ref,
-      contextRef,
-      mergedRef,
-    });
     return (
       // TODO: I think I also need to pass domRef here & I need to attach domRef to the WrappedComponent
       <RefContext.Provider value={mergedRef}>

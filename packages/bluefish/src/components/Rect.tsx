@@ -7,7 +7,6 @@ export type RectProps = React.SVGProps<SVGRectElement>;
 export const Rect = withBluefishFn(
   ({ x, y, width, height }: RectProps) => {
     return () => {
-      console.log('measuring rect', x, y, width, height);
       return {
         left: x !== undefined ? +x : undefined,
         top: y !== undefined ? +y : undefined,
@@ -17,7 +16,6 @@ export const Rect = withBluefishFn(
     };
   },
   forwardRef((props: RectProps & { $bbox?: Partial<NewBBox> }, ref: any) => {
-    console.log('rect props', props, props.$bbox);
     const { $bbox, ...rest } = props;
     return (
       // translate and scale based on $bbox.coord

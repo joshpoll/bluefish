@@ -45,6 +45,7 @@ import { BluefishContextValue } from './bluefish';
 import { Rect as Rect2 } from './components/Rect2';
 import { Col as Col2 } from './components/Col2';
 import { Test2 } from './components/Test2';
+import { Copy } from './components/Copy';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -122,6 +123,13 @@ function App() {
 
   return (
     <div className="App">
+      <SVG width={300} height={300}>
+        <Col spacing={10} alignment={'center'}>
+          <Rect name={'foooo'} width={200} height={10} fill="cornflowerblue" />
+          <Copy to={'foooo'} />
+        </Col>
+      </SVG>
+      <br />
       <SVG width={300} height={300}>
         <Test2 />
       </SVG>
