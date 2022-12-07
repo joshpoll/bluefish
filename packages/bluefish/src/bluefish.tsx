@@ -148,7 +148,7 @@ export const useBluefishLayout = (
   // remember constraints so we can re-measure if they change
   const constraintRef = useRef<Constraints | undefined>(undefined);
   // remember props so we can re-measure if they change
-  const propsRef = useRef<any>(undefined);
+  const propsRef = useRef<any>(props);
 
   // console.log('useBluefishLayout', children);
   // useEffect(() => {

@@ -46,6 +46,7 @@ import { Rect as Rect2 } from './components/Rect2';
 import { Col as Col2 } from './components/Col2';
 import { Test2 } from './components/Test2';
 import { Copy } from './components/Copy';
+import { CopyAttr } from './components/CopyAttr';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -55,6 +56,24 @@ const copyAttr = <T,>(context: BluefishContextValue, name: string, prop: string)
   const measurable = resolveRef(name, context.bfMap);
   return measurable.props[prop] as T;
 };
+
+{
+  /* <>
+  <Group data={''}>
+    <Label>1957</Label>
+    <Label>1978</Label>
+  </Group>
+  <Group>
+    <Label>2000</Label>
+  </Group>
+
+  {[1957, 1978, 2000].map((year, i) => (
+    <Label>{year}</Label>
+  ))}
+
+  <Label data={[1957, 1978, 2000]} />
+</>; */
+}
 
 function App() {
   const [startOpId, setStartOpId] = React.useState('5@B');
@@ -123,6 +142,15 @@ function App() {
 
   return (
     <div className="App">
+      <SVG width={300} height={300}>
+        <Col spacing={10} alignment={'center'}>
+          <Rect name={'foooo'} width={200} height={10} fill="cornflowerblue" />
+          <CopyAttr to={'foooo'} prop={'fill'}>
+            {({ fill }) => <Circle name={'barrr'} r={20} fill={fill} />}
+          </CopyAttr>
+        </Col>
+      </SVG>
+      <br />
       <SVG width={300} height={300}>
         <Col spacing={10} alignment={'center'}>
           <Rect name={'foooo'} width={200} height={10} fill="cornflowerblue" />
