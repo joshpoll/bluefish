@@ -270,6 +270,7 @@ export const Copy = forwardRef((props: RefProps, ref: any) => {
       name: measurable.current?.name + '-ref' /* TODO: come up with a better name? this one will collide */,
       props: measurable.current?.props,
       domRef: measurable.current?.domRef!,
+      constraints: measurable.current?.constraints,
       get transformStack() {
         return transformStackRef.current;
       },
@@ -376,6 +377,7 @@ export const Copy = forwardRef((props: RefProps, ref: any) => {
   // render the domRef
   return (
     <g
+      className="copy"
       transform={`translate(${coordRef.current?.translate?.x ?? 0} ${coordRef.current?.translate?.y ?? 0})
     scale(${coordRef.current?.scale?.x ?? 1} ${coordRef.current?.scale?.y ?? 1})`}
       ref={(node: SVGGElement) => {

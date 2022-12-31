@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useRef, useEffect, ReactElement, useState } from 'react';
-import { BBox, BluefishContext, Measure, processChildren } from '../bluefish';
+import { BBox, BluefishContext, Measure, processChildren, BluefishSymbolContext } from '../bluefish';
 
 // SVG is a bit weird, because it initiates layout
 // TODO: it can still probably be cleaned up a bit.
@@ -35,6 +35,9 @@ const svgMeasurePolicy: Measure = (measurables, constraints) => {
 export const SVG = (props: PropsWithChildren<SVGProps>) => {
   const [bfMap, setBFMap] = useState(new Map());
   const value = { bfMap, setBFMap };
+  const [bfSymbolMap, setBFSymbolMap] = useState(new Map());
+  const symbolValue = { bfSymbolMap, setBFSymbolMap };
+
   const [rerender, setRerender] = useState(false);
 
   const { width, height } = useMeasure(svgMeasurePolicy);
@@ -65,23 +68,24 @@ export const SVG = (props: PropsWithChildren<SVGProps>) => {
 
   return (
     <BluefishContext.Provider value={value}>
-      <svg width={props.width} height={props.height}>
-        {processChildren(props.children, (child, index) => (node: any) => {
-          childrenRef.current[index] = node;
-          // console.log('setting child ref', index, node, node.name);
-          /* TODO: need to add children to the map. maybe a reason to wrap stuff in Bluefish */
-          // if (node !== null && 'name' in node && node.name !== undefined) {
-          //   console.log('setting ref', node.name, node);
-          //   context.bfMap.set(node.name, node);
-          // }
-          const { ref } = child as any;
-          // console.log('current ref on child', ref);
-          if (typeof ref === 'function') ref(node);
-          else if (ref) {
-            ref.current = node;
-          }
-        })}
-        {/* {React.Children.map(props.children, (child, index) =>
+      <BluefishSymbolContext.Provider value={symbolValue}>
+        <svg width={props.width} height={props.height}>
+          {processChildren(props.children, (child, index) => (node: any) => {
+            childrenRef.current[index] = node;
+            // console.log('setting child ref', index, node, node.name);
+            /* TODO: need to add children to the map. maybe a reason to wrap stuff in Bluefish */
+            // if (node !== null && 'name' in node && node.name !== undefined) {
+            //   console.log('setting ref', node.name, node);
+            //   context.bfMap.set(node.name, node);
+            // }
+            const { ref } = child as any;
+            // console.log('current ref on child', ref);
+            if (typeof ref === 'function') ref(node);
+            else if (ref) {
+              ref.current = node;
+            }
+          })}
+          {/* {React.Children.map(props.children, (child, index) =>
           //   TODO: not sure why this cast is necessary
           React.cloneElement(child as ReactElement, {
             ref: (innerRef: any) => {
@@ -95,7 +99,8 @@ export const SVG = (props: PropsWithChildren<SVGProps>) => {
             },
           }),
         )} */}
-      </svg>
+        </svg>
+      </BluefishSymbolContext.Provider>
     </BluefishContext.Provider>
   );
 };

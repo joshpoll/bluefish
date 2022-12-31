@@ -47,15 +47,20 @@ import { Col as Col2 } from './components/Col2';
 import { Test2 } from './components/Test2';
 import { Copy } from './components/Copy';
 import { CopyAttr } from './components/CopyAttr';
+import { Align2 as Align3 } from './components/Align3';
+import { Group as Group2 } from './components/Group2';
+import { Circle as Circle2 } from './components/Circle2';
+import { ColNewHooks } from './components/ColNewHooks';
+import { CharSymbol } from './examples/peritext-symbol-test';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
 };
 
-const copyAttr = <T,>(context: BluefishContextValue, name: string, prop: string): T => {
-  const measurable = resolveRef(name, context.bfMap);
-  return measurable.props[prop] as T;
-};
+// const copyAttr = <T,>(context: BluefishContextValue, name: string, prop: string): T => {
+//   const measurable = resolveRef(name, context.bfMap);
+//   return measurable.props[prop] as T;
+// };
 
 {
   /* <>
@@ -142,12 +147,63 @@ function App() {
 
   return (
     <div className="App">
+      <SVG width={500} height={500}>
+        <Col spacing={10} alignment={'center'}>
+          <CharSymbol value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
+        </Col>
+      </SVG>
+      <br />
+      <SVG width={300} height={150}>
+        <Group>
+          <ColNewHooks spacing={10} totalHeight={100} alignment={'center'} constraints={{}}>
+            <Rect2 name={'rect1'} fill={'black'} width={30} />
+            <Rect2 name={'rect2'} fill={'black'} width={30} />
+            <Rect2 name={'rect3'} fill={'black'} width={30} />
+          </ColNewHooks>
+        </Group>
+      </SVG>
+      <SVG width={300} height={300}>
+        <ColNewHooks spacing={10} totalHeight={100} alignment={'center'} constraints={{}}>
+          <Rect2 name={'rect1'} fill={'black'} width={30} />
+          <Rect2 name={'rect2'} fill={'black'} width={30} />
+          <Rect2 name={'rect3'} fill={'black'} width={30} />
+        </ColNewHooks>
+      </SVG>
+      <SVG width={300} height={300}>
+        <Col spacing={10} totalHeight={100} alignment={'center'}>
+          <Rect2 name={'rect1'} fill={'black'} width={30} />
+          <Rect2 name={'rect2'} fill={'black'} width={30} />
+          <Rect2 name={'rect3'} fill={'black'} width={30} />
+        </Col>
+      </SVG>
+      <br />
+      <SVG width={300} height={300}>
+        <Col spacing={10} alignment={'center'}>
+          {/* <Group2 name={'foo'}>
+            <Circle name={'circle'} fill={'black'} r={10} />
+            <Text name={'text'} contents={'1'} stroke={'white'} fill={'white'} />
+            <Align3 center={[<Ref to="circle" />, <Ref to="text" />]} />
+          </Group2> */}
+          <Circle2 name={'foo'} fill={'black'} r={10} />
+          <Row spacing={5} alignment={'middle'}>
+            <Copy to={'foo'} />
+            <Text contents="<- that is a label" />
+          </Row>
+        </Col>
+      </SVG>
+      <br />
       <SVG width={300} height={300}>
         <Col spacing={10} alignment={'center'}>
           <Rect name={'foooo'} width={200} height={10} fill="cornflowerblue" />
-          <CopyAttr to={'foooo'} prop={'fill'}>
-            {({ fill }) => <Circle name={'barrr'} r={20} fill={fill} />}
-          </CopyAttr>
+          {/* <AlignAttr>
+            <Ref to={'foooo'} props={['fill', 'stroke']} />
+            <Circle name={'barrr'} r={20} fill={({fill}) => (...) => ...} stroke={({fill}) => ...} />
+          </AlignAttr> */}
+          {/* <CopyAttr to={'foooo'} prop={'fill'}>
+            {({ fill }) => <Ref fill={fill} />}
+          </CopyAttr> */}
+          {/* TODO: could try using this interface instead... */}
+          {/* <Circle name={'whatever'} r={20} fill={copyAttr('barrr', 'fill', (fill) => fill)} /> */}
         </Col>
       </SVG>
       <br />

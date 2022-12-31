@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import { ComponentType, forwardRef, PropsWithChildren, useContext } from 'react';
 import { NewBBoxClass } from '../NewBBox';
+import { useConstraints, Layout } from '../types/NewHooks';
 import {
   Constraints,
   Measure,
   Placeable,
-  Layout,
   useBluefishLayout,
   withBluefish,
   LayoutFn,
@@ -104,13 +104,21 @@ const colMeasurePolicy =
 //   return <g transform={`translate(${props.x ?? 0}, ${props.y ?? 0})`}>{props.children}</g>;
 // });
 
-export const Col = withBluefish3((props: PropsWithChildren<ColProps>) => {
-  const { domRef, bbox, children } = useBluefishLayout2({}, props, colMeasurePolicy(props));
+export const ColNewHooks = withBluefish3((props: PropsWithChildren<ColProps> & { constraints: Constraints }) => {
+  const constraints = props.constraints ?? {};
+  console.log('withBluefish3 [ColNewHooks] constraints', constraints);
 
-  return (
-    <g ref={domRef} transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}>
-      {children}
-    </g>
-  );
+  if (constraints.height !== undefined && constraints.height < 200) {
+    return (
+      <Layout
+        layout={(measurables) => colMeasurePolicy({ ...props, spacing: 0 })(measurables, constraints)}
+        parentProps={{ ...props, spacing: 0 }}
+      />
+    );
+  } else {
+    return <Layout layout={(measurables) => colMeasurePolicy(props)(measurables, constraints)} parentProps={props} />;
+  }
+
+  // return <Layout layout={(measurables) => colMeasurePolicy(props)(measurables, constraints)} parentProps={props} />;
 });
-Col.displayName = 'Col';
+ColNewHooks.displayName = 'ColNewHooks';

@@ -6,18 +6,37 @@ import {
   NewPlaceable,
   Placeable,
   useBluefishContext,
+  Symbol,
 } from '../bluefish';
 import { CoordinateTransform, NewBBoxClass, NewBBox } from '../NewBBox';
+import { BluefishSymbolMap, useBluefishSymbolContext } from '../bluefish';
 
-export type BluefishRef = string | React.RefObject<any>;
+export type BluefishRef = string | React.RefObject<any> | Symbol;
 
 export type RefProps = { to: BluefishRef };
 
-export const resolveRef = (ref: BluefishRef, map: BluefishContextValue['bfMap']): Measurable => {
+export const resolveRef = (
+  ref: BluefishRef,
+  map: BluefishContextValue['bfMap'],
+  symbolMap: BluefishSymbolMap,
+): Measurable => {
   if (typeof ref === 'string') {
     const refObject = map.get(ref);
     if (refObject === undefined) {
       throw new Error(`Could not find component with id ${ref}. Available ids: ${Array.from(map.keys())}`);
+    } else {
+      return refObject as unknown as Measurable;
+    }
+  } else if ('symbol' in ref) {
+    const refObject = symbolMap.get(ref.symbol)?.ref;
+    const foo = symbolMap.get(ref.symbol);
+    // debugger;
+    if (refObject === undefined) {
+      throw new Error(
+        `Could not find component with symbol ${ref.symbol.description}. Available symbols: ${Array.from(
+          symbolMap.keys(),
+        ).map((s) => s.description)}`,
+      );
     } else {
       return refObject as unknown as Measurable;
     }
@@ -256,6 +275,7 @@ export class RefBBox extends NewBBoxClass {
 
 export const Ref = forwardRef((props: RefProps, ref: any) => {
   const context = useBluefishContext();
+  const symbolContext = useBluefishSymbolContext();
 
   const transformStackRef = useRef<CoordinateTransform[] | undefined>(undefined);
   const measurable = useRef<Measurable | null>(null);
@@ -266,6 +286,7 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
       name: measurable.current?.name + '-ref' /* TODO: come up with a better name? this one will collide */,
       props: measurable.current?.props,
       domRef: measurable.current?.domRef!,
+      constraints: measurable.current?.constraints,
       get transformStack() {
         return transformStackRef.current;
       },
@@ -280,7 +301,7 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
       measure(constraints: Constraints): NewBBoxClass {
         console.log('[ref] measure', constraints, props.to);
         try {
-          measurable.current = resolveRef(props.to, context.bfMap);
+          measurable.current = resolveRef(props.to, context.bfMap, symbolContext.bfSymbolMap);
           // TODO: we might not need the slice here
           // console.log(
           //   '[ref] transform stacks for',
@@ -341,9 +362,9 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
         }
       },
     }),
-    [props.to, context.bfMap],
+    [props.to, context.bfMap, symbolContext.bfSymbolMap],
   );
 
-  return <></>;
+  return <g className="ref"></g>;
 });
 Ref.displayName = 'Ref';

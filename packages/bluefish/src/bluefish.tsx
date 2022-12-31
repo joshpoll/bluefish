@@ -11,6 +11,7 @@ import React, {
   useContext,
   useEffect,
   useId,
+  useMemo,
 } from 'react';
 import { isEqual, isNaN } from 'lodash';
 import ReactIs from 'react-is';
@@ -31,8 +32,10 @@ import { flattenChildren } from './flatten-children';
 
 export type Measurable = {
   domRef: SVGElement | null;
+  constraints: Constraints | undefined;
   props: any;
   name: string;
+  symbol?: Symbol;
   measure(constraints: Constraints, isRef?: boolean): NewBBoxClass;
   transformStack: CoordinateTransform[] | undefined;
 };
@@ -129,8 +132,13 @@ export const useBluefishLayout = (
   props: any,
   children?: React.ReactNode,
   name?: any,
+  symbol?: {
+    symbol: symbol;
+    parent?: symbol;
+  },
 ): NewBBoxWithChildren & { boundary?: paper.Path } => {
   const context = useContext(BluefishContext);
+  const symbolContext = useContext(BluefishSymbolContext);
 
   const childrenRef = useRef<any[]>([]);
 
@@ -171,7 +179,9 @@ export const useBluefishLayout = (
     (): Measurable => ({
       props: propsRef.current,
       domRef: domRef.current,
+      constraints: constraintRef.current,
       name,
+      symbol,
       get transformStack() {
         return transformStackRef.current;
       },
@@ -261,11 +271,22 @@ export const useBluefishLayout = (
       setWidth,
       setHeight,
       name,
+      symbol,
       bboxClassRef,
       props,
       domRef,
     ],
   );
+
+  // // set the ref in the symbol map to this ref
+  // useEffect(() => {
+  //   if (symbol !== undefined) {
+  //     symbolContext.bfSymbolMap.set(symbol.symbol, {
+  //       ref: ref as any,
+  //       children: symbolContext.bfSymbolMap.get(symbol.symbol)?.children ?? [],
+  //     });
+  //   }
+  // }, [symbol, ref, symbolContext.bfSymbolMap]);
 
   // console.log(`returning bbox for ${name}`, { left, top, right, bottom, width, height });
   return {
@@ -285,6 +306,23 @@ export const useBluefishLayout = (
         if (node !== null && 'name' in node && node.name !== undefined) {
           console.log('setting ref', node.name, node);
           context.bfMap.set(node.name, node);
+        }
+        // add symbol the map
+        if (node !== null && 'symbol' in node && node.symbol !== undefined) {
+          console.log('[symbol] setting ref', node.symbol, node);
+          symbolContext.bfSymbolMap.set(node.symbol.symbol, {
+            ref: node,
+            children: [],
+          });
+          console.log('[symbol] symbolMap after', symbolContext.bfSymbolMap.get(node.symbol.symbol));
+
+          // connect the symbol to its parent
+          if (node.symbol.parent !== undefined) {
+            symbolContext.bfSymbolMap.set(node.symbol.parent, {
+              ref: symbolContext.bfSymbolMap.get(node.symbol.parent)!.ref,
+              children: [...(symbolContext.bfSymbolMap.get(node.symbol.parent)?.children ?? []), node.symbol.symbol],
+            });
+          }
         }
         const { ref } = child as any;
         // console.log('current ref on child', ref);
@@ -441,7 +479,12 @@ scale(${coord?.scale?.x ?? 1} ${coord?.scale?.y ?? 1})`}
     );
   });
 
-export const useBluefishLayout2 = <T extends { children?: any; name?: string }>(
+export type Symbol = {
+  symbol: symbol;
+  parent?: symbol;
+};
+
+export const useBluefishLayout2 = <T extends { children?: any; name?: string; symbol?: Symbol }>(
   init: {
     bbox?: Partial<NewBBox>;
     coord?: CoordinateTransform;
@@ -463,6 +506,7 @@ export const useBluefishLayout2 = <T extends { children?: any; name?: string }>(
     props,
     props.children,
     props.name,
+    props.symbol,
   );
 
   // console.log('useBluefishLayout2 after', props.name, children, ref, domRef);
@@ -504,14 +548,15 @@ export const withBluefish2 = <ComponentProps,>(
 // injects name (and debug. still todo)
 // injects ref
 export const withBluefish3 = <ComponentProps,>(WrappedComponent: React.ComponentType<ComponentProps>) =>
-  forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any }, ref: any) => {
+  forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any; symbol?: Symbol }, ref: any) => {
     const contextRef = useContext(RefContext);
     // TODO: I definitely wrote this code, but I also definitely don't understand it.
     const mergedRef = ref ?? contextRef;
+    console.log('withBluefish3', props.name, mergedRef);
     return (
       // TODO: I think I also need to pass domRef here & I need to attach domRef to the WrappedComponent
       <RefContext.Provider value={mergedRef}>
-        <WrappedComponent {...props} />
+        <WrappedComponent {...props} constraints={mergedRef?.current?.constraints} />
       </RefContext.Provider>
     );
   });
@@ -622,3 +667,56 @@ export const BluefishContext = React.createContext<BluefishContextValue>({
   setBFMap: () => {},
 });
 export const useBluefishContext = () => useContext(BluefishContext);
+
+export type BluefishSymbolMap = Map<
+  symbol,
+  {
+    ref?: React.MutableRefObject<any>;
+    children: symbol[];
+  }
+>;
+
+export type BluefishSymbolContextValue = {
+  bfSymbolMap: BluefishSymbolMap;
+  setBFSymbolMap: React.Dispatch<React.SetStateAction<BluefishSymbolMap>>;
+};
+
+export const BluefishSymbolContext = React.createContext<BluefishSymbolContextValue>({
+  bfSymbolMap: new Map(),
+  setBFSymbolMap: () => {},
+});
+
+export const useBluefishSymbolContext = () => useContext(BluefishSymbolContext);
+
+export const useSymbol = (name: string): Symbol => {
+  const { bfSymbolMap } = useBluefishSymbolContext();
+
+  const parentRef = useContext(RefContext) as Measurable | null;
+
+  const symbol = useMemo(() => Symbol(name), [name]);
+  useEffect(() => {
+    /* TODO: we're doing this synchronously right now, since that's also how names are handled, but
+    this doesn't seem very robust... */
+    // bfSymbolMap.set(symbol, { ref: undefined, children: [] });
+
+    // add this symbol to the parent's children
+    if (!parentRef) return;
+    const parentSymbol = parentRef.symbol?.symbol;
+    if (!parentSymbol) return;
+    const parent = bfSymbolMap.get(parentSymbol);
+    if (!parent) return;
+    parent.children.push(symbol);
+
+    // setBFSymbolMap((prev) => {
+    //   const newMap = new Map(prev);
+    //   newMap.set(symbol, { ref: null, children: [] });
+    //   return newMap;
+    // });
+  }, [symbol, bfSymbolMap, parentRef]);
+  return {
+    symbol,
+    // TODO: it seems like this parent field isn't actually necessary since we resolve the parent in
+    // this hook already
+    parent: parentRef?.symbol?.symbol,
+  };
+};
