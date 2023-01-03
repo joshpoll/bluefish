@@ -697,7 +697,15 @@ export const useSymbol = (name: string): Symbol => {
   useEffect(() => {
     /* TODO: we're doing this synchronously right now, since that's also how names are handled, but
     this doesn't seem very robust... */
-    // bfSymbolMap.set(symbol, { ref: undefined, children: [] });
+    const oldEntry = bfSymbolMap.get(symbol);
+    if (oldEntry) {
+      bfSymbolMap.set(symbol, {
+        ref: oldEntry.ref,
+        children: oldEntry.children,
+      });
+    } else {
+      bfSymbolMap.set(symbol, { ref: undefined, children: [] });
+    }
 
     // add this symbol to the parent's children
     if (!parentRef) return;

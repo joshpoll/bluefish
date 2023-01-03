@@ -52,6 +52,7 @@ import { Group as Group2 } from './components/Group2';
 import { Circle as Circle2 } from './components/Circle2';
 import { ColNewHooks } from './components/ColNewHooks';
 import { CharSymbol } from './examples/peritext-symbol-test';
+import { TreeSymbol } from './examples/tree-symbol-test';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -147,6 +148,65 @@ function App() {
 
   return (
     <div className="App">
+      <SVG width={500} height={500}>
+        <TreeSymbol
+          data={{
+            name: 'A',
+            value: {
+              value: '7',
+              marks: ['bold', 'italic'],
+            },
+            subtrees: [
+              {
+                name: 'B',
+                value: {
+                  value: '4',
+                  marks: ['bold', 'italic'],
+                },
+                subtrees: [
+                  {
+                    name: 'C',
+                    value: {
+                      value: '2',
+                      marks: ['bold', 'italic'],
+                    },
+                  },
+                  {
+                    name: 'D',
+                    value: {
+                      value: '2',
+                      marks: ['bold', 'italic'],
+                    },
+                  },
+                ],
+              },
+              {
+                name: 'E',
+                value: {
+                  value: '3',
+                  marks: ['bold', 'italic'],
+                },
+                subtrees: [
+                  {
+                    name: 'F',
+                    value: {
+                      value: '1',
+                      marks: ['bold', 'italic'],
+                    },
+                  },
+                  {
+                    name: 'G',
+                    value: {
+                      value: '1',
+                      marks: ['bold', 'italic'],
+                    },
+                  },
+                ],
+              },
+            ],
+          }}
+        />
+      </SVG>
       <SVG width={500} height={500}>
         <Col spacing={10} alignment={'center'}>
           <CharSymbol value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
