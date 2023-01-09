@@ -53,6 +53,7 @@ import { Circle as Circle2 } from './components/Circle2';
 import { ColNewHooks } from './components/ColNewHooks';
 import { CharSymbol } from './examples/peritext-symbol-test';
 import { TreeSymbol } from './examples/tree-symbol-test';
+import { Peritext as PeritextSymbol } from './examples/peritext-symbol-test';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
