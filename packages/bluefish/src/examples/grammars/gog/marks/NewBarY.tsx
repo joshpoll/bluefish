@@ -1,6 +1,6 @@
 import React from 'react';
 import { forwardRef } from 'react';
-import { withBluefish, withBluefishFn, BBox } from '../../../../bluefish';
+import { withBluefish, BBox, Measure, useBluefishLayout2 } from '../../../../bluefish';
 import { NewBBox } from '../../../../NewBBox';
 import { PlotContext } from '../Plot';
 import { scaleLinear } from 'd3-scale';
@@ -41,40 +41,36 @@ export type RectScaleProps = React.SVGProps<SVGRectElement> & {
   yScale: (d: any) => (y: number) => number;
 };
 
-export const RectScale = withBluefishFn(
-  (props: RectScaleProps) => {
-    const { x, y, width, height } = props;
+const rectMeasurePolicy = (props: RectScaleProps): Measure => {
+  const { x, y, width, height } = props;
 
-    return (_, constraints) => {
-      const scaledY = y !== undefined ? props.yScale(constraints.height)(+y) : undefined;
-      const scaledHeight = height !== undefined ? props.yScale(constraints.height)(+height) : undefined;
+  return (_, constraints) => {
+    const scaledY = y !== undefined ? props.yScale(constraints.height)(+y) : undefined;
+    const scaledHeight = height !== undefined ? props.yScale(constraints.height)(+height) : undefined;
 
-      return {
-        left: x !== undefined ? +x : undefined,
-        top: scaledY,
-        width: width !== undefined ? +width : undefined,
-        height: scaledHeight,
-      };
+    return {
+      left: x !== undefined ? +x : undefined,
+      top: scaledY,
+      width: width !== undefined ? +width : undefined,
+      height: scaledHeight,
     };
-  },
-  forwardRef((props: RectScaleProps & { $bbox?: Partial<NewBBox> }, ref: any) => {
-    const { $bbox, yScale, ...rest } = props;
-    return (
-      // translate and scale based on $bbox.coord
-      <g
-        ref={ref}
-        transform={`translate(${$bbox?.coord?.translate?.x ?? 0} ${$bbox?.coord?.translate?.y ?? 0})
-scale(${$bbox?.coord?.scale?.x ?? 1} ${$bbox?.coord?.scale?.y ?? 1})`}
-      >
-        <rect
-          {...rest}
-          x={$bbox?.left ?? 0}
-          y={$bbox?.top ?? 0}
-          width={$bbox?.width ?? 0}
-          height={$bbox?.height ?? 0}
-        />
-      </g>
-    );
-  }),
-);
+  };
+};
+
+export const RectScale = withBluefish((props: RectScaleProps) => {
+  const { yScale, ...rest } = props;
+
+  const { bbox, domRef } = useBluefishLayout2({}, props, rectMeasurePolicy(props));
+
+  return (
+    // translate and scale based on bbox.coord
+    <g
+      ref={domRef}
+      transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})
+scale(${bbox?.coord?.scale?.x ?? 1} ${bbox?.coord?.scale?.y ?? 1})`}
+    >
+      <rect {...rest} x={bbox?.left ?? 0} y={bbox?.top ?? 0} width={bbox?.width ?? 0} height={bbox?.height ?? 0} />
+    </g>
+  );
+});
 RectScale.displayName = 'RectScale';

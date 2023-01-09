@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { PropsWithChildren } from 'react';
-import { Layout, LayoutFn, Measure } from '../../../bluefish';
+import { Measure, useBluefishLayout2 } from '../../../bluefish';
+import { NewBBoxClass } from '../../../NewBBox';
 import { Scale as ScaleType } from './Plot';
 
 export type ScaleProps = {
@@ -30,7 +31,11 @@ const scaleMeasurePolicy =
       const xScale = props.xScale ? props.xScale({ width: width!, height: height! }) : (x: number) => x;
       const yScale = props.yScale ? props.yScale({ width: width!, height: height! }) : (y: number) => y;
 
-      const placeable = measurable.measure({ ...constraints, width: xScale(width!), height: yScale(height!) });
+      const placeable: NewBBoxClass = measurable.measure({
+        ...constraints,
+        width: xScale(width!),
+        height: yScale(height!),
+      });
       console.log('placeable before', placeable.width, placeable.height);
 
       // scale the placeable using the props
@@ -97,4 +102,12 @@ const scaleMeasurePolicy =
     };
   };
 
-export const Scale = LayoutFn(scaleMeasurePolicy);
+export const Scale = (props: PropsWithChildren<ScaleProps>) => {
+  const { domRef, bbox, children } = useBluefishLayout2({}, props, scaleMeasurePolicy(props));
+
+  return (
+    <g ref={domRef} transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}>
+      {children}
+    </g>
+  );
+};

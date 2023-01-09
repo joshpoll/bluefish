@@ -7,12 +7,9 @@ import {
   Measure,
   Placeable,
   useBluefishLayout,
-  withBluefish,
-  LayoutFn,
-  withBluefishFn,
   NewPlaceable,
   useBluefishLayout2,
-  withBluefish3,
+  withBluefish,
   RefContext,
 } from '../bluefish';
 
@@ -104,7 +101,7 @@ const colMeasurePolicy =
 //   return <g transform={`translate(${props.x ?? 0}, ${props.y ?? 0})`}>{props.children}</g>;
 // });
 
-export const ColNewHooks = withBluefish3((props: PropsWithChildren<ColProps> & { constraints: Constraints }) => {
+export const ColNewHooks = withBluefish((props: PropsWithChildren<ColProps> & { constraints: Constraints }) => {
   const constraints = props.constraints ?? {};
   console.log('withBluefish3 [ColNewHooks] constraints', constraints);
 

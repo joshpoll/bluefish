@@ -1,24 +1,28 @@
-import { withBluefish, withBluefishFn, BBox } from '../bluefish';
+import { PropsWithChildren } from 'react';
+import { withBluefish, BBox, useBluefishLayout2 } from '../bluefish';
 
 export type ArrowProps = {
   from: React.MutableRefObject<any> | undefined;
   to: React.MutableRefObject<any> | undefined;
 };
 
-export const Arrow = withBluefishFn(
-  ({ from, to }) => {
-    return () => {
-      const fromBox = from?.current.measure();
-      const toBox = to?.current.measure();
-      return { width: 0, height: 0 };
-    };
-  },
-  (props: ArrowProps & Partial<BBox>) => (
+const arrowMeasurePolicy = ({ from, to }: ArrowProps) => {
+  return () => {
+    const fromBox = from?.current.measure();
+    const toBox = to?.current.measure();
+    return { width: 0, height: 0 };
+  };
+};
+
+export const Arrow = withBluefish((props: PropsWithChildren<ArrowProps>) => {
+  const { bbox } = useBluefishLayout2({}, props, arrowMeasurePolicy(props));
+
+  return (
     <line
-      x1={props.x ?? 0}
-      x2={(props.x ?? 0) + (props.width ?? 0)}
-      y1={props.y ?? 0}
-      y2={(props.y ?? 0) + (props.height ?? 0)}
+      x1={bbox.left ?? 0}
+      x2={(bbox.left ?? 0) + (bbox.width ?? 0)}
+      y1={bbox.top ?? 0}
+      y2={(bbox.top ?? 0) + (bbox.height ?? 0)}
     />
-  ),
-);
+  );
+});

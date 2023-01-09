@@ -1,9 +1,8 @@
 import _ from 'lodash';
 import React, { forwardRef } from 'react';
-import { Measure, withBluefish, withBluefishFn } from '../../../../bluefish';
-import { Col } from '../../../../components/Col';
-import { Group } from '../../../../components/Group';
-import { Rect } from '../../../../components/Rect';
+import { Measure, withBluefish } from '../../../../bluefish';
+import { Group } from '../../../../components/Group2';
+import { Rect } from '../../../../components/Rect2';
 import { Row } from '../../../../components/Row';
 import { Mark, PlotContext, plotMarkReified } from '../Plot';
 import { Scale } from '../Scale';
@@ -112,15 +111,15 @@ const groupMeasurePolicy: Measure = (measurables, constraints) => {
 };
 
 export const BarYWithBFN = withBluefish(
-  groupMeasurePolicy,
-  (props: { data?: any[]; encodings: { x: string; y: string; color: string } }, ref) => {
+  (props: { data?: any[]; encodings: { x: string; y: string; color: string } }) => {
     const context = React.useContext(PlotContext);
 
     const { encodings } = props;
     const data = props.data ?? context.data;
     const { x, y, color } = encodings;
     const mark = barY(data, { x, y, color });
-    return <Group ref={ref}>{plotMarkReified(mark, context.scales, context.dimensions)}</Group>;
+
+    return <Group>{plotMarkReified(mark, context.scales, context.dimensions)}</Group>;
   },
 );
 

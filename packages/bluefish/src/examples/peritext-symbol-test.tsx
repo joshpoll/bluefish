@@ -1,32 +1,20 @@
 import { forwardRef, useEffect, useId, useRef, useState } from 'react';
-import { Col } from '../components/Col';
-import { Rect } from '../components/Rect';
-import { Rect as Rect2 } from '../components/Rect2';
-import { Text } from '../components/Text';
+import { Rect } from '../components/Rect2';
+import { Text } from '../components/Text2';
 import { Text as Text2 } from '../components/Text2';
 import { Row } from '../components/Row';
 import { SVG } from '../components/SVG';
-import { Align } from '../components/Align';
-import {
-  BBoxWithChildren,
-  Measure,
-  useBluefishLayout,
-  withBluefish,
-  withBluefishComponent,
-  useBluefishContext,
-  useSymbol,
-} from '../bluefish';
+import { BBoxWithChildren, Measure, useBluefishLayout, withBluefish, useBluefishContext, useSymbol } from '../bluefish';
 import { Ref } from '../components/Ref';
-import { Group } from '../components/Group';
+import { Group } from '../components/Group2';
 import { Group as Group2 } from '../components/Group2';
 import { Line } from '../components/Line';
 import { Arrow } from '../components/Arrow';
 import { Space } from '../components/Space';
 import { Connector } from '../components/Connector';
 import _ from 'lodash';
-import { Align2 } from '../components/Align2';
+import { Align2 } from '../components/Align3';
 import { Align2 as Align3 } from '../components/Align3';
-import { withBluefish3 } from '../bluefish';
 
 export type CharProps = {
   value: string;
@@ -35,7 +23,7 @@ export type CharProps = {
   marks: ('italic' | 'bold')[];
 };
 
-export const CharSymbol = withBluefish3(function Char({ value, marks, opId }: CharProps) {
+export const CharSymbol = withBluefish(function Char({ value, marks, opId }: CharProps) {
   // const tile = opId + '-tile';
   // const opIdLabel = opId + '-label';
   // const leftHandle = opId + '-leftHandle';
@@ -50,9 +38,9 @@ export const CharSymbol = withBluefish3(function Char({ value, marks, opId }: Ch
   return (
     // TODO: use x and y to position the group
     <Group2 name={opId}>
-      <Rect2 symbol={tile} height={65} width={50} rx={5} fill={'#eee'} />
-      <Rect2 symbol={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
-      <Rect2 symbol={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
+      <Rect symbol={tile} height={65} width={50} rx={5} fill={'#eee'} />
+      <Rect symbol={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
+      <Rect symbol={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
       <Text2
         symbol={letter}
         contents={value === ' ' ? '␣' : value.toString()}

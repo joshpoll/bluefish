@@ -1,14 +1,6 @@
 import _ from 'lodash';
 import { forwardRef, PropsWithChildren } from 'react';
-import {
-  Measure,
-  Constraints,
-  Placeable,
-  LayoutFn,
-  NewPlaceable,
-  withBluefish3,
-  useBluefishLayout2,
-} from '../bluefish';
+import { Measure, Constraints, Placeable, NewPlaceable, withBluefish, useBluefishLayout2 } from '../bluefish';
 import { NewBBoxClass } from '../NewBBox';
 
 export type Alignment2D =
@@ -95,7 +87,7 @@ type Align2Props =
   | { [K in Alignment1DHorizontal]?: React.CElement<any, any> | React.CElement<any, any>[] }
   | { [K in Alignment1DVertical]?: React.CElement<any, any> | React.CElement<any, any>[] };
 
-export const Align2 = withBluefish3(function Align2(props: Align2Props) {
+export const Align2 = withBluefish(function Align2(props: Align2Props) {
   const children = Object.entries(props).flatMap(([alignment, child]) => {
     if (Array.isArray(child)) {
       return child.map((c) => ({ alignment: alignment as Alignment2D, child: c }));
@@ -461,7 +453,7 @@ const alignMeasurePolicy =
     };
   };
 
-export const Align2Aux = withBluefish3((props: PropsWithChildren<Align2AuxProps>) => {
+export const Align2Aux = withBluefish((props: PropsWithChildren<Align2AuxProps>) => {
   const { domRef, children, bbox } = useBluefishLayout2({}, props, alignMeasurePolicy(props));
 
   return (

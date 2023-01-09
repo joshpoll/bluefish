@@ -5,14 +5,9 @@ import {
   Constraints,
   Measure,
   Placeable,
-  Layout,
   useBluefishLayout,
-  withBluefish,
-  LayoutFn,
-  withBluefishFn,
-  NewPlaceable,
   useBluefishLayout2,
-  withBluefish3,
+  withBluefish,
   RefContext,
 } from '../bluefish';
 
@@ -104,7 +99,7 @@ const colMeasurePolicy =
 //   return <g transform={`translate(${props.x ?? 0}, ${props.y ?? 0})`}>{props.children}</g>;
 // });
 
-export const Col = withBluefish3((props: PropsWithChildren<ColProps>) => {
+export const Col = withBluefish((props: PropsWithChildren<ColProps>) => {
   const { domRef, bbox, children } = useBluefishLayout2({}, props, colMeasurePolicy(props));
 
   return (

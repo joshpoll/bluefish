@@ -363,122 +363,6 @@ export const useBluefishLayout = (
   };
 };
 
-// a layout HOC
-export const withBluefish = <ComponentProps,>(
-  measure: Measure,
-  WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox> }>,
-) =>
-  forwardRef(
-    (
-      props: PropsWithChildren<ComponentProps> /* & { $bbox?: Partial<NewBBox> } */ & { name?: any; debug?: boolean },
-      ref: any,
-    ) => {
-      const domRef = useRef<SVGElement>(null);
-
-      const { left, top, bottom, right, width, height, children, coord } = useBluefishLayout(
-        measure,
-        {
-          // left: props.bbox?.left,
-          // top: props.bbox?.top,
-          // right: props.bbox?.right,
-          // bottom: props.bbox?.bottom,
-          // width: props.bbox?.width,
-          // height: props.bbox?.height,
-        },
-        {},
-        ref,
-        domRef,
-        props,
-        props.children,
-        props.name,
-      );
-      return (
-        <>
-          <WrappedComponent
-            {...props}
-            ref={domRef}
-            $bbox={{
-              left,
-              top,
-              bottom,
-              right,
-              width,
-              height,
-              coord,
-            }}
-          >
-            {children}
-          </WrappedComponent>
-          {props.debug && (
-            <g
-              ref={ref}
-              transform={`translate(${coord?.translate?.x ?? 0} ${coord?.translate?.y ?? 0})
-    scale(${coord?.scale?.x ?? 1} ${coord?.scale?.y ?? 1})`}
-            >
-              <rect x={left} y={top} width={width} height={height} fill="none" stroke="magenta" strokeWidth="1" />
-            </g>
-          )}
-        </>
-      );
-    },
-  );
-
-export const withBluefishFn = <ComponentProps,>(
-  measureFn: (props: ComponentProps & PropsWithChildren<{ $bbox?: Partial<NewBBox> }>) => Measure,
-  WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox>; $coord?: CoordinateTransform }>,
-) =>
-  forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any; debug?: boolean }, ref: any) => {
-    // console.log('withBluefishFn', props.name, props, ref);
-    const domRef = useRef<SVGElement>(null);
-
-    const { left, top, bottom, right, width, height, children, coord, boundary } = useBluefishLayout(
-      measureFn(props),
-      {
-        // left: props.bbox?.left,
-        // top: props.bbox?.top,
-        // right: props.bbox?.right,
-        // bottom: props.bbox?.bottom,
-        // width: props.bbox?.width,
-        // height: props.bbox?.height,
-      },
-      {},
-      ref,
-      domRef,
-      props,
-      props.children,
-      props.name,
-    );
-    return (
-      <>
-        <WrappedComponent
-          {...props}
-          ref={domRef}
-          $bbox={{
-            left,
-            top,
-            bottom,
-            right,
-            width,
-            height,
-            coord,
-          }}
-          $boundary={boundary}
-        >
-          {children}
-        </WrappedComponent>
-        {props.debug && (
-          <g
-            ref={ref}
-            transform={`translate(${coord?.translate?.x ?? 0} ${coord?.translate?.y ?? 0})
-scale(${coord?.scale?.x ?? 1} ${coord?.scale?.y ?? 1})`}
-          >
-            <rect x={left} y={top} width={width} height={height} fill="none" stroke="magenta" strokeWidth="1" />
-          </g>
-        )}
-      </>
-    );
-  });
-
 export type Symbol = {
   symbol: symbol;
   parent?: symbol;
@@ -497,7 +381,7 @@ export const useBluefishLayout2 = <T extends { children?: any; name?: string; sy
   const domRef = useRef<any>(null);
 
   // console.log('useBluefishLayout2', props.name, props.children, ref, domRef);
-  const { left, top, bottom, right, width, height, children, coord } = useBluefishLayout(
+  const { left, top, bottom, right, width, height, children, coord, boundary } = useBluefishLayout(
     measure,
     init?.bbox ?? {},
     init?.coord ?? {},
@@ -513,6 +397,7 @@ export const useBluefishLayout2 = <T extends { children?: any; name?: string; sy
 
   return {
     domRef,
+    boundary,
     bbox: {
       left,
       top,
@@ -533,24 +418,9 @@ export const RefContext = React.createContext<{ ref: React.RefObject<SVGElement>
   symbol: undefined,
 });
 
-export const withBluefish2 = <ComponentProps,>(
-  measure: Measure,
-  WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox> }>,
-) =>
-  forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any }, ref: any) => {
-    const { domRef, bbox, children } = useBluefishLayout2({}, props, measure);
-    return (
-      <RefContext.Provider value={ref}>
-        <WrappedComponent {...props} ref={domRef} $bbox={bbox}>
-          {children}
-        </WrappedComponent>
-      </RefContext.Provider>
-    );
-  });
-
 // injects name (and debug. still todo)
 // injects ref
-export const withBluefish3 = <ComponentProps,>(WrappedComponent: React.ComponentType<ComponentProps>) =>
+export const withBluefish = <ComponentProps,>(WrappedComponent: React.ComponentType<ComponentProps>) =>
   forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any; symbol?: Symbol }, ref: any) => {
     /* TODO: need to collect refs maybe?? */
     const { ref: contextRef } = useContext(RefContext);
@@ -567,102 +437,6 @@ export const withBluefish3 = <ComponentProps,>(WrappedComponent: React.Component
       >
         <WrappedComponent {...props} constraints={mergedRef?.current?.constraints} />
       </RefContext.Provider>
-    );
-  });
-
-// export const withBluefishFnWithContext = <ComponentProps,>(
-//   measureFn: (
-//     props: ComponentProps & PropsWithChildren<{ $bbox?: Partial<NewBBox> }>,
-//     context: BluefishContextValue,
-//   ) => Measure,
-//   WrappedComponent: React.ComponentType<ComponentProps & { $bbox?: Partial<NewBBox> }>,
-// ) =>
-//   forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any }, ref: any) => {
-//     const context = useContext(BluefishContext);
-//     const { left, top, bottom, right, width, height, children, coord } = useBluefishLayout(
-//       measureFn(props, context),
-//       {
-//         // left: props.bbox?.left,
-//         // top: props.bbox?.top,
-//         // right: props.bbox?.right,
-//         // bottom: props.bbox?.bottom,
-//         // width: props.bbox?.width,
-//         // height: props.bbox?.height,
-//       },
-//       {},
-//       ref,
-//       props.children,
-//       props.name,
-//     );
-//     return (
-//       <WrappedComponent
-//         {...props}
-//         $bbox={{
-//           left,
-//           top,
-//           bottom,
-//           right,
-//           width,
-//           height,
-//         }}
-//         $coord={coord}
-//       >
-//         {children}
-//       </WrappedComponent>
-//     );
-//   });
-
-// a pure layout component builder
-export const Layout = (measurePolicy: Measure) =>
-  withBluefish(measurePolicy, (props: PropsWithChildren<{ $bbox?: Partial<NewBBox> }>) => {
-    return (
-      <g transform={`translate(${props.$bbox!.coord?.translate?.x ?? 0}, ${props.$bbox!.coord?.translate?.y ?? 0})`}>
-        {props.children}
-      </g>
-    );
-    // return <g transform={`translate(${props.$bbox?.left ?? 0}, ${props.$bbox?.top ?? 0})`}>{props.children}</g>;
-  });
-
-export const LayoutFn = <T,>(
-  measurePolicyFn: (props: T & PropsWithChildren<{ $bbox?: Partial<NewBBox> }>) => Measure,
-) =>
-  withBluefishFn(measurePolicyFn, (props: PropsWithChildren<{ $bbox?: Partial<NewBBox> }>) => {
-    return (
-      <g transform={`translate(${props.$bbox!.coord?.translate?.x ?? 0}, ${props.$bbox!.coord?.translate?.y ?? 0})`}>
-        {props.children}
-      </g>
-    );
-    // return <g transform={`translate(${props.$bbox?.left ?? 0}, ${props.$bbox?.top ?? 0})`}>{props.children}</g>;
-  });
-
-// TODO: this HOC doesn't work :/
-export const withBluefishComponent = <ComponentProps,>(
-  WrappedComponent: React.ComponentType<ComponentProps & BBoxWithChildren>,
-) =>
-  forwardRef((props: ComponentProps & BBoxWithChildren, ref: any) => {
-    return (
-      <WrappedComponent {...props}>
-        {React.Children.map(props.children, (child, index) => {
-          if (isValidElement(child)) {
-            return React.cloneElement(child as React.ReactElement<any>, {
-              ref,
-              // store a pointer to every child's ref in an array
-              // also pass through outer refs
-              // see: https://github.com/facebook/react/issues/8873
-              // ref: (node: any) => {
-              //   childrenRef.current[index] = node;
-              //   const { ref } = child as any;
-              //   if (typeof ref === 'function') ref(node);
-              //   else if (ref) ref.current = node;
-              // },
-            });
-          } else {
-            // TODO: what to do with non-elements?
-            console.log('warning: non-element child', child);
-            return child;
-          }
-        })}
-      </WrappedComponent>
     );
   });
 

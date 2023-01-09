@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React, { forwardRef } from 'react';
-import { Group } from '../../../../components/Group';
+import { Group } from '../../../../components/Group2';
 import { Path } from '../../../../components/Path';
 import { Mark, PlotContext, plotMarkReified } from '../Plot';
 import { curveCatmullRom, line as d3Line } from 'd3-shape';

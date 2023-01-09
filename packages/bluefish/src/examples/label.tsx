@@ -1,22 +1,18 @@
 import { forwardRef, useEffect, useId, useRef, useState } from 'react';
-import { Col } from '../components/Col';
-import { Rect } from '../components/Rect';
-import { Text } from '../components/Text';
+import { Rect } from '../components/Rect2';
 import { Row } from '../components/Row';
 import { SVG } from '../components/SVG';
-import { Align } from '../components/Align';
 import {
   BBoxWithChildren,
   Measure,
   useBluefishLayout,
   withBluefish,
-  withBluefishComponent,
   useBluefishContext,
-  LayoutFn,
   Constraints,
+  useBluefishLayout2,
 } from '../bluefish';
 import { Ref } from '../components/Ref';
-import { Group } from '../components/Group';
+import { Group } from '../components/Group2';
 import { Line } from '../components/Line';
 import { Arrow } from '../components/Arrow';
 import { Space } from '../components/Space';
@@ -92,7 +88,15 @@ const labelMeasurePolicy =
     };
   };
 
-export const Label = LayoutFn(labelMeasurePolicy);
+export const Label = withBluefish((props: LabelProps) => {
+  const { domRef, bbox, children } = useBluefishLayout2({}, props, labelMeasurePolicy(props));
+
+  return (
+    <g ref={domRef} transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}>
+      {children}
+    </g>
+  );
+});
 Label.displayName = 'Label';
 
 export type LabelTestProps = {};

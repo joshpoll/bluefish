@@ -17,19 +17,15 @@ import * as _ from 'lodash';
 import { bertinHotel } from './examples/bertinHotel';
 // import { blob as test_blob } from './examples/paperjs-test';
 import { SVG } from './components/SVG';
-import { Col } from './components/Col';
 import { Row } from './components/Row';
-import { Rect } from './components/Rect';
-import { Text } from './components/Text';
+import { Text } from './components/Text2';
 import { Char, Peritext } from './examples/peritext';
 import { Bluefish } from './components/Bluefish';
 // import { Child, Parent } from './components/TestingRefs';
 import { Child, Parent } from './components/TestingContext';
-import { Align } from './components/Align';
 import { GoGTest } from './examples/grammars/gog/examples/test';
 import { rasterize } from './rasterize';
 import { Label, LabelTest } from './examples/label';
-import { Group } from './components/Group';
 import labelLayout, { Anchors } from './components/Label/LabelLayout';
 import { PointLabel } from './components/Label/PointLabel';
 import { Circle, Ref, useBluefishContext } from './main';
@@ -42,13 +38,13 @@ import { NewLine } from './examples/grammars/gog/marks/NewLine';
 import { NewDot } from './examples/grammars/gog/marks/NewDot';
 import { resolveRef } from './components/Ref';
 import { BluefishContextValue } from './bluefish';
-import { Rect as Rect2 } from './components/Rect2';
-import { Col as Col2 } from './components/Col2';
+import { Rect } from './components/Rect2';
+import { Col } from './components/Col2';
 import { Test2 } from './components/Test2';
 import { Copy } from './components/Copy';
 import { CopyAttr } from './components/CopyAttr';
 import { Align2 as Align3 } from './components/Align3';
-import { Group as Group2 } from './components/Group2';
+import { Group } from './components/Group2';
 import { Circle as Circle2 } from './components/Circle2';
 import { ColNewHooks } from './components/ColNewHooks';
 import { CharSymbol } from './examples/peritext-symbol-test';
@@ -274,24 +270,24 @@ function App_OLD() {
       <SVG width={300} height={150}>
         <Group>
           <ColNewHooks spacing={10} totalHeight={100} alignment={'center'} constraints={{}}>
-            <Rect2 name={'rect1'} fill={'black'} width={30} />
-            <Rect2 name={'rect2'} fill={'black'} width={30} />
-            <Rect2 name={'rect3'} fill={'black'} width={30} />
+            <Rect name={'rect1'} fill={'black'} width={30} />
+            <Rect name={'rect2'} fill={'black'} width={30} />
+            <Rect name={'rect3'} fill={'black'} width={30} />
           </ColNewHooks>
         </Group>
       </SVG>
       <SVG width={300} height={300}>
         <ColNewHooks spacing={10} totalHeight={100} alignment={'center'} constraints={{}}>
-          <Rect2 name={'rect1'} fill={'black'} width={30} />
-          <Rect2 name={'rect2'} fill={'black'} width={30} />
-          <Rect2 name={'rect3'} fill={'black'} width={30} />
+          <Rect name={'rect1'} fill={'black'} width={30} />
+          <Rect name={'rect2'} fill={'black'} width={30} />
+          <Rect name={'rect3'} fill={'black'} width={30} />
         </ColNewHooks>
       </SVG>
       <SVG width={300} height={300}>
         <Col spacing={10} totalHeight={100} alignment={'center'}>
-          <Rect2 name={'rect1'} fill={'black'} width={30} />
-          <Rect2 name={'rect2'} fill={'black'} width={30} />
-          <Rect2 name={'rect3'} fill={'black'} width={30} />
+          <Rect name={'rect1'} fill={'black'} width={30} />
+          <Rect name={'rect2'} fill={'black'} width={30} />
+          <Rect name={'rect3'} fill={'black'} width={30} />
         </Col>
       </SVG>
       <br />
@@ -337,14 +333,14 @@ function App_OLD() {
       </SVG>
       <br />
       <SVG width={300} height={300}>
-        <Col2 name={'$2 col2'} spacing={5} alignment={'center'}>
-          <Rect2 name={'$2 rect2-1'} width={20} height={10} fill="cornflowerblue" />
-          <Rect2 name={'$2 rect2-2'} width={10} height={20} fill="green" />
-        </Col2>
+        <Col name={'$2 col2'} spacing={5} alignment={'center'}>
+          <Rect name={'$2 rect2-1'} width={20} height={10} fill="cornflowerblue" />
+          <Rect name={'$2 rect2-2'} width={10} height={20} fill="green" />
+        </Col>
       </SVG>
       <br />
       <SVG width={300} height={300}>
-        <Rect2 x={30} y={50} width={20} height={10} fill="cornflowerblue" />
+        <Rect x={30} y={50} width={20} height={10} fill="cornflowerblue" />
       </SVG>
       <br />
       {/* <SVG width={500} height={300}>

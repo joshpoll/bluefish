@@ -1,17 +1,13 @@
 import React from 'react';
 import { forwardRef } from 'react';
-import { withBluefish, withBluefishFn, BBox } from '../../../../bluefish';
+import { withBluefish, BBox, Measure, useBluefishLayout2 } from '../../../../bluefish';
 import { NewBBox } from '../../../../NewBBox';
 import { PlotContext } from '../Plot';
 import { scaleLinear } from 'd3-scale';
 import { max, min } from 'lodash';
-import { Row } from '../../../../components/Row';
-import { Group } from '../../../../components/Group';
+import { Group } from '../../../../components/Group2';
 import { Anchors, PointLabel } from '../../../../components/Label/PointLabel';
-import { Text } from '../../../../components/Text';
-import { Rect } from '../../../../components/Rect';
-import { Align } from '../../../../components/Align';
-import { Circle } from '../../../../components/Circle';
+import { Text } from '../../../../components/Text2';
 
 export type NewDotProps<T> = Omit<
   React.SVGProps<SVGCircleElement>,
@@ -77,36 +73,38 @@ export type DotScaleProps = React.SVGProps<SVGCircleElement> & {
   yScale: (d: any) => (y: number) => number;
 };
 
-export const DotScale = withBluefishFn(
-  ({ cx, cy, r, xScale, yScale }: DotScaleProps) => {
-    return (_measurables, constraints) => {
-      const scaledCX = cx !== undefined ? xScale(constraints.width)(+cx) : undefined;
-      const scaledCY = cy !== undefined ? yScale(constraints.height)(+cy) : undefined;
+const dotMeasurePolicy = ({ cx, cy, r, xScale, yScale }: DotScaleProps): Measure => {
+  return (_measurables, constraints) => {
+    const scaledCX = cx !== undefined ? xScale(constraints.width)(+cx) : undefined;
+    const scaledCY = cy !== undefined ? yScale(constraints.height)(+cy) : undefined;
 
-      return {
-        left: scaledCX !== undefined ? +scaledCX - +(r ?? 0) : undefined,
-        top: scaledCY !== undefined ? +scaledCY - +(r ?? 0) : undefined,
-        width: r !== undefined ? +r * 2 : undefined,
-        height: r !== undefined ? +r * 2 : undefined,
-      };
+    return {
+      left: scaledCX !== undefined ? +scaledCX - +(r ?? 0) : undefined,
+      top: scaledCY !== undefined ? +scaledCY - +(r ?? 0) : undefined,
+      width: r !== undefined ? +r * 2 : undefined,
+      height: r !== undefined ? +r * 2 : undefined,
     };
-  },
-  forwardRef((props: DotScaleProps & { $bbox?: Partial<NewBBox> }, ref: any) => {
-    const { $bbox, xScale, yScale, ...rest } = props;
-    return (
-      <g
-        ref={ref}
-        transform={`translate(${$bbox?.coord?.translate?.x ?? 0} ${$bbox?.coord?.translate?.y ?? 0})
-scale(${$bbox?.coord?.scale?.x ?? 1} ${$bbox?.coord?.scale?.y ?? 1})`}
-      >
-        <circle
-          {...rest}
-          cx={($bbox?.left ?? 0) + ($bbox?.width ?? 0) / 2}
-          cy={($bbox?.top ?? 0) + ($bbox?.height ?? 0) / 2}
-          r={($bbox?.width ?? 0) / 2}
-        />
-      </g>
-    );
-  }),
-);
+  };
+};
+
+export const DotScale = withBluefish((props: DotScaleProps) => {
+  const { xScale, yScale, ...rest } = props;
+
+  const { bbox, domRef } = useBluefishLayout2({}, props, dotMeasurePolicy(props));
+
+  return (
+    <g
+      ref={domRef}
+      transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})
+scale(${bbox?.coord?.scale?.x ?? 1} ${bbox?.coord?.scale?.y ?? 1})`}
+    >
+      <circle
+        {...rest}
+        cx={(bbox?.left ?? 0) + (bbox?.width ?? 0) / 2}
+        cy={(bbox?.top ?? 0) + (bbox?.height ?? 0) / 2}
+        r={(bbox?.width ?? 0) / 2}
+      />
+    </g>
+  );
+});
 DotScale.displayName = 'DotScale';

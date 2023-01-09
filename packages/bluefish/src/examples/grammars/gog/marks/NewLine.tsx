@@ -2,7 +2,7 @@ import _, { max, min } from 'lodash';
 import React, { forwardRef } from 'react';
 import { Mark, PlotContext, plotMarkReified } from '../Plot';
 import { curveCatmullRom, line as d3Line } from 'd3-shape';
-import { withBluefishFn, BBox } from '../../../../bluefish';
+import { withBluefish, BBox, Measure, useBluefishLayout2 } from '../../../../bluefish';
 import { NewBBox } from '../../../../NewBBox';
 import { PaperScope, Point } from 'paper/dist/paper-core';
 import { scaleLinear } from 'd3-scale';
@@ -57,36 +57,38 @@ export type PathProps = Omit<React.SVGProps<SVGPathElement>, 'd' | 'points'> &
     points: [number, number][];
   };
 
-export const PathScale = withBluefishFn(
-  ({ points, xScale, yScale }: PathProps) => {
-    const canvas = document.createElement('canvas');
-    const paperScope = new PaperScope();
-    paperScope.setup(canvas);
-    return (_measurables, constraints) => {
-      const xScaleFn = xScale(constraints.width);
-      const yScaleFn = yScale(constraints.height);
+const pathMeasurePolicy = ({ points, xScale, yScale }: PathProps): Measure => {
+  const canvas = document.createElement('canvas');
+  const paperScope = new PaperScope();
+  paperScope.setup(canvas);
+  return (_measurables, constraints) => {
+    const xScaleFn = xScale(constraints.width);
+    const yScaleFn = yScale(constraints.height);
 
-      const d =
-        d3Line().curve(curveCatmullRom)(points.map((p) => [xScaleFn(p[0]), yScaleFn(p[1])] as [number, number])) ?? '';
-      const path = new paperScope.Path(d!);
+    const d =
+      d3Line().curve(curveCatmullRom)(points.map((p) => [xScaleFn(p[0]), yScaleFn(p[1])] as [number, number])) ?? '';
+    const path = new paperScope.Path(d!);
 
-      const bounds = path.bounds;
+    const bounds = path.bounds;
 
-      return {
-        left: bounds.left,
-        top: bounds.top,
-        width: bounds.width,
-        height: bounds.height,
-        boundary: path /* TODO: boundary should be dependent on width & height so it can be scaled later! */,
-      };
+    return {
+      left: bounds.left,
+      top: bounds.top,
+      width: bounds.width,
+      height: bounds.height,
+      boundary: path /* TODO: boundary should be dependent on width & height so it can be scaled later! */,
     };
-  },
-  (props: PathProps & { $bbox?: Partial<NewBBox>; $boundary?: paper.Path }) => {
-    const { $bbox, $boundary, points, ...rest } = props;
-    return (
-      <g transform={`translate(${$bbox!.coord?.translate?.x ?? 0}, ${$bbox!.coord?.translate?.y ?? 0})`}>
-        <path {...rest} d={$boundary?.pathData ?? ''} />
-      </g>
-    );
-  },
-);
+  };
+};
+
+export const PathScale = withBluefish((props: PathProps) => {
+  const { points, ...rest } = props;
+
+  const { bbox, boundary } = useBluefishLayout2({}, props, pathMeasurePolicy(props));
+
+  return (
+    <g transform={`translate(${bbox!.coord?.translate?.x ?? 0}, ${bbox!.coord?.translate?.y ?? 0})`}>
+      <path {...rest} d={boundary?.pathData ?? ''} />
+    </g>
+  );
+});

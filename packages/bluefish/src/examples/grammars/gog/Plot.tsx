@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { forwardRef, PropsWithChildren } from 'react';
-import { Measure, withBluefish, withBluefishFn } from '../../../bluefish';
-import { Group } from '../../../components/Group';
+import { Measure, useBluefishLayout2, withBluefish } from '../../../bluefish';
+import { Group } from '../../../components/Group2';
 import { Padding } from '../../../components/Padding';
 import { SVG } from '../../../components/SVG';
 import { NewBBox } from '../../../NewBBox';
@@ -152,28 +152,27 @@ export const Plot: React.FC<PropsWithChildren<PlotProps>> = forwardRef((props, r
 // TODO: this is weird b/c we need access to the bbox information to compute the scales, which are
 // then passed as data.  Copilot proposes making the scales a separate component that can be
 // composed with the marks.
-export const Plot2 = withBluefishFn(
-  () => groupMeasurePolicy,
-  (props: PropsWithChildren<PlotProps> & { $bbox?: Partial<NewBBox>; $boundary?: paper.Path }) => {
-    let { width, height, margin, data, children, $bbox, $boundary, ...scales } = props;
-    // compute dimensions from outer width, height, and margins
-    const oldDimensions = { width: width - margin.left - margin.right, height: height - margin.bottom - margin.top };
-    const dimensions = { width: $bbox!.width!, height: $bbox!.height! };
-    console.log('dimensions', dimensions);
-    // reify scales
-    console.log('scales', scales);
-    const reifiedScales = reifyScales(scales as any, oldDimensions);
-    // append "Scale" to scale names
-    const renamedScales = renameScales(reifiedScales);
-    console.log('[renamedScales]', renamedScales);
-    const { xScale, yScale, colorScale } = renamedScales;
+export const Plot2 = withBluefish((props: PropsWithChildren<PlotProps>) => {
+  const { domRef, bbox } = useBluefishLayout2({}, props, groupMeasurePolicy);
 
-    return (
-      <Group>
-        <PlotContext.Provider value={{ dimensions: oldDimensions, scales: renamedScales, data }}>
-          <Group>{children}</Group>
-        </PlotContext.Provider>
-      </Group>
-    );
-  },
-);
+  let { width, height, margin, data, children, ...scales } = props;
+  // compute dimensions from outer width, height, and margins
+  const oldDimensions = { width: width - margin.left - margin.right, height: height - margin.bottom - margin.top };
+  const dimensions = { width: bbox!.width!, height: bbox!.height! };
+  console.log('dimensions', dimensions);
+  // reify scales
+  console.log('scales', scales);
+  const reifiedScales = reifyScales(scales as any, oldDimensions);
+  // append "Scale" to scale names
+  const renamedScales = renameScales(reifiedScales);
+  console.log('[renamedScales]', renamedScales);
+  const { xScale, yScale, colorScale } = renamedScales;
+
+  return (
+    <Group>
+      <PlotContext.Provider value={{ dimensions: oldDimensions, scales: renamedScales, data }}>
+        <Group>{children}</Group>
+      </PlotContext.Provider>
+    </Group>
+  );
+});

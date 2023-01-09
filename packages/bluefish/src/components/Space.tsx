@@ -1,6 +1,7 @@
 import _ from 'lodash';
-import { Measure, Constraints, Placeable, LayoutFn, NewPlaceable } from '../bluefish';
+import { Measure, Constraints, Placeable, NewPlaceable, withBluefish, useBluefishLayout2 } from '../bluefish';
 import { NewBBoxClass } from '../NewBBox';
+import { PropsWithChildren } from 'react';
 
 // export type Direction = { vertically: boolean } | { horizontally: boolean };
 
@@ -89,5 +90,13 @@ const spaceMeasurePolicy =
     }
   };
 
-export const Space = LayoutFn((props: SpaceProps) => spaceMeasurePolicy(props));
+export const Space = withBluefish((props: PropsWithChildren<SpaceProps>) => {
+  const { domRef, bbox, children } = useBluefishLayout2({}, props, spaceMeasurePolicy(props));
+
+  return (
+    <g ref={domRef} transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}>
+      {children}
+    </g>
+  );
+});
 Space.displayName = 'Space';

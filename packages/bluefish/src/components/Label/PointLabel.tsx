@@ -1,13 +1,8 @@
 import _ from 'lodash';
-import { forwardRef, useRef } from 'react';
-import { LayoutFn, Measure, withBluefishFn } from '../../bluefish';
+import { forwardRef, PropsWithChildren, useRef } from 'react';
+import { Measure, useBluefishLayout2, withBluefish } from '../../bluefish';
 import { NewBBox } from '../../NewBBox';
-import { Align } from '../Align';
-import { Connector } from '../Connector';
-import { Group } from '../Group';
-import { Rect } from '../Rect';
 import { Ref } from '../Ref';
-import { Text } from '../Text';
 import labelLayout from './LabelLayout';
 
 // 8-bit representation of anchors
@@ -67,105 +62,101 @@ export const PointLabel = forwardRef(function PointLabel({ texts }: PointLabelPr
   );
 });
 
-export const PointLabelAux = LayoutFn(
-  (props): Measure => {
-    return (measurables, constraints) => {
-      // const [_label, ref] = measurables;
-      // const [labelBBox, refBBox] = measurables.map((m) => m.measure(constraints));
-      // const refDomRef: SVGElement | null = ref.domRef;
-      // generalize this to the whole array
-      // https://stackoverflow.com/a/44656332
-      let i = -1;
-      const [labels, refs] = _.partition(measurables, (_) => i++ % 2);
-      const labelBBoxes = labels.map((m) => m.measure(constraints));
-      const refBBoxes = refs.map((m) => m.measure(constraints));
-      const refDomRefs: (SVGElement | null | undefined)[] = refs.map((m) => m.domRef);
+const pointLabelMeasurePolicy = (props: {}): Measure => {
+  return (measurables, constraints) => {
+    // const [_label, ref] = measurables;
+    // const [labelBBox, refBBox] = measurables.map((m) => m.measure(constraints));
+    // const refDomRef: SVGElement | null = ref.domRef;
+    // generalize this to the whole array
+    // https://stackoverflow.com/a/44656332
+    let i = -1;
+    const [labels, refs] = _.partition(measurables, (_) => i++ % 2);
+    const labelBBoxes = labels.map((m) => m.measure(constraints));
+    const refBBoxes = refs.map((m) => m.measure(constraints));
+    const refDomRefs: (SVGElement | null | undefined)[] = refs.map((m) => m.domRef);
 
-      // early return if we don't have refs yet
-      if (refDomRefs.some((refDomRef) => refDomRef === null || refDomRef === undefined)) {
-        return {
-          /* width: 0, height: 0 */
-        };
-      }
-
-      // if (refDomRef === null || refDomRef === undefined) {
-      //   return {
-      //     width: 0,
-      //     height: 0,
-      //   };
-      // }
-
-      labelLayout({
-        // labels and anchor points
-        texts: _.zipWith(labelBBoxes, refDomRefs, (labelBBox, refDomRef) => ({
-          label: labelBBox,
-          ref: refDomRef as SVGElement /* early return guarantees this */,
-        })),
-        // canvas size (provided by parent in Bluefish)
-        size: [constraints.width!, constraints.height!],
-        // optional sorting function to determine label layout priority order
-        compare: undefined,
-        // label offset from anchor point
-        offset: [1],
-        // offset orientation (e.g. 'top-left')
-        anchor: Anchors,
-        // optional list of elements to avoid (like a line mark)
-        avoidElements: [],
-        // whether or not we should avoid the anchor points (circle1, circle2, circle3)
-        avoidRefElements: true,
-        // padding around canvas to allow labels to be partially offscreen
-        padding: 0,
-      });
-
-      // bbox should just be a union over all children (this should be the default case somewhere...)
-      // const left = Math.min(fromX!, toX!);
-      // const top = Math.min(fromY!, toY!);
-      // const right = Math.max(fromX!, toX!);
-      // const bottom = Math.max(fromY!, toY!);
-      // const left = Math.min(labelBBox.left!, refBBox.left!);
-      // const top = Math.min(labelBBox.top!, refBBox.top!);
-      // const right = Math.max(labelBBox.right!, refBBox.right!);
-      // const bottom = Math.max(labelBBox.bottom!, refBBox.bottom!);
-      const left = Math.min(
-        ...labelBBoxes.map((labelBBox) => labelBBox.left!),
-        ...refBBoxes.map((refBBox) => refBBox.left!),
-      );
-      const top = Math.min(
-        ...labelBBoxes.map((labelBBox) => labelBBox.top!),
-        ...refBBoxes.map((refBBox) => refBBox.top!),
-      );
-      const right = Math.max(
-        ...labelBBoxes.map((labelBBox) => labelBBox.right!),
-        ...refBBoxes.map((refBBox) => refBBox.right!),
-      );
-      const bottom = Math.max(
-        ...labelBBoxes.map((labelBBox) => labelBBox.bottom!),
-        ...refBBoxes.map((refBBox) => refBBox.bottom!),
-      );
-      // TODO: annoying problem where these values don't actually get propagated?
-      const width = right - left;
-      const height = bottom - top;
-
+    // early return if we don't have refs yet
+    if (refDomRefs.some((refDomRef) => refDomRef === null || refDomRef === undefined)) {
       return {
-        left,
-        top,
-        right,
-        bottom,
-        width,
-        height,
+        /* width: 0, height: 0 */
       };
+    }
+
+    // if (refDomRef === null || refDomRef === undefined) {
+    //   return {
+    //     width: 0,
+    //     height: 0,
+    //   };
+    // }
+
+    labelLayout({
+      // labels and anchor points
+      texts: _.zipWith(labelBBoxes, refDomRefs, (labelBBox, refDomRef) => ({
+        label: labelBBox,
+        ref: refDomRef as SVGElement /* early return guarantees this */,
+      })),
+      // canvas size (provided by parent in Bluefish)
+      size: [constraints.width!, constraints.height!],
+      // optional sorting function to determine label layout priority order
+      compare: undefined,
+      // label offset from anchor point
+      offset: [1],
+      // offset orientation (e.g. 'top-left')
+      anchor: Anchors,
+      // optional list of elements to avoid (like a line mark)
+      avoidElements: [],
+      // whether or not we should avoid the anchor points (circle1, circle2, circle3)
+      avoidRefElements: true,
+      // padding around canvas to allow labels to be partially offscreen
+      padding: 0,
+    });
+
+    // bbox should just be a union over all children (this should be the default case somewhere...)
+    // const left = Math.min(fromX!, toX!);
+    // const top = Math.min(fromY!, toY!);
+    // const right = Math.max(fromX!, toX!);
+    // const bottom = Math.max(fromY!, toY!);
+    // const left = Math.min(labelBBox.left!, refBBox.left!);
+    // const top = Math.min(labelBBox.top!, refBBox.top!);
+    // const right = Math.max(labelBBox.right!, refBBox.right!);
+    // const bottom = Math.max(labelBBox.bottom!, refBBox.bottom!);
+    const left = Math.min(
+      ...labelBBoxes.map((labelBBox) => labelBBox.left!),
+      ...refBBoxes.map((refBBox) => refBBox.left!),
+    );
+    const top = Math.min(
+      ...labelBBoxes.map((labelBBox) => labelBBox.top!),
+      ...refBBoxes.map((refBBox) => refBBox.top!),
+    );
+    const right = Math.max(
+      ...labelBBoxes.map((labelBBox) => labelBBox.right!),
+      ...refBBoxes.map((refBBox) => refBBox.right!),
+    );
+    const bottom = Math.max(
+      ...labelBBoxes.map((labelBBox) => labelBBox.bottom!),
+      ...refBBoxes.map((refBBox) => refBBox.bottom!),
+    );
+    // TODO: annoying problem where these values don't actually get propagated?
+    const width = right - left;
+    const height = bottom - top;
+
+    return {
+      left,
+      top,
+      right,
+      bottom,
+      width,
+      height,
     };
-  },
-  // (props: PointLabelProps & { $bbox?: Partial<NewBBox> }) => {
-  //   const { $bbox, ...rest } = props;
-  //   return (
-  //     <line
-  //       {...rest}
-  //       x1={$bbox?.left ?? 0}
-  //       x2={($bbox?.left ?? 0) + ($bbox?.width ?? 0)}
-  //       y1={$bbox?.top ?? 0}
-  //       y2={($bbox?.top ?? 0) + ($bbox?.height ?? 0)}
-  //     />
-  //   );
-  // },
-);
+  };
+};
+
+export const PointLabelAux = withBluefish((props: PropsWithChildren<{}>) => {
+  const { domRef, bbox, children } = useBluefishLayout2({}, props, pointLabelMeasurePolicy(props));
+
+  return (
+    <g ref={domRef} transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}>
+      {children}
+    </g>
+  );
+});

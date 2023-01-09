@@ -13,7 +13,7 @@ import {
   useBluefishContext,
 } from '../bluefish';
 import { CoordinateTransform, NewBBoxClass, NewBBox } from '../NewBBox';
-import { withBluefish3, useBluefishLayout2 } from '../bluefish';
+import { withBluefish, useBluefishLayout2 } from '../bluefish';
 import { isEqual } from 'lodash';
 import React from 'react';
 
@@ -49,19 +49,6 @@ export type CopyAttrProps = {
       prop: string | string[];
     }
 );
-
-const withBluefish = (WrappedComponent: React.ComponentType<CopyAttrProps>) =>
-  forwardRef((props: CopyAttrProps & { name?: any }, ref: any) => {
-    const contextRef = useContext(RefContext);
-    // TODO: I definitely wrote this code, but I also definitely don't understand it.
-    const mergedRef = ref ?? contextRef;
-    return (
-      // TODO: I think I also need to pass domRef here & I need to attach domRef to the WrappedComponent
-      <RefContext.Provider value={mergedRef}>
-        <WrappedComponent {...props} />
-      </RefContext.Provider>
-    );
-  });
 
 const getPropsFromMeasurable = (ref: Measurable, props: string[]): any => {
   const refProps = ref.props;

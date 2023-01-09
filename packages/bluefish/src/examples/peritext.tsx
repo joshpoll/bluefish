@@ -1,31 +1,20 @@
 import { forwardRef, useEffect, useId, useRef, useState } from 'react';
-import { Col } from '../components/Col';
-import { Rect } from '../components/Rect';
+import { Col } from '../components/Col2';
+import { Rect } from '../components/Rect2';
 import { Rect as Rect2 } from '../components/Rect2';
-import { Text } from '../components/Text';
+import { Text } from '../components/Text2';
 import { Text as Text2 } from '../components/Text2';
 import { Row } from '../components/Row';
 import { SVG } from '../components/SVG';
-import { Align } from '../components/Align';
-import {
-  BBoxWithChildren,
-  Measure,
-  useBluefishLayout,
-  withBluefish,
-  withBluefishComponent,
-  useBluefishContext,
-} from '../bluefish';
+import { BBoxWithChildren, Measure, useBluefishLayout, withBluefish, useBluefishContext } from '../bluefish';
 import { Ref } from '../components/Ref';
-import { Group } from '../components/Group';
-import { Group as Group2 } from '../components/Group2';
+import { Group } from '../components/Group2';
 import { Line } from '../components/Line';
 import { Arrow } from '../components/Arrow';
 import { Space } from '../components/Space';
 import { Connector } from '../components/Connector';
 import _ from 'lodash';
-import { Align2 } from '../components/Align2';
 import { Align2 as Align3 } from '../components/Align3';
-import { withBluefish3 } from '../bluefish';
 
 export type CharProps = {
   value: string;
@@ -41,7 +30,7 @@ const foo = {
   to: { the: 'center', of: 'B' },
 };
 
-export const Char = withBluefish3(function Char({ value, marks, opId }: CharProps) {
+export const Char = withBluefish(function Char({ value, marks, opId }: CharProps) {
   const tile = opId + '-tile';
   const opIdLabel = opId + '-label';
   const leftHandle = opId + '-leftHandle';
@@ -50,7 +39,7 @@ export const Char = withBluefish3(function Char({ value, marks, opId }: CharProp
 
   return (
     // TODO: use x and y to position the group
-    <Group2 name={opId}>
+    <Group name={opId}>
       <Rect2 name={tile} height={65} width={50} rx={5} fill={'#eee'} />
       <Rect2 name={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
       <Rect2 name={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
@@ -66,7 +55,7 @@ export const Char = withBluefish3(function Char({ value, marks, opId }: CharProp
       <Align3 topCenter={[<Ref to={opIdLabel} />, <Ref to={tile} />]} />
       <Align3 center={<Ref to={leftHandle} />} centerLeft={<Ref to={tile} />} />
       <Align3 center={<Ref to={rightHandle} />} centerRight={<Ref to={tile} />} />
-    </Group2>
+    </Group>
   );
 });
 
@@ -95,9 +84,9 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(function MarkOp(
         <Text name={opId + '-text'} ref={textRef} contents={`${action} ${markType}`} />
         {/* ...however, using a rect instead results in a properly centered component */}
         {/* <Rect name={opId + '-text'} ref={textRef} width={50} height={15} fill={'magenta'} /> */}
-        <Align2 left={[<Ref to={rectRef} />, <Ref to={start.opId} />]} />
-        <Align2 right={[<Ref to={rectRef} />, <Ref to={end.opId} />]} />
-        <Align2 center={[<Ref to={textRef} />, <Ref to={rectRef} />]} />
+        <Align3 left={[<Ref to={rectRef} />, <Ref to={start.opId} />]} />
+        <Align3 right={[<Ref to={rectRef} />, <Ref to={end.opId} />]} />
+        <Align3 center={[<Ref to={textRef} />, <Ref to={rectRef} />]} />
       </Group>
       {/* make a row component and a column component */}
       <Row spacing={10} alignment={'bottom'} name={opId + '-row'}>
@@ -109,10 +98,7 @@ export const MarkOp: React.FC<MarkOpProps> = forwardRef(function MarkOp(
         <Rect name={opId + '-col-rect-2'} fill={'#eee'} />
       </Col>
       {/* align the two components */}
-      <Align name={opId + '-align-4'} center>
-        <Ref to={opId + '-row'} />
-        <Ref to={opId + '-col'} />
-      </Align>
+      <Align3 name={opId + '-align-4'} center={[<Ref to={opId + '-row'} />, <Ref to={opId + '-col'} />]} />
     </Group>
 
     // proposed API:

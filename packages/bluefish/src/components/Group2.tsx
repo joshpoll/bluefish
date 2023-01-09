@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { PropsWithChildren } from 'react';
-import { Layout, Measure, NewPlaceable, withBluefish, useBluefishLayout2, withBluefish3 } from '../bluefish';
+import { Measure, NewPlaceable, useBluefishLayout2, withBluefish } from '../bluefish';
 import { NewBBox } from '../NewBBox';
 
 const groupMeasurePolicy: Measure = (measurables, constraints) => {
@@ -45,7 +45,7 @@ const groupMeasurePolicy: Measure = (measurables, constraints) => {
   // return { width, height };
 };
 
-export const Group = withBluefish3((props: PropsWithChildren<{}>) => {
+export const Group = withBluefish((props: PropsWithChildren<{}>) => {
   const { domRef, bbox, children } = useBluefishLayout2({}, props, groupMeasurePolicy);
 
   return (

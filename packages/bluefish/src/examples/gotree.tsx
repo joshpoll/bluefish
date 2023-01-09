@@ -1,26 +1,18 @@
 import { forwardRef, useEffect, useId, useRef, useState } from 'react';
-import { Col } from '../components/Col';
-import { Rect } from '../components/Rect';
-import { Text } from '../components/Text';
+import { Col } from '../components/Col2';
+import { Rect } from '../components/Rect2';
+import { Text } from '../components/Text2';
 import { Row } from '../components/Row';
 import { SVG } from '../components/SVG';
-import { Align } from '../components/Align';
-import {
-  BBoxWithChildren,
-  Measure,
-  useBluefishLayout,
-  withBluefish,
-  withBluefishComponent,
-  useBluefishContext,
-} from '../bluefish';
+import { BBoxWithChildren, Measure, useBluefishLayout, withBluefish, useBluefishContext } from '../bluefish';
 import { Ref } from '../components/Ref';
-import { Group } from '../components/Group';
+import { Group } from '../components/Group2';
 import { Line } from '../components/Line';
 import { Arrow } from '../components/Arrow';
 import { Space } from '../components/Space';
 import { Connector } from '../components/Connector';
 import _ from 'lodash';
-import { Align2 } from '../components/Align2';
+import { Align2 } from '../components/Align3';
 
 export type TreeProps<T> = {
   name: string;
@@ -66,7 +58,7 @@ export const Tree = forwardRef(function TreeFn<T>({ name, value, treeChildren }:
         <Ref to={tile} />
       </Align> */}
       </Group>
-      <Row debug={false} name={name + '-subtree'} alignment={'top'} spacing={10}>
+      <Row /* debug={false} */ name={name + '-subtree'} alignment={'top'} spacing={10}>
         {(treeChildren ?? []).map((child, i) => (
           <Tree {...child} />
         ))}

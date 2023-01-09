@@ -1,8 +1,5 @@
 import { scaleBand, scaleLinear, scaleOrdinal, scaleSequential } from 'd3-scale';
 import _ from 'lodash';
-import { Col } from '../../../../components/Col';
-import { Group } from '../../../../components/Group';
-import { Rect } from '../../../../components/Rect';
 import { SVG } from '../../../../components/SVG';
 import { BarY, barY, BarYWithBFN } from '../marks/BarY';
 import { Plot, Plot2, plotMark } from '../Plot';

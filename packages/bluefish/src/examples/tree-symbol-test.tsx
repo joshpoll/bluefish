@@ -1,4 +1,4 @@
-import { withBluefish3, useSymbol } from '../bluefish';
+import { withBluefish, useSymbol } from '../bluefish';
 import { CharProps } from './peritext';
 import { Group as Group2 } from '../components/Group2';
 import { Rect as Rect2 } from '../components/Rect2';
@@ -9,7 +9,7 @@ import { Col } from '../components/Col2';
 import { Row } from '../components/Row';
 import { Connector } from '../main';
 
-export const CharSymbol = withBluefish3(function Char({ value, marks, opId }: CharProps) {
+export const CharSymbol = withBluefish(function Char({ value, marks, opId }: CharProps) {
   // const tile = opId + '-tile';
   // const opIdLabel = opId + '-label';
   // const leftHandle = opId + '-leftHandle';
@@ -49,7 +49,7 @@ type TreeData = {
   subtrees?: TreeData[];
 };
 
-export const TreeSymbol = withBluefish3(function _Tree({ data }: { data: TreeData }) {
+export const TreeSymbol = withBluefish(function _Tree({ data }: { data: TreeData }) {
   const { name, value, subtrees } = data;
 
   const node = useSymbol('node');
