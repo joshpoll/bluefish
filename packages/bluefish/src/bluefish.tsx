@@ -492,7 +492,7 @@ export const useBluefishLayout2 = <T extends { children?: any; name?: string; sy
   props: T,
   measure: Measure,
 ) => {
-  const ref = useContext(RefContext);
+  const { ref } = useContext(RefContext);
 
   const domRef = useRef<any>(null);
 
@@ -528,7 +528,10 @@ export const useBluefishLayout2 = <T extends { children?: any; name?: string; sy
 
 // create a higher order component that uses a forwardRef, but places the ref in a context so it can
 // be looked up by the useBluefishLayout2 hook
-export const RefContext = React.createContext<React.RefObject<SVGElement> | null>(null);
+export const RefContext = React.createContext<{ ref: React.RefObject<SVGElement> | null; symbol?: Symbol }>({
+  ref: null,
+  symbol: undefined,
+});
 
 export const withBluefish2 = <ComponentProps,>(
   measure: Measure,
@@ -549,13 +552,19 @@ export const withBluefish2 = <ComponentProps,>(
 // injects ref
 export const withBluefish3 = <ComponentProps,>(WrappedComponent: React.ComponentType<ComponentProps>) =>
   forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any; symbol?: Symbol }, ref: any) => {
-    const contextRef = useContext(RefContext);
+    /* TODO: need to collect refs maybe?? */
+    const { ref: contextRef } = useContext(RefContext);
     // TODO: I definitely wrote this code, but I also definitely don't understand it.
     const mergedRef = ref ?? contextRef;
-    console.log('withBluefish3', props.name, mergedRef);
+    console.log('withBluefish3', props.name, props.symbol, mergedRef);
     return (
       // TODO: I think I also need to pass domRef here & I need to attach domRef to the WrappedComponent
-      <RefContext.Provider value={mergedRef}>
+      <RefContext.Provider
+        value={{
+          ref: mergedRef,
+          symbol: props.symbol,
+        }}
+      >
         <WrappedComponent {...props} constraints={mergedRef?.current?.constraints} />
       </RefContext.Provider>
     );
@@ -691,40 +700,33 @@ export const useBluefishSymbolContext = () => useContext(BluefishSymbolContext);
 export const useSymbol = (name: string): Symbol => {
   const { bfSymbolMap } = useBluefishSymbolContext();
 
-  const parentRef = useContext(RefContext) as Measurable | null;
+  const { ref: parentRef, symbol: parentSymbol } = useContext(RefContext);
+  console.log('[test] parentSymbol', parentSymbol);
 
   const symbol = useMemo(() => Symbol(name), [name]);
-  useEffect(() => {
-    /* TODO: we're doing this synchronously right now, since that's also how names are handled, but
-    this doesn't seem very robust... */
-    const oldEntry = bfSymbolMap.get(symbol);
-    if (oldEntry) {
-      bfSymbolMap.set(symbol, {
-        ref: oldEntry.ref,
-        children: oldEntry.children,
-      });
-    } else {
-      bfSymbolMap.set(symbol, { ref: undefined, children: [] });
-    }
+  // useEffect(() => {
+  //   /* TODO: we're doing this synchronously right now, since that's also how names are handled, but
+  //   this doesn't seem very robust... */
+  //   // bfSymbolMap.set(symbol, { ref: undefined, children: [] });
 
-    // add this symbol to the parent's children
-    if (!parentRef) return;
-    const parentSymbol = parentRef.symbol?.symbol;
-    if (!parentSymbol) return;
-    const parent = bfSymbolMap.get(parentSymbol);
-    if (!parent) return;
-    parent.children.push(symbol);
+  //   // add this symbol to the parent's children
+  //   if (!parentRef) return;
+  //   const parentSymbol = parentRef.symbol?.symbol;
+  //   if (!parentSymbol) return;
+  //   const parent = bfSymbolMap.get(parentSymbol);
+  //   if (!parent) return;
+  //   parent.children.push(symbol);
 
-    // setBFSymbolMap((prev) => {
-    //   const newMap = new Map(prev);
-    //   newMap.set(symbol, { ref: null, children: [] });
-    //   return newMap;
-    // });
-  }, [symbol, bfSymbolMap, parentRef]);
+  //   // setBFSymbolMap((prev) => {
+  //   //   const newMap = new Map(prev);
+  //   //   newMap.set(symbol, { ref: null, children: [] });
+  //   //   return newMap;
+  //   // });
+  // }, [symbol, bfSymbolMap, parentRef]);
   return {
     symbol,
     // TODO: it seems like this parent field isn't actually necessary since we resolve the parent in
     // this hook already
-    parent: parentRef?.symbol?.symbol,
+    parent: parentSymbol?.symbol,
   };
 };

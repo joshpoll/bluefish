@@ -44,7 +44,7 @@ export const Layout = withBluefish3((props: React.PropsWithChildren<{ layout: us
 });
 
 export const useConstraints = (): Constraints => {
-  const contextRef = useContext(RefContext);
+  const { ref: contextRef } = useContext(RefContext);
   console.log('useConstraints', contextRef?.current);
   return (contextRef?.current as any)?.constraints ?? {};
 };

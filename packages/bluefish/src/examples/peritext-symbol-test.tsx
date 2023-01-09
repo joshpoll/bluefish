@@ -1,10 +1,39 @@
-import { withBluefish3, useSymbol } from '../bluefish';
-import { CharProps } from './peritext';
-import { Group as Group2 } from '../components/Group2';
+import { forwardRef, useEffect, useId, useRef, useState } from 'react';
+import { Col } from '../components/Col';
+import { Rect } from '../components/Rect';
 import { Rect as Rect2 } from '../components/Rect2';
+import { Text } from '../components/Text';
 import { Text as Text2 } from '../components/Text2';
-import { Align2 as Align3 } from '../components/Align3';
+import { Row } from '../components/Row';
+import { SVG } from '../components/SVG';
+import { Align } from '../components/Align';
+import {
+  BBoxWithChildren,
+  Measure,
+  useBluefishLayout,
+  withBluefish,
+  withBluefishComponent,
+  useBluefishContext,
+  useSymbol,
+} from '../bluefish';
 import { Ref } from '../components/Ref';
+import { Group } from '../components/Group';
+import { Group as Group2 } from '../components/Group2';
+import { Line } from '../components/Line';
+import { Arrow } from '../components/Arrow';
+import { Space } from '../components/Space';
+import { Connector } from '../components/Connector';
+import _ from 'lodash';
+import { Align2 } from '../components/Align2';
+import { Align2 as Align3 } from '../components/Align3';
+import { withBluefish3 } from '../bluefish';
+
+export type CharProps = {
+  value: string;
+  opId: string;
+  deleted: boolean;
+  marks: ('italic' | 'bold')[];
+};
 
 export const CharSymbol = withBluefish3(function Char({ value, marks, opId }: CharProps) {
   // const tile = opId + '-tile';
@@ -39,3 +68,37 @@ export const CharSymbol = withBluefish3(function Char({ value, marks, opId }: Ch
     </Group2>
   );
 });
+
+export type MarkOpProps = {
+  action: string;
+  markType: string;
+  backgroundColor: string;
+  borderColor: string;
+  opId: string;
+  start: { opId: string };
+  end: { opId: string };
+};
+
+export type PeritextProps = {
+  chars: CharProps[];
+  markOps: MarkOpProps[];
+};
+
+export const Peritext: React.FC<PeritextProps & { spacing?: number }> = ({ chars, markOps, spacing }) => {
+  const group = useSymbol('group');
+  const charsRow = useSymbol('chars');
+
+  return (
+    <SVG width={1000} height={500}>
+      {/* TODO: if I don't have the group component here, then the refs don't resolve properly... */}
+      <Group2 symbol={group}>
+        {/* chars */}
+        <Row name={'chars'} spacing={spacing ? +spacing : 10} alignment={'middle'}>
+          {chars.map((char) => (
+            <CharSymbol {...char} />
+          ))}
+        </Row>
+      </Group2>
+    </SVG>
+  );
+};

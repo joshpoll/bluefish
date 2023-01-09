@@ -29,6 +29,12 @@ export const resolveRef = (
     }
   } else if ('symbol' in ref) {
     const refObject = symbolMap.get(ref.symbol)?.ref;
+    // const foo = symbolMap.get(ref.symbol);
+    console.log(
+      '[test]',
+      Array.from(symbolMap.entries()).map((e) => e[1].children.length),
+    );
+    // debugger;
     if (refObject === undefined) {
       throw new Error(
         `Could not find component with symbol ${ref.symbol.description}. Available symbols: ${Array.from(

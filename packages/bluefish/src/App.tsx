@@ -82,6 +82,63 @@ const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | 
 }
 
 function App() {
+  return (
+    <div className="App">
+      {/* <svg width={500} height={500}>
+        <ColUseState spacing={10}>
+          <RectUseState width={100} height={100} fill={'red'} />
+          <RectUseState width={100} height={100} fill={'green'} />
+          <RectUseState width={100} height={100} fill={'blue'} />
+        </ColUseState>
+      </svg>
+      <br /> */}
+      <PeritextSymbol
+        chars={[
+          { value: 'T', opId: '1@A', deleted: false, marks: ['italic'] },
+          { value: 'h', opId: '2@A', deleted: true, marks: ['italic'] },
+          // { value: 'r', opId: '20@A', deleted: true, marks: ['italic'] },
+          { value: 'e', opId: '5@B', deleted: false, marks: ['bold', 'italic'] },
+          { value: ' ', opId: '6@B', deleted: false, marks: ['bold', 'italic'] },
+          { value: 'f', opId: '7@A', deleted: false, marks: ['bold'] },
+          { value: 'o', opId: '8@A', deleted: true, marks: [] },
+          { value: 'x', opId: '9@A', deleted: false, marks: [] },
+        ]}
+        markOps={[
+          {
+            action: 'addMark',
+            opId: '18@A',
+            start: { opId: '5@B' },
+            end: { opId: '7@A' },
+            markType: 'bold',
+            backgroundColor: '#F9EEEE',
+            borderColor: '#E57E97',
+          },
+          {
+            action: 'addMark',
+            opId: '10@B',
+            start: { opId: '1@A' },
+            end: { opId: '6@B' },
+            markType: 'italic',
+            backgroundColor: '#E3F2F7',
+            borderColor: '#00C2FF',
+          },
+        ]}
+      />
+      <br />
+      <SVG width={500} height={500}>
+        <Col spacing={10} alignment={'center'}>
+          <CharSymbol value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
+          <CharSymbol value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
+        </Col>
+      </SVG>
+      {/* <svg width={500} height={500}>
+        <RectUseState x={20} y={20} width={100} height={100} fill={'green'} />
+      </svg> */}
+    </div>
+  );
+}
+
+function App_OLD() {
   const [startOpId, setStartOpId] = React.useState('5@B');
   const [rangeval, setRangeval] = React.useState(undefined);
 
