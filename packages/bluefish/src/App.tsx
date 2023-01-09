@@ -122,63 +122,122 @@ function App() {
         ]}
       />
       <SVG width={500} height={500}>
-        <TreeSymbol
-          data={{
-            name: 'A',
-            value: {
-              value: '7',
-              marks: ['bold', 'italic'],
-            },
-            subtrees: [
-              {
-                name: 'B',
-                value: {
-                  value: '4',
-                  marks: ['bold', 'italic'],
-                },
-                subtrees: [
-                  {
-                    name: 'C',
-                    value: {
-                      value: '2',
-                      marks: ['bold', 'italic'],
-                    },
-                  },
-                  {
-                    name: 'D',
-                    value: {
-                      value: '2',
-                      marks: ['bold', 'italic'],
-                    },
-                  },
-                ],
+        <Col alignment={'center'} spacing={5}>
+          <TreeSymbol
+            data={{
+              name: 'A',
+              value: {
+                value: '7',
+                marks: ['bold', 'italic'],
               },
-              {
-                name: 'E',
-                value: {
-                  value: '3',
-                  marks: ['bold', 'italic'],
+              subtrees: [
+                {
+                  name: 'B',
+                  value: {
+                    value: '4',
+                    marks: ['bold', 'italic'],
+                  },
+                  subtrees: [
+                    {
+                      name: 'C',
+                      value: {
+                        value: '2',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                    {
+                      name: 'D',
+                      value: {
+                        value: '2',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                  ],
                 },
-                subtrees: [
-                  {
-                    name: 'F',
-                    value: {
-                      value: '1',
-                      marks: ['bold', 'italic'],
-                    },
+                {
+                  name: 'E',
+                  value: {
+                    value: '3',
+                    marks: ['bold', 'italic'],
                   },
-                  {
-                    name: 'G',
-                    value: {
-                      value: '1',
-                      marks: ['bold', 'italic'],
+                  subtrees: [
+                    {
+                      name: 'F',
+                      value: {
+                        value: '1',
+                        marks: ['bold', 'italic'],
+                      },
                     },
-                  },
-                ],
+                    {
+                      name: 'G',
+                      value: {
+                        value: '1',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                  ],
+                },
+              ],
+            }}
+          />
+          <TreeSymbol
+            data={{
+              name: 'A',
+              value: {
+                value: '7',
+                marks: ['bold', 'italic'],
               },
-            ],
-          }}
-        />
+              subtrees: [
+                {
+                  name: 'B',
+                  value: {
+                    value: '4',
+                    marks: ['bold', 'italic'],
+                  },
+                  subtrees: [
+                    {
+                      name: 'C',
+                      value: {
+                        value: '2',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                    {
+                      name: 'D',
+                      value: {
+                        value: '2',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                  ],
+                },
+                {
+                  name: 'E',
+                  value: {
+                    value: '3',
+                    marks: ['bold', 'italic'],
+                  },
+                  subtrees: [
+                    {
+                      name: 'F',
+                      value: {
+                        value: '1',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                    {
+                      name: 'G',
+                      value: {
+                        value: '1',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                  ],
+                },
+              ],
+            }}
+          />
+        </Col>
       </SVG>
       <br />
       <SVG width={500} height={500}>

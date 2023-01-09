@@ -1,4 +1,4 @@
-import { withBluefish, useSymbol, useSymbolArray } from '../bluefish';
+import { withBluefish, useSymbol, useSymbolArray, lookup } from '../bluefish';
 import { CharProps } from './peritext';
 import { Group as Group2 } from '../components/Group2';
 import { Rect as Rect2 } from '../components/Rect2';
@@ -56,14 +56,15 @@ type TreeData = {
 export const TreeSymbol = withBluefish(function _Tree({ data }: { data: TreeData }) {
   const { name, value, subtrees } = data;
 
-  const id = useId();
-  const node = useSymbol('node' + id);
-  const subtreesName = useSymbol('subtrees' + id);
+  const node = useSymbol('node');
+  const subtreesName = useSymbol('subtrees');
   // list of indices like [0, 1, 2, ...]
-  const childNames = useSymbolArray(_.range(subtrees?.length || 0).map((i) => `child-${i}` + id));
+  const childNames = useSymbolArray(_.range(subtrees?.length || 0).map((i) => `child-${i}`));
+  const group = useSymbol('group');
 
   return (
-    <Group2>
+    // TODO: removing the group symbol breaks stuff
+    <Group2 symbol={group}>
       <CharSymbol symbol={node} {...value} opId={name} deleted />
       <Row symbol={subtreesName} alignment={'top'} spacing={10}>
         {(subtrees || []).map((child, i) => (
@@ -79,8 +80,7 @@ export const TreeSymbol = withBluefish(function _Tree({ data }: { data: TreeData
       {(subtrees || []).map((child, i) => (
         <Connector $from={'bottomCenter'} $to={'topCenter'} stroke={'black'} strokeWidth={2}>
           <Ref to={node} />
-          <Ref to={subtreesName} />
-          {/* <Ref to={child.name + '-node'} /> */}
+          <Ref to={lookup(childNames[i], 'node')} />
         </Connector>
       ))}
     </Group2>

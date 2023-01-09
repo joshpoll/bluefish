@@ -582,3 +582,11 @@ export const useSymbolArray = (names: string[]): Symbol[] => {
     parent: parentSymbol?.symbol,
   }));
 };
+
+export const lookup = (symbol: Symbol, ...path: string[]) => {
+  return {
+    type: 'lookup',
+    symbol,
+    path,
+  } as const;
+};

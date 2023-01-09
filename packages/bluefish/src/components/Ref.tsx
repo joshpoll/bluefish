@@ -11,7 +11,13 @@ import {
 import { CoordinateTransform, NewBBoxClass, NewBBox } from '../NewBBox';
 import { BluefishSymbolMap, useBluefishSymbolContext } from '../bluefish';
 
-export type BluefishRef = string | React.RefObject<any> | Symbol;
+export type Lookup = {
+  type: 'lookup';
+  symbol: Symbol;
+  path: string[];
+};
+
+export type BluefishRef = string | React.RefObject<any> | Symbol | Lookup;
 
 export type RefProps = { to: BluefishRef };
 
@@ -28,8 +34,25 @@ export const resolveRef = (
       return refObject as unknown as Measurable;
     }
   } else if ('symbol' in ref) {
-    // console.log('[ref]', symbolMap);
-    let refObject: symbol | React.MutableRefObject<any> | undefined = ref.symbol;
+    let refObject: symbol | React.MutableRefObject<any> | undefined =
+      typeof ref.symbol === 'object' ? ref.symbol.symbol : ref.symbol;
+    if ('type' in ref && ref.type === 'lookup') {
+      for (const position of ref.path) {
+        const children: Set<symbol> | undefined = symbolMap.get(refObject as symbol)?.children;
+        // search children set for symbol with matching description
+        for (const child of Array.from(children?.values() ?? [])) {
+          if (child.description === position) {
+            refObject = child;
+            break;
+          }
+        }
+      }
+    } else {
+      // console.log('[ref]', symbolMap);
+      refObject = ref.symbol as symbol;
+    }
+    // now that we have resolved the symbol, we need to find the actual ref associated with it
+
     // const refObject = symbolMap.get(ref.symbol)?.ref;
     // const foo = symbolMap.get(ref.symbol);
     console.log(
@@ -40,9 +63,9 @@ export const resolveRef = (
     // debugger;
     if (refObject === undefined) {
       throw new Error(
-        `Could not find component with symbol ${ref.symbol.description}. Available symbols: ${Array.from(
-          symbolMap.keys(),
-        ).map((s) => s.description)}`,
+        `Could not find component with symbol ${
+          (typeof ref.symbol === 'object' ? ref.symbol.symbol : ref.symbol).description
+        }. Available symbols: ${Array.from(symbolMap.keys()).map((s) => s.description)}`,
       );
     } else {
       const symbolTrace = [refObject.description];
@@ -52,7 +75,9 @@ export const resolveRef = (
       }
       if (refObject === undefined) {
         throw new Error(
-          `Found component with symbol ${ref.symbol.description}, but could not resolve its ref.
+          `Found component with symbol ${
+            (typeof ref.symbol === 'object' ? ref.symbol.symbol : ref.symbol).description
+          }, but could not resolve its ref.
 Symbol trace: ${symbolTrace}.
 Symbol map: ${Array.from(symbolMap.entries()).map(
             (e) => `{
