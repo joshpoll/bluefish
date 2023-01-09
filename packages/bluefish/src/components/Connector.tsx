@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle } from 'react';
+import { forwardRef, PropsWithChildren, useImperativeHandle } from 'react';
 import {
   withBluefish,
   BBox,
@@ -10,7 +10,7 @@ import {
 } from '../bluefish';
 import { NewBBox, NewBBoxClass } from '../NewBBox';
 import { Alignment2D, splitAlignment } from './Align3';
-import { BluefishRef, resolveRef } from './Ref';
+import { rowMeasurePolicy } from './Row';
 
 // export type ConnectorProps = React.SVGProps<SVGLineElement> & {
 //   $from: {
@@ -101,17 +101,24 @@ const connectorMeasurePolicy = (props: ConnectorProps): Measure => {
   };
 };
 
-export const Connector = withBluefish((props: ConnectorProps) => {
-  const { bbox } = useBluefishLayout2({}, props, connectorMeasurePolicy(props));
+// TODO: note that if `children` is not placed, this doesn't actually measure anything!
+// I'm not sure why...
+export const Connector = withBluefish((props: PropsWithChildren<ConnectorProps>) => {
+  const { bbox, domRef, children } = useBluefishLayout2({}, props, connectorMeasurePolicy(props));
 
   const { $from, $to, ...rest } = props;
   return (
-    <line
-      {...rest}
-      x1={bbox?.left ?? 0}
-      x2={(bbox?.left ?? 0) + (bbox?.width ?? 0)}
-      y1={bbox?.top ?? 0}
-      y2={(bbox?.top ?? 0) + (bbox?.height ?? 0)}
-    />
+    <>
+      {children}
+      <line
+        ref={domRef}
+        {...rest}
+        x1={bbox?.left ?? 0}
+        x2={(bbox?.left ?? 0) + (bbox?.width ?? 0)}
+        y1={bbox?.top ?? 0}
+        y2={(bbox?.top ?? 0) + (bbox?.height ?? 0)}
+      />
+    </>
   );
 });
+Connector.displayName = 'Connector';

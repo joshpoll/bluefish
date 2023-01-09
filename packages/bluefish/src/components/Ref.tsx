@@ -28,11 +28,14 @@ export const resolveRef = (
       return refObject as unknown as Measurable;
     }
   } else if ('symbol' in ref) {
-    const refObject = symbolMap.get(ref.symbol)?.ref;
+    // console.log('[ref]', symbolMap);
+    let refObject: symbol | React.MutableRefObject<any> | undefined = ref.symbol;
+    // const refObject = symbolMap.get(ref.symbol)?.ref;
     // const foo = symbolMap.get(ref.symbol);
     console.log(
       '[test]',
-      Array.from(symbolMap.entries()).map((e) => e[1].children.length),
+      Array.from(symbolMap.entries()).filter((e) => e[1].children.size > 0),
+      // Array.from(symbolMap.entries()).map((e) => e[1].children.length),
     );
     // debugger;
     if (refObject === undefined) {
@@ -42,6 +45,24 @@ export const resolveRef = (
         ).map((s) => s.description)}`,
       );
     } else {
+      const symbolTrace = [refObject.description];
+      while (typeof refObject === 'symbol') {
+        refObject = symbolMap.get(refObject)?.ref;
+        if (typeof refObject === 'symbol') symbolTrace.push(refObject.description);
+      }
+      if (refObject === undefined) {
+        throw new Error(
+          `Found component with symbol ${ref.symbol.description}, but could not resolve its ref.
+Symbol trace: ${symbolTrace}.
+Symbol map: ${Array.from(symbolMap.entries()).map(
+            (e) => `{
+            key: ${e[0].description},
+            value: ${e[1].ref?.toString()},
+          }`,
+          )}`,
+        );
+      }
+      console.log('[ref] resolved symbol', refObject);
       return refObject as unknown as Measurable;
     }
   } else {

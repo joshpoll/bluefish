@@ -1,4 +1,4 @@
-import { withBluefish, useSymbol } from '../bluefish';
+import { withBluefish, useSymbol, useSymbolArray } from '../bluefish';
 import { CharProps } from './peritext';
 import { Group as Group2 } from '../components/Group2';
 import { Rect as Rect2 } from '../components/Rect2';
@@ -8,6 +8,8 @@ import { Ref } from '../components/Ref';
 import { Col } from '../components/Col2';
 import { Row } from '../components/Row';
 import { Connector } from '../main';
+import _ from 'lodash';
+import { useEffect, useId } from 'react';
 
 export const CharSymbol = withBluefish(function Char({ value, marks, opId }: CharProps) {
   // const tile = opId + '-tile';
@@ -20,10 +22,12 @@ export const CharSymbol = withBluefish(function Char({ value, marks, opId }: Cha
   const leftHandle = useSymbol('leftHandle');
   const rightHandle = useSymbol('rightHandle');
   const letter = useSymbol('letter');
+  const group = useSymbol('group');
 
   return (
     // TODO: use x and y to position the group
-    <Group2 name={opId}>
+    // TODO: removing the group symbol here breaks this!
+    <Group2 symbol={group} name={opId}>
       <Rect2 symbol={tile} height={65} width={50} rx={5} fill={'#eee'} />
       <Rect2 symbol={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
       <Rect2 symbol={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
@@ -52,30 +56,33 @@ type TreeData = {
 export const TreeSymbol = withBluefish(function _Tree({ data }: { data: TreeData }) {
   const { name, value, subtrees } = data;
 
-  const node = useSymbol('node');
+  const id = useId();
+  const node = useSymbol('node' + id);
+  const subtreesName = useSymbol('subtrees' + id);
+  // list of indices like [0, 1, 2, ...]
+  const childNames = useSymbolArray(_.range(subtrees?.length || 0).map((i) => `child-${i}` + id));
 
   return (
     <Group2>
-      {/* <CharSymbol symbol={node} name={name + '-node'} {...value} opId={name + '-node'} deleted /> */}
-      <Rect2 symbol={node} height={65} width={50} rx={5} fill={'#eee'} />
-      <Row name={name + '-subtree'} alignment={'top'} spacing={10}>
+      <CharSymbol symbol={node} {...value} opId={name} deleted />
+      <Row symbol={subtreesName} alignment={'top'} spacing={10}>
         {(subtrees || []).map((child, i) => (
-          <TreeSymbol data={child} />
+          <TreeSymbol symbol={childNames[i]} data={child} />
         ))}
       </Row>
       {subtrees ? (
         <Col alignment={'center'} spacing={10}>
-          {/* <Ref to={name + '-node'} /> */}
           <Ref to={node} />
-          <Ref to={name + '-subtree'} />
+          <Ref to={subtreesName} />
         </Col>
       ) : null}
-      {/* {(subtrees || []).map((child, i) => (
+      {(subtrees || []).map((child, i) => (
         <Connector $from={'bottomCenter'} $to={'topCenter'} stroke={'black'} strokeWidth={2}>
-          <Ref to={name + '-node'} />
-          <Ref to={child.name + '-node'} />
+          <Ref to={node} />
+          <Ref to={subtreesName} />
+          {/* <Ref to={child.name + '-node'} /> */}
         </Connector>
-      ))} */}
+      ))}
     </Group2>
   );
 });

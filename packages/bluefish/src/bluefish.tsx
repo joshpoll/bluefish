@@ -312,15 +312,24 @@ export const useBluefishLayout = (
           console.log('[symbol] setting ref', node.symbol, node);
           symbolContext.bfSymbolMap.set(node.symbol.symbol, {
             ref: node,
-            children: [],
+            children: new Set(),
           });
           console.log('[symbol] symbolMap after', symbolContext.bfSymbolMap.get(node.symbol.symbol));
 
           // connect the symbol to its parent
           if (node.symbol.parent !== undefined) {
+            console.log('[symbol] setting parent', node.symbol.parent, node.symbol.symbol);
+            if (!symbolContext.bfSymbolMap.has(node.symbol.parent)) {
+              console.log('[symbol] parent not found in', symbolContext.bfSymbolMap);
+            }
             symbolContext.bfSymbolMap.set(node.symbol.parent, {
               ref: symbolContext.bfSymbolMap.get(node.symbol.parent)!.ref,
-              children: [...(symbolContext.bfSymbolMap.get(node.symbol.parent)?.children ?? []), node.symbol.symbol],
+              // children: [...(symbolContext.bfSymbolMap.get(node.symbol.parent)?.children ?? []),
+              // node.symbol.symbol],
+              children: new Set([
+                ...Array.from(symbolContext.bfSymbolMap.get(node.symbol.parent)?.children ?? []),
+                node.symbol.symbol,
+              ]),
             });
           }
         }
@@ -415,7 +424,9 @@ export const useBluefishLayout2 = <T extends { children?: any; name?: string; sy
 // be looked up by the useBluefishLayout2 hook
 export const RefContext = React.createContext<{ ref: React.RefObject<SVGElement> | null; symbol?: Symbol }>({
   ref: null,
-  symbol: undefined,
+  symbol: {
+    symbol: Symbol('$root'),
+  },
 });
 
 // injects name (and debug. still todo)
@@ -423,16 +434,50 @@ export const RefContext = React.createContext<{ ref: React.RefObject<SVGElement>
 export const withBluefish = <ComponentProps,>(WrappedComponent: React.ComponentType<ComponentProps>) =>
   forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any; symbol?: Symbol }, ref: any) => {
     /* TODO: need to collect refs maybe?? */
-    const { ref: contextRef } = useContext(RefContext);
+    const { ref: contextRef, symbol: parentSymbol } = useContext(RefContext);
+    console.log('[withBluefish] lookup symbol', parentSymbol);
+    const symbolContext = useBluefishSymbolContext();
     // TODO: I definitely wrote this code, but I also definitely don't understand it.
     const mergedRef = ref ?? contextRef;
-    console.log('withBluefish3', props.name, props.symbol, mergedRef);
+    console.log('[withBluefish] ref', { ref, contextRef, mergedRef });
+    console.log('[withBluefish]', props.name, props.symbol, mergedRef);
+    console.log('[withBluefish] name & symbol', props.name, props.symbol);
+
+    const id = useId();
+
+    const autogenSymbol = useMemo(() => Symbol('AUTOGEN-' + id), [id]);
+
+    const symbol = useMemo(() => {
+      if (props.symbol !== undefined) {
+        symbolContext.bfSymbolMap.set(props.symbol.symbol, {
+          ref: undefined,
+          children: new Set(),
+        });
+        return props.symbol;
+      }
+      symbolContext.bfSymbolMap.set(autogenSymbol, {
+        ref: undefined,
+        children: new Set(),
+      });
+
+      return {
+        symbol: autogenSymbol,
+      };
+    }, [autogenSymbol, props.symbol, symbolContext.bfSymbolMap]);
+
+    if (parentSymbol !== undefined) {
+      symbolContext.bfSymbolMap.set(parentSymbol.symbol, {
+        ref: symbol.symbol,
+        children: symbolContext.bfSymbolMap.get(parentSymbol.symbol)?.children ?? new Set(),
+      });
+    }
+
     return (
       // TODO: I think I also need to pass domRef here & I need to attach domRef to the WrappedComponent
       <RefContext.Provider
         value={{
           ref: mergedRef,
-          symbol: props.symbol,
+          symbol,
         }}
       >
         <WrappedComponent {...props} constraints={mergedRef?.current?.constraints} />
@@ -454,8 +499,9 @@ export const useBluefishContext = () => useContext(BluefishContext);
 export type BluefishSymbolMap = Map<
   symbol,
   {
-    ref?: React.MutableRefObject<any>;
-    children: symbol[];
+    ref?: React.MutableRefObject<any> | symbol;
+    // children: symbol[];
+    children: Set<symbol>;
   }
 >;
 
@@ -475,7 +521,6 @@ export const useSymbol = (name: string): Symbol => {
   const { bfSymbolMap } = useBluefishSymbolContext();
 
   const { ref: parentRef, symbol: parentSymbol } = useContext(RefContext);
-  console.log('[test] parentSymbol', parentSymbol);
 
   const symbol = useMemo(() => Symbol(name), [name]);
   // useEffect(() => {
@@ -503,4 +548,37 @@ export const useSymbol = (name: string): Symbol => {
     // this hook already
     parent: parentSymbol?.symbol,
   };
+};
+
+export const useSymbolArray = (names: string[]): Symbol[] => {
+  const { bfSymbolMap } = useBluefishSymbolContext();
+
+  const { ref: parentRef, symbol: parentSymbol } = useContext(RefContext);
+
+  const symbols = useMemo(() => names.map((name) => Symbol(name)), [names]);
+  // useEffect(() => {
+  //   /* TODO: we're doing this synchronously right now, since that's also how names are handled, but
+  //   this doesn't seem very robust... */
+  //   // bfSymbolMap.set(symbol, { ref: undefined, children: [] });
+
+  //   // add this symbol to the parent's children
+  //   if (!parentRef) return;
+  //   const parentSymbol = parentRef.symbol?.symbol;
+  //   if (!parentSymbol) return;
+  //   const parent = bfSymbolMap.get(parentSymbol);
+  //   if (!parent) return;
+  //   parent.children.push(symbol);
+
+  //   // setBFSymbolMap((prev) => {
+  //   //   const newMap = new Map(prev);
+  //   //   newMap.set(symbol, { ref: null, children: [] });
+  //   //   return newMap;
+  //   // });
+  // }, [symbol, bfSymbolMap, parentRef]);
+  return symbols.map((symbol) => ({
+    symbol,
+    // TODO: it seems like this parent field isn't actually necessary since we resolve the parent in
+    // this hook already
+    parent: parentSymbol?.symbol,
+  }));
 };

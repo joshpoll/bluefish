@@ -11,10 +11,10 @@ export type RowProps = ({ spacing: number } | { totalWidth: number } | { spacing
   alignment: VerticalAlignment;
 };
 
-const rowMeasurePolicy =
+export const rowMeasurePolicy =
   (options: RowProps): Measure =>
   (measurables, constraints: Constraints) => {
-    console.log('[row] measure policy called', options);
+    console.log('[row] measure policy called', options, measurables);
     let placeables;
     if ('totalWidth' in options && 'spacing' in options) {
       // width is completely determined by the totalWidth and spacing, so update the constraints
