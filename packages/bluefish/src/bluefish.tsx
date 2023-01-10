@@ -193,7 +193,7 @@ export const useBluefishLayout = (
         }
       },
       measure(constraints: Constraints, isRef?: boolean): NewBBoxClass {
-        console.log('measuring', name, 'with constraints', constraints, 'and children', childrenRef.current);
+        // console.log('measuring', name, 'with constraints', constraints, 'and children', childrenRef.current);
         let bbox;
         if (
           isRef !== true &&
@@ -209,7 +209,7 @@ export const useBluefishLayout = (
             }
           });
           const { width, height, left, top, right, bottom, boundary } = measure(childrenRef.current, constraints);
-          console.log('measured', name, JSON.stringify({ width, height, left, top, right, bottom }));
+          // console.log('measured', name, JSON.stringify({ width, height, left, top, right, bottom }));
           setWidth(width);
           setHeight(height);
           setLeft(left);
@@ -255,7 +255,7 @@ export const useBluefishLayout = (
           bboxClassRef.current = bbox;
         } else {
           bbox = bboxClassRef.current;
-          console.log('using cached bbox', name, bbox);
+          // console.log('using cached bbox', name, bbox);
         }
 
         return bbox!;
@@ -316,22 +316,22 @@ export const useBluefishLayout = (
           });
           console.log('[symbol] symbolMap after', symbolContext.bfSymbolMap.get(node.symbol.symbol));
 
-          // connect the symbol to its parent
-          if (node.symbol.parent !== undefined) {
-            console.log('[symbol] setting parent', node.symbol.parent, node.symbol.symbol);
-            if (!symbolContext.bfSymbolMap.has(node.symbol.parent)) {
-              console.log('[symbol] parent not found in', symbolContext.bfSymbolMap);
-            }
-            symbolContext.bfSymbolMap.set(node.symbol.parent, {
-              ref: symbolContext.bfSymbolMap.get(node.symbol.parent)!.ref,
-              // children: [...(symbolContext.bfSymbolMap.get(node.symbol.parent)?.children ?? []),
-              // node.symbol.symbol],
-              children: new Set([
-                ...Array.from(symbolContext.bfSymbolMap.get(node.symbol.parent)?.children ?? []),
-                node.symbol.symbol,
-              ]),
-            });
-          }
+          // // connect the symbol to its parent
+          // if (node.symbol.parent !== undefined) {
+          //   console.log('[symbol] setting parent', node.symbol.parent, node.symbol.symbol);
+          //   if (!symbolContext.bfSymbolMap.has(node.symbol.parent)) {
+          //     console.log('[symbol] parent not found in', symbolContext.bfSymbolMap);
+          //   }
+          //   symbolContext.bfSymbolMap.set(node.symbol.parent, {
+          //     ref: symbolContext.bfSymbolMap.get(node.symbol.parent)!.ref,
+          //     // children: [...(symbolContext.bfSymbolMap.get(node.symbol.parent)?.children ?? []),
+          //     // node.symbol.symbol],
+          //     children: new Set([
+          //       ...Array.from(symbolContext.bfSymbolMap.get(node.symbol.parent)?.children ?? []),
+          //       node.symbol.symbol,
+          //     ]),
+          //   });
+          // }
         }
         const { ref } = child as any;
         // console.log('current ref on child', ref);
@@ -420,13 +420,27 @@ export const useBluefishLayout2 = <T extends { children?: any; name?: string; sy
   };
 };
 
+type RefContextValue = {
+  ref: React.RefObject<SVGElement> | null;
+  parent: {
+    scope?: symbol;
+    ref: symbol;
+  };
+};
+
+const root = Symbol('$root');
+
 // create a higher order component that uses a forwardRef, but places the ref in a context so it can
 // be looked up by the useBluefishLayout2 hook
-export const RefContext = React.createContext<{ ref: React.RefObject<SVGElement> | null; symbol?: Symbol }>({
+export const RefContext = React.createContext<RefContextValue>({
   ref: null,
-  symbol: {
-    symbol: Symbol('$root'),
+  parent: {
+    scope: root,
+    ref: root,
   },
+  // symbol: {
+  //   symbol: Symbol('$root'),
+  // },
 });
 
 // injects name (and debug. still todo)
@@ -434,53 +448,103 @@ export const RefContext = React.createContext<{ ref: React.RefObject<SVGElement>
 export const withBluefish = <ComponentProps,>(WrappedComponent: React.ComponentType<ComponentProps>) =>
   forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any; symbol?: Symbol }, ref: any) => {
     /* TODO: need to collect refs maybe?? */
-    const { ref: contextRef, symbol: parentSymbol } = useContext(RefContext);
-    console.log('[withBluefish] lookup symbol', parentSymbol);
+    const {
+      ref: contextRef,
+      parent: { scope: parentScopeSymbol, ref: parentRefSymbol },
+    } = useContext(RefContext);
+    // console.log('[withBluefish] lookup symbol', parentSymbol);
     const symbolContext = useBluefishSymbolContext();
     // TODO: I definitely wrote this code, but I also definitely don't understand it.
     const mergedRef = ref ?? contextRef;
-    console.log('[withBluefish] ref', { ref, contextRef, mergedRef });
-    console.log('[withBluefish]', props.name, props.symbol, mergedRef);
-    console.log('[withBluefish] name & symbol', props.name, props.symbol);
+    // console.log('[withBluefish] ref', { ref, contextRef, mergedRef });
+    // console.log('[withBluefish]', props.name, props.symbol, mergedRef);
+    // console.log('[withBluefish] name & symbol', props.name, props.symbol);
 
     const id = useId();
 
     const autogenSymbol = useMemo(() => Symbol('AUTOGEN-' + id), [id]);
 
+    // const mergedRefSymbol = ref !== undefined ? autogenSymbol : parentRefSymbol;
+
     const symbol = useMemo(() => {
-      if (props.symbol !== undefined) {
-        symbolContext.bfSymbolMap.set(props.symbol.symbol, {
-          ref: undefined,
-          children: new Set(),
-        });
-        return props.symbol;
-      }
-      symbolContext.bfSymbolMap.set(autogenSymbol, {
-        ref: undefined,
-        children: new Set(),
-      });
+      return props.symbol?.symbol ?? autogenSymbol;
+    }, [autogenSymbol, props.symbol?.symbol]);
 
-      return {
-        symbol: autogenSymbol,
-      };
-    }, [autogenSymbol, props.symbol, symbolContext.bfSymbolMap]);
+    // const symbol = useMemo(() => {
+    //   if (props.symbol !== undefined) {
+    //     console.log('[withBluefish] setting symbol', props.symbol.symbol, props.symbol.parent);
+    //     symbolContext.bfSymbolMap.set(props.symbol.symbol, {
+    //       ref: undefined,
+    //       children: new Set(),
+    //     });
 
-    if (parentSymbol !== undefined) {
-      symbolContext.bfSymbolMap.set(parentSymbol.symbol, {
-        ref: symbol.symbol,
-        children: symbolContext.bfSymbolMap.get(parentSymbol.symbol)?.children ?? new Set(),
+    //     if (props.symbol.parent !== undefined) {
+    //       const symbolParent = props.symbol.parent;
+
+    //       console.log(
+    //         '[withBluefish] symbolParent entry',
+    //         props.symbol.symbol,
+    //         symbolParent,
+    //         symbolContext.bfSymbolMap.get(symbolParent),
+    //       );
+
+    //       symbolContext.bfSymbolMap.set(symbolParent, {
+    //         ref: symbolContext.bfSymbolMap.get(symbolParent)?.ref ?? undefined,
+    //         children: symbolContext.bfSymbolMap.get(symbolParent)?.children ?? new Set(),
+    //       });
+    //     }
+
+    //     return props.symbol;
+    //   }
+    //   symbolContext.bfSymbolMap.set(autogenSymbol, {
+    //     ref: undefined,
+    //     children: new Set(),
+    //   });
+
+    //   return {
+    //     symbol: autogenSymbol,
+    //   };
+    // }, [autogenSymbol, props.symbol, symbolContext.bfSymbolMap]);
+
+    // console.log('parentSymbol', parentSymbol);
+    console.log('[withBluefish] symbol', symbol);
+    console.log(
+      '[withBluefish] ref',
+      symbol,
+      ref === null ? null : typeof ref,
+      contextRef === null ? null : typeof contextRef,
+    );
+    if (ref === null) {
+      // we are inheriting from above, so connect the symbol above to this one
+      console.log('[withBluefish] connecting', symbol, 'to REF parent', parentRefSymbol);
+      symbolContext.bfSymbolMap.set(parentRefSymbol, {
+        ref: symbol,
+        children: symbolContext.bfSymbolMap.get(parentRefSymbol)?.children ?? new Set(),
       });
     }
+    // if (parentScopeSymbol !== undefined) {
+    //   symbolContext.bfSymbolMap.set(parentScopeSymbol, {
+    //     ref: symbol,
+    //     children: symbolContext.bfSymbolMap.get(parentScopeSymbol)?.children ?? new Set(),
+    //   });
+    // }
 
     return (
       // TODO: I think I also need to pass domRef here & I need to attach domRef to the WrappedComponent
       <RefContext.Provider
         value={{
           ref: mergedRef,
-          symbol,
+          parent: {
+            scope: props.symbol?.symbol,
+            ref: symbol,
+          },
         }}
       >
-        <WrappedComponent {...props} constraints={mergedRef?.current?.constraints} />
+        <WrappedComponent
+          {...props}
+          symbol={props.symbol ?? { symbol: autogenSymbol }}
+          constraints={mergedRef?.current?.constraints}
+        />
       </RefContext.Provider>
     );
   });
@@ -520,7 +584,10 @@ export const useBluefishSymbolContext = () => useContext(BluefishSymbolContext);
 export const useSymbol = (name: string): Symbol => {
   const { bfSymbolMap } = useBluefishSymbolContext();
 
-  const { ref: parentRef, symbol: parentSymbol } = useContext(RefContext);
+  const {
+    ref: parentRef,
+    parent: { scope: parentSymbol },
+  } = useContext(RefContext);
 
   const symbol = useMemo(() => Symbol(name), [name]);
   // useEffect(() => {
@@ -542,18 +609,41 @@ export const useSymbol = (name: string): Symbol => {
   //   //   return newMap;
   //   // });
   // }, [symbol, bfSymbolMap, parentRef]);
+
+  if (parentSymbol !== undefined) {
+    console.log(
+      '[withBluefish] connecting',
+      symbol,
+      'to SCOPE parent',
+      parentSymbol,
+      `Symbol map: ${Array.from(bfSymbolMap.entries()).map(
+        (e) => `{
+  symbol: ${e[0].description},
+  ref: ${typeof e[1].ref === 'symbol' ? e[1].ref.description : e[1].ref?.toString()},
+}`,
+      )}`,
+    );
+    bfSymbolMap.set(parentSymbol, {
+      ref: bfSymbolMap.get(parentSymbol)?.ref ?? undefined,
+      children: new Set([...Array.from(bfSymbolMap.get(parentSymbol)?.children ?? []), symbol]),
+    });
+  }
+
   return {
     symbol,
     // TODO: it seems like this parent field isn't actually necessary since we resolve the parent in
     // this hook already
-    parent: parentSymbol?.symbol,
+    parent: parentSymbol,
   };
 };
 
 export const useSymbolArray = (names: string[]): Symbol[] => {
   const { bfSymbolMap } = useBluefishSymbolContext();
 
-  const { ref: parentRef, symbol: parentSymbol } = useContext(RefContext);
+  const {
+    ref: parentRef,
+    parent: { scope: parentSymbol },
+  } = useContext(RefContext);
 
   const symbols = useMemo(() => names.map((name) => Symbol(name)), [names]);
   // useEffect(() => {
@@ -575,12 +665,22 @@ export const useSymbolArray = (names: string[]): Symbol[] => {
   //   //   return newMap;
   //   // });
   // }, [symbol, bfSymbolMap, parentRef]);
-  return symbols.map((symbol) => ({
-    symbol,
-    // TODO: it seems like this parent field isn't actually necessary since we resolve the parent in
-    // this hook already
-    parent: parentSymbol?.symbol,
-  }));
+  return symbols.map((symbol) => {
+    if (parentSymbol !== undefined) {
+      console.log('[withBluefish] connecting', symbol, 'to SCOPE parent', parentSymbol);
+      bfSymbolMap.set(parentSymbol, {
+        ref: bfSymbolMap.get(parentSymbol)?.ref ?? undefined,
+        children: new Set([...Array.from(bfSymbolMap.get(parentSymbol)?.children ?? []), symbol]),
+      });
+    }
+
+    return {
+      symbol,
+      // TODO: it seems like this parent field isn't actually necessary since we resolve the parent in
+      // this hook already
+      parent: parentSymbol,
+    };
+  });
 };
 
 export const lookup = (symbol: Symbol, ...path: string[]) => {

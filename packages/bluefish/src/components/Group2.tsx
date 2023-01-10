@@ -6,22 +6,22 @@ import { NewBBox } from '../NewBBox';
 const groupMeasurePolicy: Measure = (measurables, constraints) => {
   const placeables = measurables.map((measurable, idx) => {
     // console.log('[set to] name', measurable.name);
-    console.log(`measurable ${idx}`, measurable);
+    // console.log(`measurable ${idx}`, measurable);
     const placeable = measurable.measure(constraints);
-    console.log(`placed measurable ${idx}`, placeable);
+    // console.log(`placed measurable ${idx}`, placeable);
     return placeable;
   });
   placeables.forEach((placeable, idx) => {
-    console.log(`placeable ${idx}`, placeable);
+    // console.log(`placeable ${idx}`, placeable);
     if (placeable.left === undefined) {
-      console.log('placeable.left set to before', placeable.left);
+      // console.log('placeable.left set to before', placeable.left);
       placeable.left = 0;
-      console.log('placeable.left set to after', placeable.left);
+      // console.log('placeable.left set to after', placeable.left);
     }
     if (placeable.top === undefined) {
       placeable.top = 0;
     }
-    console.log(`group after: placed placeable ${idx}`, placeable);
+    // console.log(`group after: placed placeable ${idx}`, placeable);
   });
 
   // TODO: might need to preserve "natural" position so I can figure out what the translation should be.

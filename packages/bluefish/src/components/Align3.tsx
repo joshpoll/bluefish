@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { forwardRef, PropsWithChildren } from 'react';
-import { Measure, Constraints, Placeable, NewPlaceable, withBluefish, useBluefishLayout2 } from '../bluefish';
+import { Symbol, Measure, Constraints, Placeable, NewPlaceable, withBluefish, useBluefishLayout2 } from '../bluefish';
 import { NewBBoxClass } from '../NewBBox';
 
 export type Alignment2D =
@@ -87,8 +87,9 @@ type Align2Props =
   | { [K in Alignment1DHorizontal]?: React.CElement<any, any> | React.CElement<any, any>[] }
   | { [K in Alignment1DVertical]?: React.CElement<any, any> | React.CElement<any, any>[] };
 
-export const Align2 = withBluefish(function Align2(props: Align2Props) {
-  const children = Object.entries(props).flatMap(([alignment, child]) => {
+export const Align2 = withBluefish(function Align2(props: Align2Props & { symbol?: Symbol }) {
+  const { symbol: _, ...rest } = props;
+  const children = Object.entries(rest).flatMap(([alignment, child]) => {
     if (Array.isArray(child)) {
       return child.map((c) => ({ alignment: alignment as Alignment2D, child: c }));
     } else {

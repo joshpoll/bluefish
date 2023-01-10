@@ -10,6 +10,7 @@ import {
 } from '../bluefish';
 import { CoordinateTransform, NewBBoxClass, NewBBox } from '../NewBBox';
 import { BluefishSymbolMap, useBluefishSymbolContext } from '../bluefish';
+import _ from 'lodash';
 
 export type Lookup = {
   type: 'lookup';
@@ -37,20 +38,32 @@ export const resolveRef = (
     let refObject: symbol | React.MutableRefObject<any> | undefined =
       typeof ref.symbol === 'object' ? ref.symbol.symbol : ref.symbol;
     if ('type' in ref && ref.type === 'lookup') {
+      console.log('resolving path', ref.path);
       for (const position of ref.path) {
+        console.log('position', position);
         const children: Set<symbol> | undefined = symbolMap.get(refObject as symbol)?.children;
         // search children set for symbol with matching description
-        for (const child of Array.from(children?.values() ?? [])) {
-          if (child.description === position) {
-            refObject = child;
-            break;
-          }
+        console.log('children', Array.from(children?.values() ?? []));
+        // iterate through children and find the first occurrence where child.description ===
+        // position
+        // COMBAK: this reverse is used to get around React double-render... this is because the
+        // symbols are not idempotent
+        refObject = _.find(Array.from(children?.values() ?? []).reverse(), (child) => child.description === position);
+
+        if (refObject === undefined) {
+          throw new Error(
+            `Could not find component with symbol ${ref.symbol.symbol.description} and path ${ref.path.join(
+              '.',
+            )}. Available symbols: ${Array.from(symbolMap.keys()).map((s) => s.description)}`,
+          );
         }
       }
     } else {
       // console.log('[ref]', symbolMap);
       refObject = ref.symbol as symbol;
     }
+    const savedRefObject = refObject;
+    console.log('ref', ref, 'savedRefObject', savedRefObject);
     // now that we have resolved the symbol, we need to find the actual ref associated with it
 
     // const refObject = symbolMap.get(ref.symbol)?.ref;
@@ -63,9 +76,9 @@ export const resolveRef = (
     // debugger;
     if (refObject === undefined) {
       throw new Error(
-        `Could not find component with symbol ${
-          (typeof ref.symbol === 'object' ? ref.symbol.symbol : ref.symbol).description
-        }. Available symbols: ${Array.from(symbolMap.keys()).map((s) => s.description)}`,
+        `Could not find component with symbol ${savedRefObject.description}. Available symbols: ${Array.from(
+          symbolMap.keys(),
+        ).map((s) => s.description)}`,
       );
     } else {
       const symbolTrace = [refObject.description];
@@ -75,14 +88,12 @@ export const resolveRef = (
       }
       if (refObject === undefined) {
         throw new Error(
-          `Found component with symbol ${
-            (typeof ref.symbol === 'object' ? ref.symbol.symbol : ref.symbol).description
-          }, but could not resolve its ref.
+          `Found component with symbol ${savedRefObject.description}, but could not resolve its ref.
 Symbol trace: ${symbolTrace}.
 Symbol map: ${Array.from(symbolMap.entries()).map(
             (e) => `{
-            key: ${e[0].description},
-            value: ${e[1].ref?.toString()},
+            symbol: ${e[0].description},
+            ref: ${typeof e[1].ref === 'symbol' ? e[1].ref.description : e[1].ref?.toString()},
           }`,
           )}`,
         );
@@ -101,7 +112,7 @@ Symbol map: ${Array.from(symbolMap.entries()).map(
 };
 
 const accumulateTransforms = (transforms: CoordinateTransform[]): CoordinateTransform => {
-  console.log('[ref] accumulating transforms', transforms);
+  // console.log('[ref] accumulating transforms', transforms);
   return transforms.reduce(
     (acc: CoordinateTransform, t: CoordinateTransform) => {
       const newTransform = {
@@ -303,7 +314,7 @@ export class RefBBox extends NewBBoxClass {
       }
       return;
     }
-    console.log('[ref] setting coord', this._name, JSON.stringify(value), this._ref);
+    // console.log('[ref] setting coord', this._name, JSON.stringify(value), this._ref);
     if (value === undefined) {
       this._ref.coord = undefined;
     } else {
@@ -341,7 +352,7 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
         return transformStackRef.current;
       },
       set transformStack(transforms: CoordinateTransform[] | undefined) {
-        console.log('[ref] setting transform stack', transforms);
+        // console.log('[ref] setting transform stack', transforms);
         if (transforms !== undefined) {
           // notice that we don't use coords here b/c coords can only be set after measure is
           // returned at which point Ref behaves like the component it references
@@ -349,7 +360,7 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
         }
       },
       measure(constraints: Constraints): NewBBoxClass {
-        console.log('[ref] measure', constraints, props.to);
+        // console.log('[ref] measure', constraints, props.to);
         try {
           measurable.current = resolveRef(props.to, context.bfMap, symbolContext.bfSymbolMap);
           // TODO: we might not need the slice here
