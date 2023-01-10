@@ -89,7 +89,7 @@ function App() {
         </ColUseState>
       </svg>
       <br /> */}
-      {/* <PeritextSymbol
+      <PeritextSymbol
         chars={[
           { value: 'T', opId: '1@A', deleted: false, marks: ['italic'] },
           { value: 'h', opId: '2@A', deleted: true, marks: ['italic'] },
@@ -120,7 +120,7 @@ function App() {
             borderColor: '#00C2FF',
           },
         ]}
-      /> */}
+      />
       <SVG width={500} height={500}>
         <Col alignment={'center'} spacing={5}>
           <TreeSymbol
@@ -180,7 +180,7 @@ function App() {
               ],
             }}
           />
-          {/* <TreeSymbol
+          <TreeSymbol
             data={{
               name: 'A',
               value: {
@@ -236,16 +236,16 @@ function App() {
                 },
               ],
             }}
-          /> */}
+          />
         </Col>
       </SVG>
       <br />
-      {/* <SVG width={500} height={500}>
+      <SVG width={500} height={500}>
         <Col spacing={10} alignment={'center'}>
           <CharSymbol value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
           <CharSymbol value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
         </Col>
-      </SVG> */}
+      </SVG>
       {/* <svg width={500} height={500}>
         <RectUseState x={20} y={20} width={100} height={100} fill={'green'} />
       </svg> */}
