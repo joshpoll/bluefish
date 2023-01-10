@@ -6,10 +6,10 @@ import { scaleLinear } from 'd3-scale';
 import { max } from 'lodash';
 import { Row } from '../../../../components/Row';
 import { Path } from '../../../../components/Path';
-import { Group } from '../../../../components/Group2';
+import { Group } from '../../../../components/Group';
 import { Line } from '../../../../components/Line';
 import { Connector } from '../../../../components/Connector';
-import { Text } from '../../../../components/Text2';
+import { Text } from '../../../../components/Text';
 import { Ref } from '../../../../components/Ref';
 
 export type AxisProps<T> = Omit<React.SVGProps<SVGRectElement>, 'x' | 'y' | 'fill' | 'width' | 'height'> & {

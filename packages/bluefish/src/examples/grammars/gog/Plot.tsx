@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { forwardRef, PropsWithChildren } from 'react';
 import { Measure, useBluefishLayout2, withBluefish } from '../../../bluefish';
-import { Group } from '../../../components/Group2';
+import { Group } from '../../../components/Group';
 import { Padding } from '../../../components/Padding';
 import { SVG } from '../../../components/SVG';
 import { NewBBox } from '../../../NewBBox';

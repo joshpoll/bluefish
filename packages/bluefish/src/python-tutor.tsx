@@ -1,6 +1,6 @@
 import { forwardRef, useRef } from 'react';
 import { Group, Rect, Space, Align, Ref, SVG, Text } from './main';
-import { Col } from './components/Col2';
+import { Col } from './components/Col';
 
 const Variable = forwardRef(function _Variable({ data }: { data: any }, ref) {
   const { pointObject, name, value, opId } = data;

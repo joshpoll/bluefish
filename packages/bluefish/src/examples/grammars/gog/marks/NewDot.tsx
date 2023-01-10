@@ -5,9 +5,9 @@ import { NewBBox } from '../../../../NewBBox';
 import { PlotContext } from '../Plot';
 import { scaleLinear } from 'd3-scale';
 import { max, min } from 'lodash';
-import { Group } from '../../../../components/Group2';
+import { Group } from '../../../../components/Group';
 import { Anchors, PointLabel } from '../../../../components/Label/PointLabel';
-import { Text } from '../../../../components/Text2';
+import { Text } from '../../../../components/Text';
 
 export type NewDotProps<T> = Omit<
   React.SVGProps<SVGCircleElement>,

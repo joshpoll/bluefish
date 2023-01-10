@@ -9,7 +9,7 @@ import {
   useBluefishLayout2,
 } from '../bluefish';
 import { NewBBox, NewBBoxClass } from '../NewBBox';
-import { Alignment2D, splitAlignment } from './Align3';
+import { Alignment2D, splitAlignment } from './Align';
 import { rowMeasurePolicy } from './Row';
 
 // export type ConnectorProps = React.SVGProps<SVGLineElement> & {

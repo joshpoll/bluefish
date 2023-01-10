@@ -1,20 +1,20 @@
 import { forwardRef, useEffect, useId, useRef, useState } from 'react';
-import { Rect } from '../components/Rect2';
-import { Text } from '../components/Text2';
-import { Text as Text2 } from '../components/Text2';
+import { Rect } from '../components/Rect';
+import { Text } from '../components/Text';
+import { Text as Text2 } from '../components/Text';
 import { Row } from '../components/Row';
 import { SVG } from '../components/SVG';
 import { BBoxWithChildren, Measure, useBluefishLayout, withBluefish, useBluefishContext, useSymbol } from '../bluefish';
 import { Ref } from '../components/Ref';
-import { Group } from '../components/Group2';
-import { Group as Group2 } from '../components/Group2';
+import { Group } from '../components/Group';
+import { Group as Group2 } from '../components/Group';
 import { Line } from '../components/Line';
 import { Arrow } from '../components/Arrow';
 import { Space } from '../components/Space';
 import { Connector } from '../components/Connector';
 import _ from 'lodash';
-import { Align2 } from '../components/Align3';
-import { Align2 as Align3 } from '../components/Align3';
+import { Align } from '../components/Align';
+import { Align as Align3 } from '../components/Align';
 
 export type CharProps = {
   value: string;

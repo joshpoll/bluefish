@@ -27,7 +27,7 @@ export type Alignment1D = Alignment1DHorizontal | Alignment1DVertical;
 
 export type Alignment1DObjs = { [K in Alignment1D]: { [k in K]: boolean } }[Alignment1D];
 
-export type Align2AuxProps = { alignments: [VerticalAlignment | undefined, HorizontalAlignment | undefined][] } & {
+export type AlignAuxProps = { alignments: [VerticalAlignment | undefined, HorizontalAlignment | undefined][] } & {
   x?: number;
   y?: number;
 };
@@ -82,12 +82,12 @@ export const splitAlignment = (
   return [verticalAlignment, horizontalAlignment];
 };
 
-type Align2Props =
+type AlignProps =
   | { [K in Alignment2D]?: React.CElement<any, any> | React.CElement<any, any>[] }
   | { [K in Alignment1DHorizontal]?: React.CElement<any, any> | React.CElement<any, any>[] }
   | { [K in Alignment1DVertical]?: React.CElement<any, any> | React.CElement<any, any>[] };
 
-export const Align2 = withBluefish(function Align2(props: Align2Props & { symbol?: Symbol }) {
+export const Align = withBluefish(function Align(props: AlignProps & { symbol?: Symbol }) {
   const { symbol: _, ...rest } = props;
   const children = Object.entries(rest).flatMap(([alignment, child]) => {
     if (Array.isArray(child)) {
@@ -99,7 +99,7 @@ export const Align2 = withBluefish(function Align2(props: Align2Props & { symbol
 
   const alignments = children.map((c) => c.alignment).map(splitAlignment);
 
-  return <Align2Aux alignments={alignments}>{children.map((c) => c.child)}</Align2Aux>;
+  return <AlignAux alignments={alignments}>{children.map((c) => c.child)}</AlignAux>;
 });
 
 const isLeftFixed = (placeable: NewBBoxClass): boolean => {
@@ -129,7 +129,7 @@ const isHeightFixed = (placeable: NewBBoxClass): boolean => {
 // COMBAK: this implementation is brittle. a more robust implementation would probably be to use some
 // version of the blue constraint solver here to locally propagate the equality constraints
 const alignMeasurePolicy =
-  (options: Align2AuxProps): Measure =>
+  (options: AlignAuxProps): Measure =>
   (measurables, constraints: Constraints) => {
     console.log('[align2] entering alignment node');
     // const [mov, fix] = measurables.map((measurable) => measurable.measure(constraints));
@@ -454,7 +454,7 @@ const alignMeasurePolicy =
     };
   };
 
-export const Align2Aux = withBluefish((props: PropsWithChildren<Align2AuxProps>) => {
+export const AlignAux = withBluefish((props: PropsWithChildren<AlignAuxProps>) => {
   const { domRef, children, bbox } = useBluefishLayout2({}, props, alignMeasurePolicy(props));
 
   return (
@@ -463,4 +463,4 @@ export const Align2Aux = withBluefish((props: PropsWithChildren<Align2AuxProps>)
     </g>
   );
 });
-Align2Aux.displayName = 'Align2Aux';
+AlignAux.displayName = 'AlignAux';

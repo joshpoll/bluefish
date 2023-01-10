@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useId, useRef, useState } from 'react';
-import { Rect } from '../components/Rect2';
+import { Rect } from '../components/Rect';
 import { Row } from '../components/Row';
 import { SVG } from '../components/SVG';
 import {
@@ -12,7 +12,7 @@ import {
   useBluefishLayout2,
 } from '../bluefish';
 import { Ref } from '../components/Ref';
-import { Group } from '../components/Group2';
+import { Group } from '../components/Group';
 import { Line } from '../components/Line';
 import { Arrow } from '../components/Arrow';
 import { Space } from '../components/Space';

@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import React, { forwardRef } from 'react';
 import { Measure, withBluefish } from '../../../../bluefish';
-import { Group } from '../../../../components/Group2';
-import { Rect } from '../../../../components/Rect2';
+import { Group } from '../../../../components/Group';
+import { Rect } from '../../../../components/Rect';
 import { Row } from '../../../../components/Row';
 import { Mark, PlotContext, plotMarkReified } from '../Plot';
 import { Scale } from '../Scale';

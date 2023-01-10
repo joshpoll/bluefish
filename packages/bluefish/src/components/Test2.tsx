@@ -1,5 +1,5 @@
-import { Col } from './Col2';
-import { Rect } from './Rect2';
+import { Col } from './Col';
+import { Rect } from './Rect';
 import { withBluefish } from '../bluefish';
 
 export const Test2 = withBluefish(() => {

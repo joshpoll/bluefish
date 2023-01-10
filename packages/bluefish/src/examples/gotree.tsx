@@ -1,18 +1,18 @@
 import { forwardRef, useEffect, useId, useRef, useState } from 'react';
-import { Col } from '../components/Col2';
-import { Rect } from '../components/Rect2';
-import { Text } from '../components/Text2';
+import { Col } from '../components/Col';
+import { Rect } from '../components/Rect';
+import { Text } from '../components/Text';
 import { Row } from '../components/Row';
 import { SVG } from '../components/SVG';
 import { BBoxWithChildren, Measure, useBluefishLayout, withBluefish, useBluefishContext } from '../bluefish';
 import { Ref } from '../components/Ref';
-import { Group } from '../components/Group2';
+import { Group } from '../components/Group';
 import { Line } from '../components/Line';
 import { Arrow } from '../components/Arrow';
 import { Space } from '../components/Space';
 import { Connector } from '../components/Connector';
 import _ from 'lodash';
-import { Align2 } from '../components/Align3';
+import { Align } from '../components/Align';
 
 export type TreeProps<T> = {
   name: string;
@@ -45,8 +45,8 @@ export const Tree = forwardRef(function TreeFn<T>({ name, value, treeChildren }:
       <Group name={name + '-node'}>
         <Rect ref={tile} height={65} width={50} rx={5} fill={'#eee'} />
         <Text ref={letter} contents={value === ' ' ? '␣' : `${value}`} fontSize={'30px'} />
-        <Align2 center={[<Ref to={letter} />, <Ref to={tile} />]} />
-        <Align2
+        <Align center={[<Ref to={letter} />, <Ref to={tile} />]} />
+        <Align
           topCenter={[<Text ref={opIdLabel} contents={name} fontSize={'12px'} fill={'#999'} />, <Ref to={tile} />]}
         />
         {/* <Align center to={'centerLeft'}>

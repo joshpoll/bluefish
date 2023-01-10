@@ -2,9 +2,9 @@
 macro-style scopes
 */
 
-import { Col } from '../components/Col2';
-import { Rect } from '../components/Rect2';
-import { Text } from '../components/Text2';
+import { Col } from '../components/Col';
+import { Rect } from '../components/Rect';
+import { Text } from '../components/Text';
 import { Ref } from '../main';
 
 const WorldComponent = () => {
