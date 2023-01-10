@@ -82,21 +82,21 @@ const connectorMeasurePolicy = (props: ConnectorProps): Measure => {
     console.log('[connector] from', fromX, fromY);
     console.log('[connector] to', toX, toY);
 
-    const left = Math.min(fromX!, toX!);
-    const top = Math.min(fromY!, toY!);
-    const right = Math.max(fromX!, toX!);
-    const bottom = Math.max(fromY!, toY!);
+    // const left = Math.min(fromX!, toX!);
+    // const top = Math.min(fromY!, toY!);
+    // const right = Math.max(fromX!, toX!);
+    // const bottom = Math.max(fromY!, toY!);
     // TODO: annoying problem where these values don't actually get propagated?
-    const width = right - left;
-    const height = bottom - top;
+    // const width = right - left;
+    // const height = bottom - top;
 
     return {
-      left,
-      top,
-      right,
-      bottom,
-      width,
-      height,
+      left: fromX,
+      top: fromY,
+      width: (toX ?? 0) - (fromX ?? 0),
+      height: (toY ?? 0) - (fromY ?? 0),
+      right: toX,
+      bottom: toY,
     };
   };
 };
