@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React, { forwardRef, PropsWithChildren } from 'react';
-import { Measure, useBluefishLayout, withBluefish } from '../../../bluefish';
+import { Measure, PropsWithBluefish, useBluefishLayout, withBluefish } from '../../../bluefish';
 import { Group } from '../../../components/Group';
 import { Padding } from '../../../components/Padding';
 import { SVG } from '../../../components/SVG';
@@ -51,6 +51,15 @@ export type PlotProps = {
   width: number;
   height: number;
   margin: { top: number; right: number; bottom: number; left: number };
+  x?: Scale;
+  y?: Scale;
+  color?: Scale;
+  data?: any;
+};
+
+export type Plot2Props = {
+  width: number;
+  height: number;
   x?: Scale;
   y?: Scale;
   color?: Scale;
@@ -129,8 +138,8 @@ export const PlotContext = React.createContext<PlotContextValue>({
   scales: {},
 });
 
-export const Plot: React.FC<PropsWithChildren<PlotProps>> = forwardRef((props, ref) => {
-  let { width, height, margin, data, children, ...scales } = props;
+export const Plot: React.FC<PropsWithBluefish<PlotProps>> = forwardRef((props, ref) => {
+  let { width, height, margin, data, children, name, ...scales } = props;
   // compute dimensions from outer width, height, and margins
   const dimensions = { width: width - margin.left - margin.right, height: height - margin.bottom - margin.top };
   // reify scales
@@ -152,17 +161,15 @@ export const Plot: React.FC<PropsWithChildren<PlotProps>> = forwardRef((props, r
 // TODO: this is weird b/c we need access to the bbox information to compute the scales, which are
 // then passed as data.  Copilot proposes making the scales a separate component that can be
 // composed with the marks.
-export const Plot2 = withBluefish((props: PropsWithChildren<PlotProps>) => {
-  const { domRef, bbox } = useBluefishLayout({}, props, groupMeasurePolicy);
+export const Plot2 = withBluefish((props: PropsWithBluefish<Plot2Props>) => {
+  const { domRef, bbox, children, constraints } = useBluefishLayout({}, props, groupMeasurePolicy);
 
-  let { width, height, margin, data, children, ...scales } = props;
+  let { width, height, data, children: _, name, ...scales } = props;
   // compute dimensions from outer width, height, and margins
-  const oldDimensions = { width: width - margin.left - margin.right, height: height - margin.bottom - margin.top };
-  const dimensions = { width: bbox!.width!, height: bbox!.height! };
-  console.log('dimensions', dimensions);
+  const dimensions = { width: constraints?.width ?? 0, height: constraints?.height ?? 0 };
   // reify scales
   console.log('scales', scales);
-  const reifiedScales = reifyScales(scales as any, oldDimensions);
+  const reifiedScales = reifyScales(scales as any, dimensions);
   // append "Scale" to scale names
   const renamedScales = renameScales(reifiedScales);
   console.log('[renamedScales]', renamedScales);
@@ -170,8 +177,14 @@ export const Plot2 = withBluefish((props: PropsWithChildren<PlotProps>) => {
 
   return (
     <Group>
-      <PlotContext.Provider value={{ dimensions: oldDimensions, scales: renamedScales, data }}>
-        <Group>{children}</Group>
+      <PlotContext.Provider
+        value={{
+          dimensions,
+          scales: renamedScales,
+          data,
+        }}
+      >
+        {children}
       </PlotContext.Provider>
     </Group>
   );

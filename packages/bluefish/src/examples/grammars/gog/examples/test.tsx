@@ -13,7 +13,7 @@ import { NewBarY } from '../marks/NewBarY';
 
 // see https://observablehq.com/@joshpoll/vvt-gog
 
-const alphabet = [
+export const alphabet = [
   { letter: 'A', frequency: '0.08167' },
   { letter: 'B', frequency: '0.01492' },
   { letter: 'C', frequency: '0.02782' },
@@ -81,7 +81,6 @@ export const GoGTest: React.FC<{}> = ({}) => {
             data={alphabet}
             width={width}
             height={200}
-            margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
             x={({ width }) =>
               scaleBand(
                 alphabet.map((d) => d.letter),

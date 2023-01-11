@@ -26,7 +26,7 @@ const paddingMeasurePolicy =
       width: constraints.width ? constraints.width - left - right : undefined,
       height: constraints.height ? constraints.height - top - bottom : undefined,
     };
-    const placeables = measurables.map((measurable) => measurable.measure(constraints));
+    const placeables = measurables.map((measurable) => measurable.measure(childConstraints));
 
     placeables[0].left = left;
     placeables[0].top = top;

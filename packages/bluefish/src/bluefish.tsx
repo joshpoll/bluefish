@@ -85,7 +85,7 @@ export const processChildren = (
   callbackRef: (child: any, index: number) => (node: any) => void,
   // name?: string,
 ): any => {
-  console.log('[processChildren] children', children);
+  // console.log('[processChildren] children', children);
   // if (name !== undefined && name.startsWith('$')) console.log('processChildren', name, children);
   return React.Children.map(flattenChildren(children), (child, index) => {
     /* if (ReactIs.isContextProvider(child)) {
@@ -137,7 +137,7 @@ export const useBluefishLayoutInternal = (
     symbol: symbol;
     parent?: symbol;
   },
-): NewBBoxWithChildren & { boundary?: paper.Path } => {
+): NewBBoxWithChildren & { boundary?: paper.Path; constraints?: Constraints } => {
   const context = useContext(BluefishContext);
   const symbolContext = useContext(BluefishSymbolContext);
 
@@ -203,6 +203,7 @@ export const useBluefishLayoutInternal = (
             propsRef.current !== props)
         ) {
           constraintRef.current = constraints;
+          // console.log('constraints', constraintRef.current);
           // console.log('measuring', name);
           childrenRef.current.forEach((child) => {
             if (child !== undefined) {
@@ -298,6 +299,7 @@ export const useBluefishLayoutInternal = (
     width: width,
     height: height,
     coord: coordRef.current,
+    constraints: constraintRef.current,
     boundary,
     children: processChildren(
       children,
@@ -310,12 +312,12 @@ export const useBluefishLayoutInternal = (
         // }
         // add symbol the map
         if (node !== null && 'name' in node && node.name !== undefined) {
-          console.log('[symbol] setting ref', node.name, node);
+          // console.log('[symbol] setting ref', node.name, node);
           symbolContext.bfSymbolMap.set(node.name.symbol, {
             ref: node,
             children: new Set(),
           });
-          console.log('[symbol] symbolMap after', symbolContext.bfSymbolMap.get(node.name.symbol));
+          // console.log('[symbol] symbolMap after', symbolContext.bfSymbolMap.get(node.name.symbol));
 
           // // connect the symbol to its parent
           // if (node.symbol.parent !== undefined) {
@@ -391,7 +393,7 @@ export const useBluefishLayout = <T extends { children?: any; /* name?: string; 
   const domRef = useRef<any>(null);
 
   // console.log('useBluefishLayout2', props.name, props.children, ref, domRef);
-  const { left, top, bottom, right, width, height, children, coord, boundary } = useBluefishLayoutInternal(
+  const { left, top, bottom, right, width, height, children, coord, boundary, constraints } = useBluefishLayoutInternal(
     measure,
     init?.bbox ?? {},
     init?.coord ?? {},
@@ -408,6 +410,7 @@ export const useBluefishLayout = <T extends { children?: any; /* name?: string; 
   return {
     domRef,
     boundary,
+    constraints,
     bbox: {
       left,
       top,
@@ -508,16 +511,16 @@ export const withBluefish = <ComponentProps,>(WrappedComponent: React.ComponentT
     // }, [autogenSymbol, props.symbol, symbolContext.bfSymbolMap]);
 
     // console.log('parentSymbol', parentSymbol);
-    console.log('[withBluefish] symbol', symbol);
-    console.log(
-      '[withBluefish] ref',
-      symbol,
-      ref === null ? null : typeof ref,
-      contextRef === null ? null : typeof contextRef,
-    );
+    // console.log('[withBluefish] symbol', symbol);
+    // console.log(
+    //   '[withBluefish] ref',
+    //   symbol,
+    //   ref === null ? null : typeof ref,
+    //   contextRef === null ? null : typeof contextRef,
+    // );
     if (ref === null) {
       // we are inheriting from above, so connect the symbol above to this one
-      console.log('[withBluefish] connecting', symbol, 'to REF parent', parentRefSymbol);
+      // console.log('[withBluefish] connecting', symbol, 'to REF parent', parentRefSymbol);
       symbolContext.bfSymbolMap.set(parentRefSymbol, {
         ref: symbol,
         children: symbolContext.bfSymbolMap.get(parentRefSymbol)?.children ?? new Set(),
@@ -541,11 +544,7 @@ export const withBluefish = <ComponentProps,>(WrappedComponent: React.ComponentT
           },
         }}
       >
-        <WrappedComponent
-          {...props}
-          name={props.name ?? { symbol: autogenSymbol }}
-          constraints={mergedRef?.current?.constraints}
-        />
+        <WrappedComponent {...props} name={props.name ?? { symbol: autogenSymbol }} />
       </RefContext.Provider>
     );
   });
@@ -612,18 +611,18 @@ export const useName = (name: string): Symbol => {
   // }, [symbol, bfSymbolMap, parentRef]);
 
   if (parentSymbol !== undefined) {
-    console.log(
-      '[withBluefish] connecting',
-      symbol,
-      'to SCOPE parent',
-      parentSymbol,
-      `Symbol map: ${Array.from(bfSymbolMap.entries()).map(
-        (e) => `{
-  symbol: ${e[0].description},
-  ref: ${typeof e[1].ref === 'symbol' ? e[1].ref.description : e[1].ref?.toString()},
-}`,
-      )}`,
-    );
+    //     console.log(
+    //       '[withBluefish] connecting',
+    //       symbol,
+    //       'to SCOPE parent',
+    //       parentSymbol,
+    //       `Symbol map: ${Array.from(bfSymbolMap.entries()).map(
+    //         (e) => `{
+    //   symbol: ${e[0].description},
+    //   ref: ${typeof e[1].ref === 'symbol' ? e[1].ref.description : e[1].ref?.toString()},
+    // }`,
+    //       )}`,
+    //     );
     bfSymbolMap.set(parentSymbol, {
       ref: bfSymbolMap.get(parentSymbol)?.ref ?? undefined,
       children: new Set([...Array.from(bfSymbolMap.get(parentSymbol)?.children ?? []), symbol]),
@@ -668,7 +667,7 @@ export const useNameList = (names: string[]): Symbol[] => {
   // }, [symbol, bfSymbolMap, parentRef]);
   return symbols.map((symbol) => {
     if (parentSymbol !== undefined) {
-      console.log('[withBluefish] connecting', symbol, 'to SCOPE parent', parentSymbol);
+      // console.log('[withBluefish] connecting', symbol, 'to SCOPE parent', parentSymbol);
       bfSymbolMap.set(parentSymbol, {
         ref: bfSymbolMap.get(parentSymbol)?.ref ?? undefined,
         children: new Set([...Array.from(bfSymbolMap.get(parentSymbol)?.children ?? []), symbol]),

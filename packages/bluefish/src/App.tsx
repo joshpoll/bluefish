@@ -23,16 +23,16 @@ import { Text } from './components/Text';
 import { Bluefish } from './components/Bluefish';
 // import { Child, Parent } from './components/TestingRefs';
 import { Child, Parent } from './components/TestingContext';
-import { GoGTest } from './examples/grammars/gog/examples/test';
+import { alphabet, GoGTest } from './examples/grammars/gog/examples/test';
 import { rasterize } from './rasterize';
 import { Label, LabelTest } from './examples/label';
 import labelLayout, { Anchors } from './components/Label/LabelLayout';
 import { PointLabel } from './components/Label/PointLabel';
-import { Circle, Ref, useBluefishContext } from './main';
+import { Circle, Padding, Ref, useBluefishContext } from './main';
 import { GoTree } from './examples/gotree';
 import { driving } from './examples/grammars/gog/examples/driving';
-import { Plot2 as Plot } from './examples/grammars/gog/Plot';
-import { scaleLinear } from 'd3-scale';
+import { Plot2 as Plot, Plot2 } from './examples/grammars/gog/Plot';
+import { scaleBand, scaleLinear, scaleSequential } from 'd3-scale';
 import { GlobalFrame } from './python-tutor';
 import { NewLine } from './examples/grammars/gog/marks/NewLine';
 import { NewDot } from './examples/grammars/gog/marks/NewDot';
@@ -50,6 +50,8 @@ import { ColNewHooks } from './components/ColNewHooks';
 import { CharSymbol } from './examples/peritext-symbol-test';
 import { TreeSymbol } from './examples/tree-symbol-test';
 import { Peritext as PeritextSymbol } from './examples/peritext-symbol-test';
+import { interpolateBlues } from 'd3-scale-chromatic';
+import { NewBarY } from './examples/grammars/gog/marks/NewBarY';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -89,6 +91,32 @@ function App() {
         </ColUseState>
       </svg>
       <br /> */}
+      <SVG width={800} height={200}>
+        <Padding left={40} top={10} right={20} bottom={30}>
+          <Plot2
+            data={alphabet}
+            width={800}
+            height={200}
+            x={({ width }) =>
+              scaleBand(
+                alphabet.map((d) => d.letter),
+                [0, width],
+              ).padding(0.1)
+            }
+            y={({ height }) => scaleLinear([0, _.max(alphabet.map((d) => +d.frequency))!], [0, height])}
+            color={() =>
+              scaleSequential(interpolateBlues).domain([
+                _.min(alphabet.map((d) => +d.frequency))!,
+                _.max(alphabet.map((d) => +d.frequency))!,
+              ])
+            }
+          >
+            {/* <BarY encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
+            <NewBarY spacing={5} x={'letter'} y={'frequency'} color={'frequency'} />
+            {/* <BarYWithBFN encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
+          </Plot2>
+        </Padding>
+      </SVG>
       <PeritextSymbol
         chars={[
           { value: 'T', opId: '1@A', deleted: false, marks: ['italic'] },
@@ -522,7 +550,6 @@ function App_OLD() {
             data={driving /* .slice(0, 16) */}
             width={500}
             height={300}
-            margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
             x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
             y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
             color={() => () => 'black'}
@@ -552,7 +579,6 @@ function App_OLD() {
           data={driving /* .slice(0, 16) */}
           width={500}
           height={300}
-          margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
           x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
           y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
           color={() => () => 'black'}
@@ -567,7 +593,6 @@ function App_OLD() {
           data={driving}
           width={500}
           height={300}
-          margin={{ top: 10, bottom: 30, left: 40, right: 20 }}
           x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
           y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
           color={() => () => 'black'}

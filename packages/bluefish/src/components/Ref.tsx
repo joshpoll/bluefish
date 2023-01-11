@@ -98,7 +98,7 @@ Symbol map: ${Array.from(symbolMap.entries()).map(
           )}`,
         );
       }
-      console.log('[ref] resolved symbol', refObject);
+      // console.log('[ref] resolved symbol', refObject);
       return refObject as unknown as Measurable;
     }
   } else {
