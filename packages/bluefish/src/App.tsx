@@ -95,8 +95,6 @@ function App() {
         <Padding left={40} top={10} right={20} bottom={30}>
           <Plot2
             data={alphabet}
-            width={800}
-            height={200}
             x={({ width }) =>
               scaleBand(
                 alphabet.map((d) => d.letter),
