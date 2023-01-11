@@ -11,6 +11,7 @@ import {
   useBluefishContext,
   useName,
   Symbol,
+  PropsWithBluefish,
 } from '../bluefish';
 import { Ref } from '../components/Ref';
 import { Group } from '../components/Group';
@@ -23,12 +24,12 @@ import { Align } from '../components/Align';
 import { Col } from '../components/Col';
 import { useNameList } from '../bluefish';
 
-export type CharProps = {
+export type CharProps = PropsWithBluefish<{
   value: string;
   opId: string;
   deleted: boolean;
   marks: ('italic' | 'bold')[];
-};
+}>;
 
 export const CharSymbol = withBluefish(function Char({ value, marks, opId }: CharProps) {
   // const tile = opId + '-tile';
@@ -45,17 +46,17 @@ export const CharSymbol = withBluefish(function Char({ value, marks, opId }: Cha
   return (
     // TODO: use x and y to position the group
     <Group>
-      <Rect symbol={tile} height={65} width={50} rx={5} fill={'#eee'} />
-      <Rect symbol={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
-      <Rect symbol={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
+      <Rect name={tile} height={65} width={50} rx={5} fill={'#eee'} />
+      <Rect name={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
+      <Rect name={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
       <Text
-        symbol={letter}
+        name={letter}
         contents={value === ' ' ? '␣' : value.toString()}
         fontSize={'30px'}
         fontWeight={marks.includes('bold') ? 'bold' : 'normal'}
         fontStyle={marks.includes('italic') ? 'italic' : 'normal'}
       />
-      <Text symbol={opIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
+      <Text name={opIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
       <Align center={[<Ref to={letter} />, <Ref to={tile} />]} />
       <Align topCenter={[<Ref to={opIdLabel} />, <Ref to={tile} />]} />
       <Align center={<Ref to={leftHandle} />} centerLeft={<Ref to={tile} />} />
@@ -74,7 +75,7 @@ export type MarkOpProps = {
   end: { opId: string };
 };
 
-export const MarkOp: React.FC<MarkOpProps & { symbol?: Symbol }> = withBluefish(function MarkOp({
+export const MarkOp = withBluefish(function MarkOp({
   action,
   markType,
   backgroundColor,
@@ -82,15 +83,15 @@ export const MarkOp: React.FC<MarkOpProps & { symbol?: Symbol }> = withBluefish(
   start,
   end,
   opId,
-}) {
+}: PropsWithBluefish<MarkOpProps>) {
   const rect = useName('rect');
   const text = useName('text');
 
   return (
     <Group>
-      <Rect symbol={rect} fill={backgroundColor} stroke={borderColor} rx={5} height={20} />
+      <Rect name={rect} fill={backgroundColor} stroke={borderColor} rx={5} height={20} />
       {/* TODO: text measurement is broken, since the text isn't actually centered */}
-      <Text symbol={text} contents={`${action} ${markType}`} />
+      <Text name={text} contents={`${action} ${markType}`} />
       {/* ...however, using a rect instead results in a properly centered component */}
       {/* <Rect name={opId + '-text'} ref={textRef} width={50} height={15} fill={'magenta'} /> */}
       <Align left={[<Ref to={rect} />, <Ref to={start.opId} />]} />
@@ -117,9 +118,9 @@ export const Peritext: React.FC<PeritextProps & { spacing?: number }> = ({ chars
       {/* TODO: if I don't have the group component here, then the refs don't resolve properly... */}
       <Group>
         {/* chars */}
-        <Row symbol={charsList} spacing={spacing ? +spacing : 10} alignment={'middle'}>
+        <Row name={charsList} spacing={spacing ? +spacing : 10} alignment={'middle'}>
           {chars.map((char, i) => (
-            <CharSymbol symbol={charNames[i]} {...char} />
+            <CharSymbol name={charNames[i]} {...char} />
           ))}
         </Row>
       </Group>

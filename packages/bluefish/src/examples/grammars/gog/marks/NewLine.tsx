@@ -2,7 +2,7 @@ import _, { max, min } from 'lodash';
 import React, { forwardRef } from 'react';
 import { Mark, PlotContext, plotMarkReified } from '../Plot';
 import { curveCatmullRom, line as d3Line } from 'd3-shape';
-import { withBluefish, BBox, Measure, useBluefishLayout } from '../../../../bluefish';
+import { withBluefish, BBox, Measure, useBluefishLayout, PropsWithBluefish } from '../../../../bluefish';
 import { NewBBox } from '../../../../NewBBox';
 import { PaperScope, Point } from 'paper/dist/paper-core';
 import { scaleLinear } from 'd3-scale';
@@ -50,12 +50,14 @@ export const NewLine = forwardRef(function NewLine(props: NewLineProps<any>, ref
 });
 NewLine.displayName = 'NewLine';
 
-export type PathProps = Omit<React.SVGProps<SVGPathElement>, 'd' | 'points'> &
-  Partial<BBox> & {
-    xScale: (d: any) => (y: number) => number;
-    yScale: (d: any) => (y: number) => number;
-    points: [number, number][];
-  };
+export type PathProps = PropsWithBluefish<
+  Omit<React.SVGProps<SVGPathElement>, 'd' | 'points'> &
+    Partial<BBox> & {
+      xScale: (d: any) => (y: number) => number;
+      yScale: (d: any) => (y: number) => number;
+      points: [number, number][];
+    }
+>;
 
 const pathMeasurePolicy = ({ points, xScale, yScale }: PathProps): Measure => {
   const canvas = document.createElement('canvas');
@@ -82,7 +84,7 @@ const pathMeasurePolicy = ({ points, xScale, yScale }: PathProps): Measure => {
 };
 
 export const PathScale = withBluefish((props: PathProps) => {
-  const { points, ...rest } = props;
+  const { points, name, ...rest } = props;
 
   const { bbox, boundary } = useBluefishLayout({}, props, pathMeasurePolicy(props));
 

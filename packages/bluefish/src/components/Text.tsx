@@ -1,14 +1,16 @@
 import _ from 'lodash';
-import { withBluefish, useBluefishLayout } from '../bluefish';
+import { withBluefish, useBluefishLayout, PropsWithBluefish } from '../bluefish';
 import { measureText } from '../measureText';
 import { NewBBox } from '../NewBBox';
 
 // TODO: allow text within the text element instead of on contents arg
 
-export type TextProps = React.SVGProps<SVGTextElement> & { contents: string } & Partial<{
-    x: number;
-    y: number;
-  }>;
+export type TextProps = PropsWithBluefish<
+  React.SVGProps<SVGTextElement> & { contents: string } & Partial<{
+      x: number;
+      y: number;
+    }>
+>;
 
 // TODO: use 'alphabetic' baseline in renderer? may need to figure out displacement again
 // TODO: maybe use https://airbnb.io/visx/docs/text?
@@ -19,6 +21,7 @@ export type TextProps = React.SVGProps<SVGTextElement> & { contents: string } & 
 export const textMeasurePolicy = (props: TextProps) => {
   const partialNoUndef = _.pickBy(props, (v) => v !== undefined);
   const { fontStyle, fontWeight, fontSize, fontFamily } = {
+    fontStyle: 'normal',
     fontFamily: 'sans-serif',
     fontSize: '12px',
     fontWeight: 'normal',
@@ -33,6 +36,7 @@ export const textMeasurePolicy = (props: TextProps) => {
 };
 
 export const Text = withBluefish((props: TextProps) => {
+  const { name, ...rest } = props;
   const { domRef, bbox } = useBluefishLayout({}, props, textMeasurePolicy(props));
 
   return (
@@ -42,7 +46,7 @@ export const Text = withBluefish((props: TextProps) => {
 scale(${bbox?.coord?.scale?.x ?? 1} ${bbox?.coord?.scale?.y ?? 1})`}
     >
       <text
-        {...props}
+        {...rest}
         x={bbox?.left ?? 0}
         // TODO: need some way to pass fontDescent here
         // TODO: is height always defined?

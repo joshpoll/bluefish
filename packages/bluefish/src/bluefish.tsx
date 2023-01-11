@@ -35,7 +35,7 @@ export type Measurable = {
   constraints: Constraints | undefined;
   props: any;
   // name: string;
-  symbol?: Symbol;
+  name?: Symbol;
   measure(constraints: Constraints, isRef?: boolean): NewBBoxClass;
   transformStack: CoordinateTransform[] | undefined;
 };
@@ -85,6 +85,7 @@ export const processChildren = (
   callbackRef: (child: any, index: number) => (node: any) => void,
   // name?: string,
 ): any => {
+  console.log('[processChildren] children', children);
   // if (name !== undefined && name.startsWith('$')) console.log('processChildren', name, children);
   return React.Children.map(flattenChildren(children), (child, index) => {
     /* if (ReactIs.isContextProvider(child)) {
@@ -132,7 +133,7 @@ export const useBluefishLayoutInternal = (
   props: any,
   children?: React.ReactNode,
   // name?: any,
-  symbol?: {
+  name?: {
     symbol: symbol;
     parent?: symbol;
   },
@@ -181,7 +182,7 @@ export const useBluefishLayoutInternal = (
       domRef: domRef.current,
       constraints: constraintRef.current,
       // name,
-      symbol,
+      name: name,
       get transformStack() {
         return transformStackRef.current;
       },
@@ -271,7 +272,7 @@ export const useBluefishLayoutInternal = (
       setWidth,
       setHeight,
       // name,
-      symbol,
+      name,
       bboxClassRef,
       props,
       domRef,
@@ -308,13 +309,13 @@ export const useBluefishLayoutInternal = (
         //   context.bfMap.set(node.name, node);
         // }
         // add symbol the map
-        if (node !== null && 'symbol' in node && node.symbol !== undefined) {
-          console.log('[symbol] setting ref', node.symbol, node);
-          symbolContext.bfSymbolMap.set(node.symbol.symbol, {
+        if (node !== null && 'name' in node && node.name !== undefined) {
+          console.log('[symbol] setting ref', node.name, node);
+          symbolContext.bfSymbolMap.set(node.name.symbol, {
             ref: node,
             children: new Set(),
           });
-          console.log('[symbol] symbolMap after', symbolContext.bfSymbolMap.get(node.symbol.symbol));
+          console.log('[symbol] symbolMap after', symbolContext.bfSymbolMap.get(node.name.symbol));
 
           // // connect the symbol to its parent
           // if (node.symbol.parent !== undefined) {
@@ -377,7 +378,7 @@ export type Symbol = {
   parent?: symbol;
 };
 
-export const useBluefishLayout = <T extends { children?: any; /* name?: string;  */ symbol?: Symbol }>(
+export const useBluefishLayout = <T extends { children?: any; /* name?: string;  */ name?: Symbol }>(
   init: {
     bbox?: Partial<NewBBox>;
     coord?: CoordinateTransform;
@@ -399,7 +400,7 @@ export const useBluefishLayout = <T extends { children?: any; /* name?: string; 
     props,
     props.children,
     // props.name,
-    props.symbol,
+    props.name,
   );
 
   // console.log('useBluefishLayout2 after', props.name, children, ref, domRef);
@@ -446,7 +447,7 @@ export const RefContext = React.createContext<RefContextValue>({
 // injects name (and debug. still todo)
 // injects ref
 export const withBluefish = <ComponentProps,>(WrappedComponent: React.ComponentType<ComponentProps>) =>
-  forwardRef((props: PropsWithChildren<ComponentProps> & { /* name?: any; */ symbol?: Symbol }, ref: any) => {
+  forwardRef((props: PropsWithChildren<ComponentProps> & { /* name?: any; */ name?: Symbol }, ref: any) => {
     /* TODO: need to collect refs maybe?? */
     const {
       ref: contextRef,
@@ -467,8 +468,8 @@ export const withBluefish = <ComponentProps,>(WrappedComponent: React.ComponentT
     // const mergedRefSymbol = ref !== undefined ? autogenSymbol : parentRefSymbol;
 
     const symbol = useMemo(() => {
-      return props.symbol?.symbol ?? autogenSymbol;
-    }, [autogenSymbol, props.symbol?.symbol]);
+      return props.name?.symbol ?? autogenSymbol;
+    }, [autogenSymbol, props.name?.symbol]);
 
     // const symbol = useMemo(() => {
     //   if (props.symbol !== undefined) {
@@ -535,14 +536,14 @@ export const withBluefish = <ComponentProps,>(WrappedComponent: React.ComponentT
         value={{
           ref: mergedRef,
           parent: {
-            scope: props.symbol?.symbol,
+            scope: props.name?.symbol,
             ref: symbol,
           },
         }}
       >
         <WrappedComponent
           {...props}
-          symbol={props.symbol ?? { symbol: autogenSymbol }}
+          name={props.name ?? { symbol: autogenSymbol }}
           constraints={mergedRef?.current?.constraints}
         />
       </RefContext.Provider>
@@ -690,3 +691,5 @@ export const lookup = (symbol: Symbol, ...path: string[]) => {
     path,
   } as const;
 };
+
+export type PropsWithBluefish<T> = PropsWithChildren<Omit<T, 'name'>> & { name?: Symbol };

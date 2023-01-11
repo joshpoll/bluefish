@@ -1,6 +1,15 @@
 import _ from 'lodash';
 import { forwardRef, PropsWithChildren } from 'react';
-import { Symbol, Measure, Constraints, Placeable, NewPlaceable, withBluefish, useBluefishLayout } from '../bluefish';
+import {
+  Symbol,
+  Measure,
+  Constraints,
+  Placeable,
+  NewPlaceable,
+  withBluefish,
+  useBluefishLayout,
+  PropsWithBluefish,
+} from '../bluefish';
 import { NewBBoxClass } from '../NewBBox';
 
 export type Alignment2D =
@@ -87,8 +96,8 @@ type AlignProps =
   | { [K in Alignment1DHorizontal]?: React.CElement<any, any> | React.CElement<any, any>[] }
   | { [K in Alignment1DVertical]?: React.CElement<any, any> | React.CElement<any, any>[] };
 
-export const Align = withBluefish(function Align(props: AlignProps & { symbol?: Symbol }) {
-  const { symbol: _, ...rest } = props;
+export const Align = withBluefish(function Align(props: AlignProps & { name?: any }) {
+  const { name: _, ...rest } = props;
   const children = Object.entries(rest).flatMap(([alignment, child]) => {
     if (Array.isArray(child)) {
       return child.map((c) => ({ alignment: alignment as Alignment2D, child: c }));
@@ -151,7 +160,7 @@ const alignMeasurePolicy =
     console.log(
       '[align2]',
       _.zip(
-        measurables.map((m) => m.symbol?.symbol.description),
+        measurables.map((m) => m.name?.symbol.description),
         options.alignments,
         placeables.map((p) =>
           JSON.stringify({

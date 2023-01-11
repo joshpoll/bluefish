@@ -36,7 +36,7 @@ const spaceMeasurePolicy =
   (measurables, constraints: Constraints) => {
     console.log(
       'entering spacing node',
-      measurables.map((m) => m.symbol?.symbol.description),
+      measurables.map((m) => m.name?.symbol.description),
     );
     const placeables = measurables.map((measurable) => measurable.measure(constraints));
 

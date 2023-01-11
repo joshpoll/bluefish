@@ -1,6 +1,6 @@
 import React from 'react';
 import { forwardRef } from 'react';
-import { withBluefish, BBox, Measure, useBluefishLayout } from '../../../../bluefish';
+import { withBluefish, BBox, Measure, useBluefishLayout, PropsWithBluefish } from '../../../../bluefish';
 import { NewBBox } from '../../../../NewBBox';
 import { PlotContext } from '../Plot';
 import { scaleLinear } from 'd3-scale';
@@ -37,9 +37,11 @@ export const NewBarY = forwardRef(function NewBarY(props: NewBarYProps<any>, ref
 });
 NewBarY.displayName = 'NewBarY';
 
-export type RectScaleProps = React.SVGProps<SVGRectElement> & {
-  yScale: (d: any) => (y: number) => number;
-};
+export type RectScaleProps = PropsWithBluefish<
+  React.SVGProps<SVGRectElement> & {
+    yScale: (d: any) => (y: number) => number;
+  }
+>;
 
 const rectMeasurePolicy = (props: RectScaleProps): Measure => {
   const { x, y, width, height } = props;
@@ -58,7 +60,7 @@ const rectMeasurePolicy = (props: RectScaleProps): Measure => {
 };
 
 export const RectScale = withBluefish((props: RectScaleProps) => {
-  const { yScale, ...rest } = props;
+  const { yScale, name, ...rest } = props;
 
   const { bbox, domRef } = useBluefishLayout({}, props, rectMeasurePolicy(props));
 

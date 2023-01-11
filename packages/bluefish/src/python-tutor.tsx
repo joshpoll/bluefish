@@ -19,15 +19,15 @@ const Variable = withBluefish(function _Variable({ data }: { data: any }) {
   return (
     <Group>
       {/* Creates frame of Variable component (text label & box for value) */}
-      <Space symbol={variable} horizontally by={5}>
+      <Space name={variable} horizontally by={5}>
         <Text contents={name} fontSize={'24px'} fontFamily={fontFamily} fill={'black'} />
-        <Rect symbol={box} height={40} width={40} fill={'#e2ebf6'} />
+        <Rect name={box} height={40} width={40} fill={'#e2ebf6'} />
       </Space>
       {/* Creates left and bottom edge borders */}
-      <Rect symbol={boxBorderLeft} height={40} width={2} fill={'#a6b3b6'} />
-      <Rect symbol={boxBorderBottom} height={2} width={40} fill={'#a6b3b6'} />
+      <Rect name={boxBorderLeft} height={40} width={2} fill={'#a6b3b6'} />
+      <Rect name={boxBorderBottom} height={2} width={40} fill={'#a6b3b6'} />
       {/* Creates text labels of variable */}
-      <Text symbol={valueName} contents={value} fontFamily={fontFamily} fontSize={'24px'} fill={'black'} />
+      <Text name={valueName} contents={value} fontFamily={fontFamily} fontSize={'24px'} fill={'black'} />
       {/* Align text and border components to variable frame */}
       <Align bottomCenter={[<Ref to={boxBorderBottom} />, <Ref to={box} />]}></Align>
       <Align centerLeft={[<Ref to={boxBorderLeft} />, <Ref to={box} />]}></Align>
@@ -49,15 +49,15 @@ export const GlobalFrame = withBluefish(function _GlobalFrame({ variables, opId 
   return (
     <Group>
       {/* Global Frame and relevant text */}
-      <Rect symbol={frame} height={300} width={200} fill={'#e2ebf6'} />
-      <Rect symbol={frameBorder} height={300} width={5} fill={'#a6b3b6'} />
-      <Text symbol={opIdLabel} contents={'Global Frame'} fontSize={'24px'} fontFamily={fontFamily} fill={'black'} />
+      <Rect name={frame} height={300} width={200} fill={'#e2ebf6'} />
+      <Rect name={frameBorder} height={300} width={5} fill={'#a6b3b6'} />
+      <Text name={opIdLabel} contents={'Global Frame'} fontSize={'24px'} fontFamily={fontFamily} fill={'black'} />
       <Align topCenter={[<Ref to={opIdLabel} />, <Ref to={frame} />]}></Align>
       {/* TODO: this Space and Align should be a Col, but Col overwrites *all* placeable positions
             even though opIdLabel has already been placed */}
       <Space vertically by={10}>
         <Ref to={opIdLabel} />
-        <Col symbol={frameVariables} spacing={10} alignment={'right'}>
+        <Col name={frameVariables} spacing={10} alignment={'right'}>
           {variables.map((variable: any) => (
             <Variable data={variable} />
           ))}

@@ -11,18 +11,22 @@ import { Line } from '../../../../components/Line';
 import { Connector } from '../../../../components/Connector';
 import { Text } from '../../../../components/Text';
 import { Ref } from '../../../../components/Ref';
+import { PropsWithBluefish, useName, useNameList, withBluefish } from '../../../../bluefish';
+import _ from 'lodash';
 
-export type AxisProps<T> = Omit<React.SVGProps<SVGRectElement>, 'x' | 'y' | 'fill' | 'width' | 'height'> & {
-  x: keyof T;
-  y: keyof T;
-  color: keyof T;
-  data?: T[];
-  totalWidth?: number;
-  spacing?: number;
-  scale: any;
-};
+export type AxisProps<T> = PropsWithBluefish<
+  Omit<React.SVGProps<SVGRectElement>, 'x' | 'y' | 'fill' | 'width' | 'height'> & {
+    x: keyof T;
+    y: keyof T;
+    color: keyof T;
+    data?: T[];
+    totalWidth?: number;
+    spacing?: number;
+    scale: any;
+  }
+>;
 
-export const Axis = forwardRef(function Axis(props: AxisProps<any>, ref: any) {
+export const Axis = withBluefish(function Axis(props: AxisProps<any>) {
   const context = React.useContext(PlotContext);
   const data = props.data ?? context.data;
   const totalWidth = props.totalWidth ?? context.dimensions.width;
@@ -32,13 +36,16 @@ export const Axis = forwardRef(function Axis(props: AxisProps<any>, ref: any) {
   const scale = props.scale;
   const ticks = scale.ticks();
 
+  const path = useName('path');
+  const ticksList = useNameList(_.range(ticks.length).map((i) => `tick-${i}`));
+
   return (
-    <Group ref={ref}>
+    <Group>
       {/* feed path the tick marks. this should generate ids to ref each point */}
-      <Path name={'path'} />
+      <Path name={path} />
       {(ticks as any[]).map((tick, i) => (
         // then use ids here align text to the path
-        <Text name={`tick-${i}`} contents={tick} x={scale(tick)} y={0} />
+        <Text name={ticksList[i]} contents={tick} x={scale(tick)} y={0} />
       ))}
       {/* then use ids here to align connectors between the twos */}
       {/* {(data as any[]).map((d, i) => (

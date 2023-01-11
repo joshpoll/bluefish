@@ -1,9 +1,10 @@
-import { withBluefish, useBluefishLayout } from '../bluefish';
+import { withBluefish, useBluefishLayout, PropsWithBluefish } from '../bluefish';
 import { NewBBox } from '../NewBBox';
 
-export type CircleProps = React.SVGProps<SVGCircleElement>;
+export type CircleProps = PropsWithBluefish<React.SVGProps<SVGCircleElement>>;
 
 export const Circle = withBluefish((props: CircleProps) => {
+  const { name, ...rest } = props;
   const { domRef, bbox } = useBluefishLayout({}, props, () => {
     const { cx, cy, r } = props;
     return {
@@ -21,7 +22,7 @@ export const Circle = withBluefish((props: CircleProps) => {
 scale(${bbox.coord?.scale?.x ?? 1} ${bbox.coord?.scale?.y ?? 1})`}
     >
       <circle
-        {...props}
+        {...rest}
         cx={(bbox.left ?? 0) + (bbox.width ?? 0) / 2}
         cy={(bbox.top ?? 0) + (bbox.height ?? 0) / 2}
         r={(bbox.width ?? 0) / 2}

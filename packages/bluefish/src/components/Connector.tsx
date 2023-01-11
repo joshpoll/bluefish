@@ -7,6 +7,7 @@ import {
   MeasureResult,
   Measure,
   useBluefishLayout,
+  PropsWithBluefish,
 } from '../bluefish';
 import { NewBBox, NewBBoxClass } from '../NewBBox';
 import { Alignment2D, splitAlignment } from './Align';
@@ -22,10 +23,12 @@ import { rowMeasurePolicy } from './Row';
 //     of: BluefishRef;
 //   };
 // };
-export type ConnectorProps = React.SVGProps<SVGLineElement> & {
-  $from: Alignment2D;
-  $to: Alignment2D;
-};
+export type ConnectorProps = PropsWithBluefish<
+  React.SVGProps<SVGLineElement> & {
+    $from: Alignment2D;
+    $to: Alignment2D;
+  }
+>;
 
 const connectorMeasurePolicy = (props: ConnectorProps): Measure => {
   return (measurables, constraints: any) => {
@@ -106,7 +109,7 @@ const connectorMeasurePolicy = (props: ConnectorProps): Measure => {
 export const Connector = withBluefish((props: PropsWithChildren<ConnectorProps>) => {
   const { bbox, domRef, children } = useBluefishLayout({}, props, connectorMeasurePolicy(props));
 
-  const { $from, $to, ...rest } = props;
+  const { $from, $to, name, ...rest } = props;
   return (
     <>
       {children}

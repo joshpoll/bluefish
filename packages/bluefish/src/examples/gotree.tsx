@@ -50,12 +50,12 @@ export const Tree = forwardRef(function TreeFn<T>({ name, value, treeChildren }:
 
   return (
     <Group ref={ref}>
-      <Group symbol={node}>
-        <Rect symbol={tile} height={65} width={50} rx={5} fill={'#eee'} />
-        <Text symbol={letter} contents={value === ' ' ? '␣' : `${value}`} fontSize={'30px'} />
+      <Group name={node}>
+        <Rect name={tile} height={65} width={50} rx={5} fill={'#eee'} />
+        <Text name={letter} contents={value === ' ' ? '␣' : `${value}`} fontSize={'30px'} />
         <Align center={[<Ref to={letter} />, <Ref to={tile} />]} />
         <Align
-          topCenter={[<Text symbol={opIdLabel} contents={name} fontSize={'12px'} fill={'#999'} />, <Ref to={tile} />]}
+          topCenter={[<Text name={opIdLabel} contents={name} fontSize={'12px'} fill={'#999'} />, <Ref to={tile} />]}
         />
         {/* <Align center to={'centerLeft'}>
         <Ref to={leftHandle} />
@@ -66,7 +66,7 @@ export const Tree = forwardRef(function TreeFn<T>({ name, value, treeChildren }:
         <Ref to={tile} />
       </Align> */}
       </Group>
-      <Row /* debug={false} */ symbol={subtree} alignment={'top'} spacing={10}>
+      <Row /* debug={false} */ name={subtree} alignment={'top'} spacing={10}>
         {(treeChildren ?? []).map((child, i) => (
           <Tree {...child} />
         ))}

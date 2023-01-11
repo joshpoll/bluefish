@@ -20,17 +20,17 @@ export const CharSymbol = withBluefish(function Char({ value, marks, opId }: Cha
   return (
     // TODO: use x and y to position the group
     <Group>
-      <Rect symbol={tile} height={65} width={50} rx={5} fill={'#eee'} />
-      <Rect symbol={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
-      <Rect symbol={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
+      <Rect name={tile} height={65} width={50} rx={5} fill={'#eee'} />
+      <Rect name={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
+      <Rect name={rightHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
       <Text
-        symbol={letter}
+        name={letter}
         contents={value === ' ' ? '␣' : value.toString()}
         fontSize={'30px'}
         fontWeight={marks.includes('bold') ? 'bold' : 'normal'}
         fontStyle={marks.includes('italic') ? 'italic' : 'normal'}
       />
-      <Text symbol={opIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
+      <Text name={opIdLabel} contents={opId} fontSize={'12px'} fill={'#999'} />
       <Align center={[<Ref to={letter} />, <Ref to={tile} />]} />
       <Align topCenter={[<Ref to={opIdLabel} />, <Ref to={tile} />]} />
       <Align center={<Ref to={leftHandle} />} centerLeft={<Ref to={tile} />} />
@@ -54,10 +54,10 @@ export const TreeSymbol = withBluefish(function _Tree({ data }: { data: TreeData
 
   return (
     <Group>
-      <CharSymbol symbol={node} {...value} opId={name} deleted />
-      <Row symbol={subtreesName} alignment={'top'} spacing={10}>
+      <CharSymbol name={node} {...value} opId={name} deleted />
+      <Row name={subtreesName} alignment={'top'} spacing={10}>
         {(subtrees || []).map((child, i) => (
-          <TreeSymbol symbol={childNames[i]} data={child} />
+          <TreeSymbol name={childNames[i]} data={child} />
         ))}
       </Row>
       {subtrees ? (

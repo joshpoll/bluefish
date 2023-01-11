@@ -1,6 +1,6 @@
 import React from 'react';
 import { forwardRef } from 'react';
-import { withBluefish, BBox, Measure, useBluefishLayout } from '../../../../bluefish';
+import { withBluefish, BBox, Measure, useBluefishLayout, PropsWithBluefish, useNameList } from '../../../../bluefish';
 import { NewBBox } from '../../../../NewBBox';
 import { PlotContext } from '../Plot';
 import { scaleLinear } from 'd3-scale';
@@ -8,28 +8,30 @@ import { max, min } from 'lodash';
 import { Group } from '../../../../components/Group';
 import { Anchors, PointLabel } from '../../../../components/Label/PointLabel';
 import { Text } from '../../../../components/Text';
+import _ from 'lodash';
 
-export type NewDotProps<T> = Omit<
-  React.SVGProps<SVGCircleElement>,
-  'cx' | 'cy' | 'fill' | 'width' | 'height' | 'label'
-> & {
-  x: keyof T;
-  y: keyof T;
-  color?: keyof T;
-  stroke?: keyof T;
-  label?: keyof T;
-  data?: T[];
-};
+export type NewDotProps<T> = PropsWithBluefish<
+  Omit<React.SVGProps<SVGCircleElement>, 'cx' | 'cy' | 'fill' | 'width' | 'height' | 'label'> & {
+    x: keyof T;
+    y: keyof T;
+    color?: keyof T;
+    stroke?: keyof T;
+    label?: keyof T;
+    data?: T[];
+  }
+>;
 
-export const NewDot = forwardRef(function NewDot(props: NewDotProps<any>, ref: any) {
+export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
   const context = React.useContext(PlotContext);
   const data = props.data ?? context.data;
 
+  const dots = useNameList(_.range(data.length).map((i) => `dot-${i}`));
+
   return (
-    <Group ref={ref}>
+    <Group>
       {(data as any[]).map((d, i) => (
         <DotScale
-          name={`dot-${i}`}
+          name={dots[i]}
           cx={+d[props.x]}
           cy={+d[props.y]}
           r={3}
@@ -68,10 +70,12 @@ export const NewDot = forwardRef(function NewDot(props: NewDotProps<any>, ref: a
 });
 NewDot.displayName = 'NewDot';
 
-export type DotScaleProps = React.SVGProps<SVGCircleElement> & {
-  xScale: (d: any) => (x: number) => number;
-  yScale: (d: any) => (y: number) => number;
-};
+export type DotScaleProps = PropsWithBluefish<
+  React.SVGProps<SVGCircleElement> & {
+    xScale: (d: any) => (x: number) => number;
+    yScale: (d: any) => (y: number) => number;
+  }
+>;
 
 const dotMeasurePolicy = ({ cx, cy, r, xScale, yScale }: DotScaleProps): Measure => {
   return (_measurables, constraints) => {
@@ -88,7 +92,7 @@ const dotMeasurePolicy = ({ cx, cy, r, xScale, yScale }: DotScaleProps): Measure
 };
 
 export const DotScale = withBluefish((props: DotScaleProps) => {
-  const { xScale, yScale, ...rest } = props;
+  const { xScale, yScale, name, ...rest } = props;
 
   const { bbox, domRef } = useBluefishLayout({}, props, dotMeasurePolicy(props));
 

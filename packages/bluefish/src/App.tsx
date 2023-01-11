@@ -385,7 +385,7 @@ function App_OLD() {
         </Col>
       </SVG>
       <br />
-      <SVG width={300} height={150}>
+      {/* <SVG width={300} height={150}>
         <Group>
           <ColNewHooks spacing={10} totalHeight={100} alignment={'center'} constraints={{}}>
             <Rect name={'rect1'} fill={'black'} width={30} />
@@ -407,7 +407,7 @@ function App_OLD() {
           <Rect name={'rect2'} fill={'black'} width={30} />
           <Rect name={'rect3'} fill={'black'} width={30} />
         </Col>
-      </SVG>
+      </SVG> */}
       <br />
       <SVG width={300} height={300}>
         <Col spacing={10} alignment={'center'}>
@@ -416,7 +416,7 @@ function App_OLD() {
             <Text name={'text'} contents={'1'} stroke={'white'} fill={'white'} />
             <Align3 center={[<Ref to="circle" />, <Ref to="text" />]} />
           </Group2> */}
-          <Circle2 name={'foo'} fill={'black'} r={10} />
+          <Circle2 /* name={'foo'} */ fill={'black'} r={10} />
           <Row spacing={5} alignment={'middle'}>
             <Copy to={'foo'} />
             <Text contents="<- that is a label" />
@@ -502,7 +502,7 @@ function App_OLD() {
       </SVG>
       <br /> */}
       <SVG width={500} height={300}>
-        <Rect name={'rect'} x={10} y={10} width={40} height={20} fill={'cornflowerblue'} />
+        <Rect /* name={'rect'} */ x={10} y={10} width={40} height={20} fill={'cornflowerblue'} />
         {/* <CopyAttr<number> name={'rect'} prop={'y'}>
           {(y) => <Rect x={10} y={y} width={40} height={20} fill={'cornflowerblue'} />}
         </CopyAttr>

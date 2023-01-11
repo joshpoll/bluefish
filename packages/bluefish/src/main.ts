@@ -24,6 +24,7 @@ import { Padding } from './components/Padding';
 import { NewBBox } from './NewBBox';
 import { Circle } from './components/Circle';
 import { Path } from './components/Path';
+import { PropsWithBluefish } from './bluefish';
 
 export {
   // core bluefish stuff
@@ -51,4 +52,4 @@ export {
   // Path,
 };
 
-export type { BBoxWithChildren, Measure, Constraints, NewBBox };
+export type { BBoxWithChildren, Measure, Constraints, NewBBox, PropsWithBluefish };

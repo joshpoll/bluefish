@@ -1,11 +1,13 @@
-import { Measure, withBluefish, useBluefishLayout } from '../../../../bluefish';
+import { Measure, withBluefish, useBluefishLayout, PropsWithBluefish } from '../../../../bluefish';
 import { NewBBox } from '../../../../NewBBox';
 import { Scale } from '../Plot';
 
-export type RectScaleProps = React.SVGProps<SVGRectElement> & {
-  xScale?: Scale;
-  yScale?: Scale;
-};
+export type RectScaleProps = PropsWithBluefish<
+  React.SVGProps<SVGRectElement> & {
+    xScale?: Scale;
+    yScale?: Scale;
+  }
+>;
 
 const rectMeasurePolicy = ({ x, y, width, height, xScale, yScale }: RectScaleProps): Measure => {
   return (_measurables, { width, height }) => {
@@ -20,7 +22,7 @@ const rectMeasurePolicy = ({ x, y, width, height, xScale, yScale }: RectScalePro
   };
 };
 export const RectScale = withBluefish((props: RectScaleProps) => {
-  const { ...rest } = props;
+  const { name, ...rest } = props;
 
   const { domRef, bbox } = useBluefishLayout({}, props, rectMeasurePolicy(props));
 
