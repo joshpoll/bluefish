@@ -1,6 +1,6 @@
 import { PaperScope } from 'paper/dist/paper-core';
 import { PropsWithChildren } from 'react';
-import { withBluefish, BBox, useBluefishLayout2 } from '../bluefish';
+import { withBluefish, BBox, useBluefishLayout } from '../bluefish';
 import { NewBBox } from '../NewBBox';
 
 export type PathProps = React.SVGProps<SVGPathElement> & Partial<BBox>;
@@ -24,7 +24,7 @@ const pathMeasurePolicy = ({ d }: PathProps) => {
 export const Path = withBluefish((props: PropsWithChildren<PathProps>) => {
   const { ...rest } = props;
 
-  const { bbox } = useBluefishLayout2({}, props, pathMeasurePolicy(props));
+  const { bbox } = useBluefishLayout({}, props, pathMeasurePolicy(props));
 
   return (
     <g transform={`translate(${bbox!.coord?.translate?.x ?? 0}, ${bbox!.coord?.translate?.y ?? 0})`}>

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { forwardRef, PropsWithChildren, useRef } from 'react';
-import { Measure, useBluefishLayout2, withBluefish } from '../../bluefish';
+import { Measure, useBluefishLayout, withBluefish } from '../../bluefish';
 import { NewBBox } from '../../NewBBox';
 import { Ref } from '../Ref';
 import labelLayout from './LabelLayout';
@@ -152,7 +152,7 @@ const pointLabelMeasurePolicy = (props: {}): Measure => {
 };
 
 export const PointLabelAux = withBluefish((props: PropsWithChildren<{}>) => {
-  const { domRef, bbox, children } = useBluefishLayout2({}, props, pointLabelMeasurePolicy(props));
+  const { domRef, bbox, children } = useBluefishLayout({}, props, pointLabelMeasurePolicy(props));
 
   return (
     <g ref={domRef} transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}>

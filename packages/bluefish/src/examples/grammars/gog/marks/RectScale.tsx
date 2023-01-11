@@ -1,4 +1,4 @@
-import { Measure, withBluefish, useBluefishLayout2 } from '../../../../bluefish';
+import { Measure, withBluefish, useBluefishLayout } from '../../../../bluefish';
 import { NewBBox } from '../../../../NewBBox';
 import { Scale } from '../Plot';
 
@@ -22,7 +22,7 @@ const rectMeasurePolicy = ({ x, y, width, height, xScale, yScale }: RectScalePro
 export const RectScale = withBluefish((props: RectScaleProps) => {
   const { ...rest } = props;
 
-  const { domRef, bbox } = useBluefishLayout2({}, props, rectMeasurePolicy(props));
+  const { domRef, bbox } = useBluefishLayout({}, props, rectMeasurePolicy(props));
 
   return (
     <rect

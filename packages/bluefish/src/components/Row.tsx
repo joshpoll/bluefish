@@ -1,6 +1,13 @@
 import _ from 'lodash';
 import { ComponentType, forwardRef, PropsWithChildren } from 'react';
-import { Constraints, Measure, Placeable, useBluefishLayout, useBluefishLayout2, withBluefish } from '../bluefish';
+import {
+  Constraints,
+  Measure,
+  Placeable,
+  useBluefishLayoutInternal,
+  useBluefishLayout,
+  withBluefish,
+} from '../bluefish';
 import { NewBBoxClass } from '../NewBBox';
 
 export type VerticalAlignment = 'top' | 'middle' | 'bottom';
@@ -89,7 +96,7 @@ export const rowMeasurePolicy =
   };
 
 export const Row = withBluefish((props: PropsWithChildren<RowProps>) => {
-  const { domRef, bbox, children } = useBluefishLayout2({}, props, rowMeasurePolicy(props));
+  const { domRef, bbox, children } = useBluefishLayout({}, props, rowMeasurePolicy(props));
 
   return (
     <g ref={domRef} transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}>

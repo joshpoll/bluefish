@@ -5,10 +5,10 @@ import {
   Constraints,
   Measure,
   Placeable,
-  useBluefishLayout,
+  useBluefishLayoutInternal,
   withBluefish,
   NewPlaceable,
-  useBluefishLayout2,
+  useBluefishLayout,
 } from '../bluefish';
 
 export type PaddingProps = { left: number; right: number; top: number; bottom: number } | { all: number };
@@ -40,7 +40,7 @@ const paddingMeasurePolicy =
   };
 
 export const Padding = withBluefish((props: PropsWithChildren<PaddingProps>) => {
-  const { domRef, bbox, children } = useBluefishLayout2({}, props, paddingMeasurePolicy(props));
+  const { domRef, bbox, children } = useBluefishLayout({}, props, paddingMeasurePolicy(props));
 
   return (
     <g ref={domRef} transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}>

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { forwardRef, PropsWithChildren } from 'react';
-import { Symbol, Measure, Constraints, Placeable, NewPlaceable, withBluefish, useBluefishLayout2 } from '../bluefish';
+import { Symbol, Measure, Constraints, Placeable, NewPlaceable, withBluefish, useBluefishLayout } from '../bluefish';
 import { NewBBoxClass } from '../NewBBox';
 
 export type Alignment2D =
@@ -151,7 +151,7 @@ const alignMeasurePolicy =
     console.log(
       '[align2]',
       _.zip(
-        measurables.map((m) => m.name),
+        measurables.map((m) => m.symbol?.symbol.description),
         options.alignments,
         placeables.map((p) =>
           JSON.stringify({
@@ -455,7 +455,7 @@ const alignMeasurePolicy =
   };
 
 export const AlignAux = withBluefish((props: PropsWithChildren<AlignAuxProps>) => {
-  const { domRef, children, bbox } = useBluefishLayout2({}, props, alignMeasurePolicy(props));
+  const { domRef, children, bbox } = useBluefishLayout({}, props, alignMeasurePolicy(props));
 
   return (
     <g ref={domRef} transform={`translate(${bbox!.coord?.translate?.x ?? 0}, ${bbox!.coord?.translate?.y ?? 0})`}>

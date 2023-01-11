@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { PropsWithChildren } from 'react';
-import { Measure, useBluefishLayout2 } from '../../../bluefish';
+import { Measure, useBluefishLayout } from '../../../bluefish';
 import { NewBBoxClass } from '../../../NewBBox';
 import { Scale as ScaleType } from './Plot';
 
@@ -103,7 +103,7 @@ const scaleMeasurePolicy =
   };
 
 export const Scale = (props: PropsWithChildren<ScaleProps>) => {
-  const { domRef, bbox, children } = useBluefishLayout2({}, props, scaleMeasurePolicy(props));
+  const { domRef, bbox, children } = useBluefishLayout({}, props, scaleMeasurePolicy(props));
 
   return (
     <g ref={domRef} transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}>

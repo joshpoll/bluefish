@@ -267,7 +267,7 @@ export const Copy = forwardRef((props: RefProps, ref: any) => {
   useImperativeHandle(
     ref,
     (): Measurable => ({
-      name: measurable.current?.name + '-ref' /* TODO: come up with a better name? this one will collide */,
+      // name: measurable.current?.name + '-ref' /* TODO: come up with a better name? this one will collide */,
       props: measurable.current?.props,
       domRef: measurable.current?.domRef!,
       constraints: measurable.current?.constraints,

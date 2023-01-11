@@ -1,10 +1,10 @@
-import { withBluefish, useBluefishLayout2 } from '../bluefish';
+import { withBluefish, useBluefishLayout } from '../bluefish';
 import { NewBBox } from '../NewBBox';
 
 export type CircleProps = React.SVGProps<SVGCircleElement>;
 
 export const Circle = withBluefish((props: CircleProps) => {
-  const { domRef, bbox } = useBluefishLayout2({}, props, () => {
+  const { domRef, bbox } = useBluefishLayout({}, props, () => {
     const { cx, cy, r } = props;
     return {
       left: cx !== undefined ? +cx - +(r ?? 0) : undefined,

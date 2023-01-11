@@ -1,9 +1,9 @@
-import { withBluefish, useBluefishLayout2 } from '../bluefish';
+import { withBluefish, useBluefishLayout } from '../bluefish';
 
 export type RectProps = React.SVGProps<SVGRectElement>;
 
 export const Rect = withBluefish((props: RectProps) => {
-  const { domRef, bbox } = useBluefishLayout2({}, props, () => {
+  const { domRef, bbox } = useBluefishLayout({}, props, () => {
     const { x, y, width, height } = props;
     return {
       left: x !== undefined ? +x : undefined,

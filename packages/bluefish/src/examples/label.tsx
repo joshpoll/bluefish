@@ -5,11 +5,11 @@ import { SVG } from '../components/SVG';
 import {
   BBoxWithChildren,
   Measure,
-  useBluefishLayout,
+  useBluefishLayoutInternal,
   withBluefish,
   useBluefishContext,
   Constraints,
-  useBluefishLayout2,
+  useBluefishLayout,
 } from '../bluefish';
 import { Ref } from '../components/Ref';
 import { Group } from '../components/Group';
@@ -89,7 +89,7 @@ const labelMeasurePolicy =
   };
 
 export const Label = withBluefish((props: LabelProps) => {
-  const { domRef, bbox, children } = useBluefishLayout2({}, props, labelMeasurePolicy(props));
+  const { domRef, bbox, children } = useBluefishLayout({}, props, labelMeasurePolicy(props));
 
   return (
     <g ref={domRef} transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}>

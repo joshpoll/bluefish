@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React, { forwardRef, PropsWithChildren } from 'react';
-import { Measure, useBluefishLayout2, withBluefish } from '../../../bluefish';
+import { Measure, useBluefishLayout, withBluefish } from '../../../bluefish';
 import { Group } from '../../../components/Group';
 import { Padding } from '../../../components/Padding';
 import { SVG } from '../../../components/SVG';
@@ -153,7 +153,7 @@ export const Plot: React.FC<PropsWithChildren<PlotProps>> = forwardRef((props, r
 // then passed as data.  Copilot proposes making the scales a separate component that can be
 // composed with the marks.
 export const Plot2 = withBluefish((props: PropsWithChildren<PlotProps>) => {
-  const { domRef, bbox } = useBluefishLayout2({}, props, groupMeasurePolicy);
+  const { domRef, bbox } = useBluefishLayout({}, props, groupMeasurePolicy);
 
   let { width, height, margin, data, children, ...scales } = props;
   // compute dimensions from outer width, height, and margins

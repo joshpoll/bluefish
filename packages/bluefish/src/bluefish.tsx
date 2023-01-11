@@ -34,7 +34,7 @@ export type Measurable = {
   domRef: SVGElement | null;
   constraints: Constraints | undefined;
   props: any;
-  name: string;
+  // name: string;
   symbol?: Symbol;
   measure(constraints: Constraints, isRef?: boolean): NewBBoxClass;
   transformStack: CoordinateTransform[] | undefined;
@@ -83,7 +83,7 @@ export type NewPlaceable = {
 export const processChildren = (
   children: React.ReactNode,
   callbackRef: (child: any, index: number) => (node: any) => void,
-  name?: string,
+  // name?: string,
 ): any => {
   // if (name !== undefined && name.startsWith('$')) console.log('processChildren', name, children);
   return React.Children.map(flattenChildren(children), (child, index) => {
@@ -123,7 +123,7 @@ export const processChildren = (
 };
 
 // a layout hook
-export const useBluefishLayout = (
+export const useBluefishLayoutInternal = (
   measure: Measure,
   bbox: Partial<NewBBox>,
   coord: Partial<CoordinateTransform>,
@@ -131,7 +131,7 @@ export const useBluefishLayout = (
   domRef: React.RefObject<SVGElement>,
   props: any,
   children?: React.ReactNode,
-  name?: any,
+  // name?: any,
   symbol?: {
     symbol: symbol;
     parent?: symbol;
@@ -180,7 +180,7 @@ export const useBluefishLayout = (
       props: propsRef.current,
       domRef: domRef.current,
       constraints: constraintRef.current,
-      name,
+      // name,
       symbol,
       get transformStack() {
         return transformStackRef.current;
@@ -270,7 +270,7 @@ export const useBluefishLayout = (
       setBottom,
       setWidth,
       setHeight,
-      name,
+      // name,
       symbol,
       bboxClassRef,
       props,
@@ -303,10 +303,10 @@ export const useBluefishLayout = (
       (child, index) => (node: any) => {
         childrenRef.current[index] = node;
         // console.log('setting child ref', index, node, node.name);
-        if (node !== null && 'name' in node && node.name !== undefined) {
-          console.log('setting ref', node.name, node);
-          context.bfMap.set(node.name, node);
-        }
+        // if (node !== null && 'name' in node && node.name !== undefined) {
+        //   console.log('setting ref', node.name, node);
+        //   context.bfMap.set(node.name, node);
+        // }
         // add symbol the map
         if (node !== null && 'symbol' in node && node.symbol !== undefined) {
           console.log('[symbol] setting ref', node.symbol, node);
@@ -340,7 +340,7 @@ export const useBluefishLayout = (
           ref.current = node;
         }
       },
-      name,
+      // name,
     ),
     // children: React.Children.map(children, (child, index) => {
     //   if (isValidElement(child)) {
@@ -377,7 +377,7 @@ export type Symbol = {
   parent?: symbol;
 };
 
-export const useBluefishLayout2 = <T extends { children?: any; name?: string; symbol?: Symbol }>(
+export const useBluefishLayout = <T extends { children?: any; /* name?: string;  */ symbol?: Symbol }>(
   init: {
     bbox?: Partial<NewBBox>;
     coord?: CoordinateTransform;
@@ -390,7 +390,7 @@ export const useBluefishLayout2 = <T extends { children?: any; name?: string; sy
   const domRef = useRef<any>(null);
 
   // console.log('useBluefishLayout2', props.name, props.children, ref, domRef);
-  const { left, top, bottom, right, width, height, children, coord, boundary } = useBluefishLayout(
+  const { left, top, bottom, right, width, height, children, coord, boundary } = useBluefishLayoutInternal(
     measure,
     init?.bbox ?? {},
     init?.coord ?? {},
@@ -398,7 +398,7 @@ export const useBluefishLayout2 = <T extends { children?: any; name?: string; sy
     domRef,
     props,
     props.children,
-    props.name,
+    // props.name,
     props.symbol,
   );
 
@@ -446,7 +446,7 @@ export const RefContext = React.createContext<RefContextValue>({
 // injects name (and debug. still todo)
 // injects ref
 export const withBluefish = <ComponentProps,>(WrappedComponent: React.ComponentType<ComponentProps>) =>
-  forwardRef((props: PropsWithChildren<ComponentProps> & { name?: any; symbol?: Symbol }, ref: any) => {
+  forwardRef((props: PropsWithChildren<ComponentProps> & { /* name?: any; */ symbol?: Symbol }, ref: any) => {
     /* TODO: need to collect refs maybe?? */
     const {
       ref: contextRef,
@@ -581,7 +581,7 @@ export const BluefishSymbolContext = React.createContext<BluefishSymbolContextVa
 
 export const useBluefishSymbolContext = () => useContext(BluefishSymbolContext);
 
-export const useSymbol = (name: string): Symbol => {
+export const useName = (name: string): Symbol => {
   const { bfSymbolMap } = useBluefishSymbolContext();
 
   const {
@@ -637,7 +637,7 @@ export const useSymbol = (name: string): Symbol => {
   };
 };
 
-export const useSymbolArray = (names: string[]): Symbol[] => {
+export const useNameList = (names: string[]): Symbol[] => {
   const { bfSymbolMap } = useBluefishSymbolContext();
 
   const {

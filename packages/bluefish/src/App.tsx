@@ -19,7 +19,7 @@ import { bertinHotel } from './examples/bertinHotel';
 import { SVG } from './components/SVG';
 import { Row } from './components/Row';
 import { Text } from './components/Text';
-import { Char, Peritext } from './examples/peritext';
+// import { Char, Peritext } from './examples/peritext';
 import { Bluefish } from './components/Bluefish';
 // import { Child, Parent } from './components/TestingRefs';
 import { Child, Parent } from './components/TestingContext';
@@ -426,7 +426,7 @@ function App_OLD() {
       <br />
       <SVG width={300} height={300}>
         <Col spacing={10} alignment={'center'}>
-          <Rect name={'foooo'} width={200} height={10} fill="cornflowerblue" />
+          <Rect width={200} height={10} fill="cornflowerblue" />
           {/* <AlignAttr>
             <Ref to={'foooo'} props={['fill', 'stroke']} />
             <Circle name={'barrr'} r={20} fill={({fill}) => (...) => ...} stroke={({fill}) => ...} />
@@ -441,7 +441,7 @@ function App_OLD() {
       <br />
       <SVG width={300} height={300}>
         <Col spacing={10} alignment={'center'}>
-          <Rect name={'foooo'} width={200} height={10} fill="cornflowerblue" />
+          <Rect width={200} height={10} fill="cornflowerblue" />
           <Copy to={'foooo'} />
         </Col>
       </SVG>
@@ -451,9 +451,9 @@ function App_OLD() {
       </SVG>
       <br />
       <SVG width={300} height={300}>
-        <Col name={'$2 col2'} spacing={5} alignment={'center'}>
-          <Rect name={'$2 rect2-1'} width={20} height={10} fill="cornflowerblue" />
-          <Rect name={'$2 rect2-2'} width={10} height={20} fill="green" />
+        <Col spacing={5} alignment={'center'}>
+          <Rect width={20} height={10} fill="cornflowerblue" />
+          <Rect width={10} height={20} fill="green" />
         </Col>
       </SVG>
       <br />
@@ -797,7 +797,7 @@ function App_OLD() {
           <Rect fill={'green'} width={100} height={100} />
         </Row>
       </SVG> */}
-      <Peritext
+      {/* <Peritext
         spacing={rangeval}
         chars={[
           { value: 'T', opId: '1@A', deleted: false, marks: ['italic'] },
@@ -829,7 +829,7 @@ function App_OLD() {
             borderColor: '#00C2FF',
           },
         ]}
-      />
+      /> */}
       <br />
       {/* <SVG width={500} height={500}>
         <Align center>

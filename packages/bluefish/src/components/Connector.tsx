@@ -6,7 +6,7 @@ import {
   Constraints,
   MeasureResult,
   Measure,
-  useBluefishLayout2,
+  useBluefishLayout,
 } from '../bluefish';
 import { NewBBox, NewBBoxClass } from '../NewBBox';
 import { Alignment2D, splitAlignment } from './Align';
@@ -104,7 +104,7 @@ const connectorMeasurePolicy = (props: ConnectorProps): Measure => {
 // TODO: note that if `children` is not placed, this doesn't actually measure anything!
 // I'm not sure why...
 export const Connector = withBluefish((props: PropsWithChildren<ConnectorProps>) => {
-  const { bbox, domRef, children } = useBluefishLayout2({}, props, connectorMeasurePolicy(props));
+  const { bbox, domRef, children } = useBluefishLayout({}, props, connectorMeasurePolicy(props));
 
   const { $from, $to, ...rest } = props;
   return (

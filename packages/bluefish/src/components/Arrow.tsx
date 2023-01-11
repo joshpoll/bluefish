@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react';
-import { withBluefish, BBox, useBluefishLayout2 } from '../bluefish';
+import { withBluefish, BBox, useBluefishLayout } from '../bluefish';
 
 export type ArrowProps = {
   from: React.MutableRefObject<any> | undefined;
@@ -15,7 +15,7 @@ const arrowMeasurePolicy = ({ from, to }: ArrowProps) => {
 };
 
 export const Arrow = withBluefish((props: PropsWithChildren<ArrowProps>) => {
-  const { bbox } = useBluefishLayout2({}, props, arrowMeasurePolicy(props));
+  const { bbox } = useBluefishLayout({}, props, arrowMeasurePolicy(props));
 
   return (
     <line

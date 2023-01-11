@@ -13,7 +13,7 @@ import {
   useBluefishContext,
 } from '../bluefish';
 import { CoordinateTransform, NewBBoxClass, NewBBox } from '../NewBBox';
-import { withBluefish, useBluefishLayout2 } from '../bluefish';
+import { withBluefish, useBluefishLayout } from '../bluefish';
 import { isEqual } from 'lodash';
 import React from 'react';
 
@@ -349,7 +349,7 @@ export const CopyAttr = withBluefish((props: CopyAttrProps) => {
 
   console.log('[copyattr] copiedProps', copiedProps, copiedProps ? props.children(copiedProps) : null);
 
-  const { domRef, children } = useBluefishLayout2(
+  const { domRef, children } = useBluefishLayout(
     {},
     { ...props, children: copiedProps ? props.children(copiedProps) : null },
     (measurables, constraints) => {

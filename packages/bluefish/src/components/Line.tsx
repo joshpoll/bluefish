@@ -1,4 +1,4 @@
-import { withBluefish, BBox, useBluefishLayout2 } from '../bluefish';
+import { withBluefish, BBox, useBluefishLayout } from '../bluefish';
 
 export type LineProps = React.SVGProps<SVGLineElement> & Partial<BBox>;
 
@@ -7,7 +7,7 @@ const lineMeasurePolicy = ({ x1, x2, y1, y2 }: LineProps) => {
 };
 
 export const Line = withBluefish((props: LineProps) => {
-  const { bbox } = useBluefishLayout2({}, props, lineMeasurePolicy(props));
+  const { bbox } = useBluefishLayout({}, props, lineMeasurePolicy(props));
 
   return (
     <line

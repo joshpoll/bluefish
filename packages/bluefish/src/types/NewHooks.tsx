@@ -1,7 +1,7 @@
 // prototype of potential new hook API
 
 import { useContext } from 'react';
-import { Constraints, Measurable, useBluefishLayout2, MeasureResult, RefContext, withBluefish } from '../bluefish';
+import { Constraints, Measurable, useBluefishLayout, MeasureResult, RefContext, withBluefish } from '../bluefish';
 
 export type useConstraintsType = () => Constraints;
 
@@ -32,7 +32,7 @@ export type Layout2 = (props: {
 // to give it a "paint" or "render" function that just returns the raw SVG.
 
 export const Layout = withBluefish((props: React.PropsWithChildren<{ layout: useLayout; parentProps: any }>) => {
-  const { domRef, bbox, children } = useBluefishLayout2({}, props.parentProps, (measurables, _constraints) =>
+  const { domRef, bbox, children } = useBluefishLayout({}, props.parentProps, (measurables, _constraints) =>
     props.layout(measurables),
   );
 

@@ -1,5 +1,5 @@
 import {
-  useBluefishLayout2 as useBluefishLayout,
+  useBluefishLayout as useBluefishLayout,
   withBluefish,
   BBoxWithChildren,
   Constraints,

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { withBluefish, useBluefishLayout2 } from '../bluefish';
+import { withBluefish, useBluefishLayout } from '../bluefish';
 import { measureText } from '../measureText';
 import { NewBBox } from '../NewBBox';
 
@@ -33,7 +33,7 @@ export const textMeasurePolicy = (props: TextProps) => {
 };
 
 export const Text = withBluefish((props: TextProps) => {
-  const { domRef, bbox } = useBluefishLayout2({}, props, textMeasurePolicy(props));
+  const { domRef, bbox } = useBluefishLayout({}, props, textMeasurePolicy(props));
 
   return (
     <g

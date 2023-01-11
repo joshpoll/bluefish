@@ -10,7 +10,7 @@ import { Align } from '../components/Align';
 import {
   BBoxWithChildren,
   Measure,
-  useBluefishLayout,
+  useBluefishLayoutInternal,
   withBluefish,
   withBluefishComponent,
   useBluefishContext,

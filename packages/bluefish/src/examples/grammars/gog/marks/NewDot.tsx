@@ -1,6 +1,6 @@
 import React from 'react';
 import { forwardRef } from 'react';
-import { withBluefish, BBox, Measure, useBluefishLayout2 } from '../../../../bluefish';
+import { withBluefish, BBox, Measure, useBluefishLayout } from '../../../../bluefish';
 import { NewBBox } from '../../../../NewBBox';
 import { PlotContext } from '../Plot';
 import { scaleLinear } from 'd3-scale';
@@ -90,7 +90,7 @@ const dotMeasurePolicy = ({ cx, cy, r, xScale, yScale }: DotScaleProps): Measure
 export const DotScale = withBluefish((props: DotScaleProps) => {
   const { xScale, yScale, ...rest } = props;
 
-  const { bbox, domRef } = useBluefishLayout2({}, props, dotMeasurePolicy(props));
+  const { bbox, domRef } = useBluefishLayout({}, props, dotMeasurePolicy(props));
 
   return (
     <g

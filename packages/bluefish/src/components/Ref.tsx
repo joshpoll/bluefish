@@ -344,7 +344,7 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
   useImperativeHandle(
     ref,
     (): Measurable => ({
-      name: measurable.current?.name + '-ref' /* TODO: come up with a better name? this one will collide */,
+      // name: measurable.current?.name + '-ref' /* TODO: come up with a better name? this one will collide */,
       props: measurable.current?.props,
       domRef: measurable.current?.domRef!,
       constraints: measurable.current?.constraints,
@@ -415,7 +415,8 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
           return new RefBBox(
             measurable.current.measure(constraints, true),
             otherTransformInThisCoordinateSystem,
-            measurable.current.name,
+            undefined,
+            // measurable.current.name,
           );
         } catch (e) {
           console.error('Error while measuring', props.to, e);

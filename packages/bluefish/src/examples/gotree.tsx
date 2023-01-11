@@ -4,7 +4,14 @@ import { Rect } from '../components/Rect';
 import { Text } from '../components/Text';
 import { Row } from '../components/Row';
 import { SVG } from '../components/SVG';
-import { BBoxWithChildren, Measure, useBluefishLayout, withBluefish, useBluefishContext } from '../bluefish';
+import {
+  BBoxWithChildren,
+  Measure,
+  useBluefishLayoutInternal,
+  withBluefish,
+  useBluefishContext,
+  useName,
+} from '../bluefish';
 import { Ref } from '../components/Ref';
 import { Group } from '../components/Group';
 import { Line } from '../components/Line';
@@ -34,20 +41,21 @@ export type TreeProps<T> = {
 // </Group>
 
 export const Tree = forwardRef(function TreeFn<T>({ name, value, treeChildren }: TreeProps<T>, ref: any) {
-  const tile = useRef(null);
-  const leftHandle = useRef(null);
-  const rightHandle = useRef(null);
-  const letter = useRef(null);
-  const opIdLabel = useRef(null);
+  const tile = useName('tile');
+  const letter = useName('letter');
+  const opIdLabel = useName('opIdLabel');
+
+  const node = useName('node');
+  const subtree = useName('subtree');
 
   return (
     <Group ref={ref}>
-      <Group name={name + '-node'}>
-        <Rect ref={tile} height={65} width={50} rx={5} fill={'#eee'} />
-        <Text ref={letter} contents={value === ' ' ? '␣' : `${value}`} fontSize={'30px'} />
+      <Group symbol={node}>
+        <Rect symbol={tile} height={65} width={50} rx={5} fill={'#eee'} />
+        <Text symbol={letter} contents={value === ' ' ? '␣' : `${value}`} fontSize={'30px'} />
         <Align center={[<Ref to={letter} />, <Ref to={tile} />]} />
         <Align
-          topCenter={[<Text ref={opIdLabel} contents={name} fontSize={'12px'} fill={'#999'} />, <Ref to={tile} />]}
+          topCenter={[<Text symbol={opIdLabel} contents={name} fontSize={'12px'} fill={'#999'} />, <Ref to={tile} />]}
         />
         {/* <Align center to={'centerLeft'}>
         <Ref to={leftHandle} />
@@ -58,7 +66,7 @@ export const Tree = forwardRef(function TreeFn<T>({ name, value, treeChildren }:
         <Ref to={tile} />
       </Align> */}
       </Group>
-      <Row /* debug={false} */ name={name + '-subtree'} alignment={'top'} spacing={10}>
+      <Row /* debug={false} */ symbol={subtree} alignment={'top'} spacing={10}>
         {(treeChildren ?? []).map((child, i) => (
           <Tree {...child} />
         ))}
@@ -108,7 +116,7 @@ export const GoTree: React.FC<GoTreeProps<any>> = ({ tree }) => {
 
   return (
     <SVG width={1000} height={500}>
-      <Group name={'group'}>
+      <Group>
         <Tree {...tree} />
         {/* <Row name={'chars'} ref={charsRef} spacing={10} alignment={'middle'}>
           {chars.map((char) => (

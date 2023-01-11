@@ -1,5 +1,5 @@
-import { withBluefish, useSymbol, useSymbolArray, lookup } from '../bluefish';
-import { CharProps } from './peritext';
+import { withBluefish, useName, useNameList, lookup } from '../bluefish';
+import { CharProps } from './peritext-symbol-test';
 import { Group } from '../components/Group';
 import { Rect } from '../components/Rect';
 import { Text } from '../components/Text';
@@ -9,18 +9,16 @@ import { Col } from '../components/Col';
 import { Row } from '../components/Row';
 import { Connector } from '../main';
 import _ from 'lodash';
-import { useEffect, useId } from 'react';
 
 export const CharSymbol = withBluefish(function Char({ value, marks, opId }: CharProps) {
-  const tile = useSymbol('tile');
-  const opIdLabel = useSymbol('opIdLabel');
-  const leftHandle = useSymbol('leftHandle');
-  const rightHandle = useSymbol('rightHandle');
-  const letter = useSymbol('letter');
+  const tile = useName('tile');
+  const opIdLabel = useName('opIdLabel');
+  const leftHandle = useName('leftHandle');
+  const rightHandle = useName('rightHandle');
+  const letter = useName('letter');
 
   return (
     // TODO: use x and y to position the group
-    // TODO: removing the group symbol here breaks this!
     <Group>
       <Rect symbol={tile} height={65} width={50} rx={5} fill={'#eee'} />
       <Rect symbol={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
@@ -50,13 +48,12 @@ type TreeData = {
 export const TreeSymbol = withBluefish(function _Tree({ data }: { data: TreeData }) {
   const { name, value, subtrees } = data;
 
-  const node = useSymbol('node');
-  const subtreesName = useSymbol('subtrees');
-  const childNames = useSymbolArray(_.range(subtrees?.length || 0).map((i) => `child-${i}`));
+  const node = useName('node');
+  const subtreesName = useName('subtrees');
+  const childNames = useNameList(_.range(subtrees?.length || 0).map((i) => `child-${i}`));
 
   return (
     <Group>
-      {/* <Rect symbol={node} height={65} width={50} rx={5} fill={'#eee'} /> */}
       <CharSymbol symbol={node} {...value} opId={name} deleted />
       <Row symbol={subtreesName} alignment={'top'} spacing={10}>
         {(subtrees || []).map((child, i) => (
@@ -64,7 +61,7 @@ export const TreeSymbol = withBluefish(function _Tree({ data }: { data: TreeData
         ))}
       </Row>
       {subtrees ? (
-        <Col /* symbol={col} */ alignment={'center'} spacing={10}>
+        <Col alignment={'center'} spacing={10}>
           <Ref to={node} />
           <Ref to={subtreesName} />
         </Col>
