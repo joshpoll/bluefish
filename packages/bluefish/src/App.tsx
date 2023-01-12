@@ -91,9 +91,22 @@ function App() {
         </ColUseState>
       </svg>
       <br /> */}
+      <SVG width={500} height={300}>
+        <Padding left={40} top={10} right={20} bottom={30}>
+          <Plot
+            data={driving}
+            x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
+            y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
+            color={() => () => 'black'}
+          >
+            <NewLine x={'miles'} y={'gas'} />
+            <NewDot x={'miles'} y={'gas'} label={'year'} />
+          </Plot>
+        </Padding>
+      </SVG>
       <SVG width={800} height={200}>
         <Padding left={40} top={10} right={20} bottom={30}>
-          <Plot2
+          <Plot
             data={alphabet}
             x={({ width }) =>
               scaleBand(
@@ -112,7 +125,7 @@ function App() {
             {/* <BarY encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
             <NewBarY spacing={5} x={'letter'} y={'frequency'} color={'frequency'} />
             {/* <BarYWithBFN encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
-          </Plot2>
+          </Plot>
         </Padding>
       </SVG>
       <PeritextSymbol

@@ -55,7 +55,7 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
         <PointLabel
           texts={(data as any[]).map((d, i) => ({
             label: <Text contents={d[props.label!]} fontSize={'6pt'} />,
-            ref: `dot-${i}`,
+            ref: dots[i],
           }))}
           compare={undefined}
           offset={[1]}
