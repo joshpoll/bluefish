@@ -65,14 +65,14 @@ export const CharSymbol = withBluefish(function Char({ value, marks, opId }: Cha
   );
 });
 
-export type MarkOpProps = {
+export type MarkOpProps<OpId> = {
   action: string;
   markType: string;
   backgroundColor: string;
   borderColor: string;
   opId: string;
-  start: { opId: string };
-  end: { opId: string };
+  start: { opId: OpId };
+  end: { opId: OpId };
 };
 
 export const MarkOp = withBluefish(function MarkOp({
@@ -83,7 +83,7 @@ export const MarkOp = withBluefish(function MarkOp({
   start,
   end,
   opId,
-}: PropsWithBluefish<MarkOpProps>) {
+}: PropsWithBluefish<MarkOpProps<Symbol>>) {
   const rect = useName('rect');
   const text = useName('text');
 
@@ -96,22 +96,22 @@ export const MarkOp = withBluefish(function MarkOp({
       {/* <Rect name={opId + '-text'} ref={textRef} width={50} height={15} fill={'magenta'} /> */}
       <Align left={[<Ref to={rect} />, <Ref to={start.opId} />]} />
       <Align right={[<Ref to={rect} />, <Ref to={end.opId} />]} />
-      <Align center={[<Ref to={text} />, <Ref to={text} />]} />
+      <Align center={[<Ref to={text} />, <Ref to={rect} />]} />
     </Group>
   );
 });
 
 export type PeritextProps = {
   chars: CharProps[];
-  markOps: MarkOpProps[];
+  markOps: MarkOpProps<string>[];
 };
 
 export const Peritext: React.FC<PeritextProps & { spacing?: number }> = ({ chars, markOps, spacing }) => {
   const charsList = useName('chars');
   const markOpsList = useName('markOps');
 
-  const markOpNames = useNameList(_.range(markOps.length).map((i) => `markOp-${i}`));
-  const charNames = useNameList(chars.map((char) => `char-${char.opId}`));
+  const markOpNames = useNameList(markOps.map((markOp) => `${markOp.opId}`));
+  const charNames = useNameList(chars.map((char) => `${char.opId}`));
 
   return (
     <SVG width={1000} height={500}>
@@ -123,53 +123,57 @@ export const Peritext: React.FC<PeritextProps & { spacing?: number }> = ({ chars
             <CharSymbol name={charNames[i]} {...char} />
           ))}
         </Row>
+        {/* markOps */}
+        {/* TODO: Do I need to extract the aligns out for bbox purposes? */}
+        <Space name={markOpsList} vertically by={8}>
+          {markOps.map((markOp, i) => (
+            /* TODO: need to find the ids */
+            <MarkOp
+              name={markOpNames[i]}
+              {...{
+                ...markOp,
+                // start: { opId: charNames[markOps[i].start.opId] },
+                start: { opId: charNames.find((charName) => charName.symbol.description === markOps[i].start.opId)! },
+                // end: { opId: charNames[markOps[i].end.opId] },
+                end: { opId: charNames.find((charName) => charName.symbol.description === markOps[i].end.opId)! },
+                // TODO: maybe could also use the parent's namespace to look it up?
+              }}
+            />
+          ))}
+        </Space>
+        {/* space markOps from chars */}
+        <Space vertically by={8}>
+          <Ref to={charsList} />
+          <Ref to={markOpsList} />
+        </Space>
+        <Group>
+          {/* TODO: need to find the ids */}
+          {/* {markOps.map((markOp) => (
+            <Group>
+              <Connector
+                $from={'centerLeft'}
+                $to={'centerLeft'}
+                stroke={markOp.borderColor}
+                strokeWidth={1}
+                strokeDasharray={3}
+              >
+                <Ref to={markOp.start.opId} />
+                <Ref to={markOp.opId} />
+              </Connector>
+              <Connector
+                $from={'centerRight'}
+                $to={'centerRight'}
+                stroke={markOp.borderColor}
+                strokeWidth={1}
+                strokeDasharray={3}
+              >
+                <Ref to={markOp.end.opId} />
+                <Ref to={markOp.opId} />
+              </Connector>
+            </Group>
+          ))} */}
+        </Group>
       </Group>
     </SVG>
   );
 };
-
-/* TODO: add al this back! */
-//  {/* markOps */}
-//         {/* TODO: Do I need to extract the aligns out for bbox purposes? */}
-//         <Space symbol={markOpsList} vertically by={8}>
-//           {markOps.map((markOp, i) => (
-//             /* TODO: need to find the ids */
-//             <MarkOp symbol={markOpNames[i]} {...markOp} />
-//           ))}
-//         </Space>
-//         {/* space markOps from chars */}
-//         <Space vertically by={8}>
-//           <Ref to={charsList} />
-//           <Ref to={markOpsList} />
-//         </Space>
-//       </Group>
-//       <Group>
-//         {/* TODO: need to find the ids */}
-//         {markOps.map((markOp) => (
-//           // <Connector
-//           //   $from={{ the: 'centerLeft', of: markOp.start.opId }}
-//           //   $to={{ the: 'centerLeft', of: markOp.opId }}
-//           // />
-//           <Group>
-//             <Connector
-//               $from={'centerLeft'}
-//               $to={'centerLeft'}
-//               stroke={markOp.borderColor}
-//               strokeWidth={1}
-//               strokeDasharray={3}
-//             >
-//               <Ref to={markOp.start.opId} />
-//               <Ref to={markOp.opId} />
-//             </Connector>
-//             <Connector
-//               $from={'centerRight'}
-//               $to={'centerRight'}
-//               stroke={markOp.borderColor}
-//               strokeWidth={1}
-//               strokeDasharray={3}
-//             >
-//               <Ref to={markOp.end.opId} />
-//               <Ref to={markOp.opId} />
-//             </Connector>
-//           </Group>
-//         ))}

@@ -2,9 +2,10 @@
 react-keyed-flatten-children (see below) */
 import { ReactNode, ReactElement, Children, isValidElement, cloneElement } from 'react';
 import { isContextProvider, isFragment } from 'react-is';
+import { Fragment } from './components/Fragment';
 
 // jmp addition: inlining b/c ReactChild is deprecated
-type ReactChild = ReactElement | string | number;
+export type ReactChild = ReactElement | string | number;
 
 /**
  * Similar to [React's built-in `Children.toArray` method](https://reactjs.org/docs/react-api.html#reactchildrentoarray),
@@ -51,3 +52,92 @@ export const flattenChildren = (children: ReactNode, depth: number = 0, keys: (s
     }
     return acc;
   }, []);
+
+export type StructureChildrenResult = {
+  object: { [key: string]: ReactChild[] };
+  array: ReactChild[];
+};
+
+// export type StructuredChildren =
+//   | {
+//       [key: string]: StructuredChildren;
+//     }
+//   | StructuredChildren[]
+//   | ReactChild;
+
+// type IntermediateStructuredChildrenResult = {
+//   object: { [key: string]: StructuredChildren };
+//   array: StructuredChildren[];
+// };
+
+export const structureChildren = (
+  children: ReactNode,
+  depth: number = 0,
+  keys: (string | number)[] = [],
+): StructureChildrenResult =>
+  Children.toArray(children).reduce(
+    (acc: StructureChildrenResult, node) => {
+      if (isFragment(node)) {
+        const childrenRes = structureChildren(
+          node.props.children,
+          depth + 1,
+          /**
+           * No need for index fallback, React will always assign keys
+           * See: https://reactjs.org/docs/react-api.html#reactchildrentoarray
+           */
+          keys.concat(node.key!),
+        );
+        acc.array.push.apply(acc.array, childrenRes.array);
+        // merge the childrenRes.object arrays into the acc.object arrays
+        Object.keys(childrenRes.object).forEach((key) => {
+          if (acc.object[key]) {
+            acc.object[key].push.apply(acc.object[key], childrenRes.object[key]);
+          }
+        });
+      } else if (isContextProvider(node)) {
+        // TODO: I'm not sure this actually works correctly since the children of the provider are
+        // never added to the map...
+        acc.array.push(
+          cloneElement(node, {
+            key: keys.concat(String(node.key)).join('.'),
+            // children: structureChildren(node.props.children, depth + 1, keys.concat(node.key!)),
+          }),
+        );
+      } else {
+        if (isValidElement(node)) {
+          const newNode = cloneElement(node, {
+            key: keys.concat(String(node.key)).join('.'),
+          });
+          if (node.type === Fragment && 'props' in node && 'children' in (node.props as any)) {
+            if ('layoutKey' in (node.props as any) && (node.props as any).layoutKey !== undefined) {
+              if (acc.object[(node.props as any).layoutKey] === undefined) {
+                acc.object[(node.props as any).layoutKey] = [];
+              }
+              acc.object[(node.props as any).layoutKey].push(newNode);
+            } else {
+              const childrenRes = structureChildren(
+                (node.props as any).children,
+                depth + 1,
+                /**
+                 * No need for index fallback, React will always assign keys
+                 * See: https://reactjs.org/docs/react-api.html#reactchildrentoarray
+                 */
+                keys.concat(node.key!),
+              );
+              // TODO: add this back once type is better
+              // acc.array.push(childrenRes.array);
+            }
+          } else {
+            acc.array.push(newNode);
+          }
+        } else if (typeof node === 'string' || typeof node === 'number') {
+          acc.array.push(node);
+        }
+      }
+      return acc;
+    },
+    {
+      object: {},
+      array: [],
+    },
+  );

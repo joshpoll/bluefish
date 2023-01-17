@@ -1,6 +1,14 @@
 import React from 'react';
 import { forwardRef } from 'react';
-import { withBluefish, BBox, Measure, useBluefishLayout, PropsWithBluefish, useNameList } from '../../../../bluefish';
+import {
+  Symbol,
+  withBluefish,
+  BBox,
+  Measure,
+  useBluefishLayout,
+  PropsWithBluefish,
+  useNameList,
+} from '../../../../bluefish';
 import { NewBBox } from '../../../../NewBBox';
 import { PlotContext } from '../Plot';
 import { scaleLinear } from 'd3-scale';
@@ -9,6 +17,7 @@ import { Group } from '../../../../components/Group';
 import { Anchors, PointLabel } from '../../../../components/Label/PointLabel';
 import { Text } from '../../../../components/Text';
 import _ from 'lodash';
+import { Ref } from '../../../../main';
 
 export type NewDotProps<T> = PropsWithBluefish<
   Omit<React.SVGProps<SVGCircleElement>, 'cx' | 'cy' | 'fill' | 'width' | 'height' | 'label'> & {
@@ -16,7 +25,12 @@ export type NewDotProps<T> = PropsWithBluefish<
     y: keyof T;
     color?: keyof T;
     stroke?: keyof T;
-    label?: keyof T;
+    label?:
+      | keyof T
+      | {
+          field: keyof T;
+          avoid: Symbol[];
+        };
     data?: T[];
   }
 >;
@@ -52,18 +66,35 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
         />
       ))}
       {props.label !== undefined ? (
-        <PointLabel
-          texts={(data as any[]).map((d, i) => ({
-            label: <Text contents={d[props.label!]} fontSize={'6pt'} />,
-            ref: dots[i],
-          }))}
-          compare={undefined}
-          offset={[1]}
-          anchor={Anchors}
-          avoidElements={[]}
-          avoidRefElements
-          padding={0}
-        />
+        typeof props.label === 'object' && 'field' in props.label ? (
+          <PointLabel
+            texts={(data as any[]).map((d, i) => ({
+              label: <Text contents={d[(props.label! as any).field!]} fontSize={'6pt'} />,
+              ref: dots[i],
+            }))}
+            compare={undefined}
+            offset={[1]}
+            anchor={Anchors}
+            avoidElements={props.label.avoid.map((name) => (
+              <Ref to={name} />
+            ))}
+            avoidRefElements
+            padding={0}
+          />
+        ) : (
+          <PointLabel
+            texts={(data as any[]).map((d, i) => ({
+              label: <Text contents={d[(props.label as string)!]} fontSize={'6pt'} />,
+              ref: dots[i],
+            }))}
+            compare={undefined}
+            offset={[1]}
+            anchor={Anchors}
+            avoidElements={[]}
+            avoidRefElements
+            padding={0}
+          />
+        )
       ) : null}
     </Group>
   );

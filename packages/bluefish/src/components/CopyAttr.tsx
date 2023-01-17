@@ -8,7 +8,6 @@ import {
   NewBBoxWithChildren,
   NewPlaceable,
   Placeable,
-  processChildren,
   RefContext,
   useBluefishContext,
 } from '../bluefish';

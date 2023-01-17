@@ -17,7 +17,7 @@ export type NewLineProps<T> = Omit<
   data?: T[];
 };
 
-export const NewLine = forwardRef(function NewLine(props: NewLineProps<any>, ref: any) {
+export const NewLine = withBluefish(function NewLine(props: PropsWithBluefish<NewLineProps<any>>) {
   const context = React.useContext(PlotContext);
   const data = props.data ?? context.data;
   const colorScale = context.scales.colorScale;
@@ -25,7 +25,6 @@ export const NewLine = forwardRef(function NewLine(props: NewLineProps<any>, ref
 
   return (
     <PathScale
-      ref={ref}
       points={data.map((d: any) => [d[props.x], d[props.y]] as [number, number])}
       fill={'none'}
       stroke={props.color ?? 'black'}
@@ -83,8 +82,8 @@ const pathMeasurePolicy = ({ points, xScale, yScale }: PathProps): Measure => {
   };
 };
 
-export const PathScale = withBluefish((props: PathProps) => {
-  const { points, name, ...rest } = props;
+export const PathScale = withBluefish((props: PropsWithBluefish<PathProps>) => {
+  const { points, name, xScale, yScale, ...rest } = props;
 
   const { bbox, boundary } = useBluefishLayout({}, props, pathMeasurePolicy(props));
 

@@ -37,7 +37,7 @@ import { GlobalFrame } from './python-tutor';
 import { NewLine } from './examples/grammars/gog/marks/NewLine';
 import { NewDot } from './examples/grammars/gog/marks/NewDot';
 import { resolveRef } from './components/Ref';
-import { BluefishContextValue } from './bluefish';
+import { BluefishContextValue, useName } from './bluefish';
 import { Rect } from './components/Rect';
 import { Col } from './components/Col';
 import { Test2 } from './components/Test2';
@@ -81,6 +81,8 @@ const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | 
 }
 
 function App() {
+  const line = useName('line');
+
   return (
     <div className="App">
       {/* <svg width={500} height={500}>
@@ -92,17 +94,22 @@ function App() {
       </svg>
       <br /> */}
       <SVG width={500} height={300}>
-        <Padding left={40} top={10} right={20} bottom={30}>
-          <Plot
-            data={driving}
-            x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
-            y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
-            color={() => () => 'black'}
-          >
-            <NewLine x={'miles'} y={'gas'} />
-            <NewDot x={'miles'} y={'gas'} label={'year'} />
-          </Plot>
-        </Padding>
+        <Col spacing={5} alignment={'center'}>
+          <Padding left={40} top={10} right={20} bottom={30}>
+            <Plot
+              height={200}
+              data={driving}
+              x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
+              y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
+              color={() => () => 'black'}
+            >
+              <NewLine name={line} x={'miles'} y={'gas'} />
+              <NewDot x={'miles'} y={'gas'} label={{ field: 'year', avoid: [line] }} />
+            </Plot>
+          </Padding>
+          <Text contents={'this is a test caption'} />
+          {/* <Rect width={100} height={100} fill={'red'} /> */}
+        </Col>
       </SVG>
       <SVG width={800} height={200}>
         <Padding left={40} top={10} right={20} bottom={30}>
@@ -565,7 +572,7 @@ function App_OLD() {
             y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
             color={() => () => 'black'}
           >
-            <NewLine name={'line'} x={'miles'} y={'gas'} />
+            <NewLine /* name={'line'}  */ x={'miles'} y={'gas'} />
             <NewDot x={'miles'} y={'gas'} label={'year'} />
           </Plot>
           <Row spacing={5} alignment={'top'}>
@@ -594,7 +601,7 @@ function App_OLD() {
           y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
           color={() => () => 'black'}
         >
-          <NewLine name={'line'} x={'miles'} y={'gas'} />
+          <NewLine /* name={'line'}  */ x={'miles'} y={'gas'} />
           <NewDot x={'miles'} y={'gas'} label={'year'} />
         </Plot>
       </SVG>
