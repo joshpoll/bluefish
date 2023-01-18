@@ -94,6 +94,7 @@ export type PlotContextValue = {
 const groupMeasurePolicy =
   (props: Plot2Props): Measure =>
   (measurables, constraints) => {
+    console.log('[plot measurables]', measurables);
     constraints = { width: props.width ?? constraints.width, height: props.height ?? constraints.height };
     const placeables = measurables.map((measurable, idx) => {
       // console.log('[set to] name', measurable.name);
@@ -179,7 +180,7 @@ export const Plot2 = withBluefish((props: PropsWithBluefish<Plot2Props>) => {
   const { xScale, yScale, colorScale } = renamedScales;
 
   return (
-    <Group>
+    <g>
       <PlotContext.Provider
         value={{
           dimensions,
@@ -189,6 +190,6 @@ export const Plot2 = withBluefish((props: PropsWithBluefish<Plot2Props>) => {
       >
         {children}
       </PlotContext.Provider>
-    </Group>
+    </g>
   );
 });

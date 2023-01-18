@@ -85,10 +85,10 @@ const pathMeasurePolicy = ({ points, xScale, yScale }: PathProps): Measure => {
 export const PathScale = withBluefish((props: PropsWithBluefish<PathProps>) => {
   const { points, name, xScale, yScale, ...rest } = props;
 
-  const { bbox, boundary } = useBluefishLayout({}, props, pathMeasurePolicy(props));
+  const { bbox, boundary, domRef } = useBluefishLayout({}, props, pathMeasurePolicy(props));
 
   return (
-    <g transform={`translate(${bbox!.coord?.translate?.x ?? 0}, ${bbox!.coord?.translate?.y ?? 0})`}>
+    <g ref={domRef} transform={`translate(${bbox!.coord?.translate?.x ?? 0}, ${bbox!.coord?.translate?.y ?? 0})`}>
       <path {...rest} d={boundary?.pathData ?? ''} />
     </g>
   );

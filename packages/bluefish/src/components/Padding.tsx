@@ -16,6 +16,7 @@ export type PaddingProps = { left: number; right: number; top: number; bottom: n
 const paddingMeasurePolicy =
   (options: PaddingProps): Measure =>
   (measurables, constraints: Constraints) => {
+    console.log('paddingMeasurePolicy', measurables, constraints);
     if (measurables.length !== 1) {
       throw new Error('Padding must have exactly one child');
     }

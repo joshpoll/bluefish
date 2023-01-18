@@ -15,7 +15,8 @@ import React, {
 } from 'react';
 import { isEqual, isNaN } from 'lodash';
 import ReactIs from 'react-is';
-import { flattenChildren } from './flatten-children';
+import { flattenChildren, flattenChildrenToGroups, ChildGroup, ReactChild } from './flatten-children';
+import { LayoutGroup } from './components/LayoutGroup';
 
 // TODO: we need to change this code so that children accumulate the coordinate transformation from
 // the root component down to them. This is necessary so that references can resolve correct positions.
@@ -52,6 +53,11 @@ export type BBox = {
 
 export type BBoxWithChildren = Partial<PropsWithChildren<BBox>>;
 export type NewBBoxWithChildren = Partial<PropsWithChildren<NewBBox>>;
+export type NewBBoxWithChildren2<C extends ChildGroup = ReactChild> = Partial<
+  NewBBox & {
+    children: C[];
+  }
+>;
 
 // export type Constraints = {
 //   minWidth: number;
@@ -78,6 +84,53 @@ export type NewPlaceable = {
   bottom?: number;
   width?: number;
   height?: number;
+};
+
+const attachRefs = (
+  childGroups: ChildGroup[],
+  callbackRef: (child: ReactChild, keys: (string | number)[]) => (node: any) => void,
+  keys: (string | number)[] = [],
+): ChildGroup[] => {
+  return childGroups.map((childGroup, index) => {
+    if (Array.isArray(childGroup)) {
+      return attachRefs(childGroup, callbackRef, [...keys, index]);
+    } else if (isValidElement(childGroup)) {
+      return React.cloneElement(childGroup as React.ReactElement<any>, {
+        ref: callbackRef(childGroup, [...keys, index]),
+      });
+    } else if (typeof childGroup === 'string' || typeof childGroup === 'number') {
+      console.log('warning: non-element child', childGroup);
+      return childGroup;
+    } else {
+      return {
+        key: childGroup.key,
+        value: attachRefs(childGroup.value, callbackRef, [...keys, index]),
+      };
+    }
+  });
+};
+
+const restoreLayoutGroups = (childGroups: ChildGroup[]): ReactChild[] => {
+  return childGroups.map((childGroup) => {
+    if (Array.isArray(childGroup)) {
+      return <LayoutGroup>{restoreLayoutGroups(childGroup)}</LayoutGroup>;
+    } else if (isValidElement(childGroup)) {
+      return childGroup;
+    } else if (typeof childGroup === 'string' || typeof childGroup === 'number') {
+      return childGroup;
+    } else {
+      return <LayoutGroup id={childGroup.key}>{restoreLayoutGroups(childGroup.value)}</LayoutGroup>;
+    }
+  });
+};
+
+const processChildren2 = (
+  children: React.ReactNode,
+  callbackRef: (child: ReactChild, keys: (string | number)[]) => (node: any) => void,
+): ReactChild[] => {
+  const childGroups = flattenChildrenToGroups(children);
+  const childGroupsWithCallbacks = attachRefs(childGroups, callbackRef);
+  return restoreLayoutGroups(childGroupsWithCallbacks);
 };
 
 export const processChildren = (
@@ -123,6 +176,18 @@ export const processChildren = (
   });
 };
 
+const setTransformStacks = (children: any[], transformStack?: CoordinateTransform[]): void => {
+  children.forEach((child) => {
+    if (child === undefined) return;
+    if (Array.isArray(child)) {
+      setTransformStacks(child, transformStack);
+    } else {
+      child.transformStack = transformStack;
+    }
+    // TODO: handle groups...
+  });
+};
+
 // a layout hook
 export const useBluefishLayoutInternal = (
   measure: Measure,
@@ -137,7 +202,7 @@ export const useBluefishLayoutInternal = (
     symbol: symbol;
     parent?: symbol;
   },
-): NewBBoxWithChildren & { boundary?: paper.Path; constraints?: Constraints } => {
+): /* NewBBoxWithChildren2<C> */ NewBBoxWithChildren & { boundary?: paper.Path; constraints?: Constraints } => {
   const context = useContext(BluefishContext);
   const symbolContext = useContext(BluefishSymbolContext);
 
@@ -205,11 +270,12 @@ export const useBluefishLayoutInternal = (
           constraintRef.current = constraints;
           // console.log('constraints', constraintRef.current);
           // console.log('measuring', name);
-          childrenRef.current.forEach((child) => {
-            if (child !== undefined) {
-              child.transformStack = transformStackRef.current;
-            }
-          });
+          // childrenRef.current.forEach((child) => {
+          //   if (child !== undefined) {
+          //     child.transformStack = transformStackRef.current;
+          //   }
+          // });
+          setTransformStacks(childrenRef.current, transformStackRef.current);
           const { width, height, left, top, right, bottom, boundary } = measure(childrenRef.current, constraints);
           // console.log('measured', name, JSON.stringify({ width, height, left, top, right, bottom }));
           setWidth(width);
@@ -301,50 +367,103 @@ export const useBluefishLayoutInternal = (
     coord: coordRef.current,
     constraints: constraintRef.current,
     boundary,
-    children: processChildren(
-      children,
-      (child, index) => (node: any) => {
-        childrenRef.current[index] = node;
-        // console.log('setting child ref', index, node, node.name);
-        // if (node !== null && 'name' in node && node.name !== undefined) {
-        //   console.log('setting ref', node.name, node);
-        //   context.bfMap.set(node.name, node);
-        // }
-        // add symbol the map
-        if (node !== null && 'name' in node && node.name !== undefined) {
-          // console.log('[symbol] setting ref', node.name, node);
-          symbolContext.bfSymbolMap.set(node.name.symbol, {
-            ref: node,
-            children: new Set(),
-          });
-          // console.log('[symbol] symbolMap after', symbolContext.bfSymbolMap.get(node.name.symbol));
+    children: processChildren2(children, (child, keys) => (node: any) => {
+      let location: { [key: string | number]: any } = childrenRef.current;
+      // console.log('[location] finding location', keys, 'in', location);
+      for (const key of keys.slice(0, -1)) {
+        // console.log('[location]', 'key', key, 'in', location, 'is', location[key]);
+        if (location[key] === undefined) {
+          location[key] = [];
+        }
+        location = location[key];
+      }
+      const lastKey = keys[keys.length - 1];
+      if (lastKey !== undefined) {
+        location[lastKey] = node;
+      }
 
-          // // connect the symbol to its parent
-          // if (node.symbol.parent !== undefined) {
-          //   console.log('[symbol] setting parent', node.symbol.parent, node.symbol.symbol);
-          //   if (!symbolContext.bfSymbolMap.has(node.symbol.parent)) {
-          //     console.log('[symbol] parent not found in', symbolContext.bfSymbolMap);
-          //   }
-          //   symbolContext.bfSymbolMap.set(node.symbol.parent, {
-          //     ref: symbolContext.bfSymbolMap.get(node.symbol.parent)!.ref,
-          //     // children: [...(symbolContext.bfSymbolMap.get(node.symbol.parent)?.children ?? []),
-          //     // node.symbol.symbol],
-          //     children: new Set([
-          //       ...Array.from(symbolContext.bfSymbolMap.get(node.symbol.parent)?.children ?? []),
-          //       node.symbol.symbol,
-          //     ]),
-          //   });
-          // }
-        }
-        const { ref } = child as any;
-        // console.log('current ref on child', ref);
-        if (typeof ref === 'function') ref(node);
-        else if (ref) {
-          ref.current = node;
-        }
-      },
-      // name,
-    ),
+      // console.log('setting child ref', index, node, node.name);
+      // if (node !== null && 'name' in node && node.name !== undefined) {
+      //   console.log('setting ref', node.name, node);
+      //   context.bfMap.set(node.name, node);
+      // }
+      // add symbol the map
+      if (node !== null && 'name' in node && node.name !== undefined) {
+        // console.log('[symbol] setting ref', node.name, node);
+        symbolContext.bfSymbolMap.set(node.name.symbol, {
+          ref: node,
+          children: new Set(),
+        });
+        // console.log('[symbol] symbolMap after', symbolContext.bfSymbolMap.get(node.name.symbol));
+
+        // // connect the symbol to its parent
+        // if (node.symbol.parent !== undefined) {
+        //   console.log('[symbol] setting parent', node.symbol.parent, node.symbol.symbol);
+        //   if (!symbolContext.bfSymbolMap.has(node.symbol.parent)) {
+        //     console.log('[symbol] parent not found in', symbolContext.bfSymbolMap);
+        //   }
+        //   symbolContext.bfSymbolMap.set(node.symbol.parent, {
+        //     ref: symbolContext.bfSymbolMap.get(node.symbol.parent)!.ref,
+        //     // children: [...(symbolContext.bfSymbolMap.get(node.symbol.parent)?.children ?? []),
+        //     // node.symbol.symbol],
+        //     children: new Set([
+        //       ...Array.from(symbolContext.bfSymbolMap.get(node.symbol.parent)?.children ?? []),
+        //       node.symbol.symbol,
+        //     ]),
+        //   });
+        // }
+      }
+      const { ref } = child as any;
+      // console.log('current ref on child', ref);
+      if (typeof ref === 'function') ref(node);
+      else if (ref) {
+        ref.current = node;
+      }
+    }),
+    // children: processChildren(
+    //   children,
+    //   (child, index) => (node: any) => {
+    //     childrenRef.current[index] = node;
+    //     // console.log('setting child ref', index, node, node.name);
+    //     // if (node !== null && 'name' in node && node.name !== undefined) {
+    //     //   console.log('setting ref', node.name, node);
+    //     //   context.bfMap.set(node.name, node);
+    //     // }
+    //     // add symbol the map
+    //     if (node !== null && 'name' in node && node.name !== undefined) {
+    //       // console.log('[symbol] setting ref', node.name, node);
+    //       symbolContext.bfSymbolMap.set(node.name.symbol, {
+    //         ref: node,
+    //         children: new Set(),
+    //       });
+    //       // console.log('[symbol] symbolMap after', symbolContext.bfSymbolMap.get(node.name.symbol));
+
+    //       // // connect the symbol to its parent
+    //       // if (node.symbol.parent !== undefined) {
+    //       //   console.log('[symbol] setting parent', node.symbol.parent, node.symbol.symbol);
+    //       //   if (!symbolContext.bfSymbolMap.has(node.symbol.parent)) {
+    //       //     console.log('[symbol] parent not found in', symbolContext.bfSymbolMap);
+    //       //   }
+    //       //   symbolContext.bfSymbolMap.set(node.symbol.parent, {
+    //       //     ref: symbolContext.bfSymbolMap.get(node.symbol.parent)!.ref,
+    //       //     // children: [...(symbolContext.bfSymbolMap.get(node.symbol.parent)?.children ?? []),
+    //       //     // node.symbol.symbol],
+    //       //     children: new Set([
+    //       //       ...Array.from(symbolContext.bfSymbolMap.get(node.symbol.parent)?.children ?? []),
+    //       //       node.symbol.symbol,
+    //       //     ]),
+    //       //   });
+    //       // }
+    //     }
+    //     const { ref } = child as any;
+    //     // console.log('current ref on child', ref);
+    //     if (typeof ref === 'function') ref(node);
+    //     else if (ref) {
+    //       ref.current = node;
+    //     }
+    //   },
+    // name,
+    // ),
     // children: React.Children.map(children, (child, index) => {
     //   if (isValidElement(child)) {
     //     return React.cloneElement(child as React.ReactElement<any>, {

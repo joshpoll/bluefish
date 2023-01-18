@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import { forwardRef, PropsWithChildren, useRef } from 'react';
-import { Measure, useBluefishLayout, withBluefish } from '../../bluefish';
+import { Measurable, Measure, useBluefishLayout, withBluefish } from '../../bluefish';
 import { NewBBox } from '../../NewBBox';
+import { LayoutGroup } from '../LayoutGroup';
 import { Ref } from '../Ref';
 import labelLayout from './LabelLayout';
 
@@ -49,28 +50,40 @@ export type PointLabelProps = {
   padding: number;
 };
 
-export const PointLabel = forwardRef(function PointLabel({ texts }: PointLabelProps, ref: any) {
+export const PointLabel = forwardRef(function PointLabel({ texts, avoidElements }: PointLabelProps, ref: any) {
   return (
     <PointLabelAux ref={ref}>
-      {texts.map((text) => (
-        <>
-          {text.label}
-          <Ref to={text.ref} />
-        </>
-      ))}
+      <LayoutGroup /* id="labelRefPairs" */>
+        {texts.map((text) => (
+          <LayoutGroup>
+            {text.label}
+            <Ref to={text.ref} />
+          </LayoutGroup>
+        ))}
+      </LayoutGroup>
+      <LayoutGroup>{avoidElements}</LayoutGroup>
     </PointLabelAux>
   );
 });
 
 const pointLabelMeasurePolicy = (props: {}): Measure => {
   return (measurables, constraints) => {
+    // console.log('[pointLabelMeasurePolicy]', measurables, constraints);
     // const [_label, ref] = measurables;
     // const [labelBBox, refBBox] = measurables.map((m) => m.measure(constraints));
     // const refDomRef: SVGElement | null = ref.domRef;
     // generalize this to the whole array
     // https://stackoverflow.com/a/44656332
-    let i = -1;
-    const [labels, refs] = _.partition(measurables, (_) => i++ % 2);
+
+    // let i = -1;
+    // const [labels, refs] = _.partition(measurables, (_) => i++ % 2);
+    // const labelBBoxes = labels.map((m) => m.measure(constraints));
+    // const refBBoxes = refs.map((m) => m.measure(constraints));
+    // const refDomRefs: (SVGElement | null | undefined)[] = refs.map((m) => m.domRef);
+
+    const labelRefPairs = (measurables as unknown as [Measurable[][]])[0];
+    const labels = labelRefPairs.map((m) => m[0]);
+    const refs = labelRefPairs.map((m) => m[1]);
     const labelBBoxes = labels.map((m) => m.measure(constraints));
     const refBBoxes = refs.map((m) => m.measure(constraints));
     const refDomRefs: (SVGElement | null | undefined)[] = refs.map((m) => m.domRef);
@@ -81,6 +94,9 @@ const pointLabelMeasurePolicy = (props: {}): Measure => {
         /* width: 0, height: 0 */
       };
     }
+
+    const avoidElements = (measurables as unknown as [Measurable[][], Measurable[]])[1] ?? [];
+    avoidElements.map((m) => m.measure(constraints));
 
     // if (refDomRef === null || refDomRef === undefined) {
     //   return {
@@ -104,7 +120,7 @@ const pointLabelMeasurePolicy = (props: {}): Measure => {
       // offset orientation (e.g. 'top-left')
       anchor: Anchors,
       // optional list of elements to avoid (like a line mark)
-      avoidElements: [],
+      avoidElements: avoidElements.map((m) => m.domRef).filter((d) => d !== null) as SVGElement[],
       // whether or not we should avoid the anchor points (circle1, circle2, circle3)
       avoidRefElements: true,
       // padding around canvas to allow labels to be partially offscreen

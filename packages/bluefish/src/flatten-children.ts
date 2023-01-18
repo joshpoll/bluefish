@@ -3,6 +3,7 @@ react-keyed-flatten-children (see below) */
 import { ReactNode, ReactElement, Children, isValidElement, cloneElement } from 'react';
 import { isContextProvider, isFragment } from 'react-is';
 import { Fragment } from './components/Fragment';
+import { LayoutGroup } from './components/LayoutGroup';
 
 // jmp addition: inlining b/c ReactChild is deprecated
 export type ReactChild = ReactElement | string | number;
@@ -52,6 +53,97 @@ export const flattenChildren = (children: ReactNode, depth: number = 0, keys: (s
     }
     return acc;
   }, []);
+
+export type ChildGroup =
+  // single child
+  | ReactChild
+  // LayoutGroup with no key
+  | ChildGroup[]
+  // LayoutGroup with key
+  | { key: string; value: ChildGroup[] };
+
+// TODO: the way layoutKeys should work is that we need to use it to index into the returned
+// object later... I think?
+export const flattenChildrenToGroups = (
+  children: ReactNode,
+  depth: number = 0,
+  keys: (string | number)[] = [],
+  // layoutKeys: (string | number)[] = [],
+): ChildGroup[] => {
+  const result = Children.toArray(children).reduce((acc: ChildGroup[], node) => {
+    if (isFragment(node)) {
+      acc.push.apply(
+        acc,
+        flattenChildrenToGroups(
+          node.props.children,
+          depth + 1,
+          /**
+           * No need for index fallback, React will always assign keys
+           * See: https://reactjs.org/docs/react-api.html#reactchildrentoarray
+           */
+          keys.concat(node.key!),
+          // layoutKeys,
+        ),
+      );
+    }
+    // else if (isContextProvider(node)) {
+    //   // like fragment case, but still renders the provider
+    //   // TODO: I'm not sure this actually works correctly since the children of the provider are
+    //   // never added to the map...
+    //   acc.push(
+    //     cloneElement(node, {
+    //       key: keys.concat(String(node.key)).join('.'),
+    //       children: flattenChildrenToGroups(node.props.children, depth + 1, keys.concat(node.key!) /* layoutKeys */),
+    //     }),
+    //   );
+    // }
+    else {
+      if (isValidElement(node)) {
+        const newNode = cloneElement(node, {
+          key: keys.concat(String(node.key)).join('.'),
+        });
+        if (node.type === LayoutGroup && 'props' in node && 'children' in (node.props as any)) {
+          if ('id' in (node.props as any) && (node.props as any).id !== undefined) {
+            // named key
+            const layoutKey = (node.props as any).id;
+            // if (layoutKeys.indexOf(layoutKey) === -1) {
+            //   layoutKeys.push(layoutKey);
+            // }
+            acc.push({
+              key: layoutKey,
+              value: flattenChildrenToGroups(
+                (node.props as any).children,
+                depth + 1,
+                keys.concat(node.key!),
+                // layoutKeys,
+              ),
+            });
+          } else {
+            // anonymous key
+            acc.push(
+              flattenChildrenToGroups(
+                (node.props as any).children,
+                depth + 1,
+                /**
+                 * No need for index fallback, React will always assign keys
+                 * See: https://reactjs.org/docs/react-api.html#reactchildrentoarray
+                 */
+                keys.concat(node.key!),
+                // layoutKeys,
+              ),
+            );
+          }
+        } else {
+          acc.push(newNode);
+        }
+      } else if (typeof node === 'string' || typeof node === 'number') {
+        acc.push(node);
+      }
+    }
+    return acc;
+  }, []);
+  return result;
+};
 
 export type StructureChildrenResult = {
   object: { [key: string]: ReactChild[] };

@@ -15,6 +15,24 @@ use these ones:
 Change processChildren so if it comes across a layout key it puts the child in an object using that
 key.
 
+
+<Child1 />
+<Child2 />
+<Child3 />
+
+<Fragment layoutKey={'plotMarkReified'}>
+  <Child1 />
+  <Child2 />
+  <Child3 />
+</Fragment>
+
+<Child1 />
+<Fragment layoutKey={'plotMarkReified'}>
+  <Child2 />
+</Fragment>
+<Child3 />
+
+
 */
 
 export {};
