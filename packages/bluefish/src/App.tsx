@@ -57,6 +57,7 @@ import { Tree2 } from './examples/grammars/gotree/gotree-ex2';
 import { NodeProps, Tree3 } from './examples/grammars/gotree/gotree-ex3';
 import { Tree4 } from './examples/grammars/gotree/gotree-ex4';
 import { RELATIONS, Tree5 } from './examples/grammars/gotree/gotree-ex5';
+import { RectPath } from './examples/grammars/gog/marks/RectPath';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -111,6 +112,88 @@ function App() {
         </ColUseState>
       </svg>
       <br /> */}
+      <SVG width={500} height={500}>
+        <RectPath
+          x={Math.PI / 2}
+          y={10}
+          width={Math.PI / 2}
+          height={20}
+          xyScale={({ width, height }) =>
+            (theta, r) => ({
+              x: width / 2 + r * Math.cos(theta),
+              y: height / 2 + r * Math.sin(theta),
+            })}
+          fill={'firebrick'}
+          stroke={'white'}
+          strokeWidth={2}
+        />
+        <RectPath
+          x={Math.PI}
+          y={10}
+          width={Math.PI / 2}
+          height={20}
+          xyScale={({ width, height }) =>
+            (theta, r) => ({
+              x: width / 2 + r * Math.cos(theta),
+              y: height / 2 + r * Math.sin(theta),
+            })}
+          fill={'cornflowerblue'}
+          stroke={'white'}
+          strokeWidth={2}
+        />
+        <RectPath
+          x={Math.PI * 1.5}
+          y={10}
+          width={Math.PI / 2}
+          height={20}
+          xyScale={({ width, height }) =>
+            (theta, r) => ({
+              x: width / 2 + r * Math.cos(theta),
+              y: height / 2 + r * Math.sin(theta),
+            })}
+          fill={'coral'}
+          stroke={'white'}
+          strokeWidth={2}
+        />
+        <RectPath
+          x={Math.PI * 2}
+          y={10}
+          width={Math.PI / 2}
+          height={20}
+          xyScale={({ width, height }) =>
+            (theta, r) => ({
+              x: width / 2 + r * Math.cos(theta),
+              y: height / 2 + r * Math.sin(theta),
+            })}
+          fill={'olive'}
+          stroke={'white'}
+          strokeWidth={2}
+        />
+      </SVG>
+      <SVG width={800} height={200}>
+        <Padding left={40} top={10} right={20} bottom={30}>
+          <Plot
+            data={alphabet}
+            x={({ width }) =>
+              scaleBand(
+                alphabet.map((d) => d.letter),
+                [0, width],
+              ).padding(0.1)
+            }
+            y={({ height }) => scaleLinear([0, _.max(alphabet.map((d) => +d.frequency))!], [0, height])}
+            color={() =>
+              scaleSequential(interpolateBlues).domain([
+                _.min(alphabet.map((d) => +d.frequency))!,
+                _.max(alphabet.map((d) => +d.frequency))!,
+              ])
+            }
+          >
+            {/* <BarY encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
+            <NewBarY spacing={5} x={'letter'} y={'frequency'} color={'frequency'} />
+            {/* <BarYWithBFN encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
+          </Plot>
+        </Padding>
+      </SVG>
       <SVG width={500} height={300}>
         <Col spacing={10} alignment={'center'}>
           <Tree1
