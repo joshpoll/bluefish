@@ -32,12 +32,16 @@ export type Layout2 = (props: {
 // to give it a "paint" or "render" function that just returns the raw SVG.
 
 export const Layout = withBluefish((props: React.PropsWithChildren<{ layout: useLayout; parentProps: any }>) => {
-  const { domRef, bbox, children } = useBluefishLayout({}, props.parentProps, (measurables, _constraints) =>
+  const { id, domRef, bbox, children } = useBluefishLayout({}, props.parentProps, (measurables, _constraints) =>
     props.layout(measurables),
   );
 
   return (
-    <g ref={domRef} transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}>
+    <g
+      id={id}
+      ref={domRef}
+      transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}
+    >
       {children}
     </g>
   );

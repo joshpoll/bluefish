@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { forwardRef, PropsWithChildren, useRef } from 'react';
 import { Measurable, Measure, useBluefishLayout, withBluefish } from '../../bluefish';
+import { ReactChild } from '../../flatten-children';
 import { NewBBox } from '../../NewBBox';
 import { LayoutGroup } from '../LayoutGroup';
 import { Ref } from '../Ref';
@@ -45,7 +46,7 @@ export type PointLabelProps = {
   compare: ((a: any, b: any) => number) | undefined;
   offset: number[];
   anchor: readonly (keyof typeof anchorCode)[];
-  avoidElements: any[];
+  avoidElements: ReactChild[];
   avoidRefElements: boolean;
   padding: number;
 };
@@ -88,6 +89,11 @@ const pointLabelMeasurePolicy = (props: {}): Measure => {
     const refBBoxes = refs.map((m) => m.measure(constraints));
     const refDomRefs: (SVGElement | null | undefined)[] = refs.map((m) => m.domRef);
 
+    const avoidElements = (measurables as unknown as [Measurable[][], Measurable[]])[1] ?? [];
+    avoidElements.map((m) => m.measure(constraints));
+    const avoidElementsRefs: (SVGElement | null | undefined)[] = avoidElements.map((m) => m.domRef);
+
+    // console.log('refDomRefs', refDomRefs);
     // early return if we don't have refs yet
     if (refDomRefs.some((refDomRef) => refDomRef === null || refDomRef === undefined)) {
       return {
@@ -95,8 +101,17 @@ const pointLabelMeasurePolicy = (props: {}): Measure => {
       };
     }
 
-    const avoidElements = (measurables as unknown as [Measurable[][], Measurable[]])[1] ?? [];
-    avoidElements.map((m) => m.measure(constraints));
+    // console.log('avoidElementsRefs', avoidElementsRefs);
+    // early return if we don't have refs yet
+    if (avoidElementsRefs.some((refDomRef) => refDomRef === null || refDomRef === undefined)) {
+      return {
+        /* width: 0, height: 0 */
+      };
+    }
+    // console.log(
+    //   'avoidElementsRefs',
+    //   avoidElementsRefs.map((refDomRef) => refDomRef?.outerHTML),
+    // );
 
     // if (refDomRef === null || refDomRef === undefined) {
     //   return {
@@ -120,7 +135,7 @@ const pointLabelMeasurePolicy = (props: {}): Measure => {
       // offset orientation (e.g. 'top-left')
       anchor: Anchors,
       // optional list of elements to avoid (like a line mark)
-      avoidElements: avoidElements.map((m) => m.domRef).filter((d) => d !== null) as SVGElement[],
+      avoidElements: avoidElementsRefs as SVGElement[] /* early return guarantees this */,
       // whether or not we should avoid the anchor points (circle1, circle2, circle3)
       avoidRefElements: true,
       // padding around canvas to allow labels to be partially offscreen
@@ -168,10 +183,14 @@ const pointLabelMeasurePolicy = (props: {}): Measure => {
 };
 
 export const PointLabelAux = withBluefish((props: PropsWithChildren<{}>) => {
-  const { domRef, bbox, children } = useBluefishLayout({}, props, pointLabelMeasurePolicy(props));
+  const { id, domRef, bbox, children } = useBluefishLayout({}, props, pointLabelMeasurePolicy(props));
 
   return (
-    <g ref={domRef} transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}>
+    <g
+      id={id}
+      ref={domRef}
+      transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}
+    >
       {children}
     </g>
   );

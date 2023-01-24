@@ -24,10 +24,11 @@ const rectMeasurePolicy = ({ x, y, width, height, xScale, yScale }: RectScalePro
 export const RectScale = withBluefish((props: RectScaleProps) => {
   const { name, ...rest } = props;
 
-  const { domRef, bbox } = useBluefishLayout({}, props, rectMeasurePolicy(props));
+  const { id, domRef, bbox } = useBluefishLayout({}, props, rectMeasurePolicy(props));
 
   return (
     <rect
+      id={id}
       ref={domRef}
       {...rest}
       x={bbox?.left ?? 0}

@@ -46,10 +46,14 @@ const groupMeasurePolicy: Measure = (measurables, constraints) => {
 };
 
 export const Group = withBluefish((props: PropsWithChildren<{}>) => {
-  const { domRef, bbox, children } = useBluefishLayout({}, props, groupMeasurePolicy);
+  const { id, domRef, bbox, children } = useBluefishLayout({}, props, groupMeasurePolicy);
 
   return (
-    <g ref={domRef} transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}>
+    <g
+      id={id}
+      ref={domRef}
+      transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}
+    >
       {children}
     </g>
   );

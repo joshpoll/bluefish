@@ -37,10 +37,11 @@ export const textMeasurePolicy = (props: TextProps) => {
 
 export const Text = withBluefish((props: TextProps) => {
   const { name, ...rest } = props;
-  const { domRef, bbox } = useBluefishLayout({}, props, textMeasurePolicy(props));
+  const { id, domRef, bbox } = useBluefishLayout({}, props, textMeasurePolicy(props));
 
   return (
     <g
+      id={id}
       ref={domRef}
       transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})
 scale(${bbox?.coord?.scale?.x ?? 1} ${bbox?.coord?.scale?.y ?? 1})`}

@@ -125,10 +125,11 @@ const dotMeasurePolicy = ({ cx, cy, r, xScale, yScale }: DotScaleProps): Measure
 export const DotScale = withBluefish((props: DotScaleProps) => {
   const { xScale, yScale, name, ...rest } = props;
 
-  const { bbox, domRef } = useBluefishLayout({}, props, dotMeasurePolicy(props));
+  const { id, bbox, domRef } = useBluefishLayout({}, props, dotMeasurePolicy(props));
 
   return (
     <g
+      id={id}
       ref={domRef}
       transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})
 scale(${bbox?.coord?.scale?.x ?? 1} ${bbox?.coord?.scale?.y ?? 1})`}

@@ -100,10 +100,14 @@ const colMeasurePolicy =
 // });
 
 export const Col = withBluefish((props: PropsWithChildren<ColProps>) => {
-  const { domRef, bbox, children } = useBluefishLayout({}, props, colMeasurePolicy(props));
+  const { id, domRef, bbox, children } = useBluefishLayout({}, props, colMeasurePolicy(props));
 
   return (
-    <g ref={domRef} transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}>
+    <g
+      id={id}
+      ref={domRef}
+      transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}
+    >
       {children}
     </g>
   );

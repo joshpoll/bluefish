@@ -3,7 +3,7 @@ import { withBluefish, useBluefishLayout, PropsWithBluefish } from '../bluefish'
 export type RectProps = PropsWithBluefish<React.SVGProps<SVGRectElement>>;
 
 export const Rect = withBluefish((props: RectProps) => {
-  const { domRef, bbox } = useBluefishLayout({}, props, () => {
+  const { id, domRef, bbox } = useBluefishLayout({}, props, () => {
     const { x, y, width, height } = props;
     return {
       left: x !== undefined ? +x : undefined,
@@ -18,6 +18,7 @@ export const Rect = withBluefish((props: RectProps) => {
   return (
     // translate and scale based on $bbox.coord
     <g
+      id={id}
       ref={domRef}
       transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})
 scale(${bbox?.coord?.scale?.x ?? 1} ${bbox?.coord?.scale?.y ?? 1})`}

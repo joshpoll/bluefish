@@ -89,10 +89,14 @@ const labelMeasurePolicy =
   };
 
 export const Label = withBluefish((props: LabelProps) => {
-  const { domRef, bbox, children } = useBluefishLayout({}, props, labelMeasurePolicy(props));
+  const { id, domRef, bbox, children } = useBluefishLayout({}, props, labelMeasurePolicy(props));
 
   return (
-    <g ref={domRef} transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}>
+    <g
+      id={id}
+      ref={domRef}
+      transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}
+    >
       {children}
     </g>
   );

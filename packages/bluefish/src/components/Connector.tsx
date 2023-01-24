@@ -107,13 +107,14 @@ const connectorMeasurePolicy = (props: ConnectorProps): Measure => {
 // TODO: note that if `children` is not placed, this doesn't actually measure anything!
 // I'm not sure why...
 export const Connector = withBluefish((props: PropsWithChildren<ConnectorProps>) => {
-  const { bbox, domRef, children } = useBluefishLayout({}, props, connectorMeasurePolicy(props));
+  const { id, bbox, domRef, children } = useBluefishLayout({}, props, connectorMeasurePolicy(props));
 
   const { $from, $to, name, ...rest } = props;
   return (
     <>
       {children}
       <line
+        id={id}
         ref={domRef}
         {...rest}
         x1={bbox?.left ?? 0}

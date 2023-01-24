@@ -148,7 +148,16 @@ function test(
   isInside: boolean,
 ) {
   console.log('test', _x1, _x2, _y1, _y2, bm0, bm1, x1, x2, y1, y2, boundary, isInside);
-  // console.log('test computed values', bm0.outOfBounds(_x1, _y1, _x2, _y2), bm1?.getRange(_x1, _y1, _x2, _y2), !isInMarkBound(x1, y1, x2, y2, boundary), bm0.getRange(_x1, _y1, _x2, _y2));
+  // console.log(
+  //   'test computed values',
+  //   'bm0 out of bounds?',
+  //   bm0.outOfBounds(_x1, _y1, _x2, _y2),
+  //   // bm1?.getRange(_x1, _y1, _x2, _y2),
+  //   // 'in mark bound?',
+  //   // isInMarkBound(x1, y1, x2, y2, boundary),
+  //   'hits bm0?',
+  //   bm0.getRange(_x1, _y1, _x2, _y2),
+  // );
   return !(
     bm0.outOfBounds(_x1, _y1, _x2, _y2) ||
     (isInside && bm1

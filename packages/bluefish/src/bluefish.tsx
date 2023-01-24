@@ -39,6 +39,7 @@ export type Measurable = {
   name?: Symbol;
   measure(constraints: Constraints, isRef?: boolean): NewBBoxClass;
   transformStack: CoordinateTransform[] | undefined;
+  id?: string;
 };
 export type MeasureResult = Partial<NewBBox> & { boundary?: paper.Path };
 
@@ -202,7 +203,13 @@ export const useBluefishLayoutInternal = (
     symbol: symbol;
     parent?: symbol;
   },
-): /* NewBBoxWithChildren2<C> */ NewBBoxWithChildren & { boundary?: paper.Path; constraints?: Constraints } => {
+): /* NewBBoxWithChildren2<C> */ NewBBoxWithChildren & {
+  boundary?: paper.Path;
+  constraints?: Constraints;
+  id?: string;
+} => {
+  const id = useId();
+
   const context = useContext(BluefishContext);
   const symbolContext = useContext(BluefishSymbolContext);
 
@@ -248,6 +255,7 @@ export const useBluefishLayoutInternal = (
       constraints: constraintRef.current,
       // name,
       name: name,
+      id,
       get transformStack() {
         return transformStackRef.current;
       },
@@ -329,21 +337,7 @@ export const useBluefishLayoutInternal = (
         return bbox!;
       },
     }),
-    [
-      measure,
-      childrenRef,
-      setLeft,
-      setTop,
-      setRight,
-      setBottom,
-      setWidth,
-      setHeight,
-      // name,
-      name,
-      bboxClassRef,
-      props,
-      domRef,
-    ],
+    [domRef, name, id, props, measure],
   );
 
   // // set the ref in the symbol map to this ref
@@ -358,6 +352,7 @@ export const useBluefishLayoutInternal = (
 
   // console.log(`returning bbox for ${name}`, { left, top, right, bottom, width, height });
   return {
+    id,
     left: left,
     top: top,
     right: right,
@@ -512,17 +507,18 @@ export const useBluefishLayout = <T extends { children?: any; /* name?: string; 
   const domRef = useRef<any>(null);
 
   // console.log('useBluefishLayout2', props.name, props.children, ref, domRef);
-  const { left, top, bottom, right, width, height, children, coord, boundary, constraints } = useBluefishLayoutInternal(
-    measure,
-    init?.bbox ?? {},
-    init?.coord ?? {},
-    ref,
-    domRef,
-    props,
-    props.children,
-    // props.name,
-    props.name,
-  );
+  const { left, top, bottom, right, width, height, children, coord, boundary, constraints, id } =
+    useBluefishLayoutInternal(
+      measure,
+      init?.bbox ?? {},
+      init?.coord ?? {},
+      ref,
+      domRef,
+      props,
+      props.children,
+      // props.name,
+      props.name,
+    );
 
   // console.log('useBluefishLayout2 after', props.name, children, ref, domRef);
 
@@ -530,6 +526,7 @@ export const useBluefishLayout = <T extends { children?: any; /* name?: string; 
     domRef,
     boundary,
     constraints,
+    id,
     bbox: {
       left,
       top,
@@ -810,4 +807,4 @@ export const lookup = (symbol: Symbol, ...path: string[]) => {
   } as const;
 };
 
-export type PropsWithBluefish<T> = PropsWithChildren<Omit<T, 'name'>> & { name?: Symbol };
+export type PropsWithBluefish<P = unknown> = PropsWithChildren<Omit<P, 'name'>> & { name?: Symbol };

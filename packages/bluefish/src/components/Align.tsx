@@ -464,10 +464,14 @@ const alignMeasurePolicy =
   };
 
 export const AlignAux = withBluefish((props: PropsWithChildren<AlignAuxProps>) => {
-  const { domRef, children, bbox } = useBluefishLayout({}, props, alignMeasurePolicy(props));
+  const { id, domRef, children, bbox } = useBluefishLayout({}, props, alignMeasurePolicy(props));
 
   return (
-    <g ref={domRef} transform={`translate(${bbox!.coord?.translate?.x ?? 0}, ${bbox!.coord?.translate?.y ?? 0})`}>
+    <g
+      id={id}
+      ref={domRef}
+      transform={`translate(${bbox!.coord?.translate?.x ?? 0}, ${bbox!.coord?.translate?.y ?? 0})`}
+    >
       {children}
     </g>
   );

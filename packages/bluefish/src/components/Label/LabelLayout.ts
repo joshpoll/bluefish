@@ -135,7 +135,6 @@ export default function labelLayout({
     avoidElements = texts.map((d) => d.ref).concat(avoidElements);
   }
 
-  console.log('avoidElements', avoidElements);
   // generate bitmaps for layout calculation
   bitmaps = avoidElements.length
     ? markBitmaps($, avoidElements, labelInside /* , isGroupArea */)

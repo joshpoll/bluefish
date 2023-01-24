@@ -62,11 +62,12 @@ const rectMeasurePolicy = (props: RectScaleProps): Measure => {
 export const RectScale = withBluefish((props: RectScaleProps) => {
   const { yScale, name, ...rest } = props;
 
-  const { bbox, domRef } = useBluefishLayout({}, props, rectMeasurePolicy(props));
+  const { id, bbox, domRef } = useBluefishLayout({}, props, rectMeasurePolicy(props));
 
   return (
     // translate and scale based on bbox.coord
     <g
+      id={id}
       ref={domRef}
       transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})
 scale(${bbox?.coord?.scale?.x ?? 1} ${bbox?.coord?.scale?.y ?? 1})`}

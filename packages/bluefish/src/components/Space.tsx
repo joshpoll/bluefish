@@ -91,10 +91,14 @@ const spaceMeasurePolicy =
   };
 
 export const Space = withBluefish((props: PropsWithChildren<SpaceProps>) => {
-  const { domRef, bbox, children } = useBluefishLayout({}, props, spaceMeasurePolicy(props));
+  const { id, domRef, bbox, children } = useBluefishLayout({}, props, spaceMeasurePolicy(props));
 
   return (
-    <g ref={domRef} transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}>
+    <g
+      id={id}
+      ref={domRef}
+      transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}
+    >
       {children}
     </g>
   );

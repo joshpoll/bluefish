@@ -5,7 +5,7 @@ export type CircleProps = PropsWithBluefish<React.SVGProps<SVGCircleElement>>;
 
 export const Circle = withBluefish((props: CircleProps) => {
   const { name, ...rest } = props;
-  const { domRef, bbox } = useBluefishLayout({}, props, () => {
+  const { id, domRef, bbox } = useBluefishLayout({}, props, () => {
     const { cx, cy, r } = props;
     return {
       left: cx !== undefined ? +cx - +(r ?? 0) : undefined,
@@ -17,6 +17,7 @@ export const Circle = withBluefish((props: CircleProps) => {
 
   return (
     <g
+      id={id}
       ref={domRef}
       transform={`translate(${bbox.coord?.translate?.x ?? 0} ${bbox.coord?.translate?.y ?? 0})
 scale(${bbox.coord?.scale?.x ?? 1} ${bbox.coord?.scale?.y ?? 1})`}

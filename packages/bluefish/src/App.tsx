@@ -37,13 +37,13 @@ import { GlobalFrame } from './python-tutor';
 import { NewLine } from './examples/grammars/gog/marks/NewLine';
 import { NewDot } from './examples/grammars/gog/marks/NewDot';
 import { resolveRef } from './components/Ref';
-import { BluefishContextValue, useName } from './bluefish';
+import { BluefishContextValue, useName, withBluefish } from './bluefish';
 import { Rect } from './components/Rect';
 import { Col } from './components/Col';
 import { Test2 } from './components/Test2';
 import { Copy } from './components/Copy';
 import { CopyAttr } from './components/CopyAttr';
-import { Align as Align3 } from './components/Align';
+import { Align, Align as Align3 } from './components/Align';
 import { Group } from './components/Group';
 import { Circle as Circle2 } from './components/Circle';
 import { ColNewHooks } from './components/ColNewHooks';
@@ -52,6 +52,11 @@ import { TreeSymbol } from './examples/tree-symbol-test';
 import { Peritext as PeritextSymbol } from './examples/peritext-symbol-test';
 import { interpolateBlues } from 'd3-scale-chromatic';
 import { NewBarY } from './examples/grammars/gog/marks/NewBarY';
+import { Tree1 } from './examples/grammars/gotree/gotree-ex1';
+import { Tree2 } from './examples/grammars/gotree/gotree-ex2';
+import { NodeProps, Tree3 } from './examples/grammars/gotree/gotree-ex3';
+import { Tree4 } from './examples/grammars/gotree/gotree-ex4';
+import { RELATIONS, Tree5 } from './examples/grammars/gotree/gotree-ex5';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -80,6 +85,19 @@ const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | 
 </>; */
 }
 
+const CustomNode = withBluefish(<T,>(props: NodeProps<T>) => {
+  const circle = useName('circle');
+  const text = useName('text');
+
+  return (
+    <Group>
+      <Rect name={circle} width={50} height={50} fill={'cornflowerblue'} />
+      <Text name={text} contents={`${props.value}`} fontSize={'20px'} />
+      <Align center={[<Ref to={text} />, <Ref to={circle} />]} />
+    </Group>
+  );
+});
+
 function App() {
   const line = useName('line');
 
@@ -94,6 +112,140 @@ function App() {
       </svg>
       <br /> */}
       <SVG width={500} height={300}>
+        <Col spacing={10} alignment={'center'}>
+          <Tree1
+            data={{
+              value: 1,
+              subtrees: [
+                {
+                  value: 2,
+                  subtrees: [{ value: 3 }, { value: 4 }],
+                },
+                {
+                  value: 5,
+                  subtrees: [{ value: 6 }, { value: 7 }],
+                },
+              ],
+            }}
+          />
+          <Text contents={'flat component'} />
+        </Col>
+      </SVG>
+      <SVG width={500} height={300}>
+        <Col spacing={10} alignment={'center'}>
+          <Tree2
+            data={{
+              value: 1,
+              subtrees: [
+                {
+                  value: 2,
+                  subtrees: [{ value: 3 }, { value: 4 }],
+                },
+                {
+                  value: 5,
+                  subtrees: [{ value: 6 }, { value: 7 }],
+                },
+              ],
+            }}
+          />
+          <Text contents={'node factored out'} />
+        </Col>
+      </SVG>
+      <SVG width={500} height={300}>
+        <Col spacing={10} alignment={'center'}>
+          <Tree3
+            data={{
+              value: 1,
+              subtrees: [
+                {
+                  value: 2,
+                  subtrees: [{ value: 3 }, { value: 4 }],
+                },
+                {
+                  value: 5,
+                  subtrees: [{ value: 6 }, { value: 7 }],
+                },
+              ],
+            }}
+            encoding={{
+              node: CustomNode,
+            }}
+          />
+          <Text contents={'node in encoding'} />
+        </Col>
+      </SVG>
+      <SVG width={500} height={300}>
+        <Col spacing={10} alignment={'center'}>
+          <Tree4
+            data={{
+              value: 1,
+              subtrees: [
+                {
+                  value: 2,
+                  subtrees: [{ value: 3 }, { value: 4 }],
+                },
+                {
+                  value: 5,
+                  subtrees: [{ value: 6 }, { value: 7 }],
+                },
+              ],
+            }}
+            encoding={{
+              node: CustomNode,
+            }}
+          />
+          <Text contents={'link in encoding'} />
+        </Col>
+      </SVG>
+      <SVG width={500} height={500}>
+        <Col spacing={10} alignment={'center'}>
+          <Tree5
+            data={{
+              value: 1,
+              subtrees: [
+                {
+                  value: 2,
+                  subtrees: [{ value: 3 }, { value: 4 }],
+                },
+                {
+                  value: 5,
+                  subtrees: [{ value: 6 }, { value: 7 }],
+                },
+              ],
+            }}
+            encoding={{
+              node: CustomNode,
+              link: () => null,
+              rootSubtree: RELATIONS.row({}),
+              subtreeSubtree: RELATIONS.row({}),
+            }}
+          />
+          <Tree5
+            data={{
+              value: 1,
+              subtrees: [
+                {
+                  value: 2,
+                  subtrees: [{ value: 3 }, { value: 4 }],
+                },
+                {
+                  value: 5,
+                  subtrees: [{ value: 6 }, { value: 7 }],
+                },
+              ],
+            }}
+            encoding={{
+              node: CustomNode,
+              // link: () => null,
+              rootSubtree: RELATIONS.row({}),
+              subtreeSubtree: RELATIONS.col({}),
+            }}
+          />
+          <Text contents={'relations in encoding'} />
+        </Col>
+      </SVG>
+      <br />
+      <SVG width={500} height={300}>
         <Col spacing={5} alignment={'center'}>
           <Padding left={40} top={10} right={20} bottom={30}>
             <Plot
@@ -104,7 +256,16 @@ function App() {
               color={() => () => 'black'}
             >
               <NewLine name={line} x={'miles'} y={'gas'} />
-              <NewDot x={'miles'} y={'gas'} label={{ field: 'year', avoid: [line] }} />
+              <NewDot
+                x={'miles'}
+                y={'gas'}
+                label={{
+                  field: 'year',
+                  avoid: [
+                    /* line */
+                  ],
+                }}
+              />
             </Plot>
           </Padding>
           <Text contents={'this is a test caption'} />
