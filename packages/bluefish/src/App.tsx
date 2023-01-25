@@ -170,30 +170,6 @@ function App() {
           strokeWidth={2}
         />
       </SVG>
-      <SVG width={800} height={200}>
-        <Padding left={40} top={10} right={20} bottom={30}>
-          <Plot
-            data={alphabet}
-            x={({ width }) =>
-              scaleBand(
-                alphabet.map((d) => d.letter),
-                [0, width],
-              ).padding(0.1)
-            }
-            y={({ height }) => scaleLinear([0, _.max(alphabet.map((d) => +d.frequency))!], [0, height])}
-            color={() =>
-              scaleSequential(interpolateBlues).domain([
-                _.min(alphabet.map((d) => +d.frequency))!,
-                _.max(alphabet.map((d) => +d.frequency))!,
-              ])
-            }
-          >
-            {/* <BarY encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
-            <NewBarY spacing={5} x={'letter'} y={'frequency'} color={'frequency'} />
-            {/* <BarYWithBFN encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
-          </Plot>
-        </Padding>
-      </SVG>
       <SVG width={500} height={300}>
         <Col spacing={10} alignment={'center'}>
           <Tree1
