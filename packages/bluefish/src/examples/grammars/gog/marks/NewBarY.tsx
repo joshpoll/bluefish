@@ -16,7 +16,7 @@ export type NewBarYProps<T> = Omit<React.SVGProps<SVGRectElement>, 'x' | 'y' | '
   spacing?: number;
 };
 
-export const NewBarY = forwardRef(function NewBarY(props: NewBarYProps<any>, ref: any) {
+export const NewBarY = withBluefish(function NewBarY(props: NewBarYProps<any>) {
   const context = React.useContext(PlotContext);
   const data = props.data ?? context.data;
   const totalWidth = props.totalWidth ?? context.dimensions.width;
@@ -24,7 +24,7 @@ export const NewBarY = forwardRef(function NewBarY(props: NewBarYProps<any>, ref
   console.log('colorScale', colorScale);
 
   return (
-    <Row ref={ref} totalWidth={totalWidth} spacing={props.spacing!} alignment={'bottom'}>
+    <Row totalWidth={totalWidth} spacing={props.spacing!} alignment={'bottom'}>
       {(data as any[]).map((d) => (
         <RectScale
           height={+d[props.y]}

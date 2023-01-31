@@ -58,6 +58,7 @@ import { NodeProps, Tree3 } from './examples/grammars/gotree/gotree-ex3';
 import { Tree4 } from './examples/grammars/gotree/gotree-ex4';
 import { RELATIONS, Tree5 } from './examples/grammars/gotree/gotree-ex5';
 import { RectPath } from './examples/grammars/gog/marks/RectPath';
+import { Polio } from './examples/grammars/gog/examples/polio';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -112,6 +113,9 @@ function App() {
         </ColUseState>
       </svg>
       <br /> */}
+      <SVG width={500} height={500}>
+        <Polio />
+      </SVG>
       <SVG width={500} height={500}>
         <RectPath
           x={Math.PI / 2}

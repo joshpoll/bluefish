@@ -92,6 +92,7 @@ const attachRefs = (
   callbackRef: (child: ReactChild, keys: (string | number)[]) => (node: any) => void,
   keys: (string | number)[] = [],
 ): ChildGroup[] => {
+  // console.log('attachRefs', childGroups, keys);
   return childGroups.map((childGroup, index) => {
     if (Array.isArray(childGroup)) {
       return attachRefs(childGroup, callbackRef, [...keys, index]);
@@ -208,6 +209,8 @@ export const useBluefishLayoutInternal = (
   constraints?: Constraints;
   id?: string;
 } => {
+  // console.log('[useBluefishLayoutInternal] children', children);
+
   const id = useId();
 
   const context = useContext(BluefishContext);
@@ -563,10 +566,14 @@ export const RefContext = React.createContext<RefContextValue>({
   // },
 });
 
+export type PropsWithFunctionChildren<P = unknown> = P & {
+  children?: React.ReactNode | ((data: any) => React.ReactNode) | undefined;
+};
+
 // injects name (and debug. still todo)
 // injects ref
 export const withBluefish = <ComponentProps,>(WrappedComponent: React.ComponentType<ComponentProps>) =>
-  forwardRef((props: PropsWithChildren<ComponentProps> & { /* name?: any; */ name?: Symbol }, ref: any) => {
+  forwardRef((props: PropsWithFunctionChildren<ComponentProps> & { /* name?: any; */ name?: Symbol }, ref: any) => {
     /* TODO: need to collect refs maybe?? */
     const {
       ref: contextRef,
@@ -808,3 +815,4 @@ export const lookup = (symbol: Symbol, ...path: string[]) => {
 };
 
 export type PropsWithBluefish<P = unknown> = PropsWithChildren<Omit<P, 'name'>> & { name?: Symbol };
+export type PropsWithBluefishFn<P = unknown> = PropsWithFunctionChildren<Omit<P, 'name'>> & { name?: Symbol };

@@ -13,7 +13,7 @@ import {
 
 export type HorizontalAlignment = 'left' | 'center' | 'right';
 
-export type ColProps = ({ spacing: number } | { totalHeight: number }) & {
+export type ColProps = ({ spacing: number } | { totalHeight: number } | { spacing: number; totalHeight: number }) & {
   x?: number;
   y?: number;
   alignment: HorizontalAlignment;
@@ -22,6 +22,13 @@ export type ColProps = ({ spacing: number } | { totalHeight: number }) & {
 const colMeasurePolicy =
   (options: ColProps): Measure =>
   (measurables, constraints: Constraints) => {
+    if ('spacing' in options && 'totalHeight' in options) {
+      constraints = {
+        ...constraints,
+        height: (options.totalHeight - options.spacing * (measurables.length - 1)) / measurables.length,
+      };
+    }
+
     console.log('[colMeasurePolicy2] inputs', options, measurables, constraints);
     const placeables = measurables.map((measurable) => measurable.measure(constraints));
     console.log('[colMeasurePolicy2] placeables', placeables);
