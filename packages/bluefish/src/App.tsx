@@ -113,6 +113,10 @@ function App() {
   const fixed1 = useName('fixed1');
   const fixed2 = useName('fixed2');
 
+  const autoAssign1 = useName('autoAssign1');
+  const autoAssign2 = useName('autoAssign2');
+  const autoAssign3 = useName('autoAssign3');
+
   return (
     <div className="App">
       {/* <svg width={500} height={500}>
