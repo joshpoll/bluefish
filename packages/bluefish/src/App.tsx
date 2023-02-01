@@ -59,6 +59,10 @@ import { Tree4 } from './examples/grammars/gotree/gotree-ex4';
 import { RELATIONS, Tree5 } from './examples/grammars/gotree/gotree-ex5';
 import { ChartAccent } from './examples/chart-accent';
 import { MinError } from './examples/min-error';
+import { RectPath } from './examples/grammars/gog/marks/RectPath';
+import { Polio } from './examples/grammars/gog/examples/polio';
+import { AlignNew } from './components/AlignNew';
+import { Distribute } from './components/Distribute';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -105,6 +109,9 @@ function App() {
 
   const ex1 = useName('ex1');
   const ex2 = useName('ex2');
+
+  const fixed1 = useName('fixed1');
+  const fixed2 = useName('fixed2');
 
   return (
     <div className="App">
