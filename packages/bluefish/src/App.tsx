@@ -60,6 +60,7 @@ import { RELATIONS, Tree5 } from './examples/grammars/gotree/gotree-ex5';
 import { RectPath } from './examples/grammars/gog/marks/RectPath';
 import { Polio } from './examples/grammars/gog/examples/polio';
 import { AlignNew } from './components/AlignNew';
+import { Distribute } from './components/Distribute';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -107,6 +108,9 @@ function App() {
   const ex1 = useName('ex1');
   const ex2 = useName('ex2');
 
+  const fixed1 = useName('fixed1');
+  const fixed2 = useName('fixed2');
+
   return (
     <div className="App">
       {/* <svg width={500} height={500}>
@@ -117,6 +121,16 @@ function App() {
         </ColUseState>
       </svg>
       <br /> */}
+      <SVG width={500} height={500}>
+        <AlignNew x={250} y={250} alignment="centerHorizontally">
+          <Line name={fixed1} x1={20} y1={20} x2={20} y2={30} strokeWidth={2} stroke={'black'} />
+          <Text name={fixed2} contents={'1'} />
+        </AlignNew>
+        <Distribute direction="vertical" spacing={10}>
+          <Ref to={fixed1} />
+          <Ref to={fixed2} />
+        </Distribute>
+      </SVG>
       <SVG width={500} height={500}>
         <AlignNew x={250} y={250}>
           <Line guidePrimary="bottomCenter" x1={20} y1={20} x2={20} y2={30} strokeWidth={2} stroke={'black'} />
