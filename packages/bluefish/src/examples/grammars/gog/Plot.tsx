@@ -168,7 +168,7 @@ export const Plot: React.FC<PropsWithBluefish<PlotProps>> = forwardRef((props, r
 export const Plot2 = withBluefish((props: PropsWithBluefish<Plot2Props>) => {
   const { children, constraints } = useBluefishLayout({}, props, groupMeasurePolicy(props));
 
-  let { data, width, height, children: _, name, ...scales } = props;
+  let { data, width, height, children: _, name, guidePrimary, ...scales } = props;
   // compute dimensions from outer width, height, and margins
   const dimensions = { width: width ?? constraints?.width ?? 0, height: height ?? constraints?.height ?? 0 };
   // reify scales

@@ -41,7 +41,15 @@ export const Polio = withBluefish((props: any) => {
         ])
       }
     >
-      <GroupBy field={'state'} totalWidth={500} horizontalSpacing={5} verticalSpacing={5} positioning={USMap}>
+      {/* <Partition>? */}
+      <GroupBy
+        field={'state'}
+        totalWidth={500}
+        horizontalSpacing={5}
+        verticalSpacing={5}
+        // numRows={10}
+        positioning={USMap}
+      >
         {({ key, data }) => <NewBarY totalWidth={40} spacing={0} x={'year'} y={'total'} color={'total'} data={data} />}
       </GroupBy>
     </Plot>

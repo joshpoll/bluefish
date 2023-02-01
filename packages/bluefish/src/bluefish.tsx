@@ -37,6 +37,7 @@ export type Measurable = {
   props: any;
   // name: string;
   name?: Symbol;
+  guidePrimary?: Alignment2D | Alignment1D;
   measure(constraints: Constraints, isRef?: boolean): NewBBoxClass;
   transformStack: CoordinateTransform[] | undefined;
   id?: string;
@@ -258,6 +259,7 @@ export const useBluefishLayoutInternal = (
       constraints: constraintRef.current,
       // name,
       name: name,
+      guidePrimary: props.guidePrimary,
       id,
       get transformStack() {
         return transformStackRef.current;
@@ -287,7 +289,10 @@ export const useBluefishLayoutInternal = (
           //   }
           // });
           setTransformStacks(childrenRef.current, transformStackRef.current);
-          const { width, height, left, top, right, bottom, boundary } = measure(childrenRef.current, constraints);
+          const { width, height, left, top, right, bottom, coord, boundary } = measure(
+            childrenRef.current,
+            constraints,
+          );
           // console.log('measured', name, JSON.stringify({ width, height, left, top, right, bottom }));
           setWidth(width);
           setHeight(height);
@@ -296,6 +301,7 @@ export const useBluefishLayoutInternal = (
           setRight(right);
           setBottom(bottom);
           setBoundary(boundary);
+          coordRef.current = coord ?? {};
 
           bbox = new NewBBoxClass(
             { left, top, right, bottom, width, height, coord: coordRef.current },
@@ -549,6 +555,7 @@ type RefContextValue = {
     scope?: symbol;
     ref: symbol;
   };
+  guidePrimary?: Alignment2D | Alignment1D;
 };
 
 const root = Symbol('$root');
@@ -573,104 +580,118 @@ export type PropsWithFunctionChildren<P = unknown> = P & {
 // injects name (and debug. still todo)
 // injects ref
 export const withBluefish = <ComponentProps,>(WrappedComponent: React.ComponentType<ComponentProps>) =>
-  forwardRef((props: PropsWithFunctionChildren<ComponentProps> & { /* name?: any; */ name?: Symbol }, ref: any) => {
-    /* TODO: need to collect refs maybe?? */
-    const {
-      ref: contextRef,
-      parent: { scope: parentScopeSymbol, ref: parentRefSymbol },
-    } = useContext(RefContext);
-    // console.log('[withBluefish] lookup symbol', parentSymbol);
-    const symbolContext = useBluefishSymbolContext();
-    // TODO: I definitely wrote this code, but I also definitely don't understand it.
-    const mergedRef = ref ?? contextRef;
-    // console.log('[withBluefish] ref', { ref, contextRef, mergedRef });
-    // console.log('[withBluefish]', props.name, props.symbol, mergedRef);
-    // console.log('[withBluefish] name & symbol', props.name, props.symbol);
+  forwardRef(
+    (
+      props: PropsWithFunctionChildren<ComponentProps> & {
+        /* name?: any; */ name?: Symbol;
+        guidePrimary?: Alignment1D | Alignment2D;
+      },
+      ref: any,
+    ) => {
+      /* TODO: need to collect refs maybe?? */
+      const {
+        ref: contextRef,
+        parent: { scope: parentScopeSymbol, ref: parentRefSymbol },
+        guidePrimary,
+      } = useContext(RefContext);
+      // console.log('[withBluefish] lookup symbol', parentSymbol);
+      const symbolContext = useBluefishSymbolContext();
+      // TODO: I definitely wrote this code, but I also definitely don't understand it.
+      const mergedRef = ref ?? contextRef;
+      // console.log('[withBluefish] ref', { ref, contextRef, mergedRef });
+      // console.log('[withBluefish]', props.name, props.symbol, mergedRef);
+      // console.log('[withBluefish] name & symbol', props.name, props.symbol);
 
-    const id = useId();
+      const id = useId();
 
-    const autogenSymbol = useMemo(() => Symbol('AUTOGEN-' + id), [id]);
+      const autogenSymbol = useMemo(() => Symbol('AUTOGEN-' + id), [id]);
 
-    // const mergedRefSymbol = ref !== undefined ? autogenSymbol : parentRefSymbol;
+      // const mergedRefSymbol = ref !== undefined ? autogenSymbol : parentRefSymbol;
 
-    const symbol = useMemo(() => {
-      return props.name?.symbol ?? autogenSymbol;
-    }, [autogenSymbol, props.name?.symbol]);
+      const symbol = useMemo(() => {
+        return props.name?.symbol ?? autogenSymbol;
+      }, [autogenSymbol, props.name?.symbol]);
 
-    // const symbol = useMemo(() => {
-    //   if (props.symbol !== undefined) {
-    //     console.log('[withBluefish] setting symbol', props.symbol.symbol, props.symbol.parent);
-    //     symbolContext.bfSymbolMap.set(props.symbol.symbol, {
-    //       ref: undefined,
-    //       children: new Set(),
-    //     });
+      // const symbol = useMemo(() => {
+      //   if (props.symbol !== undefined) {
+      //     console.log('[withBluefish] setting symbol', props.symbol.symbol, props.symbol.parent);
+      //     symbolContext.bfSymbolMap.set(props.symbol.symbol, {
+      //       ref: undefined,
+      //       children: new Set(),
+      //     });
 
-    //     if (props.symbol.parent !== undefined) {
-    //       const symbolParent = props.symbol.parent;
+      //     if (props.symbol.parent !== undefined) {
+      //       const symbolParent = props.symbol.parent;
 
-    //       console.log(
-    //         '[withBluefish] symbolParent entry',
-    //         props.symbol.symbol,
-    //         symbolParent,
-    //         symbolContext.bfSymbolMap.get(symbolParent),
-    //       );
+      //       console.log(
+      //         '[withBluefish] symbolParent entry',
+      //         props.symbol.symbol,
+      //         symbolParent,
+      //         symbolContext.bfSymbolMap.get(symbolParent),
+      //       );
 
-    //       symbolContext.bfSymbolMap.set(symbolParent, {
-    //         ref: symbolContext.bfSymbolMap.get(symbolParent)?.ref ?? undefined,
-    //         children: symbolContext.bfSymbolMap.get(symbolParent)?.children ?? new Set(),
-    //       });
-    //     }
+      //       symbolContext.bfSymbolMap.set(symbolParent, {
+      //         ref: symbolContext.bfSymbolMap.get(symbolParent)?.ref ?? undefined,
+      //         children: symbolContext.bfSymbolMap.get(symbolParent)?.children ?? new Set(),
+      //       });
+      //     }
 
-    //     return props.symbol;
-    //   }
-    //   symbolContext.bfSymbolMap.set(autogenSymbol, {
-    //     ref: undefined,
-    //     children: new Set(),
-    //   });
+      //     return props.symbol;
+      //   }
+      //   symbolContext.bfSymbolMap.set(autogenSymbol, {
+      //     ref: undefined,
+      //     children: new Set(),
+      //   });
 
-    //   return {
-    //     symbol: autogenSymbol,
-    //   };
-    // }, [autogenSymbol, props.symbol, symbolContext.bfSymbolMap]);
+      //   return {
+      //     symbol: autogenSymbol,
+      //   };
+      // }, [autogenSymbol, props.symbol, symbolContext.bfSymbolMap]);
 
-    // console.log('parentSymbol', parentSymbol);
-    // console.log('[withBluefish] symbol', symbol);
-    // console.log(
-    //   '[withBluefish] ref',
-    //   symbol,
-    //   ref === null ? null : typeof ref,
-    //   contextRef === null ? null : typeof contextRef,
-    // );
-    if (ref === null) {
-      // we are inheriting from above, so connect the symbol above to this one
-      // console.log('[withBluefish] connecting', symbol, 'to REF parent', parentRefSymbol);
-      symbolContext.bfSymbolMap.set(parentRefSymbol, {
-        ref: symbol,
-        children: symbolContext.bfSymbolMap.get(parentRefSymbol)?.children ?? new Set(),
-      });
-    }
-    // if (parentScopeSymbol !== undefined) {
-    //   symbolContext.bfSymbolMap.set(parentScopeSymbol, {
-    //     ref: symbol,
-    //     children: symbolContext.bfSymbolMap.get(parentScopeSymbol)?.children ?? new Set(),
-    //   });
-    // }
+      // console.log('parentSymbol', parentSymbol);
+      // console.log('[withBluefish] symbol', symbol);
+      // console.log(
+      //   '[withBluefish] ref',
+      //   symbol,
+      //   ref === null ? null : typeof ref,
+      //   contextRef === null ? null : typeof contextRef,
+      // );
+      if (ref === null) {
+        // we are inheriting from above, so connect the symbol above to this one
+        // console.log('[withBluefish] connecting', symbol, 'to REF parent', parentRefSymbol);
+        symbolContext.bfSymbolMap.set(parentRefSymbol, {
+          ref: symbol,
+          children: symbolContext.bfSymbolMap.get(parentRefSymbol)?.children ?? new Set(),
+        });
+      }
+      // if (parentScopeSymbol !== undefined) {
+      //   symbolContext.bfSymbolMap.set(parentScopeSymbol, {
+      //     ref: symbol,
+      //     children: symbolContext.bfSymbolMap.get(parentScopeSymbol)?.children ?? new Set(),
+      //   });
+      // }
 
-    return (
-      // TODO: I think I also need to pass domRef here & I need to attach domRef to the WrappedComponent
-      <RefContext.Provider
-        value={{
-          ref: mergedRef,
-          parent: {
-            scope: props.name?.symbol,
-            ref: symbol,
-          },
-        }}
-      >
-        <WrappedComponent {...props} name={props.name ?? { symbol: autogenSymbol }} />
-      </RefContext.Provider>
-    );
-  });
+      return (
+        // TODO: I think I also need to pass domRef here & I need to attach domRef to the WrappedComponent
+        <RefContext.Provider
+          value={{
+            ref: mergedRef,
+            parent: {
+              scope: props.name?.symbol,
+              ref: symbol,
+            },
+            guidePrimary: props.guidePrimary,
+          }}
+        >
+          <WrappedComponent
+            {...props}
+            name={props.name ?? { symbol: autogenSymbol }}
+            guidePrimary={guidePrimary ?? props.guidePrimary}
+          />
+        </RefContext.Provider>
+      );
+    },
+  );
 
 export type BluefishContextValue = {
   bfMap: Map<any, React.MutableRefObject<any>>;
@@ -814,5 +835,35 @@ export const lookup = (symbol: Symbol, ...path: string[]) => {
   } as const;
 };
 
-export type PropsWithBluefish<P = unknown> = PropsWithChildren<Omit<P, 'name'>> & { name?: Symbol };
-export type PropsWithBluefishFn<P = unknown> = PropsWithFunctionChildren<Omit<P, 'name'>> & { name?: Symbol };
+export type PropsWithBluefish<P = unknown> = PropsWithChildren<Omit<P, 'name' | 'guidePrimary'>> & {
+  name?: Symbol;
+  guidePrimary?: Alignment2D | Alignment1D;
+};
+export type PropsWithBluefishFn<P = unknown> = PropsWithFunctionChildren<Omit<P, 'name' | 'guidePrimary'>> & {
+  name?: Symbol;
+  guidePrimary?: Alignment2D | Alignment1D;
+};
+
+export type Alignment2D =
+  | 'topLeft'
+  | 'topCenter'
+  | 'topRight'
+  | 'centerLeft'
+  | 'center'
+  | 'centerRight'
+  | 'bottomLeft'
+  | 'bottomCenter'
+  | 'bottomRight';
+
+// generate a union of single-key objects using Alignment2D as the keys
+export type Alignment2DObjs = { [K in Alignment2D]: { [k in K]: boolean } }[Alignment2D];
+
+export type VerticalAlignment = 'top' | 'center' | 'bottom';
+export type HorizontalAlignment = 'left' | 'center' | 'right';
+
+export type Alignment1DHorizontal = 'left' | 'centerHorizontally' | 'right';
+export type Alignment1DVertical = 'top' | 'centerVertically' | 'bottom';
+
+export type Alignment1D = Alignment1DHorizontal | Alignment1DVertical;
+
+export type Alignment1DObjs = { [K in Alignment1D]: { [k in K]: boolean } }[Alignment1D];

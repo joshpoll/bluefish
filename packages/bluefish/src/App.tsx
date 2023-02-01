@@ -28,7 +28,7 @@ import { rasterize } from './rasterize';
 import { Label, LabelTest } from './examples/label';
 import labelLayout, { Anchors } from './components/Label/LabelLayout';
 import { PointLabel } from './components/Label/PointLabel';
-import { Circle, Padding, Ref, useBluefishContext } from './main';
+import { Circle, Line, Padding, Ref, Space, useBluefishContext } from './main';
 import { GoTree } from './examples/gotree';
 import { driving } from './examples/grammars/gog/examples/driving';
 import { Plot2 as Plot, Plot2 } from './examples/grammars/gog/Plot';
@@ -59,6 +59,7 @@ import { Tree4 } from './examples/grammars/gotree/gotree-ex4';
 import { RELATIONS, Tree5 } from './examples/grammars/gotree/gotree-ex5';
 import { RectPath } from './examples/grammars/gog/marks/RectPath';
 import { Polio } from './examples/grammars/gog/examples/polio';
+import { AlignNew } from './components/AlignNew';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -103,6 +104,9 @@ const CustomNode = withBluefish(<T,>(props: NodeProps<T>) => {
 function App() {
   const line = useName('line');
 
+  const ex1 = useName('ex1');
+  const ex2 = useName('ex2');
+
   return (
     <div className="App">
       {/* <svg width={500} height={500}>
@@ -113,6 +117,55 @@ function App() {
         </ColUseState>
       </svg>
       <br /> */}
+      <SVG width={500} height={500}>
+        <AlignNew x={250} y={250}>
+          <Line guidePrimary="bottomCenter" x1={20} y1={20} x2={20} y2={30} strokeWidth={2} stroke={'black'} />
+          <Text guidePrimary="topCenter" contents={'1'} />
+        </AlignNew>
+      </SVG>
+      <SVG width={500} height={500}>
+        <AlignNew x={250} y={250}>
+          <Rect guidePrimary="bottomCenter" width={100} height={100} fill={'firebrick'} />
+          <Rect guidePrimary="topCenter" width={20} height={20} fill={'lightgreen'} />
+        </AlignNew>
+      </SVG>
+      <SVG width={500} height={500}>
+        <AlignNew x={250} y={250} alignment="center">
+          <Rect width={100} height={100} fill={'firebrick'} />
+          <Rect width={20} height={500} fill={'lightgreen'} />
+        </AlignNew>
+      </SVG>
+      <SVG width={500} height={500}>
+        <Group>
+          {/* <Group>
+            <Col spacing={5} alignment={'center'}>
+              <Line x1={20} y1={20} x2={20} y2={30} strokeWidth={2} stroke={'black'} /> */}
+          {/* <Text contents={'1'} /> */}
+          {/* <Rect width={20} height={20} fill={'red'} />
+            </Col>
+          </Group> */}
+          <Group>
+            {/* <Line name={ex1} x1={50} y1={20} x2={50} y2={30} strokeWidth={2} /> */}
+            <Rect name={ex1} width={20} height={20} fill={'red'} />
+            {/* <Text contents={'2'} /> */}
+            <Rect name={ex2} width={20} height={20} fill={'blue'} />
+            {/* <Align centerHorizontally={[<Ref to={ex1} />, <Ref to={ex2} />]} />
+            <Space vertically by={5}>
+              <Ref to={ex1} />
+              <Ref to={ex2} />
+            </Space> */}
+            <Col spacing={5} alignment={'center'}>
+              <Ref to={ex1} />
+              <Ref to={ex2} />
+            </Col>
+            {/* <Col spacing={5} alignment={'center'}>
+              <Line x1={50} y1={20} x2={50} y2={30} strokeWidth={2} /> */}
+            {/* <Text contents={'2'} /> */}
+            {/* <Rect width={20} height={20} fill={'red'} /> */}
+            {/* </Col> */}
+          </Group>
+        </Group>
+      </SVG>
       <SVG width={500} height={500}>
         <Polio />
       </SVG>

@@ -3,7 +3,12 @@ import { withBluefish, BBox, useBluefishLayout, PropsWithBluefish } from '../blu
 export type LineProps = PropsWithBluefish<React.SVGProps<SVGLineElement> & Partial<BBox>>;
 
 const lineMeasurePolicy = ({ x1, x2, y1, y2 }: LineProps) => {
-  return () => ({ width: Math.abs(+x2! - +x1!), height: Math.abs(+y2! - +y1!) });
+  return () => ({
+    left: Math.min(+x1!, +x2!),
+    top: Math.min(+y1!, +y2!),
+    width: Math.abs(+x2! - +x1!),
+    height: Math.abs(+y2! - +y1!),
+  });
 };
 
 export const Line = withBluefish((props: LineProps) => {
