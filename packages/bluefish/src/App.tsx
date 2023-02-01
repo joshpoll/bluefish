@@ -111,6 +111,10 @@ function App() {
   const fixed1 = useName('fixed1');
   const fixed2 = useName('fixed2');
 
+  const autoAssign1 = useName('autoAssign1');
+  const autoAssign2 = useName('autoAssign2');
+  const autoAssign3 = useName('autoAssign3');
+
   return (
     <div className="App">
       {/* <svg width={500} height={500}>
@@ -121,6 +125,18 @@ function App() {
         </ColUseState>
       </svg>
       <br /> */}
+      <SVG width={500} height={500}>
+        <AlignNew x={250} y={250} alignment="centerHorizontally">
+          <Rect name={autoAssign1} width={100} fill={'red'} />
+          <Rect name={autoAssign2} height={20} width={100} fill={'green'} />
+          <Rect name={autoAssign3} width={100} fill={'blue'} />
+        </AlignNew>
+        <Distribute direction="vertical" spacing={10} total={200}>
+          <Ref to={autoAssign1} />
+          <Ref to={autoAssign2} />
+          <Ref to={autoAssign3} />
+        </Distribute>
+      </SVG>
       <SVG width={500} height={500}>
         <AlignNew x={250} y={250} alignment="centerHorizontally">
           <Line name={fixed1} x1={20} y1={20} x2={20} y2={30} strokeWidth={2} stroke={'black'} />
