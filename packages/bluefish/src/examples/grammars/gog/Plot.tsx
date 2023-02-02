@@ -166,7 +166,7 @@ export const Plot: React.FC<PropsWithBluefish<PlotProps>> = forwardRef((props, r
 // then passed as data.  Copilot proposes making the scales a separate component that can be
 // composed with the marks.
 export const Plot2 = withBluefish((props: PropsWithBluefish<Plot2Props>) => {
-  const { children, constraints } = useBluefishLayout({}, props, groupMeasurePolicy(props));
+  const { children, bbox, constraints } = useBluefishLayout({}, props, groupMeasurePolicy(props));
 
   let { data, width, height, children: _, name, guidePrimary, ...scales } = props;
   // compute dimensions from outer width, height, and margins
@@ -180,7 +180,10 @@ export const Plot2 = withBluefish((props: PropsWithBluefish<Plot2Props>) => {
   const { xScale, yScale, colorScale } = renamedScales;
 
   return (
-    <g>
+    <g
+      transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})
+scale(${bbox?.coord?.scale?.x ?? 1} ${bbox?.coord?.scale?.y ?? 1})`}
+    >
       <PlotContext.Provider
         value={{
           dimensions,

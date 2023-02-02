@@ -13,6 +13,7 @@ import { Text } from '../../../../components/Text';
 import { Ref } from '../../../../components/Ref';
 import { PropsWithBluefish, useName, useNameList, withBluefish } from '../../../../bluefish';
 import _ from 'lodash';
+import { Rect } from '../../../../main';
 
 export type AxisProps<T> = PropsWithBluefish<
   Omit<React.SVGProps<SVGRectElement>, 'x' | 'y' | 'fill' | 'width' | 'height'> & {
@@ -23,6 +24,7 @@ export type AxisProps<T> = PropsWithBluefish<
     totalWidth?: number;
     spacing?: number;
     scale: any;
+    ticks: string[] | number[];
   }
 >;
 
@@ -32,9 +34,10 @@ export const Axis = withBluefish(function Axis(props: AxisProps<any>) {
   const totalWidth = props.totalWidth ?? context.dimensions.width;
   const colorScale = context.scales.colorScale;
   console.log('colorScale', colorScale);
+  console.log('axis width', totalWidth);
 
-  const scale = props.scale;
-  const ticks = scale.ticks();
+  const scale = props.scale(totalWidth);
+  const ticks = props.ticks;
 
   const path = useName('path');
   const ticksList = useNameList(_.range(ticks.length).map((i) => `tick-${i}`));
@@ -42,10 +45,13 @@ export const Axis = withBluefish(function Axis(props: AxisProps<any>) {
   return (
     <Group>
       {/* feed path the tick marks. this should generate ids to ref each point */}
-      <Path name={path} />
-      {(ticks as any[]).map((tick, i) => (
+      {/* <Path name={path} /> */}
+      {ticks.map((tick, i) => (
         // then use ids here align text to the path
-        <Text name={ticksList[i]} contents={tick} x={scale(tick)} y={0} />
+        <Group>
+          <Rect height={10} width={20} x={scale(tick)} y={0} />
+          {/* <Text name={ticksList[i]} contents={tick as string} x={scale(tick)} y={0} /> */}
+        </Group>
       ))}
       {/* then use ids here to align connectors between the twos */}
       {/* {(data as any[]).map((d, i) => (

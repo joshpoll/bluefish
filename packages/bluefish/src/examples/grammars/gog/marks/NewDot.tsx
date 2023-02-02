@@ -38,6 +38,8 @@ export type NewDotProps<T> = PropsWithBluefish<
 export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
   const context = React.useContext(PlotContext);
   const data = props.data ?? context.data;
+  const xScale = context.scales.xScale;
+  const yScale = context.scales.yScale;
 
   const dots = useNameList(_.range(data.length).map((i) => `dot-${i}`));
 
@@ -51,17 +53,19 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
           r={3}
           stroke={props.stroke ?? 'black'}
           fill={props.color ?? 'white'}
-          xScale={(width) =>
-            scaleLinear(
-              [min<number>(data.map((d: any) => +d[props.x]))!, max<number>(data.map((d: any) => +d[props.x]))!],
-              [0, width],
-            )
+          xScale={
+            (width) => xScale(width)
+            // scaleLinear(
+            //   [min<number>(data.map((d: any) => +d[props.x]))!, max<number>(data.map((d: any) => +d[props.x]))!],
+            //   [0, width],
+            // )
           }
-          yScale={(height) =>
-            scaleLinear(
-              [min<number>(data.map((d: any) => +d[props.y]))!, max<number>(data.map((d: any) => +d[props.y]))!],
-              [height, 0],
-            )
+          yScale={
+            (height) => yScale(height)
+            // scaleLinear(
+            //   [min<number>(data.map((d: any) => +d[props.y]))!, max<number>(data.map((d: any) => +d[props.y]))!],
+            //   [height, 0],
+            // )
           }
         />
       ))}

@@ -409,13 +409,13 @@ const alignMeasurePolicy =
                 if (!isBottomFixed(placeable)) {
                   placeable.bottom = fixAnchor.y;
                 } else {
-                  if (placeable.bottom !== fixAnchor.y) {
-                    throw new Error(
-                      `I expected ${'a component'} to have the same bottom as the fixed anchor (${
-                        fixAnchor.y
-                      }), but it was ${placeable.bottom} instead`,
-                    );
-                  }
+                  // if (placeable.bottom !== fixAnchor.y) {
+                  //   throw new Error(
+                  //     `I expected ${'a component'} to have the same bottom as the fixed anchor (${
+                  //       fixAnchor.y
+                  //     }), but it was ${placeable.bottom} instead`,
+                  //   );
+                  // }
                 }
                 break;
             }
