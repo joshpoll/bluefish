@@ -1,41 +1,40 @@
+import React from 'react';
 import { withBluefish } from '../bluefish';
-import SmilesDrawer from '../../node_modules/smiles-drawer/app';
+import { SVG } from '../components/SVG';
+import { Group } from '../components/Group';
 
-export const Polio = withBluefish((props: any) => {
-  let input = document.getElementById('example-input');
+const SmilesDrawer = require('smiles-drawer/app.js');
+
+export const ChemistryDiagram = withBluefish((props: any) => {
   let options = {};
 
   // Initialize the drawer to draw to canvas
-  let smilesDrawer = new SmilesDrawer.Drawer(options);
+  // let smilesDrawer = new SmilesDrawer.Drawer(options);
+  // console.log('this is the drawer');
+  // console.log(smilesDrawer);
   // Alternatively, initialize the SVG drawer:
-  // let svgDrawer = new SmilesDrawer.SvgDrawer(options);
+  let svgDrawer = new SmilesDrawer.SvgDrawer(options);
+  console.log("here's the svgDrawer");
+  console.log(svgDrawer);
 
-  input.addEventListener('input', function () {
-    // Clean the input (remove unrecognized characters, such as spaces and tabs) and parse it
-    SmilesDrawer.parse(input.value, function (tree) {
-      // Draw to the canvas
-      smilesDrawer.draw(tree, 'example-canvas', 'light', false);
-      // Alternatively, draw to SVG:
-      // svgDrawer.draw(tree, 'output-svg', 'dark', false);
-    });
+  SmilesDrawer.parse('CCCCCC', function (tree: any) {
+    // Draw to the canvas
+    console.log("here's the tree");
+    console.log(tree);
+    // smilesDrawer.draw(tree, 'example-canvas', 'light', false);
+    // Alternatively, draw to SVG:
+    svgDrawer.draw(tree, 'output-svg', 'dark', false);
   });
 
   return (
-    <div>
-      <head>
-        <meta http-equiv="x-ua-compatible" content="ie=edge" />
-        <title>Smiles Drawer Example</title>
-        <meta name="description" content="A minimal smiles drawer example." />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-        <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" />
-      </head>
+    <Group>
       <body>
-        <input id="example-input" name="example-input" />
-        <canvas id="example-canvas" width="500" height="500"></canvas>
+        <div>
+          <svg id="output-svg">Hi</svg>
+        </div>
 
         <script src="https://unpkg.com/smiles-drawer@1.0.10/dist/smiles-drawer.min.js"></script>
       </body>
-    </div>
+    </Group>
   );
 });
