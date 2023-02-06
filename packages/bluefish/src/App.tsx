@@ -117,6 +117,14 @@ function App() {
         </ColUseState>
       </svg>
       <br /> */}
+      <a href="#:r21:" aria-label="Go to r21">
+        Go to r21
+      </a>
+      <br />
+      <a href="#:r10t:" aria-label="Go to r10t">
+        Go to r10t
+      </a>
+      <br />
       <SVG width={500} height={500}>
         <AlignNew x={250} y={250}>
           <Line guidePrimary="bottomCenter" x1={20} y1={20} x2={20} y2={30} strokeWidth={2} stroke={'black'} />
