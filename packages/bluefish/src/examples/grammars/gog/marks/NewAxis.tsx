@@ -10,6 +10,7 @@ import { NewLine } from './NewLine';
 import { NewDot } from './NewDot';
 import { Align, Group, Ref } from '../../../../main';
 import { AxisTick } from './AxisTick';
+import { Text } from '../../../../components/Text';
 
 export type NewAxisProps<T> = Omit<
   React.SVGProps<SVGRectElement>,

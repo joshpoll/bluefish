@@ -25,14 +25,13 @@ export const AxisTick = withBluefish(function AxisTick(props: PropsWithBluefish<
 
   const ticks = useNameList(_.range(data.length).map((i) => `tick-${i}`));
   const labels = useNameList(_.range(data.length).map((i) => `label-${i}`));
-
-  const rects = useNameList(_.range(data.length).map((i) => `rect-${i}`));
+  const align = useNameList(_.range(data.length).map((i) => `align-${i}`));
 
   return (
     <Group>
       {(data as any[]).map((d, i) => (
         <Group>
-          <AlignNew>
+          <AlignNew name={align[i]}>
             <TickScale
               guidePrimary={props.axis === 'x' ? 'bottomCenter' : 'centerLeft'}
               name={ticks[i]}
@@ -82,10 +81,10 @@ const tickMeasurePolicy = ({ cx, cy, xScale, yScale, axis }: tickScaleProps): Me
     const scaledCY = cy !== undefined ? yScale(constraints.height)(+cy) : undefined;
 
     return {
-      left: scaledCX !== undefined ? +scaledCX - (axis === 'x' ? 0 : 5) : undefined,
-      top: scaledCY !== undefined ? +scaledCY + (axis === 'x' ? 5 : 0) : undefined,
-      right: scaledCX !== undefined ? +scaledCX + (axis === 'x' ? 0 : 5) : undefined,
-      bottom: scaledCY !== undefined ? +scaledCY - (axis === 'x' ? 5 : 0) : undefined,
+      left: scaledCX !== undefined ? +scaledCX - (axis === 'x' ? 0 : 10) : undefined,
+      top: scaledCY !== undefined ? +scaledCY + (axis === 'x' ? 0 : 0) : undefined,
+      right: scaledCX !== undefined ? +scaledCX + (axis === 'x' ? 0 : 0) : undefined,
+      bottom: scaledCY !== undefined ? +scaledCY - (axis === 'x' ? 10 : 0) : undefined,
       width: axis === 'x' ? 0 : 10,
       height: axis === 'x' ? 10 : 0,
     };
