@@ -118,12 +118,12 @@ function App() {
         </ColUseState>
       </svg>
       <br /> */}
-      <a href="#:r21:" aria-label="Go to r21">
-        Go to r21
+      <a href="#:r2ir:" aria-label="Go to r2ir">
+        Go to r2ir
       </a>
       <br />
-      <a href="#:r10t:" aria-label="Go to r10t">
-        Go to r10t
+      <a href="#:r3ij:" aria-label="Go to r3ij">
+        Go to r3ij
       </a>
       <br />
       <ChemistryDiagram />
