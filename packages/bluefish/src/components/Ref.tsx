@@ -9,7 +9,7 @@ import {
   Symbol,
 } from '../bluefish';
 import { CoordinateTransform, NewBBoxClass, NewBBox } from '../NewBBox';
-import { BluefishSymbolMap, useBluefishSymbolContext } from '../bluefish';
+import { BluefishSymbolMap, useBluefishSymbolContext, Alignment1D, Alignment2D } from '../bluefish';
 import _ from 'lodash';
 
 export type Lookup = {
@@ -20,7 +20,7 @@ export type Lookup = {
 
 export type BluefishRef = string | React.RefObject<any> | Symbol | Lookup;
 
-export type RefProps = { to: BluefishRef };
+export type RefProps = { to: BluefishRef; guidePrimary?: Alignment1D | Alignment2D };
 
 export const resolveRef = (
   ref: BluefishRef,
@@ -344,6 +344,7 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
   useImperativeHandle(
     ref,
     (): Measurable => ({
+      guidePrimary: props.guidePrimary,
       // name: measurable.current?.name + '-ref' /* TODO: come up with a better name? this one will collide */,
       props: measurable.current?.props,
       domRef: measurable.current?.domRef!,

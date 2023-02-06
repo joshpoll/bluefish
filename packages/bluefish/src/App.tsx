@@ -52,7 +52,7 @@ import { TreeSymbol } from './examples/tree-symbol-test';
 import { Peritext as PeritextSymbol } from './examples/peritext-symbol-test';
 import { interpolateBlues } from 'd3-scale-chromatic';
 import { NewBarY } from './examples/grammars/gog/marks/NewBarY';
-import { Tree1 } from './examples/grammars/gotree/gotree-ex1';
+import { Tree as Tree1 } from './examples/grammars/gotree/gotree-ex1';
 import { Tree2 } from './examples/grammars/gotree/gotree-ex2';
 import { NodeProps, Tree3 } from './examples/grammars/gotree/gotree-ex3';
 import { Tree4 } from './examples/grammars/gotree/gotree-ex4';
@@ -61,6 +61,8 @@ import { RectPath } from './examples/grammars/gog/marks/RectPath';
 import { Polio } from './examples/grammars/gog/examples/polio';
 import { AlignNew } from './components/AlignNew';
 import { Distribute } from './components/Distribute';
+import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
+import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -125,6 +127,9 @@ function App() {
         </ColUseState>
       </svg>
       <br /> */}
+      <svg width={500} height={500}>
+        <Matrix />
+      </svg>
       <SVG width={500} height={500}>
         <AlignNew x={250} y={250} alignment="centerHorizontally">
           <Rect name={autoAssign1} width={100} fill={'red'} />
@@ -345,6 +350,27 @@ function App() {
       </SVG>
       <SVG width={500} height={500}>
         <Col spacing={10} alignment={'center'}>
+          <Tree6
+            data={{
+              value: 1,
+              subtrees: [
+                {
+                  value: 2,
+                  subtrees: [{ value: 3 }, { value: 4 }],
+                },
+                {
+                  value: 5,
+                  subtrees: [{ value: 6 }, { value: 7 }],
+                },
+              ],
+            }}
+            encoding={{
+              node: CustomNode,
+              link: () => null,
+              rootSubtree: { row: {} },
+              subtreeSubtree: { row: {} },
+            }}
+          />
           <Tree5
             data={{
               value: 1,
