@@ -56,7 +56,7 @@ export const Molecule = withBluefish((props: any) => {
         id: `edge-${edgeObject.id}`,
         sourceId: `vertex-${edgeObject.sourceId}`,
         destId: `vertex-${edgeObject.targetId}`,
-        ref: useRef(`edge-${edgeObject.id}`),
+        ref: `edge-${edgeObject.id}`,
       };
     });
     const vertices = graph.vertices.map((vObject: any) => {
@@ -64,7 +64,7 @@ export const Molecule = withBluefish((props: any) => {
         ...vObject,
         xLoc: vObject.position.x,
         yLoc: vObject.position.y,
-        id: useRef(`vertex-${vObject.id}`),
+        id: `vertex-${vObject.id}`,
       };
     });
 
@@ -113,12 +113,12 @@ export const Molecule = withBluefish((props: any) => {
           <Circle name={v.id} cx={v.xLoc} cy={v.yLoc} r={5} fill={'black'} />
         ))}
 
-        {/* {edges.map((e) => (
-          <Connector $from={'bottomCenter'} $to={'topCenter'} stroke={'black'} strokeWidth={2}>
+        {edges.map((e) => (
+          <Connector $from={'center'} $to={'center'} stroke={'black'} strokeWidth={2}>
             <Ref to={e.sourceId} />
             <Ref to={e.destId} />
           </Connector>
-        ))} */}
+        ))}
       </Group>
     </SVG>
   );

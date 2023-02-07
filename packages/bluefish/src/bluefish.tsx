@@ -387,10 +387,10 @@ export const useBluefishLayoutInternal = (
       }
 
       // console.log('setting child ref', index, node, node.name);
-      // if (node !== null && 'name' in node && node.name !== undefined) {
-      //   console.log('setting ref', node.name, node);
-      //   context.bfMap.set(node.name, node);
-      // }
+      if (node !== null && 'name' in node && node.name !== undefined) {
+        console.log('setting ref', node.name, node);
+        context.bfMap.set(node.name, node);
+      }
       // add symbol the map
       if (node !== null && 'name' in node && node.name !== undefined) {
         // console.log('[symbol] setting ref', node.name, node);
