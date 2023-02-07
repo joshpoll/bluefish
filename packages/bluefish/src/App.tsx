@@ -60,7 +60,7 @@ import { RELATIONS, Tree5 } from './examples/grammars/gotree/gotree-ex5';
 import { RectPath } from './examples/grammars/gog/marks/RectPath';
 import { Polio } from './examples/grammars/gog/examples/polio';
 import { AlignNew } from './components/AlignNew';
-import { ChemistryDiagram } from './examples/chemistry';
+import { Molecule } from './examples/chemistry/molecule';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -126,7 +126,7 @@ function App() {
         Go to r3ij
       </a>
       <br />
-      <ChemistryDiagram />
+      <Molecule chemicalFormula={'C1CCCCC1'} />
       <SVG width={500} height={500}>
         <AlignNew x={250} y={250}>
           <Line guidePrimary="bottomCenter" x1={20} y1={20} x2={20} y2={30} strokeWidth={2} stroke={'black'} />
