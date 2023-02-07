@@ -1,8 +1,10 @@
-import React from 'react';
-import { withBluefish } from '../../bluefish';
+import React, { useRef } from 'react';
+import { withBluefish, useName } from '../../bluefish';
 import { SVG } from '../../components/SVG';
 import { Group } from '../../components/Group';
 import { Circle } from '../../components/Circle';
+import { Connector } from '../../components/Connector';
+import { Ref } from '../../components/Ref';
 
 const SmilesDrawer = require('smiles-drawer/app.js');
 const SvgDrawer = require('smiles-drawer/src/SvgDrawer');
@@ -54,6 +56,7 @@ export const Molecule = withBluefish((props: any) => {
         id: `edge-${edgeObject.id}`,
         sourceId: `vertex-${edgeObject.sourceId}`,
         destId: `vertex-${edgeObject.targetId}`,
+        ref: useRef(`edge-${edgeObject.id}`),
       };
     });
     const vertices = graph.vertices.map((vObject: any) => {
@@ -61,7 +64,7 @@ export const Molecule = withBluefish((props: any) => {
         ...vObject,
         xLoc: vObject.position.x,
         yLoc: vObject.position.y,
-        id: `vertex-${vObject.id}`,
+        id: useRef(`vertex-${vObject.id}`),
       };
     });
 
@@ -98,12 +101,24 @@ export const Molecule = withBluefish((props: any) => {
     svgWrapper.drawingHeight = svgWrapper.maxY - svgWrapper.minY;
   }
 
+  console.log('the edges');
+  console.log(edges);
+  console.log('the vertices');
+  console.log(vertices);
+
   return (
     <SVG width={300} height={300}>
       <Group>
         {vertices.map((v) => (
           <Circle name={v.id} cx={v.xLoc} cy={v.yLoc} r={5} fill={'black'} />
         ))}
+
+        {/* {edges.map((e) => (
+          <Connector $from={'bottomCenter'} $to={'topCenter'} stroke={'black'} strokeWidth={2}>
+            <Ref to={e.sourceId} />
+            <Ref to={e.destId} />
+          </Connector>
+        ))} */}
       </Group>
     </SVG>
   );
