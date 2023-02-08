@@ -31,8 +31,17 @@ export const textMeasurePolicy = (props: TextProps) => {
     props.contents,
     `${fontStyle ?? ''} ${fontWeight ?? ''} ${fontSize ?? ''} ${fontFamily ?? ''}`,
   );
-  // TODO: really need to figure out semantics of intrinsic vs. extrinsic dimensions
-  return () => ({ left: 0, top: 0, width: measurements.width, height: measurements.fontHeight });
+  return () => ({
+    left: measurements.left,
+    right: measurements.right,
+    width: measurements.right - measurements.left,
+    top: measurements.fontTop,
+    height: measurements.fontHeight,
+    bottom: measurements.fontDescent,
+    // top: 0,
+    /* width: measurements.width, */
+    // height: measurements.fontHeight,
+  });
 };
 
 export const Text = withBluefish((props: TextProps) => {

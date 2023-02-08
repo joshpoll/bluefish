@@ -127,9 +127,9 @@ function App() {
         </ColUseState>
       </svg>
       <br /> */}
-      <svg width={500} height={500}>
+      <SVG width={500} height={500}>
         <Matrix />
-      </svg>
+      </SVG>
       <SVG width={500} height={500}>
         <AlignNew x={250} y={250} alignment="centerHorizontally">
           <Rect name={autoAssign1} width={100} fill={'red'} />

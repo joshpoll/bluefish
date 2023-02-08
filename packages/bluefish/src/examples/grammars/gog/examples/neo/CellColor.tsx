@@ -1,4 +1,6 @@
 import { scheme } from 'vega-scale';
+import { withBluefish } from '../../../../../bluefish';
+import { Rect } from '../../../../../main';
 
 export type CellColorProps = {
   x?: number;
@@ -9,8 +11,8 @@ export type CellColorProps = {
 
 const interpolateColors = scheme('lighttealblue');
 
-export const CellColor = (props: CellColorProps) => {
+export const CellColor = withBluefish((props: CellColorProps) => {
   const { x = 0, y = 0, cellSize = 10, value } = props;
 
-  return <rect stroke="#eeeeee" x={x} y={y} width={cellSize} height={cellSize} fill={interpolateColors(value)} />;
-};
+  return <Rect stroke="#eeeeee" x={x} y={y} width={cellSize} height={cellSize} fill={interpolateColors(value)} />;
+});

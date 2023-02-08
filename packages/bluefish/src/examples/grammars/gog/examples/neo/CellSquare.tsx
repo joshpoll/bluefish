@@ -1,4 +1,6 @@
 import { scaleLinear } from 'd3-scale';
+import { withBluefish } from '../../../../../bluefish';
+import { Group, Rect } from '../../../../../main';
 
 export type CellSquareProps = {
   x?: number;
@@ -8,7 +10,7 @@ export type CellSquareProps = {
   color?: string;
 };
 
-export const CellSquare = (props: CellSquareProps) => {
+export const CellSquare = withBluefish((props: CellSquareProps) => {
   const { x = 0, y = 0, cellSize = 10, color = 'rgb(0,0,0)', value } = props;
 
   const minWidth = 2;
@@ -20,9 +22,9 @@ export const CellSquare = (props: CellSquareProps) => {
   const cY = y + (cellSize - sideLength) / 2;
 
   return (
-    <>
-      <rect x={cX} y={cY} width={sideLength} height={sideLength} fill={color} />
-      <rect fill="none" stroke="#eeeeee" x={x} y={y} width={cellSize} height={cellSize} />
-    </>
+    <Group>
+      <Rect x={cX} y={cY} width={sideLength} height={sideLength} fill={color} />
+      <Rect fill="none" stroke="#eeeeee" x={x} y={y} width={cellSize} height={cellSize} />
+    </Group>
   );
-};
+});

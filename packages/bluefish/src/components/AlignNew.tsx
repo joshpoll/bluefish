@@ -170,6 +170,29 @@ const alignMeasurePolicy =
         })
         .filter((v) => v !== undefined)[0] ?? 0;
 
+    console.log(
+      '[AlignNew] potential vertical values',
+      options.alignment,
+      measurables.map((m) => m.name?.symbol?.description),
+      verticalPlaceables
+        .map(([placeable, alignment]) => {
+          const [verticalAlignment, horizontalAlignment] = alignment!;
+          if (verticalAlignment === 'top') {
+            return placeable!.top;
+          } else if (verticalAlignment === 'center') {
+            if (placeable!.top === undefined || placeable!.height === undefined) {
+              return undefined;
+            }
+            return placeable!.top + placeable!.height / 2;
+          } else if (verticalAlignment === 'bottom') {
+            return placeable!.bottom;
+          } else {
+            return undefined;
+          }
+        })
+        .filter((v) => v !== undefined),
+    );
+
     const horizontalValue =
       horizontalPlaceables
         .map(([placeable, alignment]) => {

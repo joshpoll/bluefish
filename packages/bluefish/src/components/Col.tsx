@@ -88,6 +88,9 @@ const colMeasurePolicy =
       top: 0,
       width,
       height,
+      coord: {
+        translate: { x: options.x, y: options.y },
+      },
     };
   };
 
@@ -108,6 +111,8 @@ const colMeasurePolicy =
 
 export const Col = withBluefish((props: PropsWithChildren<ColProps>) => {
   const { id, domRef, bbox, children } = useBluefishLayout({}, props, colMeasurePolicy(props));
+
+  // console.log('[Col]', id, domRef, bbox, children);
 
   return (
     <g
