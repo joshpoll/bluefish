@@ -341,6 +341,7 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
   const transformStackRef = useRef<CoordinateTransform[] | undefined>(undefined);
   const measurable = useRef<Measurable | null>(null);
 
+  console.log('ref input', props.to);
   useImperativeHandle(
     ref,
     (): Measurable => ({
@@ -362,7 +363,9 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
       measure(constraints: Constraints): NewBBoxClass {
         // console.log('[ref] measure', constraints, props.to);
         try {
+          // console.log(props.to);
           measurable.current = resolveRef(props.to, context.bfMap, symbolContext.bfSymbolMap);
+          console.log('measured', measurable.current);
           // TODO: we might not need the slice here
           // console.log(
           //   '[ref] transform stacks for',

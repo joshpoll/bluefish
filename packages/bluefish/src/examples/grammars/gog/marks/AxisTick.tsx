@@ -1,11 +1,12 @@
 import _ from 'lodash';
 import React from 'react';
 import { Measure, PropsWithBluefish, useBluefishLayout, useNameList, withBluefish } from '../../../../bluefish';
-import { Align, Col, Group, Line, Ref, Space } from '../../../../main';
+import { Align, Col, Group, Line, Padding, Ref, Space } from '../../../../main';
 import { PlotContext } from '../Plot';
 import { Text } from '../../../../components/Text';
 import { LayoutGroup } from '../../../../components/LayoutGroup';
 import { AlignNew } from '../../../../components/AlignNew';
+import { Distribute } from '../../../../components/Distribute';
 
 export type AxisTickProps<T> = PropsWithBluefish<
   Omit<React.SVGProps<SVGLineElement>, 'cx' | 'cy' | 'fill' | 'width' | 'height' | 'label'> & {
@@ -31,7 +32,7 @@ export const AxisTick = withBluefish(function AxisTick(props: PropsWithBluefish<
     <Group>
       {(data as any[]).map((d, i) => (
         <Group>
-          <AlignNew name={align[i]}>
+          <AlignNew>
             <TickScale
               guidePrimary={props.axis === 'x' ? 'bottomCenter' : 'centerLeft'}
               name={ticks[i]}
@@ -54,11 +55,13 @@ export const AxisTick = withBluefish(function AxisTick(props: PropsWithBluefish<
               }
               axis={props.axis}
             />
-            <Text
-              guidePrimary={props.axis === 'x' ? 'topCenter' : 'centerRight'}
-              name={labels[i]}
-              contents={d[props.axis === 'x' ? props.x : props.y]}
-            />
+            <Padding all={5} guidePrimary={props.axis === 'x' ? 'topCenter' : 'centerRight'}>
+              <Text
+                guidePrimary={props.axis === 'x' ? 'topCenter' : 'centerRight'}
+                name={labels[i]}
+                contents={d[props.axis === 'x' ? props.x : props.y]}
+              />
+            </Padding>
           </AlignNew>
         </Group>
       ))}

@@ -128,6 +128,7 @@ function App() {
       </svg>
       <br /> */}
       <br />
+
       <ChartAccent />
       {/* <MinError /> */}
     </div>

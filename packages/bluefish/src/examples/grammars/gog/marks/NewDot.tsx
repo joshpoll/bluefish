@@ -8,6 +8,7 @@ import {
   useBluefishLayout,
   PropsWithBluefish,
   useNameList,
+  useName,
 } from '../../../../bluefish';
 import { NewBBox } from '../../../../NewBBox';
 import { PlotContext } from '../Plot';
@@ -42,6 +43,8 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
   const yScale = context.scales.yScale;
 
   const dots = useNameList(_.range(data.length).map((i) => `dot-${i}`));
+  const labels = useName('labels');
+  // const group = useName('group');
 
   return (
     <Group>
@@ -72,6 +75,7 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
       {props.label !== undefined ? (
         typeof props.label === 'object' && 'field' in props.label ? (
           <PointLabel
+            name={labels}
             texts={(data as any[]).map((d, i) => ({
               label: <Text contents={d[(props.label! as any).field!]} fontSize={'6pt'} />,
               ref: dots[i],
@@ -87,6 +91,7 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
           />
         ) : (
           <PointLabel
+            name={labels}
             texts={(data as any[]).map((d, i) => ({
               label: <Text contents={d[(props.label as string)!]} fontSize={'6pt'} />,
               ref: dots[i],

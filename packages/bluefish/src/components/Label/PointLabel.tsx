@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { forwardRef, PropsWithChildren, useRef } from 'react';
-import { Measurable, Measure, useBluefishLayout, withBluefish } from '../../bluefish';
+import { Measurable, Measure, PropsWithBluefish, useBluefishLayout, withBluefish } from '../../bluefish';
 import { ReactChild } from '../../flatten-children';
 import { NewBBox } from '../../NewBBox';
 import { LayoutGroup } from '../LayoutGroup';
@@ -41,7 +41,7 @@ export const Anchors = [
   'bottom-right',
 ] as const;
 
-export type PointLabelProps = {
+export type PointLabelProps = PropsWithBluefish<{
   texts: { label: any; ref: any }[];
   compare: ((a: any, b: any) => number) | undefined;
   offset: number[];
@@ -49,7 +49,7 @@ export type PointLabelProps = {
   avoidElements: ReactChild[];
   avoidRefElements: boolean;
   padding: number;
-};
+}>;
 
 export const PointLabel = forwardRef(function PointLabel({ texts, avoidElements }: PointLabelProps, ref: any) {
   return (
@@ -69,7 +69,7 @@ export const PointLabel = forwardRef(function PointLabel({ texts, avoidElements 
 
 const pointLabelMeasurePolicy = (props: {}): Measure => {
   return (measurables, constraints) => {
-    // console.log('[pointLabelMeasurePolicy]', measurables, constraints);
+    console.log('[pointLabelMeasurePolicy]', measurables, constraints);
     // const [_label, ref] = measurables;
     // const [labelBBox, refBBox] = measurables.map((m) => m.measure(constraints));
     // const refDomRef: SVGElement | null = ref.domRef;
