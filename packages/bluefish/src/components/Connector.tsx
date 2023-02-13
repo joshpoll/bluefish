@@ -25,16 +25,16 @@ import { rowMeasurePolicy } from './Row';
 // };
 export type ConnectorProps = PropsWithBluefish<
   React.SVGProps<SVGLineElement> & {
-    $from: Alignment2D;
-    $to: Alignment2D;
+    $from?: Alignment2D;
+    $to?: Alignment2D;
   }
 >;
 
 const connectorMeasurePolicy = (props: ConnectorProps): Measure => {
   return (measurables, constraints: any) => {
     const [from, to] = measurables.map((m) => m.measure(constraints));
-    const [fromYDir, fromXDir] = splitAlignment(props.$from);
-    const [toYDir, toXDir] = splitAlignment(props.$to);
+    const [fromYDir, fromXDir] = splitAlignment(props.$from ?? measurables[0].guidePrimary ?? 'center');
+    const [toYDir, toXDir] = splitAlignment(props.$to ?? measurables[1].guidePrimary ?? 'center');
     console.log('[connector] from', from, fromYDir, fromXDir);
     console.log('[connector] to', to, toYDir, toXDir);
 

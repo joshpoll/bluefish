@@ -75,8 +75,13 @@
     "@rollup/plugin-replace": "^5.0.1",
     "@types/d3-array": "^3.0.3",
     "@types/lodash": "^4.14.182",
+    "@types/ndarray": "^1.0.11",
+    "@types/ndarray-ops": "^1.2.4",
     "@types/react-is": "^17.0.3",
+    "ndarray": "^1.0.19",
+    "ndarray-ops": "^1.2.2",
     "prettier": "^2.7.1",
-    "rollup-plugin-polyfill-node": "^0.11.0"
+    "rollup-plugin-polyfill-node": "^0.11.0",
+    "vega-scale": "^7.2.0"
   }
 }
