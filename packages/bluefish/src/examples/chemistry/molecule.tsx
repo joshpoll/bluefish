@@ -10,6 +10,7 @@ const SmilesDrawer = require('smiles-drawer/app.js');
 const SvgDrawer = require('smiles-drawer/src/SvgDrawer');
 const ThemeManager = require('smiles-drawer/src/ThemeManager');
 const SvgWrapper = require('smiles-drawer/src/SvgWrapper');
+const ArrayHelper = require('smiles-drawer/src/ArrayHelper');
 
 export const Molecule = withBluefish((props: any) => {
   let options = {};
@@ -60,6 +61,15 @@ export const Molecule = withBluefish((props: any) => {
         sourceId: `vertex-${edgeObject.sourceId}`,
         destId: `vertex-${edgeObject.targetId}`,
         ref: `edge-${edgeObject.id}`,
+        lcr: drawer.preprocessor.areVerticesInSameRing(
+          drawer.preprocessor.graph.vertices[edgeObject.sourceId],
+          drawer.preprocessor.graph.vertices[edgeObject.targetId],
+        )
+          ? drawer.preprocessor.getLargestOrAromaticCommonRing(
+              drawer.preprocessor.graph.vertices[edgeObject.sourceId],
+              drawer.preprocessor.graph.vertices[edgeObject.targetId],
+            )
+          : null,
       };
     });
     const vertices = graph.vertices.map((vObject: any) => {
@@ -68,6 +78,7 @@ export const Molecule = withBluefish((props: any) => {
         xLoc: vObject.position.x,
         yLoc: vObject.position.y,
         id: `vertex-${vObject.id}`,
+        isTerminal: vObject.isTerminal(),
       };
     });
 
@@ -111,6 +122,13 @@ export const Molecule = withBluefish((props: any) => {
     svgWrapper.drawingHeight = svgWrapper.maxY - svgWrapper.minY;
   }
 
+  function getLocationVertexWithId(vertexId: any, vertices: any) {
+    const vertex = vertices.filter((v: any) => {
+      return v.id === vertexId;
+    });
+    return vertex[0].yLoc;
+  }
+
   console.log('the edges');
   console.log(edges);
   console.log('the vertices');
@@ -134,7 +152,19 @@ export const Molecule = withBluefish((props: any) => {
         ))}
 
         {edges.map((e) => (
-          <Bond $from={'center'} $to={'center'} stroke={'black'} strokeWidth={2} content={'Bond'} bondType={e.bondType}>
+          <Bond
+            $from={'center'}
+            $to={'center'}
+            stroke={'black'}
+            strokeWidth={2}
+            content={'Bond'}
+            name={e.id}
+            bondType={e.bondType}
+            ringCenterX={e.lcr ? e.lcr.center.x : 0}
+            ringCenterY={e.lcr ? e.lcr.center.y : 0}
+            startLocationY={getLocationVertexWithId(e.sourceId, vertices)}
+            endLocationY={getLocationVertexWithId(e.destId, vertices)}
+          >
             <Ref to={e.sourceId} />
             <Ref to={e.destId} />
           </Bond>

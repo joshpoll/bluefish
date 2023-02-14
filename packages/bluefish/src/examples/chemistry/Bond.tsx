@@ -19,6 +19,10 @@ export type BondProps = PropsWithBluefish<
     $to?: Alignment2D;
     content: string;
     bondType: string;
+    ringCenterX: Number;
+    ringCenterY: Number;
+    startLocationY: Number;
+    endLocationY: Number;
   }
 >;
 
@@ -92,7 +96,8 @@ const connectorMeasurePolicy = (props: BondProps): Measure => {
 // I'm not sure why...
 export const Bond = withBluefish((props: PropsWithChildren<BondProps>) => {
   const { id, bbox, domRef, children } = useBluefishLayout({}, props, connectorMeasurePolicy(props));
-  const { $from, $to, name, content, bondType, ...rest } = props;
+  const { $from, $to, name, content, ringCenterX, ringCenterY, startLocationY, endLocationY, bondType, ...rest } =
+    props;
 
   function calculateBondAngle(x1: any, x2: any, y1: any, y2: any) {
     const changeX = (x2 - x1) * 1.0;
@@ -101,15 +106,27 @@ export const Bond = withBluefish((props: PropsWithChildren<BondProps>) => {
     return angle;
   }
 
-  const angle = calculateBondAngle(bbox.left, bbox.right, bbox.top, bbox.bottom);
+  // Returns True -> draw second bond above first bond
+  // Returns False -> draw second bond below first bond
+  // Lower on the page = higher Y values
+  function calculateRingBondDirection(y1: any, y2: any, rCenterY: any) {
+    // Check if both coordinates are above the center
+    // if both coordinates are above the center, return False -> bond should be drawn below
+    if (y1 < Math.floor(rCenterY) || y2 < Math.floor(rCenterY)) {
+      return false;
+    } else {
+      // Check if both coordinates are below the center
+      // if both coordinates are below the center, return True -> bond should be drawn above
+      return true;
+    }
+  }
 
-  console.log('inside bonds');
-  console.log(angle);
+  const angle = calculateBondAngle(bbox.left, bbox.right, bbox.top, bbox.bottom);
 
   return (
     <g id={id} ref={domRef} {...rest} aria-label={content}>
       {children}
-      {bondType === '=' ? (
+      {bondType === '=' && ringCenterX === 0 && ringCenterY === 0 ? (
         <line
           x1={bbox.left ? bbox.left - 2.5 * Math.sin(angle) : 0}
           x2={(bbox.left ? bbox.left - 2.5 * Math.sin(angle) : 0) + (bbox?.width ?? 0)}
@@ -125,12 +142,31 @@ export const Bond = withBluefish((props: PropsWithChildren<BondProps>) => {
         />
       )}
 
-      {bondType === '=' ? (
+      {bondType === '=' && ringCenterX === 0 && ringCenterY === 0 ? (
         <line
           x1={bbox.left ? bbox.left + 2.5 * Math.sin(angle) : 0}
           x2={(bbox.left ? bbox.left + 2.5 * Math.sin(angle) : 0) + (bbox.width ? bbox.width : 0)}
           y1={bbox.top ? bbox.top - 2.5 * Math.cos(angle) : 0}
           y2={(bbox.top ? bbox.top - 2.5 * Math.cos(angle) : 0) + (bbox.height ? bbox.height : 0)}
+        />
+      ) : bondType === '=' ? (
+        <line
+          x1={bbox.left ? bbox.left + 5 * Math.sin(angle) : 0}
+          x2={(bbox.left ? bbox.left + 5 * Math.sin(angle) : 0) + (bbox.width ? bbox.width : 0)}
+          y1={
+            bbox.top
+              ? calculateRingBondDirection(startLocationY, endLocationY, ringCenterY)
+                ? bbox.top - 5 * Math.cos(angle)
+                : bbox.top + 5 * Math.cos(angle)
+              : 0
+          }
+          y2={
+            (bbox.top
+              ? calculateRingBondDirection(startLocationY, endLocationY, ringCenterY)
+                ? bbox.top - 5 * Math.cos(angle)
+                : bbox.top + 5 * Math.cos(angle)
+              : 0) + (bbox.height ? bbox.height : 0)
+          }
         />
       ) : null}
     </g>

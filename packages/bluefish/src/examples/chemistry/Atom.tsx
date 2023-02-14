@@ -26,14 +26,28 @@ export const Atom = withBluefish((props: AtomProps) => {
       ref={domRef}
       transform={`translate(${bbox.coord?.translate?.x ?? 0} ${bbox.coord?.translate?.y ?? 0})
 scale(${bbox.coord?.scale?.x ?? 1} ${bbox.coord?.scale?.y ?? 1})`}
+      aria-label={content}
     >
-      <circle
+      {content === 'C' ? (
+        <circle
+          {...rest}
+          cx={(bbox.left ?? 0) + (bbox.width ?? 0) / 2}
+          cy={(bbox.top ?? 0) + (bbox.height ?? 0) / 2}
+          r={(bbox.width ?? 0) / 2}
+          fill={'none'}
+        />
+      ) : (
+        <text x={(bbox.left ?? 0) + (bbox.width ?? 0) / 2} y={(bbox.top ?? 0) + (bbox.height ?? 0) / 2}>
+          {content}
+        </text>
+      )}
+      {/* <circle
         {...rest}
         cx={(bbox.left ?? 0) + (bbox.width ?? 0) / 2}
         cy={(bbox.top ?? 0) + (bbox.height ?? 0) / 2}
         r={(bbox.width ?? 0) / 2}
         aria-label={content}
-      />
+      /> */}
       {/* <text x={(bbox.left ?? 0) + (bbox.width ?? 0) / 2} y={(bbox.top ?? 0) + (bbox.height ?? 0) / 2}>
         {curId}
       </text> */}
