@@ -844,12 +844,6 @@ export type PropsWithBluefishFn<P = unknown> = PropsWithFunctionChildren<Omit<P,
   guidePrimary?: Alignment2D | Alignment1D;
 };
 
-export type PropsWithBluefishAtom<P = unknown> = PropsWithChildren<Omit<P, 'name' | 'guidePrimary' | 'content'>> & {
-  name?: Symbol;
-  content?: string;
-  guidePrimary?: Alignment2D | Alignment1D;
-};
-
 export type Alignment2D =
   | 'topLeft'
   | 'topCenter'

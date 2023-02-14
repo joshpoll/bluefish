@@ -1,7 +1,11 @@
-import { withBluefish, useBluefishLayout, PropsWithBluefish, PropsWithBluefishAtom } from '../../bluefish';
+import { withBluefish, useBluefishLayout, PropsWithBluefish } from '../../bluefish';
 import { NewBBox } from '../../NewBBox';
 
-export type AtomProps = PropsWithBluefishAtom<React.SVGProps<SVGCircleElement>>;
+export type AtomProps = PropsWithBluefish<
+  React.SVGProps<SVGCircleElement> & {
+    content: string;
+  }
+>;
 
 export const Atom = withBluefish((props: AtomProps) => {
   console.log(props);

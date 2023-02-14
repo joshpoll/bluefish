@@ -2,9 +2,9 @@ import React, { useRef } from 'react';
 import { withBluefish, useName } from '../../bluefish';
 import { SVG } from '../../components/SVG';
 import { Group } from '../../components/Group';
-import { Connector } from '../../components/Connector';
 import { Ref } from '../../components/Ref';
 import { Atom } from './Atom';
+import { Bond } from './Bond';
 
 const SmilesDrawer = require('smiles-drawer/app.js');
 const SvgDrawer = require('smiles-drawer/src/SvgDrawer');
@@ -114,10 +114,10 @@ export const Molecule = withBluefish((props: any) => {
         ))}
 
         {edges.map((e) => (
-          <Connector $from={'center'} $to={'center'} stroke={'black'} strokeWidth={2}>
+          <Bond $from={'center'} $to={'center'} stroke={'black'} strokeWidth={2} content={'bond'} bondType={'single'}>
             <Ref to={e.sourceId} />
             <Ref to={e.destId} />
-          </Connector>
+          </Bond>
         ))}
       </Group>
     </SVG>
