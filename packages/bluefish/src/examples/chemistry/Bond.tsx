@@ -92,22 +92,33 @@ const connectorMeasurePolicy = (props: BondProps): Measure => {
 // I'm not sure why...
 export const Bond = withBluefish((props: PropsWithChildren<BondProps>) => {
   const { id, bbox, domRef, children } = useBluefishLayout({}, props, connectorMeasurePolicy(props));
-
   const { $from, $to, name, content, bondType, ...rest } = props;
+
+  function calculateBondAngle(x1: any, x2: any, y1: any, y2: any) {
+    const changeX = (x2 - x1) * 1.0;
+    const changeY = (y2 - y1) * 1.0;
+    const angle = Math.atan(changeY / changeX);
+    return angle;
+  }
+
   return (
-    <>
+    <g id={id} ref={domRef} {...rest} aria-label={content}>
       {children}
       <line
-        id={id}
-        ref={domRef}
-        {...rest}
         x1={bbox?.left ?? 0}
         x2={(bbox?.left ?? 0) + (bbox?.width ?? 0)}
         y1={bbox?.top ?? 0}
         y2={(bbox?.top ?? 0) + (bbox?.height ?? 0)}
-        aria-label={content}
       />
-    </>
+      {bondType === '=' ? (
+        <line
+          x1={bbox.left ? bbox.left + 5 : 0}
+          x2={(bbox.left ? bbox.left + 5 : 0) + (bbox.width ? bbox.width + 5 : 0)}
+          y1={bbox.top ? bbox.top + 5 : 0}
+          y2={(bbox.top ? bbox.top + 5 : 0) + (bbox.height ? bbox.height + 5 : 0)}
+        />
+      ) : null}
+    </g>
   );
 });
 Bond.displayName = 'Bond';

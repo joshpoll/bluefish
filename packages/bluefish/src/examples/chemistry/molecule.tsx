@@ -15,6 +15,7 @@ export const Molecule = withBluefish((props: any) => {
   let options = {};
   let edges: any[] = [];
   let vertices: any[] = [];
+  let rings: any[] = [];
 
   let chemicalDrawer = new SvgDrawer(options);
 
@@ -39,16 +40,18 @@ export const Molecule = withBluefish((props: any) => {
     }
 
     preprocessor.processGraph();
+    console.log(preprocessor);
 
     determineDimensions(chemicalDrawer.svgWrapper, preprocessor.graph.vertices);
 
-    let [tempEdges, tempVertices] = extractVerticeEdgeInformation(chemicalDrawer);
+    let [tempEdges, tempVertices, tempRings] = extractVerticeEdgeRingInformation(chemicalDrawer);
 
     edges = edges.concat(tempEdges);
     vertices = vertices.concat(tempVertices);
+    rings = rings.concat(tempRings);
   });
 
-  function extractVerticeEdgeInformation(drawer: any) {
+  function extractVerticeEdgeRingInformation(drawer: any) {
     const graph = drawer.preprocessor.graph;
     const edges = graph.edges.map((edgeObject: any) => {
       return {
@@ -68,7 +71,14 @@ export const Molecule = withBluefish((props: any) => {
       };
     });
 
-    return [edges, vertices];
+    const rings = drawer.preprocessor.rings.map((ringObject: any) => {
+      return {
+        ...ringObject,
+        id: `ring-${ringObject.id}`,
+      };
+    });
+
+    return [edges, vertices, rings];
   }
 
   /**
@@ -105,16 +115,26 @@ export const Molecule = withBluefish((props: any) => {
   console.log(edges);
   console.log('the vertices');
   console.log(vertices);
+  console.log('the rings');
+  console.log(rings);
 
   return (
     <SVG width={300} height={300}>
       <Group>
         {vertices.map((v) => (
-          <Atom name={v.id} cx={v.xLoc} cy={v.yLoc} r={5} fill={'black'} content={v.value.element} />
+          <Atom
+            name={v.id}
+            cx={v.xLoc + 50}
+            cy={v.yLoc + 50}
+            r={5}
+            fill={'black'}
+            content={v.value.element}
+            curId={v.id}
+          />
         ))}
 
         {edges.map((e) => (
-          <Bond $from={'center'} $to={'center'} stroke={'black'} strokeWidth={2} content={'bond'} bondType={'single'}>
+          <Bond $from={'center'} $to={'center'} stroke={'black'} strokeWidth={2} content={'Bond'} bondType={e.bondType}>
             <Ref to={e.sourceId} />
             <Ref to={e.destId} />
           </Bond>

@@ -4,14 +4,12 @@ import { NewBBox } from '../../NewBBox';
 export type AtomProps = PropsWithBluefish<
   React.SVGProps<SVGCircleElement> & {
     content: string;
+    curId: string;
   }
 >;
 
 export const Atom = withBluefish((props: AtomProps) => {
-  console.log(props);
-  const { name, content, ...rest } = props;
-  console.log(name);
-  console.log(rest);
+  const { name, content, curId, ...rest } = props;
   const { id, domRef, bbox } = useBluefishLayout({}, props, () => {
     const { cx, cy, r } = props;
     return {
@@ -36,6 +34,9 @@ scale(${bbox.coord?.scale?.x ?? 1} ${bbox.coord?.scale?.y ?? 1})`}
         r={(bbox.width ?? 0) / 2}
         aria-label={content}
       />
+      {/* <text x={(bbox.left ?? 0) + (bbox.width ?? 0) / 2} y={(bbox.top ?? 0) + (bbox.height ?? 0) / 2}>
+        {curId}
+      </text> */}
     </g>
   );
 });
