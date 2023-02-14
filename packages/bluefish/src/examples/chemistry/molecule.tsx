@@ -119,14 +119,14 @@ export const Molecule = withBluefish((props: any) => {
   console.log(rings);
 
   return (
-    <SVG width={300} height={300}>
+    <SVG width={500} height={500}>
       <Group>
         {vertices.map((v) => (
           <Atom
             name={v.id}
-            cx={v.xLoc + 50}
-            cy={v.yLoc + 50}
-            r={5}
+            cx={(v.xLoc + 35) * 1.5}
+            cy={(v.yLoc + 35) * 1.5}
+            r={8}
             fill={'black'}
             content={v.value.element}
             curId={v.id}

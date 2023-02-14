@@ -101,21 +101,36 @@ export const Bond = withBluefish((props: PropsWithChildren<BondProps>) => {
     return angle;
   }
 
+  const angle = calculateBondAngle(bbox.left, bbox.right, bbox.top, bbox.bottom);
+
+  console.log('inside bonds');
+  console.log(angle);
+
   return (
     <g id={id} ref={domRef} {...rest} aria-label={content}>
       {children}
-      <line
-        x1={bbox?.left ?? 0}
-        x2={(bbox?.left ?? 0) + (bbox?.width ?? 0)}
-        y1={bbox?.top ?? 0}
-        y2={(bbox?.top ?? 0) + (bbox?.height ?? 0)}
-      />
       {bondType === '=' ? (
         <line
-          x1={bbox.left ? bbox.left + 5 : 0}
-          x2={(bbox.left ? bbox.left + 5 : 0) + (bbox.width ? bbox.width + 5 : 0)}
-          y1={bbox.top ? bbox.top + 5 : 0}
-          y2={(bbox.top ? bbox.top + 5 : 0) + (bbox.height ? bbox.height + 5 : 0)}
+          x1={bbox.left ? bbox.left - 2.5 * Math.sin(angle) : 0}
+          x2={(bbox.left ? bbox.left - 2.5 * Math.sin(angle) : 0) + (bbox?.width ?? 0)}
+          y1={bbox.top ? bbox.top + 2.5 * Math.cos(angle) : 0}
+          y2={(bbox.top ? bbox.top + 2.5 * Math.cos(angle) : 0) + (bbox?.height ?? 0)}
+        />
+      ) : (
+        <line
+          x1={bbox?.left ?? 0}
+          x2={(bbox?.left ?? 0) + (bbox?.width ?? 0)}
+          y1={bbox?.top ?? 0}
+          y2={(bbox?.top ?? 0) + (bbox?.height ?? 0)}
+        />
+      )}
+
+      {bondType === '=' ? (
+        <line
+          x1={bbox.left ? bbox.left + 2.5 * Math.sin(angle) : 0}
+          x2={(bbox.left ? bbox.left + 2.5 * Math.sin(angle) : 0) + (bbox.width ? bbox.width : 0)}
+          y1={bbox.top ? bbox.top - 2.5 * Math.cos(angle) : 0}
+          y2={(bbox.top ? bbox.top - 2.5 * Math.cos(angle) : 0) + (bbox.height ? bbox.height : 0)}
         />
       ) : null}
     </g>
