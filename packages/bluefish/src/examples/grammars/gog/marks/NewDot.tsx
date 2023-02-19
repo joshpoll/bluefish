@@ -77,7 +77,7 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
           <PointLabel
             name={labels}
             texts={(data as any[]).map((d, i) => ({
-              label: <Text contents={d[(props.label! as any).field!]} fontSize={'6pt'} />,
+              label: <Text contents={d[(props.label! as any).field!]} fontSize={'8pt'} />,
               ref: dots[i],
             }))}
             compare={undefined}
@@ -93,7 +93,7 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
           <PointLabel
             name={labels}
             texts={(data as any[]).map((d, i) => ({
-              label: <Text contents={d[(props.label as string)!]} fontSize={'6pt'} />,
+              label: <Text contents={d[(props.label as string)!]} fontSize={'8pt'} />,
               ref: dots[i],
             }))}
             compare={undefined}

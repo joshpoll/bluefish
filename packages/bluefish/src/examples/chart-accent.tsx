@@ -72,9 +72,9 @@ const ChartLegend = withBluefish((props: ChartLegendProps) => {
     <Col spacing={5} alignment={'center'}>
       {props.items.map((item, ind) => (
         <AlignNew>
-          <Circle name={circle[ind]} guidePrimary={'centerRight'} r={3} color={item.color} cx={0} cy={0} />
-          <Padding all={5}>
-            <Text name={legend[ind]} guidePrimary={'centerLeft'} contents={item.title} />
+          <Circle name={circle[ind]} guidePrimary={'centerRight'} r={5} fill={item.color} cx={0} cy={0} />
+          <Padding guidePrimary={'centerLeft'} all={5}>
+            <Text name={legend[ind]} contents={item.title} />
           </Padding>
         </AlignNew>
       ))}
@@ -162,15 +162,26 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                 })}
                 label={{ field: 'temperature', avoid: [line1, line2] }}
               />
-              <Connector $from={'center'} $to={'center'}>
-                <Ref to={lookup(phoenixDots, 'dot-0')} />
-                <Text guidePrimary={'center'} contents={'test'} fontSize={'8pt'} />
-              </Connector>
-              {/* <PointLabel
+              <NewLine
+                name={chicagoAvgRef}
+                x={'month'}
+                y={'temperature'}
+                color={'#5ca3d1'}
+                stroke={'1'}
+                data={[
+                  { temperature: chicagoAvg, month: 0 },
+                  { temperature: chicagoAvg, month: 13 },
+                ]}
+              />
+              <NewAxis x={'month'} y={'temperature'} color={'black'} ticks={Array.from(Array(14).keys())} axis={'x'} />
+              <NewAxis x={'month'} y={'temperature'} color={'black'} ticks={ticks(0, 100, 10)} axis={'y'} />
+              <PointLabel
                 texts={[
                   {
-                    label: <Text contents={'test'} fontSize={'8pt'} />,
-                    ref: <Ref to={lookup(phoenixDots, 'dot-0')} />,
+                    label: (
+                      <Text contents={`Chicago's Avg: ${chicagoAvg.toFixed(2)}`} fontSize={'10pt'} fill={'#5ca3d1'} />
+                    ),
+                    ref: chicagoAvgRef,
                   },
                 ]}
                 compare={undefined}
@@ -179,7 +190,37 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                 avoidElements={[]}
                 avoidRefElements
                 padding={0}
-              /> */}
+              />
+              <PointLabel
+                texts={[
+                  {
+                    label: <Text contents={`Freezing Point: 32`} fontSize={'10pt'} />,
+                    ref: freezing,
+                  },
+                ]}
+                compare={undefined}
+                offset={[1]}
+                anchor={Anchors}
+                avoidElements={[]}
+                avoidRefElements
+                padding={0}
+              />
+              <PointLabel
+                texts={[
+                  {
+                    label: <Text contents={`Max: 95`} fontSize={'10pt'} />,
+                    ref: lookup(phoenixDots, 'dot-6'),
+                  },
+                ]}
+                compare={undefined}
+                offset={[1]}
+                anchor={Anchors}
+                avoidElements={[]}
+                avoidRefElements
+                padding={0}
+              />
+              <NewDot x={'month'} y={'temperature'} color={'#7c9834'} data={[phoenixTemps[6]]} />
+
               {/* <PointLabel
                 texts={[
                   {
@@ -194,20 +235,6 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                 avoidRefElements
                 padding={0}
               /> */}
-
-              <NewLine
-                name={chicagoAvgRef}
-                x={'month'}
-                y={'temperature'}
-                color={'#5ca3d1'}
-                stroke={'1'}
-                data={[
-                  { temperature: chicagoAvg, month: 0 },
-                  { temperature: chicagoAvg, month: 13 },
-                ]}
-              />
-              <NewAxis x={'month'} y={'temperature'} color={'black'} ticks={Array.from(Array(14).keys())} axis={'x'} />
-              <NewAxis x={'month'} y={'temperature'} color={'black'} ticks={ticks(0, 100, 10)} axis={'y'} />
             </Plot>
           </Padding>
           <Group>
