@@ -1,15 +1,49 @@
 import { withBluefish, useBluefishLayout, PropsWithBluefish } from '../../bluefish';
 import { NewBBox } from '../../NewBBox';
 
+type maxBondTypes = {
+  [key: string]: number;
+};
+
+const maxBonds: maxBondTypes = {
+  H: 1,
+  C: 4,
+  N: 3,
+  O: 2,
+  P: 3,
+  S: 2,
+  B: 3,
+  F: 1,
+  I: 1,
+  Cl: 1,
+  Br: 1,
+};
+
+// new Map([
+//   ['H', 1],
+//   ['C', 4],
+//   ['N', 3],
+//   ['O', 2],
+//   ['P', 3],
+//   ['S', 2],
+//   ['B', 3],
+//   ['F', 1],
+//   ['I', 1],
+//   ['Cl', 1],
+//   ['Br', 1],
+// ]);
+
 export type AtomProps = PropsWithBluefish<
   React.SVGProps<SVGCircleElement> & {
     content: string;
     curId: string;
+    isTerminal: boolean;
+    bondCount: number;
   }
 >;
 
 export const Atom = withBluefish((props: AtomProps) => {
-  const { name, content, curId, ...rest } = props;
+  const { name, content, curId, isTerminal, bondCount, ...rest } = props;
   const { id, domRef, bbox } = useBluefishLayout({}, props, () => {
     const { cx, cy, r } = props;
     return {
@@ -19,6 +53,10 @@ export const Atom = withBluefish((props: AtomProps) => {
       height: r !== undefined ? +r * 2 : undefined,
     };
   });
+
+  const numHydrogens = maxBonds[content] - bondCount;
+  const hydrogenString = 'H'.repeat(numHydrogens);
+  const atomContent = content === 'C' ? '' : content + hydrogenString;
 
   return (
     <g
@@ -37,10 +75,20 @@ scale(${bbox.coord?.scale?.x ?? 1} ${bbox.coord?.scale?.y ?? 1})`}
           fill={'none'}
         />
       ) : (
-        <text x={(bbox.left ?? 0) + (bbox.width ?? 0) / 2} y={(bbox.top ?? 0) + (bbox.height ?? 0) / 2}>
-          {content}
-        </text>
+        <circle
+          {...rest}
+          cx={(bbox.left ?? 0) + (bbox.width ?? 0) / 2}
+          cy={(bbox.top ?? 0) + (bbox.height ?? 0) / 2}
+          r={(bbox.width ?? 0) / 2}
+          fill={'white'}
+          opacity={1}
+        />
       )}
+
+      <text x={bbox.left ?? 0} y={(bbox.top ?? 0) + (bbox.height ?? 0)} font-size={25}>
+        {atomContent}
+      </text>
+
       {/* <circle
         {...rest}
         cx={(bbox.left ?? 0) + (bbox.width ?? 0) / 2}

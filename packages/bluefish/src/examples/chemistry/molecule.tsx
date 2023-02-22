@@ -148,6 +148,8 @@ export const Molecule = withBluefish((props: any) => {
             fill={'black'}
             content={v.value.element}
             curId={v.id}
+            isTerminal={v.isTerminal}
+            bondCount={v.value.bondCount}
           />
         ))}
 
