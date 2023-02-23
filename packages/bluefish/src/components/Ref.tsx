@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useRef } from 'react';
+import { forwardRef, useId, useImperativeHandle, useRef } from 'react';
 import {
   BluefishContextValue,
   Constraints,
@@ -340,6 +340,7 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
 
   const transformStackRef = useRef<CoordinateTransform[] | undefined>(undefined);
   const measurable = useRef<Measurable | null>(null);
+  const id = useId();
 
   useImperativeHandle(
     ref,
@@ -428,6 +429,6 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
     [props.to, context.bfMap, symbolContext.bfSymbolMap],
   );
 
-  return <g className="ref" data-to={measurable.current?.id}></g>;
+  return <g id={id} className="ref" data-to={measurable.current?.id}></g>;
 });
 Ref.displayName = 'Ref';

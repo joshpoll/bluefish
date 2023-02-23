@@ -171,6 +171,19 @@ export const Molecule = withBluefish((props: any) => {
             <Ref to={e.destId} />
           </Bond>
         ))}
+
+        {vertices.map((v) => (
+          <Atom
+            cx={(v.xLoc + 35) * 1.5}
+            cy={(v.yLoc + 35) * 1.5}
+            r={8}
+            fill={'black'}
+            content={v.value.element}
+            curId={v.id}
+            isTerminal={v.isTerminal}
+            bondCount={v.value.bondCount}
+          />
+        ))}
       </Group>
     </SVG>
   );

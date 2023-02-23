@@ -7,7 +7,14 @@ export function DomStructure() {
       const allRefs = Array.from(document.querySelectorAll('.ref'));
       // for each ref in allRefs, get the data-to attribute
 
+      // for each ref in allRefs, get the parent node of the ref
+      const allRefsParent = allRefs.map((ref) => ref.parentNode);
       const allRefsTo = allRefs.map((ref) => ref.getAttribute('data-to'));
+
+      const refs = allRefs.map((ref) => ({
+        parent: (ref.parentNode as any).getAttribute('id'),
+        to: ref.getAttribute('data-to'),
+      }));
       // console.log(
       //   'allRefs',
       //   Array.from(allRefs).map((ref: any) => {
@@ -16,23 +23,36 @@ export function DomStructure() {
       // );
       // console.log(`allRefs`, allRefs);
       // console.log('allRefsTo', allRefsTo);
-      allRefsTo.forEach((refTo) => {
-        if (!refTo) {
+      refs.forEach(({ parent, to }) => {
+        if (!parent || !to) {
           return;
         }
-        const domObject = window[refTo as any];
+
+        const domObjectFrom = window[parent as any];
+        const domObjectTo = window[to as any];
         // console.log('dom objects');
         // console.log(domObject);
 
-        if (domObject) {
+        if (domObjectFrom) {
           const linkChild = document.createElementNS('http://www.w3.org/2000/svg', 'a');
-          linkChild.setAttribute('href', `#${refTo}`);
+          linkChild.setAttribute('href', `#${to}`);
           // create SVG text node
           const textNode = document.createElementNS('http://www.w3.org/2000/svg', 'text');
           linkChild.appendChild(textNode);
-          linkChild.setAttribute('aria-label', `Link to ${refTo}`);
+          linkChild.setAttribute('aria-label', `Link to ${to}`);
           // console.log(linkChild);
-          (domObject as any).appendChild(linkChild);
+          (domObjectFrom as any).appendChild(linkChild);
+        }
+
+        if (domObjectTo) {
+          const linkChild = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+          linkChild.setAttribute('href', `#${parent}`);
+          // create SVG text node
+          const textNode = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          linkChild.appendChild(textNode);
+          linkChild.setAttribute('aria-label', `Link to ${parent}`);
+          // console.log(linkChild);
+          (domObjectTo as any).appendChild(linkChild);
         }
 
         // console.log(domObject);
