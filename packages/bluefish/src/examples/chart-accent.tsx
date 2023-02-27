@@ -3,7 +3,7 @@ import { SVG } from '../components/SVG';
 import { scaleLinear } from 'd3-scale';
 import { line } from 'd3-shape';
 import _ from 'lodash';
-import { Circle, Col, Connector, Group, Padding, Rect, Ref, Row } from '../main';
+import { Align, Circle, Col, Connector, Group, Line, Padding, Rect, Ref, Row } from '../main';
 import { NewDot } from './grammars/gog/marks/NewDot';
 import { NewLine } from './grammars/gog/marks/NewLine';
 import { lookup, useBluefishSymbolContext, useName, useNameList, withBluefish } from '../bluefish';
@@ -13,6 +13,7 @@ import { NewAxis } from './grammars/gog/marks/NewAxis';
 import { ticks } from 'd3-array';
 import { AlignNew } from '../components/AlignNew';
 import { Anchors, PointLabel } from '../components/Label/PointLabel';
+import { NewRect } from './grammars/gog/marks/NewRect';
 
 type tempSchema = {
   city: string;
@@ -82,6 +83,27 @@ const ChartLegend = withBluefish((props: ChartLegendProps) => {
   );
 });
 
+type LineLabelProps = {
+  contents: string;
+  fontSize?: string;
+  color?: string;
+};
+
+const LineLabel = withBluefish((props: LineLabelProps) => {
+  const text = useName('text');
+  const line1 = useName('line-1');
+  const line2 = useName('line-2');
+
+  return (
+    <Group>
+      <Row spacing={5} alignment={'middle'}>
+        <Text name={text} contents={props.contents} fill={props.color ?? 'black'} fontSize={props.fontSize ?? '10pt'} />
+        <Line name={line1} color={props.color ?? 'black'} x1={0} x2={10} />
+      </Row>
+    </Group>
+  );
+});
+
 export const ChartAccent: React.FC<{}> = withBluefish(() => {
   const line1 = useName('line1');
   const line2 = useName('line2');
@@ -89,6 +111,10 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
   const chicagoAvgRef = useName('chicagoAverage');
   // const dots = useName('dots');
   const phoenixDots = useName('phoenixDots');
+  const rectAnnotation = useName('rectAnnotation');
+  const rectAnnotation2 = useName('rectAnnotation2');
+  const xAxis = useName('xAxis');
+  const yAxis = useName('yAxis');
 
   const chicagoTemps = temps.filter((temp) => temp.city === 'Chicago');
   const phoenixTemps = temps.filter((temp) => temp.city === 'Phoenix');
@@ -173,8 +199,42 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                   { temperature: chicagoAvg, month: 13 },
                 ]}
               />
-              <NewAxis x={'month'} y={'temperature'} color={'black'} ticks={Array.from(Array(14).keys())} axis={'x'} />
-              <NewAxis x={'month'} y={'temperature'} color={'black'} ticks={ticks(0, 100, 10)} axis={'y'} />
+              <NewLine
+                x={'month'}
+                y={'temperature'}
+                color={'#f0b14f'}
+                stroke={'2'}
+                data={[
+                  { temperature: 10, month: 9.5 },
+                  { temperature: 10, month: 12.5 },
+                ]}
+              />
+              <NewLine
+                x={'month'}
+                y={'temperature'}
+                color={'#f0b14f'}
+                stroke={'2'}
+                data={[
+                  { temperature: 10, month: 7.5 },
+                  { temperature: 10, month: 8.5 },
+                ]}
+              />
+              <NewAxis
+                name={xAxis}
+                x={'month'}
+                y={'temperature'}
+                color={'black'}
+                ticks={Array.from(Array(14).keys())}
+                axis={'x'}
+              />
+              <NewAxis
+                name={yAxis}
+                x={'month'}
+                y={'temperature'}
+                color={'black'}
+                ticks={ticks(0, 100, 10)}
+                axis={'y'}
+              />
               <PointLabel
                 texts={[
                   {
@@ -220,7 +280,33 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                 padding={0}
               />
               <NewDot x={'month'} y={'temperature'} color={'#7c9834'} data={[phoenixTemps[6]]} />
-
+              <AlignNew>
+                <NewRect
+                  guidePrimary={'topCenter'}
+                  name={rectAnnotation}
+                  // opacity={0.3}
+                  fillOpacity={0.3}
+                  color={'gray'}
+                  x={'month'}
+                  y={'temperature'}
+                  corner1={{ temperature: 0, month: 2.5 }}
+                  corner2={{ temperature: 100, month: 5.5 }}
+                />
+                <Padding all={10} guidePrimary={'topCenter'}>
+                  <Text contents="Spring" />
+                </Padding>
+              </AlignNew>
+              <NewRect
+                name={rectAnnotation2}
+                // opacity={0.3}
+                fillOpacity={0.2}
+                color={'#f0b14f'}
+                stroke={'#f0b14f'}
+                x={'month'}
+                y={'temperature'}
+                corner1={{ temperature: 60, month: 8.5 }}
+                corner2={{ temperature: 95, month: 10.5 }}
+              />
               {/* <PointLabel
                 texts={[
                   {
@@ -247,3 +333,13 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
     </SVG>
   );
 });
+
+// //  d3 syntax:
+// d3.selectAll(element).attr(width, 90);
+
+// // selection by component name/lookup? Is that even possible ==> if each component keeps track of what it's called
+// // i.e.
+// Bluefish.selectAll(NewDot).attr()
+
+// // should return component but also props for filtering?
+// Bluefish.selectAll(NewDot).filter(d => d.month === )

@@ -53,6 +53,7 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
           name={dots[i]}
           cx={+d[props.x]}
           cy={+d[props.y]}
+          data={d}
           r={3}
           stroke={props.stroke ?? 'black'}
           fill={props.color ?? 'white'}
@@ -114,6 +115,7 @@ export type DotScaleProps = PropsWithBluefish<
   React.SVGProps<SVGCircleElement> & {
     xScale: (d: any) => (x: number) => number;
     yScale: (d: any) => (y: number) => number;
+    data: any;
   }
 >;
 
