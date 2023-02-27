@@ -19,20 +19,6 @@ const maxBonds: maxBondTypes = {
   Br: 1,
 };
 
-// new Map([
-//   ['H', 1],
-//   ['C', 4],
-//   ['N', 3],
-//   ['O', 2],
-//   ['P', 3],
-//   ['S', 2],
-//   ['B', 3],
-//   ['F', 1],
-//   ['I', 1],
-//   ['Cl', 1],
-//   ['Br', 1],
-// ]);
-
 export type AtomProps = PropsWithBluefish<
   React.SVGProps<SVGCircleElement> & {
     content: string;
@@ -64,7 +50,7 @@ export const Atom = withBluefish((props: AtomProps) => {
       ref={domRef}
       transform={`translate(${bbox.coord?.translate?.x ?? 0} ${bbox.coord?.translate?.y ?? 0})
 scale(${bbox.coord?.scale?.x ?? 1} ${bbox.coord?.scale?.y ?? 1})`}
-      aria-label={content}
+      aria-label={`Atom: ${content}`}
     >
       {content === 'C' ? (
         <circle
@@ -79,26 +65,21 @@ scale(${bbox.coord?.scale?.x ?? 1} ${bbox.coord?.scale?.y ?? 1})`}
           {...rest}
           cx={(bbox.left ?? 0) + (bbox.width ?? 0) / 2}
           cy={(bbox.top ?? 0) + (bbox.height ?? 0) / 2}
-          r={(bbox.width ?? 0) / 2}
+          r={(1.2 * (bbox.width ?? 0)) / 2}
           fill={'white'}
           opacity={1}
         />
       )}
 
-      <text x={bbox.left ?? 0} y={(bbox.top ?? 0) + (bbox.height ?? 0)} font-size={25}>
+      <text
+        x={bbox.left ?? 0}
+        y={(bbox.top ?? 0) + (bbox.height ?? 0) / 2}
+        font-size={23}
+        text-anchor={'center'}
+        dominant-baseline={'central'}
+      >
         {atomContent}
       </text>
-
-      {/* <circle
-        {...rest}
-        cx={(bbox.left ?? 0) + (bbox.width ?? 0) / 2}
-        cy={(bbox.top ?? 0) + (bbox.height ?? 0) / 2}
-        r={(bbox.width ?? 0) / 2}
-        aria-label={content}
-      /> */}
-      {/* <text x={(bbox.left ?? 0) + (bbox.width ?? 0) / 2} y={(bbox.top ?? 0) + (bbox.height ?? 0) / 2}>
-        {curId}
-      </text> */}
     </g>
   );
 });

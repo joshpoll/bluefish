@@ -69,7 +69,7 @@ export const SVG = (props: PropsWithChildren<SVGProps>) => {
   return (
     <BluefishContext.Provider value={value}>
       <BluefishSymbolContext.Provider value={symbolValue}>
-        <svg width={props.width} height={props.height} aria-label="test label image here">
+        <svg width={props.width} height={props.height}>
           {processChildren(props.children, (child, index) => (node: any) => {
             childrenRef.current[index] = node;
             // console.log('setting child ref', index, node, node.name);

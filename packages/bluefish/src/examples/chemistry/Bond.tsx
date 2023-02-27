@@ -122,9 +122,10 @@ export const Bond = withBluefish((props: PropsWithChildren<BondProps>) => {
   }
 
   const angle = calculateBondAngle(bbox.left, bbox.right, bbox.top, bbox.bottom);
+  const bondAria = bondType === '=' ? 'Double Bond' : 'Single Bond';
 
   return (
-    <g id={id} ref={domRef} {...rest} aria-label={content}>
+    <g id={id} ref={domRef} {...rest} aria-label={bondAria}>
       {children}
       {bondType === '=' && ringCenterX === 0 && ringCenterY === 0 ? (
         <line
