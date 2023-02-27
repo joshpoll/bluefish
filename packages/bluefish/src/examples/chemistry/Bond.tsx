@@ -123,6 +123,7 @@ export const Bond = withBluefish((props: PropsWithChildren<BondProps>) => {
 
   const angle = calculateBondAngle(bbox.left, bbox.right, bbox.top, bbox.bottom);
   const bondAria = bondType === '=' ? 'Double Bond' : 'Single Bond';
+  const ringBondDirection = calculateRingBondDirection(startLocationY, endLocationY, ringCenterY);
 
   return (
     <g id={id} ref={domRef} {...rest} aria-label={bondAria}>
@@ -152,20 +153,32 @@ export const Bond = withBluefish((props: PropsWithChildren<BondProps>) => {
         />
       ) : bondType === '=' ? (
         <line
-          x1={bbox.left ? bbox.left + 5 * Math.sin(angle) : 0}
-          x2={(bbox.left ? bbox.left + 5 * Math.sin(angle) : 0) + (bbox.width ? bbox.width : 0)}
+          x1={
+            bbox.left
+              ? ringBondDirection
+                ? bbox.left + 5 * Math.sin(angle) - (5 / 3 ** 0.5) * Math.cos(angle)
+                : bbox.left + 5 * Math.sin(angle) + (5 / 3 ** 0.5) * Math.cos(angle)
+              : 0
+          }
+          x2={
+            (bbox.left
+              ? ringBondDirection
+                ? bbox.left + 5 * Math.sin(angle) + (5 / 3 ** 0.5) * Math.cos(angle)
+                : bbox.left + 5 * Math.sin(angle) - (5 / 3 ** 0.5) * Math.cos(angle)
+              : 0) + (bbox.width ? bbox.width : 0)
+          }
           y1={
             bbox.top
-              ? calculateRingBondDirection(startLocationY, endLocationY, ringCenterY)
-                ? bbox.top - 5 * Math.cos(angle)
-                : bbox.top + 5 * Math.cos(angle)
+              ? ringBondDirection
+                ? bbox.top - 5 * Math.cos(angle) - (5 / 3 ** 0.5) * Math.sin(angle)
+                : bbox.top + 5 * Math.cos(angle) - (5 / 3 ** 0.5) * Math.sin(angle)
               : 0
           }
           y2={
             (bbox.top
-              ? calculateRingBondDirection(startLocationY, endLocationY, ringCenterY)
-                ? bbox.top - 5 * Math.cos(angle)
-                : bbox.top + 5 * Math.cos(angle)
+              ? ringBondDirection
+                ? bbox.top - 5 * Math.cos(angle) + (5 / 3 ** 0.5) * Math.sin(angle)
+                : bbox.top + 5 * Math.cos(angle) + (5 / 3 ** 0.5) * Math.sin(angle)
               : 0) + (bbox.height ? bbox.height : 0)
           }
         />
