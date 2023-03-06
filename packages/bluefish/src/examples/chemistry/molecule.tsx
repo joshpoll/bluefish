@@ -126,7 +126,7 @@ export const Molecule = withBluefish((props: any) => {
     const vertex = vertices.filter((v: any) => {
       return v.id === vertexId;
     });
-    return vertex[0].yLoc;
+    return vertex[0];
   }
 
   console.log('the edges');
@@ -164,8 +164,10 @@ export const Molecule = withBluefish((props: any) => {
             bondType={e.bondType}
             ringCenterX={e.lcr ? e.lcr.center.x : 0}
             ringCenterY={e.lcr ? e.lcr.center.y : 0}
-            startLocationY={getLocationVertexWithId(e.sourceId, vertices)}
-            endLocationY={getLocationVertexWithId(e.destId, vertices)}
+            startLocationX={getLocationVertexWithId(e.sourceId, vertices).xLoc}
+            startLocationY={getLocationVertexWithId(e.sourceId, vertices).yLoc}
+            endLocationY={getLocationVertexWithId(e.destId, vertices).yLoc}
+            endLocationX={getLocationVertexWithId(e.destId, vertices).xLoc}
           >
             <Ref to={e.sourceId} />
             <Ref to={e.destId} />

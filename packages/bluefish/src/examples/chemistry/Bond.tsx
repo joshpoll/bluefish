@@ -21,7 +21,9 @@ export type BondProps = PropsWithBluefish<
     bondType: string;
     ringCenterX: Number;
     ringCenterY: Number;
+    startLocationX: Number;
     startLocationY: Number;
+    endLocationX: Number;
     endLocationY: Number;
   }
 >;
@@ -31,8 +33,8 @@ const connectorMeasurePolicy = (props: BondProps): Measure => {
     const [from, to] = measurables.map((m) => m.measure(constraints));
     const [fromYDir, fromXDir] = splitAlignment(props.$from ?? measurables[0].guidePrimary ?? 'center');
     const [toYDir, toXDir] = splitAlignment(props.$to ?? measurables[1].guidePrimary ?? 'center');
-    console.log('[bond] from', from, fromYDir, fromXDir);
-    console.log('[bond] to', to, toYDir, toXDir);
+    // console.log('[bond] from', from, fromYDir, fromXDir);
+    // console.log('[bond] to', to, toYDir, toXDir);
 
     let fromX, fromY, toX, toY;
     if (fromXDir === 'left') {
@@ -96,37 +98,67 @@ const connectorMeasurePolicy = (props: BondProps): Measure => {
 // I'm not sure why...
 export const Bond = withBluefish((props: PropsWithChildren<BondProps>) => {
   const { id, bbox, domRef, children } = useBluefishLayout({}, props, connectorMeasurePolicy(props));
-  const { $from, $to, name, content, ringCenterX, ringCenterY, startLocationY, endLocationY, bondType, ...rest } =
-    props;
+  const {
+    $from,
+    $to,
+    name,
+    content,
+    ringCenterX,
+    ringCenterY,
+    startLocationX,
+    startLocationY,
+    endLocationX,
+    endLocationY,
+    bondType,
+    ...rest
+  } = props;
 
   function calculateBondAngle(x1: any, x2: any, y1: any, y2: any) {
-    const changeX = (x2 - x1) * 1.0;
-    const changeY = (y2 - y1) * 1.0;
-    const angle = Math.atan(changeY / changeX);
+    const changeX = Math.abs(x2 - x1) * 1.0;
+    const changeY = (y1 - y2) * 1.0;
+    let slope = changeY / changeX;
+
+    // if (Math.sign(slope) == 0) {
+    //   return 0;
+    // } else if (Math.sign(slope) == 1) {
+    //   slope =
+    // } else if (Math.sign(slope) == -1) {
+    // }
+
+    const angle = Math.atan(slope);
     return angle;
   }
 
-  // Returns True -> draw second bond above first bond
-  // Returns False -> draw second bond below first bond
+  // Returns "above" -> draw second bond above first bond
+  // Returns "below" -> draw second bond below first bond
   // Lower on the page = higher Y values
   function calculateRingBondDirection(y1: any, y2: any, rCenterY: any) {
     // Check if both coordinates are above the center
     // if both coordinates are above the center, return False -> bond should be drawn below
     if (y1 < Math.floor(rCenterY) || y2 < Math.floor(rCenterY)) {
-      return false;
+      return 'below';
     } else {
       // Check if both coordinates are below the center
       // if both coordinates are below the center, return True -> bond should be drawn above
-      return true;
+      return 'above';
     }
   }
 
-  const angle = calculateBondAngle(bbox.left, bbox.right, bbox.top, bbox.bottom);
+  let angle = calculateBondAngle(bbox.left, bbox.right, bbox.top, bbox.bottom);
   const bondAria = bondType === '=' ? 'Double Bond' : 'Single Bond';
   const ringBondDirection = calculateRingBondDirection(startLocationY, endLocationY, ringCenterY);
+  const nameString = name as any;
+
+  console.log('ring information here');
+  console.log(name);
+  console.log('start: ', startLocationX, startLocationY);
+  console.log('end: ', endLocationX, endLocationY);
+  console.log('ringCenter: ', ringCenterX, ringCenterY);
+  console.log(ringBondDirection);
+  console.log((angle * 180) / Math.PI);
 
   return (
-    <g id={id} ref={domRef} {...rest} aria-label={bondAria}>
+    <g id={id} ref={domRef} {...rest} aria-label={bondAria} name={nameString}>
       {children}
       {bondType === '=' && ringCenterX === 0 && ringCenterY === 0 ? (
         <line
@@ -155,28 +187,28 @@ export const Bond = withBluefish((props: PropsWithChildren<BondProps>) => {
         <line
           x1={
             bbox.left
-              ? ringBondDirection
+              ? ringBondDirection == 'above'
                 ? bbox.left + 5 * Math.sin(angle) - (5 / 3 ** 0.5) * Math.cos(angle)
                 : bbox.left + 5 * Math.sin(angle) + (5 / 3 ** 0.5) * Math.cos(angle)
               : 0
           }
           x2={
             (bbox.left
-              ? ringBondDirection
+              ? ringBondDirection == 'above'
                 ? bbox.left + 5 * Math.sin(angle) + (5 / 3 ** 0.5) * Math.cos(angle)
                 : bbox.left + 5 * Math.sin(angle) - (5 / 3 ** 0.5) * Math.cos(angle)
               : 0) + (bbox.width ? bbox.width : 0)
           }
           y1={
             bbox.top
-              ? ringBondDirection
+              ? ringBondDirection == 'above'
                 ? bbox.top - 5 * Math.cos(angle) - (5 / 3 ** 0.5) * Math.sin(angle)
                 : bbox.top + 5 * Math.cos(angle) - (5 / 3 ** 0.5) * Math.sin(angle)
               : 0
           }
           y2={
             (bbox.top
-              ? ringBondDirection
+              ? ringBondDirection == 'above'
                 ? bbox.top - 5 * Math.cos(angle) + (5 / 3 ** 0.5) * Math.sin(angle)
                 : bbox.top + 5 * Math.cos(angle) + (5 / 3 ** 0.5) * Math.sin(angle)
               : 0) + (bbox.height ? bbox.height : 0)
