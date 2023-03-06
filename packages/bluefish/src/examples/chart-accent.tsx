@@ -109,7 +109,6 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
   const line2 = useName('line2');
   const freezing = useName('freezing');
   const chicagoAvgRef = useName('chicagoAverage');
-  // const dots = useName('dots');
   const phoenixDots = useName('phoenixDots');
   const rectAnnotation = useName('rectAnnotation');
   const rectAnnotation2 = useName('rectAnnotation2');
@@ -130,7 +129,7 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
         <Row spacing={10} alignment={'top'}>
           <Padding left={30} top={10} right={30} bottom={10}>
             <Plot
-              height={400}
+              height={500}
               width={800}
               data={temps}
               x={({ width }) =>
@@ -307,20 +306,6 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                 corner1={{ temperature: 60, month: 8.5 }}
                 corner2={{ temperature: 95, month: 10.5 }}
               />
-              {/* <PointLabel
-                texts={[
-                  {
-                    label: <Text contents={'Freezing Point: 32'} />,
-                    ref: <Ref to={freezing} />,
-                  },
-                ]}
-                compare={undefined}
-                offset={[1]}
-                anchor={Anchors}
-                avoidElements={[]}
-                avoidRefElements
-                padding={0}
-              /> */}
             </Plot>
           </Padding>
           <Group>

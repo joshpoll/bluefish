@@ -63,6 +63,7 @@ import { RectPath } from './examples/grammars/gog/marks/RectPath';
 import { Polio } from './examples/grammars/gog/examples/polio';
 import { AlignNew } from './components/AlignNew';
 import { Distribute } from './components/Distribute';
+import { Background } from './components/Background';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -119,18 +120,77 @@ function App() {
 
   return (
     <div className="App">
-      {/* <svg width={500} height={500}>
-        <ColUseState spacing={10}>
-          <RectUseState width={100} height={100} fill={'red'} />
-          <RectUseState width={100} height={100} fill={'green'} />
-          <RectUseState width={100} height={100} fill={'blue'} />
-        </ColUseState>
-      </svg>
-      <br /> */}
-      <br />
+      <SVG width={500} height={500}>
+        <Background>
+          <Padding all={10}>
+            <Circle cx={100} cy={200} r={50} fill={'red'} />
+          </Padding>
+          <Rect fill={'black'} />
+        </Background>
+      </SVG>
 
-      <ChartAccent />
-      {/* <MinError /> */}
+      <SVG width={500} height={500}>
+        <Background>
+          <TreeSymbol
+            data={{
+              name: 'A',
+              value: {
+                value: '7',
+                marks: ['bold', 'italic'],
+              },
+              subtrees: [
+                {
+                  name: 'B',
+                  value: {
+                    value: '4',
+                    marks: ['bold', 'italic'],
+                  },
+                  subtrees: [
+                    {
+                      name: 'C',
+                      value: {
+                        value: '2',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                    {
+                      name: 'D',
+                      value: {
+                        value: '2',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                  ],
+                },
+                {
+                  name: 'E',
+                  value: {
+                    value: '3',
+                    marks: ['bold', 'italic'],
+                  },
+                  subtrees: [
+                    {
+                      name: 'F',
+                      value: {
+                        value: '1',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                    {
+                      name: 'G',
+                      value: {
+                        value: '1',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                  ],
+                },
+              ],
+            }}
+          />
+          <Rect fill={'pink'} fillOpacity={0.8} />
+        </Background>
+      </SVG>
     </div>
   );
 }
