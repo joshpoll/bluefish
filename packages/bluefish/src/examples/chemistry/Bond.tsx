@@ -33,8 +33,6 @@ const connectorMeasurePolicy = (props: BondProps): Measure => {
     const [from, to] = measurables.map((m) => m.measure(constraints));
     const [fromYDir, fromXDir] = splitAlignment(props.$from ?? measurables[0].guidePrimary ?? 'center');
     const [toYDir, toXDir] = splitAlignment(props.$to ?? measurables[1].guidePrimary ?? 'center');
-    // console.log('[bond] from', from, fromYDir, fromXDir);
-    // console.log('[bond] to', to, toYDir, toXDir);
 
     let fromX, fromY, toX, toY;
     if (fromXDir === 'left') {
@@ -53,17 +51,6 @@ const connectorMeasurePolicy = (props: BondProps): Measure => {
       fromY = from.top! + from.height! / 2;
     }
 
-    console.log(
-      '[bond] to BBox',
-      JSON.stringify({
-        left: to.left,
-        right: to.right,
-        top: to.top,
-        bottom: to.bottom,
-        width: to.width,
-        height: to.height,
-      }),
-    );
     if (toXDir === 'left') {
       toX = to.left;
     } else if (toXDir === 'right') {
@@ -79,9 +66,6 @@ const connectorMeasurePolicy = (props: BondProps): Measure => {
     } else {
       toY = to.top! + to.height! / 2;
     }
-
-    console.log('[bond] from', fromX, fromY);
-    console.log('[bond] to', toX, toY);
 
     return {
       left: fromX,
@@ -118,14 +102,8 @@ export const Bond = withBluefish((props: PropsWithChildren<BondProps>) => {
     const changeY = (y1 - y2) * 1.0;
     let slope = changeY / changeX;
 
-    // if (Math.sign(slope) == 0) {
-    //   return 0;
-    // } else if (Math.sign(slope) == 1) {
-    //   slope =
-    // } else if (Math.sign(slope) == -1) {
-    // }
+    let angle = Math.atan(slope);
 
-    const angle = Math.atan(slope);
     return angle;
   }
 
@@ -144,18 +122,12 @@ export const Bond = withBluefish((props: PropsWithChildren<BondProps>) => {
     }
   }
 
-  let angle = calculateBondAngle(bbox.left, bbox.right, bbox.top, bbox.bottom);
+  // let angle = calculateBondAngle(bbox.left, bbox.right, bbox.top, bbox.bottom);
+
+  let angle = calculateBondAngle(startLocationX, endLocationX, startLocationY, endLocationY);
   const bondAria = bondType === '=' ? 'Double Bond' : 'Single Bond';
   const ringBondDirection = calculateRingBondDirection(startLocationY, endLocationY, ringCenterY);
   const nameString = name as any;
-
-  console.log('ring information here');
-  console.log(name);
-  console.log('start: ', startLocationX, startLocationY);
-  console.log('end: ', endLocationX, endLocationY);
-  console.log('ringCenter: ', ringCenterX, ringCenterY);
-  console.log(ringBondDirection);
-  console.log((angle * 180) / Math.PI);
 
   return (
     <g id={id} ref={domRef} {...rest} aria-label={bondAria} name={nameString}>

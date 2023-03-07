@@ -43,6 +43,7 @@ export const Atom = withBluefish((props: AtomProps) => {
   const numHydrogens = maxBonds[content] - bondCount;
   const hydrogenString = 'H'.repeat(numHydrogens);
   const atomContent = content === 'C' ? '' : content + hydrogenString;
+  const atomName = name as any;
 
   return (
     <g
@@ -51,6 +52,7 @@ export const Atom = withBluefish((props: AtomProps) => {
       transform={`translate(${bbox.coord?.translate?.x ?? 0} ${bbox.coord?.translate?.y ?? 0})
 scale(${bbox.coord?.scale?.x ?? 1} ${bbox.coord?.scale?.y ?? 1})`}
       aria-label={`Atom: ${content}`}
+      name={atomName}
     >
       {content === 'C' ? (
         <circle

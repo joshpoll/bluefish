@@ -45,7 +45,7 @@ const fmtValue = (value: OlliValue): string => {
  * @param node A {@link AccessibilityTreeNode} to generate a navigable tree view from
  * @returns An {@link HTMLElement} ARIA TreeView of the navigable tree view for a visualization
  */
-export function DomStructure(tree: AccessibilityTree): any {
+export function TreeRender(tree: AccessibilityTree): any {
   const namespace = (Math.random() + 1).toString(36).substring(7);
 
   const node = tree.root;

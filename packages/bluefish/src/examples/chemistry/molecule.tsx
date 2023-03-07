@@ -5,6 +5,7 @@ import { Group } from '../../components/Group';
 import { Ref } from '../../components/Ref';
 import { Atom } from './Atom';
 import { Bond } from './Bond';
+import { Ring } from './Ring';
 
 const SmilesDrawer = require('smiles-drawer/app.js');
 const SvgDrawer = require('smiles-drawer/src/SvgDrawer');
@@ -72,6 +73,7 @@ export const Molecule = withBluefish((props: any) => {
           : null,
       };
     });
+
     const vertices = graph.vertices.map((vObject: any) => {
       return {
         ...vObject,
@@ -129,64 +131,150 @@ export const Molecule = withBluefish((props: any) => {
     return vertex[0];
   }
 
-  console.log('the edges');
-  console.log(edges);
-  console.log('the vertices');
-  console.log(vertices);
-  console.log('the rings');
-  console.log(rings);
+  function findOffsetsToFitDiagram(vertices: any) {
+    let xOffsets: any[] = [];
+    let yOffsets: any[] = [];
+
+    for (let i = 0; i < vertices.length; i++) {
+      let vertex = vertices[i];
+      xOffsets.push(vertex.xLoc);
+      yOffsets.push(vertex.yLoc);
+    }
+
+    let minX = Math.abs(Math.min(...xOffsets));
+    let minY = Math.abs(Math.min(...yOffsets));
+
+    return [minX, minY];
+  }
+
+  const [minXOffset, minYOffset] = findOffsetsToFitDiagram(vertices);
+
+  function findEdgesVerticesOfRing(ringElm: any, edges: any, vertices: any) {
+    let ringEdges: any[] = [];
+    let ringVertices: any[] = [];
+
+    let usedEdges: any[] = [];
+
+    // filter vertices so that only the ones in ringElm are included
+    ringVertices = vertices.filter((v: any) => {
+      return ringElm.includes(v.id);
+    });
+
+    // filter edges, if source and destination of edge in ringElm, then include
+    ringEdges = edges.filter((e: any) => {
+      return ringElm.includes(e.sourceId) && ringElm.includes(e.destId);
+    });
+
+    usedEdges = ringEdges.map((e: any) => {
+      return e.id;
+    });
+
+    return [{ edges: ringEdges, vertices: ringVertices }, usedEdges];
+  }
+
+  // function to separate list of edges, vertices, rings for rendering
+  function separateEdgesVerticesRings(edges: any, vertices: any, rings: any) {
+    let sepRings: any[] = [];
+    let sepEdges: any[] = [];
+    let sepVertices: any[] = [];
+
+    let usedVertices: any[] = [];
+    let usedEdges: any[] = [];
+
+    for (let i = 0; i < rings.length; i++) {
+      let ringElm = rings[i];
+
+      let ringVertexIds = ringElm.members.map((v: any) => {
+        return `vertex-${v}`;
+      });
+
+      let [ringObject, edgeUsed] = findEdgesVerticesOfRing(ringVertexIds, edges, vertices);
+      sepRings.push(ringObject);
+
+      usedVertices = usedVertices.concat(ringVertexIds);
+      usedEdges = usedEdges.concat(edgeUsed);
+    }
+
+    sepVertices = vertices.filter((v: any) => {
+      return !usedVertices.includes(v.id);
+    });
+
+    sepEdges = edges.filter((e: any) => {
+      return !usedEdges.includes(e.id);
+    });
+
+    return [sepEdges, sepVertices, sepRings];
+  }
+
+  console.log('these are the vertices: ', vertices);
+  console.log('these are the edges: ', edges);
+  console.log('these are the rings: ', rings);
+
+  const [renderEdges, renderVertices, renderRings] = separateEdgesVerticesRings(edges, vertices, rings);
+
+  console.log('these are the render vertices: ', renderVertices);
+  console.log('these are the render edges: ', renderEdges);
+  console.log('these are the render rings: ', renderRings);
 
   return (
-    <SVG width={500} height={500}>
-      <Group>
-        {vertices.map((v) => (
-          <Atom
-            name={v.id}
-            cx={(v.xLoc + 35) * 1.5}
-            cy={(v.yLoc + 35) * 1.5}
-            r={8}
-            fill={'black'}
-            content={v.value.element}
-            curId={v.id}
-            isTerminal={v.isTerminal}
-            bondCount={v.value.bondCount}
-          />
-        ))}
+    <Group>
+      {vertices.map((v) => (
+        <Atom
+          name={v.id}
+          cx={(v.xLoc + minXOffset + 10) * 1.2}
+          cy={(v.yLoc + minYOffset + 10) * 1.2}
+          r={8}
+          fill={'black'}
+          content={v.value.element}
+          curId={v.id}
+          isTerminal={v.isTerminal}
+          bondCount={v.value.bondCount}
+        />
+      ))}
 
-        {edges.map((e) => (
-          <Bond
-            $from={'center'}
-            $to={'center'}
-            stroke={'black'}
-            strokeWidth={2}
-            content={'Bond'}
-            name={e.id}
-            bondType={e.bondType}
-            ringCenterX={e.lcr ? e.lcr.center.x : 0}
-            ringCenterY={e.lcr ? e.lcr.center.y : 0}
-            startLocationX={getLocationVertexWithId(e.sourceId, vertices).xLoc}
-            startLocationY={getLocationVertexWithId(e.sourceId, vertices).yLoc}
-            endLocationY={getLocationVertexWithId(e.destId, vertices).yLoc}
-            endLocationX={getLocationVertexWithId(e.destId, vertices).xLoc}
-          >
-            <Ref to={e.sourceId} />
-            <Ref to={e.destId} />
-          </Bond>
-        ))}
+      {edges.map((e) => (
+        <Bond
+          $from={'center'}
+          $to={'center'}
+          stroke={'black'}
+          strokeWidth={2}
+          content={'Bond'}
+          name={e.id}
+          bondType={e.bondType}
+          ringCenterX={e.lcr ? e.lcr.center.x : 0}
+          ringCenterY={e.lcr ? e.lcr.center.y : 0}
+          startLocationX={getLocationVertexWithId(e.sourceId, vertices).xLoc}
+          startLocationY={getLocationVertexWithId(e.sourceId, vertices).yLoc}
+          endLocationY={getLocationVertexWithId(e.destId, vertices).yLoc}
+          endLocationX={getLocationVertexWithId(e.destId, vertices).xLoc}
+        >
+          <Ref to={e.sourceId} />
+          <Ref to={e.destId} />
+        </Bond>
+      ))}
 
-        {vertices.map((v) => (
-          <Atom
-            cx={(v.xLoc + 35) * 1.5}
-            cy={(v.yLoc + 35) * 1.5}
-            r={8}
-            fill={'black'}
-            content={v.value.element}
-            curId={v.id}
-            isTerminal={v.isTerminal}
-            bondCount={v.value.bondCount}
-          />
-        ))}
-      </Group>
-    </SVG>
+      {vertices.map((v) => (
+        <Atom
+          cx={(v.xLoc + minXOffset + 10) * 1.2}
+          cy={(v.yLoc + minYOffset + 10) * 1.2}
+          r={8}
+          fill={'black'}
+          content={v.value.element}
+          curId={v.id}
+          isTerminal={v.isTerminal}
+          bondCount={v.value.bondCount}
+        />
+      ))}
+
+      {/* {renderRings.map((r) => (
+        <Ring
+          vertices={r.vertices}
+          edges={r.edges}
+          minXOffset={minXOffset}
+          minYOffset={minYOffset}
+          getLocationVertexWithId={getLocationVertexWithId}
+        />
+      ))} */}
+    </Group>
   );
 });
