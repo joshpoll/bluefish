@@ -57,21 +57,21 @@ export function DomStructure() {
       });
 
       // ###########################################################
-      const htmlRendering: HTMLElement = document.createElement('div');
-      const allSvgs = Array.from(document.querySelectorAll('svg'));
-      htmlRendering.appendChild(allSvgs[0] as any);
+      // const htmlRendering: HTMLElement = document.createElement('div');
+      // const allSvgs = Array.from(document.querySelectorAll('svg'));
+      // htmlRendering.appendChild(allSvgs[0] as any);
 
-      console.log(`allSvgs`, allSvgs);
-      const t = new Tree(allSvgs[0] as any);
-      t.init();
-      console.log('outputed tree: ', t);
-      document.addEventListener('keypress', (e) => {
-        if (e.key === 't') {
-          t.setFocusToItem(t.rootTreeItem);
-        }
-      });
+      // console.log(`allSvgs`, allSvgs);
+      // const t = new Tree(allSvgs[0] as any);
+      // t.init();
+      // console.log('outputed tree: ', t);
+      // document.addEventListener('keypress', (e) => {
+      //   if (e.key === 't') {
+      //     t.setFocusToItem(t.rootTreeItem);
+      //   }
+      // });
 
-      console.log('htmlRendering', htmlRendering);
+      // console.log('htmlRendering', htmlRendering);
 
       // ###########################################################
     }, 1000);

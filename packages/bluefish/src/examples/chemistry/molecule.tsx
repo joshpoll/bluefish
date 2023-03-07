@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { withBluefish, useName } from '../../bluefish';
+import React, { useRef, useState } from 'react';
+import { withBluefish, useName, useNameList } from '../../bluefish';
 import { SVG } from '../../components/SVG';
 import { Group } from '../../components/Group';
 import { Ref } from '../../components/Ref';
@@ -60,7 +60,9 @@ export const Molecule = withBluefish((props: any) => {
         ...edgeObject,
         id: `edge-${edgeObject.id}`,
         sourceId: `vertex-${edgeObject.sourceId}`,
+        sourceNum: edgeObject.sourceId,
         destId: `vertex-${edgeObject.targetId}`,
+        destNum: edgeObject.targetId,
         ref: `edge-${edgeObject.id}`,
         lcr: drawer.preprocessor.areVerticesInSameRing(
           drawer.preprocessor.graph.vertices[edgeObject.sourceId],
@@ -93,6 +95,12 @@ export const Molecule = withBluefish((props: any) => {
 
     return [edges, vertices, rings];
   }
+
+  // const vNames = vertices.map((v) => v.id);
+  // console.log('names of vertices: ', vNames);
+  const verticesName = useNameList(vertices.map((v) => v.id));
+  const edgesName = useNameList(edges.map((e) => e.id));
+  const ringsName = useNameList(rings.map((r) => r.id));
 
   /**
    * Determine drawing dimensiosn based on vertex positions.
@@ -218,9 +226,9 @@ export const Molecule = withBluefish((props: any) => {
 
   return (
     <Group>
-      {vertices.map((v) => (
+      {vertices.map((v, index) => (
         <Atom
-          name={v.id}
+          name={verticesName[index]}
           cx={(v.xLoc + minXOffset + 10) * 1.2}
           cy={(v.yLoc + minYOffset + 10) * 1.2}
           r={8}
@@ -232,14 +240,14 @@ export const Molecule = withBluefish((props: any) => {
         />
       ))}
 
-      {edges.map((e) => (
+      {edges.map((e, index) => (
         <Bond
           $from={'center'}
           $to={'center'}
           stroke={'black'}
           strokeWidth={2}
           content={'Bond'}
-          name={e.id}
+          name={edgesName[index]}
           bondType={e.bondType}
           ringCenterX={e.lcr ? e.lcr.center.x : 0}
           ringCenterY={e.lcr ? e.lcr.center.y : 0}
@@ -248,8 +256,8 @@ export const Molecule = withBluefish((props: any) => {
           endLocationY={getLocationVertexWithId(e.destId, vertices).yLoc}
           endLocationX={getLocationVertexWithId(e.destId, vertices).xLoc}
         >
-          <Ref to={e.sourceId} />
-          <Ref to={e.destId} />
+          <Ref to={verticesName[e.sourceNum]} />
+          <Ref to={verticesName[e.destNum]} />
         </Bond>
       ))}
 

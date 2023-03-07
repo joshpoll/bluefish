@@ -27,6 +27,7 @@ export const resolveRef = (
   map: BluefishContextValue['bfMap'],
   symbolMap: BluefishSymbolMap,
 ): Measurable => {
+  console.log('resolving ref', ref, 'map', map, 'symbolMap', symbolMap);
   if (typeof ref === 'string') {
     const refObject = map.get(ref);
     if (refObject === undefined) {
