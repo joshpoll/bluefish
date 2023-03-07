@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-// import { renderTree } from './TreeRender';
+import { Tree } from './Tree';
 
 export function DomStructure() {
   useEffect(() => {
@@ -38,8 +38,8 @@ export function DomStructure() {
           const linkChild = document.createElementNS('http://www.w3.org/2000/svg', 'a');
           linkChild.setAttribute('href', `#${to}`);
           // create SVG text node
-          const textNode = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          linkChild.appendChild(textNode);
+          // const textNode = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          // linkChild.appendChild(textNode);
           linkChild.setAttribute('aria-label', `Link to ${to}`);
           // console.log(linkChild);
           (domObjectFrom as any).appendChild(linkChild);
@@ -49,17 +49,31 @@ export function DomStructure() {
           const linkChild = document.createElementNS('http://www.w3.org/2000/svg', 'a');
           linkChild.setAttribute('href', `#${parent}`);
           // create SVG text node
-          const textNode = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          linkChild.appendChild(textNode);
+          // const textNode = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          // linkChild.appendChild(textNode);
           linkChild.setAttribute('aria-label', `Link to ${parent}`);
-          // console.log(linkChild);
           (domObjectTo as any).appendChild(linkChild);
         }
-
-        // console.log(domObject);
       });
 
-      // console.log(allRefsTo);
+      // ###########################################################
+      const htmlRendering: HTMLElement = document.createElement('div');
+      const allSvgs = Array.from(document.querySelectorAll('svg'));
+      htmlRendering.appendChild(allSvgs[0] as any);
+
+      console.log(`allSvgs`, allSvgs);
+      const t = new Tree(allSvgs[0] as any);
+      t.init();
+      console.log('outputed tree: ', t);
+      document.addEventListener('keypress', (e) => {
+        if (e.key === 't') {
+          t.setFocusToItem(t.rootTreeItem);
+        }
+      });
+
+      console.log('htmlRendering', htmlRendering);
+
+      // ###########################################################
     }, 1000);
   }, []);
 
