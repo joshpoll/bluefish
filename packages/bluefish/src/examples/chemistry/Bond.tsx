@@ -19,6 +19,7 @@ export type BondProps = PropsWithBluefish<
     $to?: Alignment2D;
     content: string;
     bondType: string;
+    curId: string;
     ringCenterX: Number;
     ringCenterY: Number;
     startLocationX: Number;
@@ -94,6 +95,7 @@ export const Bond = withBluefish((props: PropsWithChildren<BondProps>) => {
     endLocationX,
     endLocationY,
     bondType,
+    curId,
     ...rest
   } = props;
 
@@ -127,10 +129,9 @@ export const Bond = withBluefish((props: PropsWithChildren<BondProps>) => {
   let angle = calculateBondAngle(startLocationX, endLocationX, startLocationY, endLocationY);
   const bondAria = bondType === '=' ? 'Double Bond' : 'Single Bond';
   const ringBondDirection = calculateRingBondDirection(startLocationY, endLocationY, ringCenterY);
-  const nameString = name as any;
 
   return (
-    <g id={id} ref={domRef} {...rest} aria-label={bondAria} name={nameString}>
+    <g id={id} ref={domRef} {...rest} aria-label={bondAria} name={curId}>
       {children}
       {bondType === '=' && ringCenterX === 0 && ringCenterY === 0 ? (
         <line

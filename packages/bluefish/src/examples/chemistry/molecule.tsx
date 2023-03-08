@@ -255,6 +255,7 @@ export const Molecule = withBluefish((props: any) => {
           startLocationY={getLocationVertexWithId(e.sourceId, vertices).yLoc}
           endLocationY={getLocationVertexWithId(e.destId, vertices).yLoc}
           endLocationX={getLocationVertexWithId(e.destId, vertices).xLoc}
+          curId={e.id}
         >
           <Ref to={verticesName[e.sourceNum]} />
           <Ref to={verticesName[e.destNum]} />

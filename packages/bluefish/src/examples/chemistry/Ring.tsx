@@ -44,6 +44,7 @@ export const Ring = withBluefish((props: any) => {
           startLocationY={getLocationVertexWithId(e.sourceId, vertices).yLoc}
           endLocationY={getLocationVertexWithId(e.destId, vertices).yLoc}
           endLocationX={getLocationVertexWithId(e.destId, vertices).xLoc}
+          curId={e.id}
         >
           <Ref to={e.sourceId} />
           <Ref to={e.destId} />

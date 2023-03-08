@@ -59,7 +59,7 @@ export function DomStructure() {
       // ###########################################################
       // const htmlRendering: HTMLElement = document.createElement('div');
       // const allSvgs = Array.from(document.querySelectorAll('svg'));
-      // htmlRendering.appendChild(allSvgs[0] as any);
+      // // htmlRendering.appendChild(allSvgs[0] as any);
 
       // console.log(`allSvgs`, allSvgs);
       // const t = new Tree(allSvgs[0] as any);
