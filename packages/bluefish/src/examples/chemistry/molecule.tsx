@@ -102,6 +102,21 @@ export const Molecule = withBluefish((props: any) => {
   const edgesName = useNameList(edges.map((e) => e.id));
   const ringsName = useNameList(rings.map((r) => r.id));
 
+  // Remap the vertices and edges to include the names
+  vertices = vertices.map((v, index) => {
+    return {
+      ...v,
+      name: verticesName[index],
+    };
+  });
+
+  edges = edges.map((e, index) => {
+    return {
+      ...e,
+      name: edgesName[index],
+    };
+  });
+
   /**
    * Determine drawing dimensiosn based on vertex positions.
    *
@@ -197,7 +212,7 @@ export const Molecule = withBluefish((props: any) => {
       });
 
       let [ringObject, edgeUsed] = findEdgesVerticesOfRing(ringVertexIds, edges, vertices);
-      sepRings.push(ringObject);
+      sepRings.push({ ...ringObject, id: ringElm.id, name: ringElm.name });
 
       usedVertices = usedVertices.concat(ringVertexIds);
       usedEdges = usedEdges.concat(edgeUsed);
@@ -275,15 +290,9 @@ export const Molecule = withBluefish((props: any) => {
         />
       ))}
 
-      {/* {renderRings.map((r) => (
-        <Ring
-          vertices={r.vertices}
-          edges={r.edges}
-          minXOffset={minXOffset}
-          minYOffset={minYOffset}
-          getLocationVertexWithId={getLocationVertexWithId}
-        />
-      ))} */}
+      {renderRings.map((r) => (
+        <Ring ring={r} />
+      ))}
     </Group>
   );
 });
