@@ -13,6 +13,7 @@ export function DomStructure() {
     nodeIsLink: boolean
     nodeHref: string
     childIndex: number
+    nodeCategory: string
   }
   */
   function createJSONfromBluefish() {
@@ -38,6 +39,8 @@ export function DomStructure() {
         nodeIsLink: true,
         nodeHref: domElement.getAttribute('href'),
         childIndex: null,
+        totalNodes: null,
+        nodeCategory: 'Ref',
       };
 
       idToElemMap.set(linkObject.nodeId, linkObject);
@@ -58,6 +61,8 @@ export function DomStructure() {
         nodeChildren: any[];
         nodeHref: any;
         childIndex: any;
+        totalNodes: any;
+        nodeCategory: string;
       } = {
         nodeId: domElement.getAttribute('id'),
         nodeDescription: domElement.getAttribute('aria-label'),
@@ -65,6 +70,8 @@ export function DomStructure() {
         nodeIsLink: false,
         nodeHref: null,
         childIndex: null,
+        totalNodes: null,
+        nodeCategory: domElement.getAttribute('aria-label'),
       };
 
       // Add to idToElemMap
@@ -72,14 +79,18 @@ export function DomStructure() {
 
       // Process Children
       const children = Array.from(domElement.childNodes);
-      const numChildren = children.length;
 
-      children.forEach((child, index) => {
+      children.forEach((child) => {
         const childJSON = parseDOMtoJSON(child);
         if (childJSON !== null) {
-          childJSON.childIndex = index;
           groupObject.nodeChildren.push(childJSON);
         }
+      });
+
+      const totalChildren = groupObject.nodeChildren.length;
+      groupObject.nodeChildren.forEach((child, index) => {
+        child.childIndex = index + 1;
+        child.totalNodes = totalChildren;
       });
 
       groupObject.nodeDescription = groupObject.nodeDescription + ` with ${groupObject.nodeChildren.length} refs`;
@@ -97,22 +108,24 @@ export function DomStructure() {
     // Base case: link or no children
     if (diagramJSON.nodeIsLink) {
       const linkNode = document.createElement('a');
-      const linkTo = diagramJSON.nodeHref.substring(1, diagramJSON.nodeHref.length);
 
-      linkNode.setAttribute('id', `${linkTo}-desc-link`);
-      linkNode.setAttribute('href', `#${linkTo}-desc`);
+      linkNode.setAttribute('id', `${diagramJSON.nodeDescription}-desc-link`);
+      linkNode.setAttribute('href', `#${diagramJSON.nodeDescription}-desc`);
 
-      // add description to link
-      const textNode = document.createTextNode(diagramJSON.nodeDescription);
+      const linkTarget = idToElemMap.get(diagramJSON.nodeDescription);
+
+      // Add hyperlink text & return
+      const linkString = `${diagramJSON.childIndex} of ${diagramJSON.totalNodes}. Go to ${linkTarget.nodeCategory} (${linkTarget.childIndex} of ${linkTarget.totalNodes})`;
+      const textNode = document.createTextNode(linkString);
       linkNode.appendChild(textNode);
-
       return linkNode;
     } else if (diagramJSON.nodeChildren.length == 0) {
       const groupNode = document.createElement('g');
       groupNode.setAttribute('id', `${diagramJSON.nodeId}-desc`);
 
       // set text of group node to nodeDescription
-      const textNode = document.createTextNode(diagramJSON.nodeDescription);
+      const linkString = `${diagramJSON.childIndex} of ${diagramJSON.totalNodes}. ${diagramJSON.nodeDescription}`;
+      const textNode = document.createTextNode(linkString);
       groupNode.appendChild(textNode);
 
       return groupNode;
@@ -121,11 +134,13 @@ export function DomStructure() {
     // recursive case
     const groupNode = document.createElement('g');
     groupNode.setAttribute('id', `${diagramJSON.nodeId}-desc`);
-    groupNode.setAttribute('aria-label', diagramJSON.nodeDescription);
+
+    const linkString = `${diagramJSON.childIndex} of ${diagramJSON.totalNodes}. ${diagramJSON.nodeDescription}`;
+    groupNode.setAttribute('aria-label', linkString);
 
     // create paragraph node with nodedescription text
     const textNode = document.createElement('p');
-    textNode.appendChild(document.createTextNode(diagramJSON.nodeDescription));
+    textNode.appendChild(document.createTextNode(linkString));
     textNode.setAttribute('aria-hidden', 'true');
     groupNode.appendChild(textNode);
 
@@ -167,14 +182,14 @@ export function DomStructure() {
         if (domObjectFrom) {
           const linkChild = document.createElementNS('http://www.w3.org/2000/svg', 'a');
           linkChild.setAttribute('href', `#${to}`);
-          linkChild.setAttribute('aria-label', `Go to element with ID ${to}`);
+          linkChild.setAttribute('aria-label', `${to}`);
           (domObjectFrom as any).appendChild(linkChild);
         }
 
         if (domObjectTo) {
           const linkChild = document.createElementNS('http://www.w3.org/2000/svg', 'a');
           linkChild.setAttribute('href', `#${parent}`);
-          linkChild.setAttribute('aria-label', `Go to element with ID ${parent}`);
+          linkChild.setAttribute('aria-label', `${parent}`);
           (domObjectTo as any).appendChild(linkChild);
         }
       });
@@ -182,7 +197,7 @@ export function DomStructure() {
       // ~~~~ Creates JSON object from SVG ~~~~
 
       const allJSONs = createJSONfromBluefish();
-      // console.log('allJSONs', allJSONs);
+      console.log('the map: ', idToElemMap);
 
       // ~~~~ Creates DOM structure from JSON ~~~~
 

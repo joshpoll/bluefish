@@ -431,7 +431,6 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
     [props.to, context.bfMap, symbolContext.bfSymbolMap],
   );
 
-  console.log('id: ', id, measurable.current);
   return <g id={id} className="ref" data-to={measurable.current?.id}></g>;
 });
 Ref.displayName = 'Ref';

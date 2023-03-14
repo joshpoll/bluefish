@@ -127,7 +127,7 @@ export const Bond = withBluefish((props: PropsWithChildren<BondProps>) => {
   // let angle = calculateBondAngle(bbox.left, bbox.right, bbox.top, bbox.bottom);
 
   let angle = calculateBondAngle(startLocationX, endLocationX, startLocationY, endLocationY);
-  let bondAria = (bondType === '=' ? 'Double Bond' : 'Single Bond') + ` with ID ${id}`;
+  let bondAria = bondType === '=' ? 'Double Bond' : 'Single Bond';
   const ringBondDirection = calculateRingBondDirection(startLocationY, endLocationY, ringCenterY);
 
   return (
