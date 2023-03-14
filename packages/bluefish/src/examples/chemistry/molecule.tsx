@@ -59,6 +59,7 @@ export const Molecule = withBluefish((props: any) => {
       return {
         ...edgeObject,
         id: `edge-${edgeObject.id}`,
+        idNum: edgeObject.id,
         sourceId: `vertex-${edgeObject.sourceId}`,
         sourceNum: edgeObject.sourceId,
         destId: `vertex-${edgeObject.targetId}`,
@@ -82,6 +83,7 @@ export const Molecule = withBluefish((props: any) => {
         xLoc: vObject.position.x,
         yLoc: vObject.position.y,
         id: `vertex-${vObject.id}`,
+        idNum: vObject.id,
         isTerminal: vObject.isTerminal(),
       };
     });
@@ -90,6 +92,7 @@ export const Molecule = withBluefish((props: any) => {
       return {
         ...ringObject,
         id: `ring-${ringObject.id}`,
+        idNum: ringObject.id,
       };
     });
 
@@ -212,7 +215,7 @@ export const Molecule = withBluefish((props: any) => {
       });
 
       let [ringObject, edgeUsed] = findEdgesVerticesOfRing(ringVertexIds, edges, vertices);
-      sepRings.push({ ...ringObject, id: ringElm.id, name: ringElm.name });
+      sepRings.push({ ...ringObject, id: ringElm.id });
 
       usedVertices = usedVertices.concat(ringVertexIds);
       usedEdges = usedEdges.concat(edgeUsed);
@@ -291,7 +294,7 @@ export const Molecule = withBluefish((props: any) => {
       ))}
 
       {renderRings.map((r) => (
-        <Ring ring={r} />
+        <Ring ring={r} vertexNameList={verticesName} edgeNameList={edgesName} />
       ))}
     </Group>
   );

@@ -3,27 +3,31 @@ import { withBluefish, useName } from '../../bluefish';
 import { SVG } from '../../components/SVG';
 import { Group } from '../../components/Group';
 import { Ref } from '../../components/Ref';
-import { Atom } from './Atom';
-import { Bond } from './Bond';
 
 export const Ring = withBluefish((props: any) => {
   let ring = props.ring;
   let vertices = ring.vertices;
   let edges = ring.edges;
+  let vertexNames = props.vertexNameList;
+  let edgeNames = props.edgeNameList;
+
+  console.log('inside the ring');
+  console.log('vertices: ', vertices);
+  console.log('edges: ', edges);
+  console.log('the ring: ', ring);
+
+  console.log('vertexNames: ', vertexNames);
+  console.log('edgeNames: ', edgeNames);
 
   return (
     <g aria-label={ring.id}>
-      <g aria-label={'Ring Vertices'}>
-        {vertices.map((v: any) => (
-          <Ref to={v.name} />
-        ))}
-      </g>
+      {vertices.map((v: any) => (
+        <Ref to={vertexNames[v.idNum]} />
+      ))}
 
-      <g aria-label={'Ring Edges'}>
-        {edges.map((e: any) => (
-          <Ref to={e.name} />
-        ))}
-      </g>
+      {edges.map((e: any) => (
+        <Ref to={edgeNames[e.idNum]} />
+      ))}
     </g>
   );
 });

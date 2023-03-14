@@ -36,6 +36,7 @@ export const resolveRef = (
       return refObject as unknown as Measurable;
     }
   } else if ('symbol' in ref) {
+    console.log('hitting the symbol');
     let refObject: symbol | React.MutableRefObject<any> | undefined =
       typeof ref.symbol === 'object' ? ref.symbol.symbol : ref.symbol;
     if ('type' in ref && ref.type === 'lookup') {

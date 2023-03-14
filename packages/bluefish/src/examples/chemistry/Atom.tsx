@@ -50,7 +50,7 @@ export const Atom = withBluefish((props: AtomProps) => {
       ref={domRef}
       transform={`translate(${bbox.coord?.translate?.x ?? 0} ${bbox.coord?.translate?.y ?? 0})
 scale(${bbox.coord?.scale?.x ?? 1} ${bbox.coord?.scale?.y ?? 1})`}
-      aria-label={`Atom: ${content}`}
+      aria-label={`${content} atom with ID ${id}`}
       name={curId}
     >
       {content === 'C' ? (
