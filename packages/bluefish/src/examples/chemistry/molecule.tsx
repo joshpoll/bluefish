@@ -243,7 +243,7 @@ export const Molecule = withBluefish((props: any) => {
   console.log('these are the render rings: ', renderRings);
 
   return (
-    <Group>
+    <Group aria-label={props.ariaLabel}>
       {vertices.map((v, index) => (
         <Atom
           name={verticesName[index]}
@@ -255,6 +255,7 @@ export const Molecule = withBluefish((props: any) => {
           curId={v.id}
           isTerminal={v.isTerminal}
           bondCount={v.value.bondCount}
+          ariaHidden={false}
         />
       ))}
 
@@ -290,6 +291,7 @@ export const Molecule = withBluefish((props: any) => {
           curId={v.id}
           isTerminal={v.isTerminal}
           bondCount={v.value.bondCount}
+          ariaHidden={true}
         />
       ))}
 

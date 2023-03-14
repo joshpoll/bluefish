@@ -43,11 +43,12 @@ export type AtomProps = PropsWithBluefish<
     curId: string;
     isTerminal: boolean;
     bondCount: number;
+    ariaHidden: boolean;
   }
 >;
 
 export const Atom = withBluefish((props: AtomProps) => {
-  const { name, content, curId, isTerminal, bondCount, ...rest } = props;
+  const { name, content, curId, isTerminal, bondCount, ariaHidden, ...rest } = props;
   const { id, domRef, bbox } = useBluefishLayout({}, props, () => {
     const { cx, cy, r } = props;
     return {
@@ -68,8 +69,9 @@ export const Atom = withBluefish((props: AtomProps) => {
       ref={domRef}
       transform={`translate(${bbox.coord?.translate?.x ?? 0} ${bbox.coord?.translate?.y ?? 0})
 scale(${bbox.coord?.scale?.x ?? 1} ${bbox.coord?.scale?.y ?? 1})`}
-      aria-label={`${elementName[content]} atom with ID ${id}`}
+      aria-label={`${elementName[content]} atom`}
       name={curId}
+      aria-hidden={ariaHidden}
     >
       {content === 'C' ? (
         <circle

@@ -20,7 +20,7 @@ export const Ring = withBluefish((props: any) => {
   console.log('edgeNames: ', edgeNames);
 
   return (
-    <g aria-label={ring.id}>
+    <Group aria-label={ring.id}>
       {vertices.map((v: any) => (
         <Ref to={vertexNames[v.idNum]} />
       ))}
@@ -28,6 +28,6 @@ export const Ring = withBluefish((props: any) => {
       {edges.map((e: any) => (
         <Ref to={edgeNames[e.idNum]} />
       ))}
-    </g>
+    </Group>
   );
 });

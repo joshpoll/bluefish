@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { Tree } from './Tree';
 
 export function DomStructure() {
+  const idToElemMap = new Map();
+
   /* 
   Structure of JSON object:
   {
@@ -9,6 +11,8 @@ export function DomStructure() {
     nodeDescription: string
     nodeChildren: []
     nodeIsLink: boolean
+    nodeHref: string
+    childIndex: number
   }
   */
   function createJSONfromBluefish() {
@@ -26,7 +30,6 @@ export function DomStructure() {
 
   /* Recurive helper function that creates JSON object from SVG */
   function parseDOMtoJSON(domElement: any) {
-    // Link object (base case)
     if (domElement.tagName === 'a') {
       const linkObject = {
         nodeId: domElement.getAttribute('id'),
@@ -34,15 +37,17 @@ export function DomStructure() {
         nodeChildren: [],
         nodeIsLink: true,
         nodeHref: domElement.getAttribute('href'),
+        childIndex: null,
       };
 
+      idToElemMap.set(linkObject.nodeId, linkObject);
       return linkObject;
     }
 
     // Group object
     if (domElement.tagName === 'g') {
-      // if group has class ref, then return null
-      if (domElement.classList.contains('ref')) {
+      // Base case: group is ref or hidden from screen reader
+      if (domElement.classList.contains('ref') || domElement.getAttribute('aria-hidden') === 'true') {
         return null;
       }
 
@@ -52,26 +57,32 @@ export function DomStructure() {
         nodeIsLink: boolean;
         nodeChildren: any[];
         nodeHref: any;
+        childIndex: any;
       } = {
         nodeId: domElement.getAttribute('id'),
         nodeDescription: domElement.getAttribute('aria-label'),
         nodeChildren: [],
         nodeIsLink: false,
         nodeHref: null,
+        childIndex: null,
       };
 
-      // get all children of the group
-      const children = Array.from(domElement.childNodes);
+      // Add to idToElemMap
+      idToElemMap.set(groupObject.nodeId, groupObject);
 
-      // for each child, call parseDOMtoJSON
-      children.forEach((child) => {
+      // Process Children
+      const children = Array.from(domElement.childNodes);
+      const numChildren = children.length;
+
+      children.forEach((child, index) => {
         const childJSON = parseDOMtoJSON(child);
         if (childJSON !== null) {
+          childJSON.childIndex = index;
           groupObject.nodeChildren.push(childJSON);
         }
       });
 
-      groupObject.nodeDescription = groupObject.nodeDescription + ` with ${groupObject.nodeChildren.length} links`;
+      groupObject.nodeDescription = groupObject.nodeDescription + ` with ${groupObject.nodeChildren.length} refs`;
 
       return groupObject;
     }
@@ -141,10 +152,6 @@ export function DomStructure() {
       // ~~~~ Modifies DOM to create links ~~~~
       const allRefs = Array.from(document.querySelectorAll('.ref'));
 
-      // for each ref in allRefs, get the parent node of the ref
-      const allRefsParent = allRefs.map((ref) => ref.parentNode);
-      const allRefsTo = allRefs.map((ref) => ref.getAttribute('data-to'));
-
       const refs = allRefs.map((ref) => ({
         parent: (ref.parentNode as any).getAttribute('id'),
         to: ref.getAttribute('data-to'),
@@ -160,14 +167,14 @@ export function DomStructure() {
         if (domObjectFrom) {
           const linkChild = document.createElementNS('http://www.w3.org/2000/svg', 'a');
           linkChild.setAttribute('href', `#${to}`);
-          linkChild.setAttribute('aria-label', `Link to element with ID ${to}`);
+          linkChild.setAttribute('aria-label', `Go to element with ID ${to}`);
           (domObjectFrom as any).appendChild(linkChild);
         }
 
         if (domObjectTo) {
           const linkChild = document.createElementNS('http://www.w3.org/2000/svg', 'a');
           linkChild.setAttribute('href', `#${parent}`);
-          linkChild.setAttribute('aria-label', `Link to element with ID ${parent}`);
+          linkChild.setAttribute('aria-label', `Go to element with ID ${parent}`);
           (domObjectTo as any).appendChild(linkChild);
         }
       });

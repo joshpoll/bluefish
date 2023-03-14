@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { PropsWithChildren } from 'react';
-import { Measure, NewPlaceable, useBluefishLayout, withBluefish } from '../bluefish';
+import { Measure, NewPlaceable, PropsWithBluefish, useBluefishLayout, withBluefish } from '../bluefish';
 import { NewBBox } from '../NewBBox';
 
 const groupMeasurePolicy: Measure = (measurables, constraints) => {
@@ -45,11 +45,13 @@ const groupMeasurePolicy: Measure = (measurables, constraints) => {
   // return { width, height };
 };
 
-export const Group = withBluefish((props: PropsWithChildren<{}>) => {
+export const Group = withBluefish((props: PropsWithBluefish<React.SVGProps<SVGGElement>>) => {
   const { id, domRef, bbox, children } = useBluefishLayout({}, props, groupMeasurePolicy);
+  const { name, ...rest } = props;
 
   return (
     <g
+      {...rest}
       id={id}
       ref={domRef}
       transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}
