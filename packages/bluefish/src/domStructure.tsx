@@ -116,6 +116,9 @@ export function DomStructure() {
     // create UL node to contain all the children
     const ulNode = document.createElement('ul');
 
+    // set UL style type to none
+    ulNode.setAttribute('style', 'list-style-type: none;');
+
     diagramJSON.nodeChildren.forEach((child: any) => {
       // create new li node
       const liNode = document.createElement('li');
