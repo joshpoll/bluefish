@@ -71,6 +71,8 @@ export function DomStructure() {
         }
       });
 
+      groupObject.nodeDescription = groupObject.nodeDescription + ` with ${groupObject.nodeChildren.length} links`;
+
       return groupObject;
     }
 
@@ -95,32 +97,32 @@ export function DomStructure() {
 
       return linkNode;
     } else if (diagramJSON.nodeChildren.length == 0) {
-      const divNode = document.createElement('div');
-      divNode.setAttribute('id', `${diagramJSON.nodeId}-desc`);
+      const groupNode = document.createElement('g');
+      groupNode.setAttribute('id', `${diagramJSON.nodeId}-desc`);
 
-      // set text of divNode to nodeDescription
+      // set text of group node to nodeDescription
       const textNode = document.createTextNode(diagramJSON.nodeDescription);
-      divNode.appendChild(textNode);
+      groupNode.appendChild(textNode);
 
-      return divNode;
+      return groupNode;
     }
 
     // recursive case
-    const divNode = document.createElement('div');
-    divNode.setAttribute('id', `${diagramJSON.nodeId}-desc`);
+    const groupNode = document.createElement('g');
+    groupNode.setAttribute('id', `${diagramJSON.nodeId}-desc`);
+    groupNode.setAttribute('aria-label', diagramJSON.nodeDescription);
 
-    // set text of divNode to nodeDescription
-    const textNode = document.createTextNode(diagramJSON.nodeDescription);
-    divNode.appendChild(textNode);
+    // create paragraph node with nodedescription text
+    const textNode = document.createElement('p');
+    textNode.appendChild(document.createTextNode(diagramJSON.nodeDescription));
+    textNode.setAttribute('aria-hidden', 'true');
+    groupNode.appendChild(textNode);
 
     // create UL node to contain all the children
     const ulNode = document.createElement('ul');
-
-    // set UL style type to none
     ulNode.setAttribute('style', 'list-style-type: none;');
 
     diagramJSON.nodeChildren.forEach((child: any) => {
-      // create new li node
       const liNode = document.createElement('li');
       const childNode = parseJSONtoDOM(child);
 
@@ -128,9 +130,9 @@ export function DomStructure() {
       ulNode.appendChild(liNode);
     });
 
-    divNode.appendChild(ulNode);
+    groupNode.appendChild(ulNode);
 
-    return divNode;
+    return groupNode;
   }
 
   useEffect(() => {
@@ -173,7 +175,7 @@ export function DomStructure() {
       // ~~~~ Creates JSON object from SVG ~~~~
 
       const allJSONs = createJSONfromBluefish();
-      console.log('allJSONs', allJSONs);
+      // console.log('allJSONs', allJSONs);
 
       // ~~~~ Creates DOM structure from JSON ~~~~
 

@@ -19,6 +19,24 @@ const maxBonds: maxBondTypes = {
   Br: 1,
 };
 
+type elementNameTypes = {
+  [key: string]: string;
+};
+
+const elementName: elementNameTypes = {
+  H: 'Hydrogen',
+  C: 'Carbon',
+  N: 'Nitrogen',
+  O: 'Oxygen',
+  P: 'Phosphorus',
+  S: 'Sulfur',
+  B: 'Boron',
+  F: 'Flourine',
+  I: 'Iodine',
+  Cl: 'Chlorine',
+  Br: 'Bromine',
+};
+
 export type AtomProps = PropsWithBluefish<
   React.SVGProps<SVGCircleElement> & {
     content: string;
@@ -50,7 +68,7 @@ export const Atom = withBluefish((props: AtomProps) => {
       ref={domRef}
       transform={`translate(${bbox.coord?.translate?.x ?? 0} ${bbox.coord?.translate?.y ?? 0})
 scale(${bbox.coord?.scale?.x ?? 1} ${bbox.coord?.scale?.y ?? 1})`}
-      aria-label={`${content} atom with ID ${id}`}
+      aria-label={`${elementName[content]} atom with ID ${id}`}
       name={curId}
     >
       {content === 'C' ? (
