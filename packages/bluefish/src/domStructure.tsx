@@ -17,20 +17,15 @@ export function DomStructure() {
   }
   */
   function createJSONfromBluefish() {
-    // get all SVGS from the DOM
     const allSVGS = Array.from(document.querySelectorAll('svg'));
-
-    // for each SVG, get the root group
     const allRootGroups = allSVGS.map((svg) => svg.querySelector('g'));
-
-    // for each root group, call parseDOMtoJSON
     const allJSON = allRootGroups.map((rootGroup) => parseDOMtoJSON(rootGroup));
-
     return allJSON;
   }
 
   /* Recurive helper function that creates JSON object from SVG */
   function parseDOMtoJSON(domElement: any) {
+    // Base case: Link Object
     if (domElement.tagName === 'a') {
       const linkObject = {
         nodeId: domElement.getAttribute('id'),
@@ -49,11 +44,12 @@ export function DomStructure() {
 
     // Group object
     if (domElement.tagName === 'g') {
-      // Base case: group is ref or hidden from screen reader
+      // Edge case: group is ref or hidden from screen reader, then don't include
       if (domElement.classList.contains('ref') || domElement.getAttribute('aria-hidden') === 'true') {
         return null;
       }
 
+      // Initialize group object
       const groupObject: {
         nodeId: any;
         nodeDescription: any;
@@ -79,20 +75,17 @@ export function DomStructure() {
 
       // Process Children
       const children = Array.from(domElement.childNodes);
-
       children.forEach((child) => {
         const childJSON = parseDOMtoJSON(child);
         if (childJSON !== null) {
           groupObject.nodeChildren.push(childJSON);
         }
       });
-
       const totalChildren = groupObject.nodeChildren.length;
       groupObject.nodeChildren.forEach((child, index) => {
         child.childIndex = index + 1;
         child.totalNodes = totalChildren;
       });
-
       groupObject.nodeDescription = groupObject.nodeDescription + ` with ${groupObject.nodeChildren.length} refs`;
 
       return groupObject;
@@ -105,18 +98,16 @@ export function DomStructure() {
   Parses JSON object and creates DOM structure
   */
   function parseJSONtoDOM(diagramJSON: any) {
-    // Base case: link or no children
+    // Base case: node is link or has no children
     if (diagramJSON.nodeIsLink) {
       const linkNode = document.createElement('a');
-
       linkNode.setAttribute('id', `${diagramJSON.nodeDescription}-desc-link`);
       linkNode.setAttribute('href', `#${diagramJSON.nodeDescription}-desc`);
-
       const linkTarget = idToElemMap.get(diagramJSON.nodeDescription);
 
       // Add hyperlink text & return
-      const linkString = `${diagramJSON.childIndex} of ${diagramJSON.totalNodes}. Go to ${linkTarget.nodeCategory} (${linkTarget.childIndex} of ${linkTarget.totalNodes})`;
-      const textNode = document.createTextNode(linkString);
+      const linkDescription = `${diagramJSON.childIndex} of ${diagramJSON.totalNodes}. Go to ${linkTarget.nodeCategory} (${linkTarget.childIndex} of ${linkTarget.totalNodes})`;
+      const textNode = document.createTextNode(linkDescription);
       linkNode.appendChild(textNode);
       return linkNode;
     } else if (diagramJSON.nodeChildren.length == 0) {
@@ -124,8 +115,8 @@ export function DomStructure() {
       groupNode.setAttribute('id', `${diagramJSON.nodeId}-desc`);
 
       // set text of group node to nodeDescription
-      const linkString = `${diagramJSON.childIndex} of ${diagramJSON.totalNodes}. ${diagramJSON.nodeDescription}`;
-      const textNode = document.createTextNode(linkString);
+      const groupDescription = `${diagramJSON.childIndex} of ${diagramJSON.totalNodes}. ${diagramJSON.nodeDescription}`;
+      const textNode = document.createTextNode(groupDescription);
       groupNode.appendChild(textNode);
 
       return groupNode;
@@ -135,12 +126,12 @@ export function DomStructure() {
     const groupNode = document.createElement('g');
     groupNode.setAttribute('id', `${diagramJSON.nodeId}-desc`);
 
-    const linkString = `${diagramJSON.childIndex} of ${diagramJSON.totalNodes}. ${diagramJSON.nodeDescription}`;
-    groupNode.setAttribute('aria-label', linkString);
+    const groupDescription = `${diagramJSON.childIndex} of ${diagramJSON.totalNodes}. ${diagramJSON.nodeDescription}`;
+    groupNode.setAttribute('aria-label', groupDescription);
 
     // create paragraph node with nodedescription text
     const textNode = document.createElement('p');
-    textNode.appendChild(document.createTextNode(linkString));
+    textNode.appendChild(document.createTextNode(groupDescription));
     textNode.setAttribute('aria-hidden', 'true');
     groupNode.appendChild(textNode);
 
