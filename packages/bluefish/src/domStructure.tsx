@@ -1,8 +1,43 @@
 import { useEffect } from 'react';
-import { Tree } from './Tree';
 
 export function DomStructure() {
   const idToElemMap = new Map();
+
+  // event handler to handle focus by screen reader
+  function handleFocus(e: any) {
+    e.classList.add('focus');
+
+    const eId = e.getAttribute('id');
+    const idSplit = eId.split('-');
+    const targetId = idSplit[0];
+    const target = document.getElementById(targetId);
+
+    // change background color of target to red
+    target?.setAttribute('stroke', 'red');
+    target?.setAttribute('fill', 'red');
+    console.log('successfully added focus to: ', e.getAttribute('id'));
+  }
+
+  // event handler to remove focus by screen reader
+  function handleBlur(e: any) {
+    e.classList.remove('focus');
+
+    const eId = e.getAttribute('id');
+    const idSplit = eId.split('-');
+    const targetId = idSplit[0];
+    const target = document.getElementById(targetId);
+    const targetMapObject = idToElemMap.get(targetId);
+
+    // TODO: this is kind of specific to chemicals right now, but hope to change later
+    if (targetMapObject.nodeCategory === 'Single Bond' || targetMapObject.nodeCategory === 'Double Bond') {
+      target?.setAttribute('stroke', 'black');
+      target?.setAttribute('fill', 'black');
+    } else {
+      target?.setAttribute('stroke', 'none');
+      target?.setAttribute('fill', 'black');
+    }
+    console.log('successfully removed focus from: ', e.getAttribute('id'));
+  }
 
   /* 
   Structure of JSON object:
@@ -32,6 +67,7 @@ export function DomStructure() {
         nodeDescription: domElement.getAttribute('aria-label'),
         nodeChildren: [],
         nodeIsLink: true,
+        nodeHrefSource: domElement.getAttribute('data-parent'),
         nodeHref: domElement.getAttribute('href'),
         childIndex: null,
         totalNodes: null,
@@ -59,6 +95,7 @@ export function DomStructure() {
         childIndex: any;
         totalNodes: any;
         nodeCategory: string;
+        nodeHrefSource: any;
       } = {
         nodeId: domElement.getAttribute('id'),
         nodeDescription: domElement.getAttribute('aria-label'),
@@ -68,6 +105,7 @@ export function DomStructure() {
         childIndex: null,
         totalNodes: null,
         nodeCategory: domElement.getAttribute('aria-label'),
+        nodeHrefSource: null,
       };
 
       // Add to idToElemMap
@@ -101,29 +139,36 @@ export function DomStructure() {
     // Base case: node is link or has no children
     if (diagramJSON.nodeIsLink) {
       const linkNode = document.createElement('a');
-      linkNode.setAttribute('id', `${diagramJSON.nodeDescription}-desc-link`);
-      linkNode.setAttribute('href', `#${diagramJSON.nodeDescription}-desc`);
-      const linkTarget = idToElemMap.get(diagramJSON.nodeDescription);
+      linkNode.setAttribute('id', `${diagramJSON.nodeHrefSource}-link_${diagramJSON.nodeId}`);
+      linkNode.setAttribute('href', `${diagramJSON.nodeHref}-desc`);
+      const linkTarget = idToElemMap.get(diagramJSON.nodeHref.substring(1));
 
       // Add hyperlink text & return
       const linkDescription = `${diagramJSON.childIndex} of ${diagramJSON.totalNodes}. Go to ${linkTarget.nodeCategory} (${linkTarget.childIndex} of ${linkTarget.totalNodes})`;
       const textNode = document.createTextNode(linkDescription);
       linkNode.appendChild(textNode);
+
+      linkNode.addEventListener('focus', () => handleFocus(linkNode));
+      linkNode.addEventListener('blur', () => handleBlur(linkNode));
       return linkNode;
     } else if (diagramJSON.nodeChildren.length == 0) {
-      const groupNode = document.createElement('g');
+      const groupNode = document.createElement('div');
       groupNode.setAttribute('id', `${diagramJSON.nodeId}-desc`);
 
       // set text of group node to nodeDescription
       const groupDescription = `${diagramJSON.childIndex} of ${diagramJSON.totalNodes}. ${diagramJSON.nodeDescription}`;
       const textNode = document.createTextNode(groupDescription);
       groupNode.appendChild(textNode);
+      groupNode.setAttribute('tabindex', '0');
+
+      groupNode.addEventListener('focus', () => handleFocus(groupNode));
+      groupNode.addEventListener('blur', () => handleBlur(groupNode));
 
       return groupNode;
     }
 
     // recursive case
-    const groupNode = document.createElement('g');
+    const groupNode = document.createElement('div');
     groupNode.setAttribute('id', `${diagramJSON.nodeId}-desc`);
 
     const groupDescription = `${diagramJSON.childIndex} of ${diagramJSON.totalNodes}. ${diagramJSON.nodeDescription}`;
@@ -148,7 +193,10 @@ export function DomStructure() {
     });
 
     groupNode.appendChild(ulNode);
+    groupNode.setAttribute('tabindex', '0');
 
+    groupNode.addEventListener('focus', () => handleFocus(groupNode));
+    groupNode.addEventListener('blur', () => handleBlur(groupNode));
     return groupNode;
   }
 
@@ -173,14 +221,17 @@ export function DomStructure() {
         if (domObjectFrom) {
           const linkChild = document.createElementNS('http://www.w3.org/2000/svg', 'a');
           linkChild.setAttribute('href', `#${to}`);
-          linkChild.setAttribute('aria-label', `${to}`);
+          linkChild.setAttribute('aria-label', `Link to ${to}`);
+          linkChild.setAttribute('data-parent', `${parent}`);
+
           (domObjectFrom as any).appendChild(linkChild);
         }
 
         if (domObjectTo) {
           const linkChild = document.createElementNS('http://www.w3.org/2000/svg', 'a');
           linkChild.setAttribute('href', `#${parent}`);
-          linkChild.setAttribute('aria-label', `${parent}`);
+          linkChild.setAttribute('aria-label', `Link to ${parent}`);
+          linkChild.setAttribute('data-parent', `${to}`);
           (domObjectTo as any).appendChild(linkChild);
         }
       });
