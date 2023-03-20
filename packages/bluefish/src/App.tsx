@@ -61,9 +61,11 @@ import { ChartAccent } from './examples/chart-accent';
 import { MinError } from './examples/min-error';
 import { RectPath } from './examples/grammars/gog/marks/RectPath';
 import { Polio } from './examples/grammars/gog/examples/polio';
+import { MathExample } from './examples/math';
 import { AlignNew } from './components/AlignNew';
 import { Distribute } from './components/Distribute';
 import { Background } from './components/Background';
+import { MathExample2 } from './examples/math2';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -118,14 +120,28 @@ function App() {
   const autoAssign2 = useName('autoAssign2');
   const autoAssign3 = useName('autoAssign3');
 
+  // rename Background component to Contain
+
   return (
     <div className="App">
-      <SVG width={500} height={500}>
-        <Background>
+      <SVG width={500} height={500}></SVG>
+      <MathExample2 />
+
+      {/* <SVG width={500} height={500}>
+        <Background> 
           <Padding all={10}>
             <Circle cx={100} cy={200} r={50} fill={'red'} />
           </Padding>
           <Rect fill={'black'} />
+        </Background>
+      </SVG>
+
+      <SVG width={500} height={500}>
+        <Background>
+          <Padding all={20}>
+            <Rect x={100} y={100} height={100} width={100} fill={'black'} />
+          </Padding>
+          <Circle fill={'red'} />
         </Background>
       </SVG>
 
@@ -190,7 +206,7 @@ function App() {
           />
           <Rect fill={'pink'} fillOpacity={0.8} />
         </Background>
-      </SVG>
+      </SVG> */}
     </div>
   );
 }
