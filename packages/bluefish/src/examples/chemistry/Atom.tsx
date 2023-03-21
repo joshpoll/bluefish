@@ -63,34 +63,25 @@ export const Atom = withBluefish((props: AtomProps) => {
   const hydrogenString = 'H'.repeat(numHydrogens);
   const atomContent = content === 'C' ? '' : content + hydrogenString;
 
+  console.log('the bounding box of the atom is: ', bbox);
+
   return (
     <g
       id={id}
       ref={domRef}
-      transform={`translate(${bbox.coord?.translate?.x ?? 0} ${bbox.coord?.translate?.y ?? 0})
-scale(${bbox.coord?.scale?.x ?? 1} ${bbox.coord?.scale?.y ?? 1})`}
       aria-label={`${elementName[content]} atom`}
       name={curId}
       aria-hidden={ariaHidden}
+      width={1.3 * (bbox?.width ?? 0)}
+      height={1.3 * (bbox?.height ?? 0)}
     >
-      {content === 'C' ? (
-        <circle
-          {...rest}
-          cx={(bbox.left ?? 0) + (bbox.width ?? 0) / 2}
-          cy={(bbox.top ?? 0) + (bbox.height ?? 0) / 2}
-          r={(1.5 * (bbox.width ?? 0)) / 2}
-          fill={'none'}
-        />
-      ) : (
-        <circle
-          {...rest}
-          cx={(bbox.left ?? 0) + (bbox.width ?? 0) / 2}
-          cy={(bbox.top ?? 0) + (bbox.height ?? 0) / 2}
-          r={(1.3 * (bbox.width ?? 0)) / 2}
-          fill={'white'}
-          opacity={1}
-        />
-      )}
+      <circle
+        {...rest}
+        cx={(bbox.left ?? 0) + (bbox.width ?? 0) / 2}
+        cy={(bbox.top ?? 0) + (bbox.height ?? 0) / 2}
+        r={(1.3 * (bbox.width ?? 0)) / 2}
+        fill={content === 'C' ? 'none' : 'white'}
+      />
 
       <text
         x={bbox.left ?? 0}

@@ -1,6 +1,9 @@
 import { useEffect } from 'react';
 
 export function DomStructure() {
+  let rectangleBBox = null;
+  let highlightRectangleId = 'highlight-rectangle';
+
   const idToElemMap = new Map();
 
   // event handler to handle focus by screen reader
@@ -12,9 +15,51 @@ export function DomStructure() {
     const targetId = idSplit[0];
     const target = document.getElementById(targetId);
 
-    // change background color of target to red
-    target?.setAttribute('stroke', 'red');
-    target?.setAttribute('fill', 'red');
+    rectangleBBox = (target as any).getBBox();
+
+    // const clonedElt = (target as any).cloneNode(true);
+    // const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    // svg.appendChild(clonedElt);
+    // document.body.appendChild(svg);
+    // const rectangleBBox = clonedElt.getBBox();
+    // document.body.removeChild(svg);
+
+    // console.log('this is the all attributed: ', JSON.stringify(target?.attributes), target?.attributes);
+
+    // Get rectangle for highlighting
+    let highlightRectangle = document.getElementById(highlightRectangleId);
+
+    if (rectangleBBox.x === 0 && rectangleBBox.y === 0) {
+      const targetWidth = target?.getAttribute('width') as any;
+      const targetHeight = target?.getAttribute('height') as any;
+
+      highlightRectangle?.setAttribute('x', `${rectangleBBox.width - targetWidth}`);
+      highlightRectangle?.setAttribute('y', `${rectangleBBox.height - targetHeight}`);
+      highlightRectangle?.setAttribute('width', targetWidth);
+      highlightRectangle?.setAttribute('height', targetHeight);
+    } else {
+      const rectWidth = rectangleBBox.width < 5 ? 5 : rectangleBBox.width;
+      const rectHeight = rectangleBBox.height < 5 ? 5 : rectangleBBox.height;
+
+      console.log('this is the width: ', rectWidth, 'this is the height: ', rectHeight);
+
+      highlightRectangle?.setAttribute('x', rectangleBBox.x);
+      highlightRectangle?.setAttribute('y', rectangleBBox.y);
+      highlightRectangle?.setAttribute('width', rectWidth);
+      highlightRectangle?.setAttribute('height', rectHeight);
+    }
+
+    // highlightRectangle?.setAttribute('x', rectangleBBox.x);
+    // highlightRectangle?.setAttribute('y', rectangleBBox.y);
+    // highlightRectangle?.setAttribute('width', rectangleBBox.width + 5);
+    // highlightRectangle?.setAttribute('height', rectangleBBox.height + 5);
+
+    highlightRectangle?.setAttribute('opacity', '0.5');
+    highlightRectangle?.setAttribute('fill', 'red');
+
+    console.log('targetid: ', targetId);
+    console.log('target: ', target);
+    console.log('boundingbox: ', rectangleBBox);
     console.log('successfully added focus to: ', e.getAttribute('id'));
   }
 
@@ -26,16 +71,14 @@ export function DomStructure() {
     const idSplit = eId.split('-');
     const targetId = idSplit[0];
     const target = document.getElementById(targetId);
-    const targetMapObject = idToElemMap.get(targetId);
+    rectangleBBox = (target as any).getBBox();
 
-    // TODO: this is kind of specific to chemicals right now, but hope to change later
-    if (targetMapObject.nodeCategory === 'Single Bond' || targetMapObject.nodeCategory === 'Double Bond') {
-      target?.setAttribute('stroke', 'black');
-      target?.setAttribute('fill', 'black');
-    } else {
-      target?.setAttribute('stroke', 'none');
-      target?.setAttribute('fill', 'black');
-    }
+    // rectangleBBox = (target as any).getBoundingClientRect();
+
+    // Get rectangle for highlighting
+    let highlightRectangle = document.getElementById(highlightRectangleId);
+    highlightRectangle?.setAttribute('fill', 'none');
+
     console.log('successfully removed focus from: ', e.getAttribute('id'));
   }
 
@@ -223,7 +266,6 @@ export function DomStructure() {
           linkChild.setAttribute('href', `#${to}`);
           linkChild.setAttribute('aria-label', `Link to ${to}`);
           linkChild.setAttribute('data-parent', `${parent}`);
-
           (domObjectFrom as any).appendChild(linkChild);
         }
 
@@ -236,6 +278,21 @@ export function DomStructure() {
         }
       });
 
+      // add rectangle to DOM for highlighting
+      const highlightRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      highlightRect.setAttribute('aria-hidden', 'true');
+      highlightRect.setAttribute('id', highlightRectangleId);
+      highlightRect.setAttribute('x', '0');
+      highlightRect.setAttribute('y', '0');
+      highlightRect.setAttribute('width', '0');
+      highlightRect.setAttribute('height', '0');
+      highlightRect.setAttribute('fill', 'none');
+      const root = document.getElementById('root');
+      const app = root?.firstChild;
+      const molecule = app?.firstChild;
+      const moleculeSVG = molecule?.firstChild;
+      moleculeSVG?.appendChild(highlightRect);
+
       // ~~~~ Creates JSON object from SVG ~~~~
 
       const allJSONs = createJSONfromBluefish();
@@ -244,7 +301,6 @@ export function DomStructure() {
       // ~~~~ Creates DOM structure from JSON ~~~~
 
       const diagramNode = parseJSONtoDOM(allJSONs[0]);
-      // console.log('diagramNode: ', diagramNode);
 
       // append diagramNode to body
       document.body.appendChild(diagramNode);
