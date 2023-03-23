@@ -1,6 +1,9 @@
+import React from 'react';
 import { useEffect } from 'react';
 
 export function DomStructure() {
+  const domNodeRef = React.useRef<any>(null);
+
   let rectangleBBox = null;
   let highlightRectangleId = 'highlight-rectangle';
 
@@ -246,6 +249,9 @@ export function DomStructure() {
   useEffect(() => {
     // put timer for 1 second
     setTimeout(() => {
+      if (domNodeRef.current) {
+        return;
+      }
       // ~~~~ Modifies DOM to create links ~~~~
       const allRefs = Array.from(document.querySelectorAll('.ref'));
 
@@ -301,8 +307,11 @@ export function DomStructure() {
       // ~~~~ Creates DOM structure from JSON ~~~~
 
       const diagramNode = parseJSONtoDOM(allJSONs[0]);
+      diagramNode.setAttribute('style', 'overflow: auto; height: 600px; width: 400px;');
+      // diagramNode.style. = '';
 
       // append diagramNode to body
+      domNodeRef.current = diagramNode;
       document.body.appendChild(diagramNode);
     }, 1000);
   }, []);
