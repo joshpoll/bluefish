@@ -6,6 +6,7 @@ import { PlotContext } from '../Plot';
 import { scaleLinear } from 'd3-scale';
 import { max } from 'lodash';
 import { Row } from '../../../../components/Row';
+import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
 
 export type NewBarYProps<T> = Omit<React.SVGProps<SVGRectElement>, 'x' | 'y' | 'fill' | 'width' | 'height'> & {
   x: keyof T;
@@ -23,15 +24,25 @@ export const NewBarY = withBluefish(function NewBarY(props: NewBarYProps<any>) {
   const colorScale = context.scales.colorScale;
   console.log('colorScale', colorScale);
 
+  // console.log('scaledY', props);
+
   return (
     <Row totalWidth={totalWidth} spacing={props.spacing!} alignment={'bottom'}>
-      {(data as any[]).map((d) => (
-        <RectScale
-          height={+d[props.y]}
-          fill={colorScale(d[props.color])}
-          yScale={(height) => scaleLinear([0, max<number>(data.map((d: any) => +d[props.y]))!], [0, height])}
-        />
-      ))}
+      {(data as any[]).map((d) => {
+        console.log(
+          'scaledY',
+          +d[props.y],
+          data.map((d: any) => +d[props.y]),
+          max<number>(data.map((d: any) => +d[props.y])),
+        );
+        return (
+          <RectScale
+            height={+d[props.y]}
+            fill={colorScale(d[props.color])}
+            yScale={(height) => scaleLinear([0, max<number>(data.map((d: any) => +d[props.y]))!], [0, height])}
+          />
+        );
+      })}
     </Row>
   );
 });
@@ -46,9 +57,14 @@ export type RectScaleProps = PropsWithBluefish<
 const rectMeasurePolicy = (props: RectScaleProps): Measure => {
   const { x, y, width, height } = props;
 
+  console.log('scaledY BEFORE', props);
+
   return (_, constraints) => {
     const scaledY = y !== undefined ? props.yScale(constraints.height)(+y) : undefined;
     const scaledHeight = height !== undefined ? props.yScale(constraints.height)(+height) : undefined;
+
+    console.log('scaledY AFTER', y, scaledY);
+    console.log('scaledY AFTER height', height, scaledHeight);
 
     return {
       left: x !== undefined ? +x : undefined,
@@ -67,6 +83,7 @@ export const RectScale = withBluefish((props: RectScaleProps) => {
   return (
     // translate and scale based on bbox.coord
     <g
+      className="rectScale"
       id={id}
       ref={domRef}
       transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})

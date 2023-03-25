@@ -61,8 +61,11 @@ import { RectPath } from './examples/grammars/gog/marks/RectPath';
 import { Polio } from './examples/grammars/gog/examples/polio';
 import { AlignNew } from './components/AlignNew';
 import { Distribute } from './components/Distribute';
-import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
+// import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
 import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
+import { Recipe } from './examples/Recipe';
+import { Euclid } from './examples/euclid/euclid';
+import { BertinHotel } from './examples/bertin/bertin';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -127,6 +130,28 @@ function App() {
         </ColUseState>
       </svg>
       <br /> */}
+      <SVG width={500} height={500}>
+        <BertinHotel />
+      </SVG>
+      <SVG width={500} height={500}>
+        <Euclid />
+      </SVG>
+      <SVG width={500} height={500}>
+        <Recipe
+          recipe={[
+            {
+              type: 'ingredient',
+              id: 1,
+              name: '1/2 cup (50 g) onion',
+            },
+            {
+              type: 'ingredient',
+              id: 2,
+              name: '2 tablespoons (30 g) bacon grease',
+            },
+          ]}
+        />
+      </SVG>
       <SVG width={500} height={500}>
         <Matrix />
       </SVG>
@@ -201,9 +226,9 @@ function App() {
           </Group>
         </Group>
       </SVG>
-      <SVG width={500} height={500}>
+      {/* <SVG width={500} height={500}>
         <Polio />
-      </SVG>
+      </SVG> */}
       <SVG width={500} height={500}>
         <RectPath
           x={Math.PI / 2}
@@ -350,7 +375,7 @@ function App() {
       </SVG>
       <SVG width={500} height={500}>
         <Col spacing={10} alignment={'center'}>
-          <Tree6
+          {/* <Tree6
             data={{
               value: 1,
               subtrees: [
@@ -370,7 +395,7 @@ function App() {
               rootSubtree: { row: {} },
               subtreeSubtree: { row: {} },
             }}
-          />
+          /> */}
           <Tree5
             data={{
               value: 1,
@@ -444,7 +469,7 @@ function App() {
           {/* <Rect width={100} height={100} fill={'red'} /> */}
         </Col>
       </SVG>
-      <SVG width={800} height={200}>
+      {/* <SVG width={800} height={200}>
         <Padding left={40} top={10} right={20} bottom={30}>
           <Plot
             data={alphabet}
@@ -461,13 +486,13 @@ function App() {
                 _.max(alphabet.map((d) => +d.frequency))!,
               ])
             }
-          >
-            {/* <BarY encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
-            <NewBarY spacing={5} x={'letter'} y={'frequency'} color={'frequency'} />
-            {/* <BarYWithBFN encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
-          </Plot>
+          > */}
+      {/* <BarY encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
+      {/* <NewBarY spacing={5} x={'letter'} y={'frequency'} color={'frequency'} /> */}
+      {/* <BarYWithBFN encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
+      {/* </Plot>
         </Padding>
-      </SVG>
+      </SVG> */}
       <PeritextSymbol
         chars={[
           { value: 'T', opId: '1@A', deleted: false, marks: ['italic'] },
@@ -621,7 +646,7 @@ function App() {
       <br />
       <SVG width={500} height={500}>
         <Col spacing={10} alignment={'center'}>
-          <CharSymbol value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
+          <CharSymbol value={'b'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
           <CharSymbol value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
         </Col>
       </SVG>

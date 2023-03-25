@@ -38,6 +38,12 @@ export const textMeasurePolicy = (props: TextProps) => {
     top: measurements.fontTop,
     height: measurements.fontHeight,
     bottom: measurements.fontDescent,
+    coord: {
+      translate: {
+        x: props.x,
+        y: props.y,
+      },
+    },
     // top: 0,
     /* width: measurements.width, */
     // height: measurements.fontHeight,

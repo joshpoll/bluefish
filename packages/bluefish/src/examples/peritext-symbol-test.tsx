@@ -23,6 +23,7 @@ import _ from 'lodash';
 import { Align } from '../components/Align';
 import { Col } from '../components/Col';
 import { useNameList } from '../bluefish';
+import { AlignNew } from '../components/AlignNew';
 
 export type CharProps = PropsWithBluefish<{
   value: string;
@@ -32,11 +33,6 @@ export type CharProps = PropsWithBluefish<{
 }>;
 
 export const CharSymbol = withBluefish(function Char({ value, marks, opId }: CharProps) {
-  // const tile = opId + '-tile';
-  // const opIdLabel = opId + '-label';
-  // const leftHandle = opId + '-leftHandle';
-  // const rightHandle = opId + '-rightHandle';
-  // const letter = opId + '-letter';
   const tile = useName('tile');
   const opIdLabel = useName('opIdLabel');
   const leftHandle = useName('leftHandle');
@@ -44,7 +40,6 @@ export const CharSymbol = withBluefish(function Char({ value, marks, opId }: Cha
   const letter = useName('letter');
 
   return (
-    // TODO: use x and y to position the group
     <Group>
       <Rect name={tile} height={65} width={50} rx={5} fill={'#eee'} />
       <Rect name={leftHandle} height={30} width={10} fill={'#fff'} rx={5} stroke={'#ddd'} />
@@ -101,6 +96,38 @@ export const MarkOp = withBluefish(function MarkOp({
   );
 });
 
+// const MarkOpTest = withBluefish(function MarkOp({
+//   action,
+//   markType,
+//   backgroundColor,
+//   borderColor,
+//   start,
+//   end,
+//   opId,
+// }: PropsWithBluefish<MarkOpProps<Symbol>>) {
+//   const rect = <Rect fill={backgroundColor} stroke={borderColor} rx={5} height={20} />;
+//   const text = <Text contents={`${action} ${markType}`} />;
+
+//   return (
+//     <Group>
+//       {rect}
+//       {text}
+//       <AlignNew alignment="left">
+//         {rect}
+//         {start.opId}
+//       </AlignNew>
+//       <AlignNew alignment="right">
+//         {rect}
+//         {end.opId}
+//       </AlignNew>
+//       <AlignNew alignment="center">
+//         {rect}
+//         {text}
+//       </AlignNew>
+//     </Group>
+//   );
+// });
+
 export type PeritextProps = {
   chars: CharProps[];
   markOps: MarkOpProps<string>[];
@@ -142,6 +169,7 @@ export const Peritext: React.FC<PeritextProps & { spacing?: number }> = ({ chars
           ))}
         </Space>
         {/* space markOps from chars */}
+        {/*  */}
         <Space vertically by={8}>
           <Ref to={charsList} />
           <Ref to={markOpsList} />
