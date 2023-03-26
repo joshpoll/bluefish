@@ -9,7 +9,7 @@ import { Plot2 as Plot } from '../grammars/gog/Plot';
 import { GroupBy } from '../grammars/gog/marks/GroupBy';
 import { scaleBand, scaleLinear, scaleSequential } from 'd3-scale';
 import { interpolateReds } from 'd3-scale-chromatic';
-import { NewBarY } from '../grammars/gog/marks/NewBarY';
+import { BarY } from '../grammars/gog/marks/NewBarY';
 import { AlignNew } from '../../components/AlignNew';
 
 const dataSubset = data; /* .slice(0, 2); */
@@ -77,9 +77,7 @@ export const BertinHotel = withBluefish((props: any) => {
         >
           {({ key, data }) => {
             // console.log('scaledY', key, data);
-            return (
-              <NewBarY name={key} totalWidth={300} spacing={0} x={'month'} y={'count'} color={'count'} data={data} />
-            );
+            return <BarY name={key} totalWidth={300} spacing={0} x={'month'} y={'count'} color={'count'} data={data} />;
           }}
         </GroupBy>
       </Plot>

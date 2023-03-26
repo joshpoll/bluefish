@@ -2,7 +2,7 @@ import { polio_data, PolioData } from './polio-data';
 import { withBluefish } from '../../../../bluefish';
 import { groupBy } from 'lodash';
 import { Plot2 as Plot } from '../Plot';
-import { NewBarY } from '../marks/NewBarY';
+import { BarY } from '../marks/NewBarY';
 import { scaleBand, scaleLinear, scaleSequential } from 'd3-scale';
 import _ from 'lodash';
 import { interpolateReds } from 'd3-scale-chromatic';
@@ -50,7 +50,7 @@ export const Polio = withBluefish((props: any) => {
         // numRows={10}
         positioning={USMap}
       >
-        {({ key, data }) => <NewBarY totalWidth={40} spacing={0} x={'year'} y={'total'} color={'total'} data={data} />}
+        {({ key, data }) => <BarY totalWidth={40} spacing={0} x={'year'} y={'total'} color={'total'} data={data} />}
       </GroupBy>
     </Plot>
   );

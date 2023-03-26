@@ -7,17 +7,18 @@ import { scaleLinear } from 'd3-scale';
 import { max } from 'lodash';
 import { Row } from '../../../../components/Row';
 import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
+import { createSelector, Encoding } from './withEncodable';
 
-export type NewBarYProps<T> = Omit<React.SVGProps<SVGRectElement>, 'x' | 'y' | 'fill' | 'width' | 'height'> & {
-  x: keyof T;
-  y: keyof T;
-  color: keyof T;
+export type BarYProps<T> = Omit<React.SVGProps<SVGRectElement>, 'x' | 'y' | 'fill' | 'width' | 'height'> & {
+  x: Encoding<T>;
+  y: Encoding<T>;
+  color?: Encoding<T>;
   data?: T[];
   totalWidth?: number;
   spacing?: number;
 };
 
-export const NewBarY = withBluefish(function NewBarY(props: NewBarYProps<any>) {
+export const BarY = withBluefish(function BarY(props: BarYProps<any>) {
   const context = React.useContext(PlotContext);
   const data = props.data ?? context.data;
   const totalWidth = props.totalWidth ?? context.dimensions.width;
@@ -26,27 +27,34 @@ export const NewBarY = withBluefish(function NewBarY(props: NewBarYProps<any>) {
 
   // console.log('scaledY', props);
 
+  const selectors = {
+    y: createSelector(props.y),
+    color: createSelector(props.color, 'black'),
+    stroke: createSelector(props.stroke),
+  };
+
   return (
     <Row totalWidth={totalWidth} spacing={props.spacing!} alignment={'bottom'}>
       {(data as any[]).map((d) => {
         console.log(
           'scaledY',
-          +d[props.y],
-          data.map((d: any) => +d[props.y]),
-          max<number>(data.map((d: any) => +d[props.y])),
+          +selectors.y(d),
+          data.map((d: any) => +selectors.y(d)),
+          max<number>(data.map((d: any) => +selectors.y(d))),
         );
         return (
           <RectScale
-            height={+d[props.y]}
-            fill={colorScale(d[props.color])}
-            yScale={(height) => scaleLinear([0, max<number>(data.map((d: any) => +d[props.y]))!], [0, height])}
+            height={+selectors.y(d)}
+            fill={colorScale(selectors.color(d))}
+            stroke={selectors.stroke(d)}
+            yScale={(height) => scaleLinear([0, max<number>(data.map((d: any) => +selectors.y(d)))!], [0, height])}
           />
         );
       })}
     </Row>
   );
 });
-NewBarY.displayName = 'NewBarY';
+BarY.displayName = 'BarY';
 
 export type RectScaleProps = PropsWithBluefish<
   React.SVGProps<SVGRectElement> & {

@@ -51,7 +51,7 @@ import { CharSymbol } from './examples/peritext-symbol-test';
 import { TreeSymbol } from './examples/tree-symbol-test';
 import { Peritext as PeritextSymbol } from './examples/peritext-symbol-test';
 import { interpolateBlues } from 'd3-scale-chromatic';
-import { NewBarY } from './examples/grammars/gog/marks/NewBarY';
+import { BarY } from './examples/grammars/gog/marks/NewBarY';
 import { Tree as Tree1 } from './examples/grammars/gotree/gotree-ex1';
 import { Tree2 } from './examples/grammars/gotree/gotree-ex2';
 import { NodeProps, Tree3 } from './examples/grammars/gotree/gotree-ex3';
@@ -467,7 +467,6 @@ function App() {
                   ],
                 }}
               />
-              {/* TODO: to do the monarch part I need to use Grace's rect mark (or some version of it) so I can set its x positions using the data, but keep the y values undefined */}
             </Plot>
           </Padding>
           <Text contents={'this is a test caption'} />
