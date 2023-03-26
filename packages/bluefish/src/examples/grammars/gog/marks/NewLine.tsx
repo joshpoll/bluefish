@@ -20,6 +20,20 @@ export type NewLineProps<T> = Omit<
 export const NewLine = withBluefish(function NewLine(props: PropsWithBluefish<NewLineProps<any>>) {
   const context = React.useContext(PlotContext);
   const data = props.data ?? context.data;
+  const xScale = context.scales.xScale
+    ? () => context.scales.xScale
+    : (width: number) =>
+        scaleLinear(
+          [min<number>(data.map((d: any) => +d[props.x]))!, max<number>(data.map((d: any) => +d[props.x]))!],
+          [0, width],
+        );
+  const yScale = context.scales.yScale
+    ? () => context.scales.yScale
+    : (height: number) =>
+        scaleLinear(
+          [min<number>(data.map((d: any) => +d[props.y]))!, max<number>(data.map((d: any) => +d[props.y]))!],
+          [height, 0],
+        );
   const colorScale = context.scales.colorScale;
   console.log('colorScale', colorScale);
 
@@ -34,18 +48,8 @@ export const NewLine = withBluefish(function NewLine(props: PropsWithBluefish<Ne
       strokeLinecap={'round'}
       strokeLinejoin={'round'}
       strokeMiterlimit={1}
-      xScale={(width) =>
-        scaleLinear(
-          [min<number>(data.map((d: any) => +d[props.x]))!, max<number>(data.map((d: any) => +d[props.x]))!],
-          [0, width],
-        )
-      }
-      yScale={(height) =>
-        scaleLinear(
-          [min<number>(data.map((d: any) => +d[props.y]))!, max<number>(data.map((d: any) => +d[props.y]))!],
-          [height, 0],
-        )
-      }
+      xScale={xScale}
+      yScale={yScale}
     />
   );
 });

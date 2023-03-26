@@ -22,7 +22,7 @@ export const Playfair = withBluefish(() => {
             [0, width],
           ).padding(0.1)
         }
-        y={({ height }) => scaleLinear([0, _.max(wheat.map((d) => +d.wheat))!], [0, height])}
+        y={({ height }) => scaleLinear([0, _.max(wheat.map((d) => +d.wheat))!], [height, 0])}
         color={() => (x: any) => x}
       >
         <BarY spacing={0} x={'year'} y={'wheat'} color="#aaa" stroke="#999" />
@@ -31,7 +31,7 @@ export const Playfair = withBluefish(() => {
           data={monarch}
           x1="start"
           x2="end"
-          y1="start"
+          y1={0}
           y2={20}
           color={(d) => (d.commonwealth === true ? 'none' : 'black')}
           stroke="black"

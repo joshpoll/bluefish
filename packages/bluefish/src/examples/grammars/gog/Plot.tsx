@@ -88,7 +88,7 @@ export const plotMarkReified = (mark: Mark, scales: { [key in string]: Scale }, 
 export type PlotContextValue = {
   data?: any;
   dimensions: Dimensions;
-  scales: { [key in string]: Scale };
+  scales: { [key in string /* Scale */]: any };
 };
 
 const groupMeasurePolicy =

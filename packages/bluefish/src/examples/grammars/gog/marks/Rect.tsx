@@ -46,9 +46,16 @@ export type NewRectProps<T> = PropsWithBluefish<
 export const NewRect = withBluefish(function NewRect(props: NewRectProps<any>) {
   const context = React.useContext(PlotContext);
   const data = props.data ?? context.data;
-  const xScale =
-    context.scales.xScale ??
-    ((width) => scaleLinear([0, max<number>(data.map((d: any) => +createSelector(props.x1!)(d)))!], [0, width]));
+  const xScale = /* context.scales.xScale
+    ? () => context.scales.xScale
+    :  */ (width: number) =>
+    scaleLinear(
+      [
+        min<number>(data.map((d: any) => min([+createSelector(props.x1)(d), +createSelector(props.x2)(d)])))!,
+        max<number>(data.map((d: any) => max([+createSelector(props.x1)(d), +createSelector(props.x2)(d)])))!,
+      ],
+      [0, width],
+    );
   const yScale = context.scales.yScale;
 
   const rectNames = useNameList(Array.from(data.length).map((_, i) => `rect-${i}`));
@@ -87,8 +94,9 @@ export const NewRect = withBluefish(function NewRect(props: NewRectProps<any>) {
             fill={selectors.color(d)}
             fillOpacity={selectors.fillOpacity(d)}
             opacity={selectors.opacity(d)}
-            xScale={(width) => scaleLinear([0, max<number>(data.map((d: any) => +selectors.x1(d)))!], [0, width])}
-            yScale={(height) => scaleLinear([0, max<number>(data.map((d: any) => +selectors.y1(d)))!], [0, height])}
+            xScale={xScale}
+            // yScale={(height) => scaleLinear([0, max<number>(data.map((d: any) => +selectors.y1(d)))!], [0, height])}
+            yScale={(height) => (x) => x}
           />
         );
       })}
