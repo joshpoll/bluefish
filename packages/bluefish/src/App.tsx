@@ -66,6 +66,7 @@ import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
 import { Recipe } from './examples/Recipe';
 import { Euclid } from './examples/euclid/euclid';
 import { BertinHotel } from './examples/bertin/bertin';
+import { Playfair } from './examples/playfair/playfair';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -130,6 +131,9 @@ function App() {
         </ColUseState>
       </svg>
       <br /> */}
+      <SVG width={500} height={500}>
+        <Playfair />
+      </SVG>
       <SVG width={500} height={500}>
         <BertinHotel />
       </SVG>
@@ -463,6 +467,7 @@ function App() {
                   ],
                 }}
               />
+              {/* TODO: to do the monarch part I need to use Grace's rect mark (or some version of it) so I can set its x positions using the data, but keep the y values undefined */}
             </Plot>
           </Padding>
           <Text contents={'this is a test caption'} />

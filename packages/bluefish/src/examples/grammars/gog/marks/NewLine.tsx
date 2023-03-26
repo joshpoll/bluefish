@@ -25,7 +25,9 @@ export const NewLine = withBluefish(function NewLine(props: PropsWithBluefish<Ne
 
   return (
     <PathScale
-      points={data.map((d: any) => [d[props.x], d[props.y]] as [number, number])}
+      points={data
+        .map((d: any) => [d[props.x], d[props.y]] as [number, number])
+        .filter((d: any) => d[0] !== undefined && d[1] !== undefined && !isNaN(d[0]) && !isNaN(d[1]))}
       fill={'none'}
       stroke={props.color ?? 'black'}
       strokeWidth={1.5}
