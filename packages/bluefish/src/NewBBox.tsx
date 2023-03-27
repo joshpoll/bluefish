@@ -13,6 +13,7 @@ export type NewBBox = {
   width: number;
   height: number;
   coord: CoordinateTransform;
+  hidden: boolean;
 };
 
 // an abstract datatype for the NewBBox type that keeps the fields synchronized
@@ -23,6 +24,7 @@ export class NewBBoxClass {
   private _bottom?: number;
   private _width?: number;
   private _height?: number;
+  private _hidden?: boolean;
   private _coord?: CoordinateTransform;
   private _setLeft?(left: number | undefined): void;
   private _setTop?(top: number | undefined): void;
@@ -30,6 +32,7 @@ export class NewBBoxClass {
   private _setBottom?(bottom: number | undefined): void;
   private _setWidth?(width: number | undefined): void;
   private _setHeight?(height: number | undefined): void;
+  private _setHidden?(hidden: boolean | undefined): void;
   private _setCoord?(coord: CoordinateTransform | undefined): void;
 
   constructor(
@@ -42,6 +45,7 @@ export class NewBBoxClass {
     this._setBottom = callbacks.bottom;
     this._setWidth = callbacks.width;
     this._setHeight = callbacks.height;
+    this._setHidden = callbacks.hidden;
     this._setCoord = callbacks.coord;
 
     this.intrinsicLeft = bbox.left;
@@ -51,6 +55,7 @@ export class NewBBoxClass {
     this.intrinsicWidth = bbox.width;
     this.intrinsicHeight = bbox.height;
     this.coord = bbox.coord;
+    this.hidden = bbox.hidden;
   }
 
   get coord() {
@@ -61,6 +66,17 @@ export class NewBBoxClass {
     this._coord = coord;
     if (this._setCoord) {
       this._setCoord(coord);
+    }
+  }
+
+  get hidden() {
+    return this._hidden;
+  }
+
+  set hidden(hidden: boolean | undefined) {
+    this._hidden = hidden;
+    if (this._setHidden) {
+      this._setHidden(hidden);
     }
   }
 

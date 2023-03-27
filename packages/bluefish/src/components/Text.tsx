@@ -52,10 +52,11 @@ export const textMeasurePolicy = (props: TextProps) => {
 
 export const Text = withBluefish((props: TextProps) => {
   const { name, ...rest } = props;
-  const { id, domRef, bbox } = useBluefishLayout({}, props, textMeasurePolicy(props));
+  const { id, domRef, bbox, hidden } = useBluefishLayout({}, props, textMeasurePolicy(props));
 
   return (
     <g
+      visibility={hidden === true ? 'hidden' : 'visible'}
       id={id}
       ref={domRef}
       transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})

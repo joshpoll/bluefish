@@ -132,6 +132,33 @@ function App() {
         </ColUseState>
       </svg>
       <br /> */}
+      <SVG width={500} height={300}>
+        <Col spacing={5} alignment={'center'}>
+          <Padding left={40} top={10} right={20} bottom={30}>
+            <Plot
+              height={200}
+              data={driving}
+              x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
+              y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
+              color={() => () => 'black'}
+            >
+              <NewLine name={line} x={'miles'} y={'gas'} />
+              <NewDot
+                x={'miles'}
+                y={'gas'}
+                label={{
+                  field: 'year',
+                  avoid: [
+                    /* line */
+                  ],
+                }}
+              />
+            </Plot>
+          </Padding>
+          <Text contents={'this is a test caption'} />
+          {/* <Rect width={100} height={100} fill={'red'} /> */}
+        </Col>
+      </SVG>
       <SVG width={1000} height={500}>
         <UpSet />
       </SVG>
@@ -144,7 +171,7 @@ function App() {
       <SVG width={500} height={500}>
         <Euclid />
       </SVG>
-      <SVG width={500} height={500}>
+      {/* <SVG width={500} height={500}>
         <Recipe
           recipe={[
             {
@@ -159,11 +186,11 @@ function App() {
             },
           ]}
         />
-      </SVG>
-      <SVG width={500} height={500}>
+      </SVG> */}
+      {/* <SVG width={500} height={500}>
         <Matrix />
-      </SVG>
-      <SVG width={500} height={500}>
+      </SVG> */}
+      {/* <SVG width={500} height={500}>
         <AlignNew x={250} y={250} alignment="centerHorizontally">
           <Rect name={autoAssign1} width={100} fill={'red'} />
           <Rect name={autoAssign2} height={20} width={100} fill={'green'} />
@@ -184,60 +211,60 @@ function App() {
           <Ref to={fixed1} />
           <Ref to={fixed2} />
         </Distribute>
-      </SVG>
-      <SVG width={500} height={500}>
+      </SVG> */}
+      {/* <SVG width={500} height={500}>
         <AlignNew x={250} y={250}>
           <Line guidePrimary="bottomCenter" x1={20} y1={20} x2={20} y2={30} strokeWidth={2} stroke={'black'} />
           <Text guidePrimary="topCenter" contents={'1'} />
         </AlignNew>
-      </SVG>
-      <SVG width={500} height={500}>
+      </SVG> */}
+      {/* <SVG width={500} height={500}>
         <AlignNew x={250} y={250}>
           <Rect guidePrimary="bottomCenter" width={100} height={100} fill={'firebrick'} />
           <Rect guidePrimary="topCenter" width={20} height={20} fill={'lightgreen'} />
         </AlignNew>
-      </SVG>
-      <SVG width={500} height={500}>
+      </SVG> */}
+      {/* <SVG width={500} height={500}>
         <AlignNew x={250} y={250} alignment="center">
           <Rect width={100} height={100} fill={'firebrick'} />
           <Rect width={20} height={500} fill={'lightgreen'} />
         </AlignNew>
-      </SVG>
-      <SVG width={500} height={500}>
-        <Group>
-          {/* <Group>
+      </SVG> */}
+      {/* <SVG width={500} height={500}>
+        <Group> */}
+      {/* <Group>
             <Col spacing={5} alignment={'center'}>
               <Line x1={20} y1={20} x2={20} y2={30} strokeWidth={2} stroke={'black'} /> */}
-          {/* <Text contents={'1'} /> */}
-          {/* <Rect width={20} height={20} fill={'red'} />
+      {/* <Text contents={'1'} /> */}
+      {/* <Rect width={20} height={20} fill={'red'} />
             </Col>
           </Group> */}
-          <Group>
-            {/* <Line name={ex1} x1={50} y1={20} x2={50} y2={30} strokeWidth={2} /> */}
-            <Rect name={ex1} width={20} height={20} fill={'red'} />
-            {/* <Text contents={'2'} /> */}
-            <Rect name={ex2} width={20} height={20} fill={'blue'} />
-            {/* <Align centerHorizontally={[<Ref to={ex1} />, <Ref to={ex2} />]} />
+      {/* <Group> */}
+      {/* <Line name={ex1} x1={50} y1={20} x2={50} y2={30} strokeWidth={2} /> */}
+      {/* <Rect name={ex1} width={20} height={20} fill={'red'} /> */}
+      {/* <Text contents={'2'} /> */}
+      {/* <Rect name={ex2} width={20} height={20} fill={'blue'} /> */}
+      {/* <Align centerHorizontally={[<Ref to={ex1} />, <Ref to={ex2} />]} />
             <Space vertically by={5}>
               <Ref to={ex1} />
               <Ref to={ex2} />
             </Space> */}
-            <Col spacing={5} alignment={'center'}>
+      {/* <Col spacing={5} alignment={'center'}>
               <Ref to={ex1} />
               <Ref to={ex2} />
-            </Col>
-            {/* <Col spacing={5} alignment={'center'}>
+            </Col> */}
+      {/* <Col spacing={5} alignment={'center'}>
               <Line x1={50} y1={20} x2={50} y2={30} strokeWidth={2} /> */}
-            {/* <Text contents={'2'} /> */}
-            {/* <Rect width={20} height={20} fill={'red'} /> */}
-            {/* </Col> */}
-          </Group>
+      {/* <Text contents={'2'} /> */}
+      {/* <Rect width={20} height={20} fill={'red'} /> */}
+      {/* </Col> */}
+      {/* </Group>
         </Group>
-      </SVG>
+      </SVG> */}
       {/* <SVG width={500} height={500}>
         <Polio />
       </SVG> */}
-      <SVG width={500} height={500}>
+      {/* <SVG width={500} height={500}>
         <RectPath
           x={Math.PI / 2}
           y={10}
@@ -294,7 +321,7 @@ function App() {
           stroke={'white'}
           strokeWidth={2}
         />
-      </SVG>
+      </SVG> */}
       <SVG width={500} height={300}>
         <Col spacing={10} alignment={'center'}>
           <Tree1
@@ -450,33 +477,6 @@ function App() {
         </Col>
       </SVG>
       <br />
-      <SVG width={500} height={300}>
-        <Col spacing={5} alignment={'center'}>
-          <Padding left={40} top={10} right={20} bottom={30}>
-            <Plot
-              height={200}
-              data={driving}
-              x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
-              y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
-              color={() => () => 'black'}
-            >
-              <NewLine name={line} x={'miles'} y={'gas'} />
-              <NewDot
-                x={'miles'}
-                y={'gas'}
-                label={{
-                  field: 'year',
-                  avoid: [
-                    /* line */
-                  ],
-                }}
-              />
-            </Plot>
-          </Padding>
-          <Text contents={'this is a test caption'} />
-          {/* <Rect width={100} height={100} fill={'red'} /> */}
-        </Col>
-      </SVG>
       {/* <SVG width={800} height={200}>
         <Padding left={40} top={10} right={20} bottom={30}>
           <Plot

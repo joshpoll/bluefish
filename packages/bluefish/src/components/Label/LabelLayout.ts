@@ -148,7 +148,7 @@ export default function labelLayout({
 
   // place all labels
   // data.forEach((d) => d.datum.setAttribute('opacity', `${+place(d)}`));
-  data.forEach((d) => place({ bbox: d.datum, boundary: d.boundary }));
+  data.forEach((d) => (d.datum.hidden = !place({ bbox: d.datum, boundary: d.boundary })));
 
   return data;
 }
