@@ -19,7 +19,7 @@ operators TODO:
 
 export const Point = withBluefish((props: any) => {
   // TODO: incorporate labels? maybe just punt to PointLabel?
-  return <Circle r={5} fill={props.fill ?? 'black'} />;
+  return <Circle r={props.size ?? 5} fill={props.fill ?? 'black'} />;
 });
 
 // TODO: this component doesn't work because distribute doesn't use centers...
@@ -147,16 +147,28 @@ export const Euclid = withBluefish((props: any) => {
   const k = useName('k');
   const l = useName('l');
 
+  const blue = '#0e638e';
+  const red = '#d42a20';
+  const yellow = '#fac22b';
+
   return (
     <Padding all={20}>
       <Group>
-        <Point name={a} fill="none" />
-        <Point name={b} fill="none" />
-        <Point name={c} fill="none" />
-        <Offset horizontal={30} vertical={-30}>
+        <Point name={a} fill="none" size={0} />
+        <Point name={b} fill="none" size={0} />
+        <Point name={c} fill="none" size={0} />
+        <Distribute spacing={50} direction="horizontal">
+          <Ref select={a} />
+          <Ref select={c} />
+        </Distribute>
+        <AlignNew alignment="centerVertically">
+          <Ref select={a} />
+          <Ref select={c} />
+        </AlignNew>
+        {/* <Offset horizontal={30} vertical={-30}>
           <Ref select={a} />
           <Ref select={b} />
-        </Offset>
+        </Offset> */}
         {/* <AlignNew alignment="centerHorizontally">
         <Ref select={b} />
         <Ref select={c} />
@@ -167,20 +179,20 @@ export const Euclid = withBluefish((props: any) => {
         <Ref select={b} />
         <Ref select={c} />
       </Perpendicular> */}
-        {/* TODO: just eyeballing the perpendicular for now... LOL */}
-        <Offset horizontal={30} vertical={45}>
+        {/* TODO: the drawing actually has the hypotenuse horizontal for symmetry reasons */}
+        <Offset horizontal={-18} vertical={24}>
           <Ref select={b} />
-          <Ref select={c} />
+          <Ref select={a} />
         </Offset>
-        <Connector stroke="yellow" strokeWidth="3">
+        <Connector stroke={yellow} strokeWidth="3">
           <Ref select={a} />
           <Ref select={b} />
         </Connector>
-        <Connector name={bc} stroke="blue" strokeWidth="3">
+        <Connector name={bc} stroke={blue} strokeWidth="3">
           <Ref select={b} />
           <Ref select={c} />
         </Connector>
-        <Connector stroke="red" strokeWidth="3">
+        <Connector stroke={red} strokeWidth="3">
           <Ref select={c} />
           <Ref select={a} />
         </Connector>
@@ -203,7 +215,7 @@ export const Euclid = withBluefish((props: any) => {
           <Ref select={g} />
           <Ref select={b} />
         </Connector> */}
-        <Square flip fill="blue">
+        <Square flip fill={blue}>
           <Ref select={c} />
           <Ref select={a} />
           <Point name={h} fill="none" />
@@ -221,12 +233,28 @@ export const Euclid = withBluefish((props: any) => {
           <Ref select={k} />
           <Ref select={a} />
         </Connector> */}
-        <Square name={square3} flip fill="red">
+        <Square name={square3} flip fill={red}>
           <Ref select={b} />
           <Ref select={c} />
           <Point name={e} fill="none" />
           <Point name={d} fill="none" />
         </Square>
+        <Connector stroke="black" strokeWidth="3">
+          <Ref select={a} />
+          <Ref select={d} />
+        </Connector>
+        <Connector stroke="black" strokeWidth="3">
+          <Ref select={b} />
+          <Ref select={h} />
+        </Connector>
+        <Connector stroke={red} strokeDasharray={5} strokeWidth={5}>
+          <Ref select={c} />
+          <Ref select={h} />
+        </Connector>
+        <Connector stroke={blue} strokeDasharray={5} strokeWidth={5}>
+          <Ref select={c} />
+          <Ref select={d} />
+        </Connector>
         {/* <Connector stroke="black" strokeWidth="3">
           <Ref select={b} />
           <Ref select={e} />

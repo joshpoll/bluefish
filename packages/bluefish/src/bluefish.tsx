@@ -827,6 +827,54 @@ export const useNameList = (names: string[]): Symbol[] => {
   });
 };
 
+// like useNameList, but accepts an arbitrary JSON object with strings at the leaves and returns a
+// new object with the same structure but with Bluefish names at the leaves
+export const useNames = (
+  names: unknown[] | Record<number | string, unknown>,
+): unknown | Record<number | string, unknown> => {
+  const { bfSymbolMap } = useBluefishSymbolContext();
+
+  const {
+    ref: parentRef,
+    parent: { scope: parentSymbol },
+  } = useContext(RefContext);
+
+  const symbols = useMemo(() => {
+    // construct the output in a functional style
+    const recurse = (
+      names: unknown[] | Record<number | string, unknown>,
+      path: (number | string)[],
+    ): unknown[] | Record<number | string, unknown> => {
+      const output: Record<number | string, unknown> = {};
+      for (const [key, value] of Object.entries(names)) {
+        if (typeof value === 'string') {
+          const symbol = Symbol(`${path.join('.')}.${value}`);
+          output[key] = {
+            symbol,
+            parent: parentSymbol,
+          };
+          if (parentSymbol !== undefined) {
+            bfSymbolMap.set(parentSymbol, {
+              ref: bfSymbolMap.get(parentSymbol)?.ref ?? undefined,
+              children: new Set([...Array.from(bfSymbolMap.get(parentSymbol)?.children ?? []), symbol]),
+            });
+          }
+        } else if (typeof value === 'object' && value !== null) {
+          output[key] = recurse(value as Record<number | string, unknown>, [...path, key]);
+        }
+      }
+      return output;
+    };
+
+    return recurse(names, []);
+  }, [names, parentSymbol, bfSymbolMap]);
+
+  return symbols as Record<string, unknown>;
+};
+
+// TODO: maybe I can use a SolidJS-style (probably not originally theirs) store API to make this
+// a bit more ergonomic
+
 export const lookup = (symbol: Symbol, ...path: string[]) => {
   return {
     type: 'lookup',

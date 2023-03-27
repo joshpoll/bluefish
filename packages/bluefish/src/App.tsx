@@ -67,6 +67,7 @@ import { Recipe } from './examples/Recipe';
 import { Euclid } from './examples/euclid/euclid';
 import { BertinHotel } from './examples/bertin/bertin';
 import { Playfair } from './examples/playfair/playfair';
+import { UpSet } from './examples/upset/upset';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -131,6 +132,9 @@ function App() {
         </ColUseState>
       </svg>
       <br /> */}
+      <SVG width={1000} height={500}>
+        <UpSet />
+      </SVG>
       <SVG width={1000} height={500}>
         <Playfair />
       </SVG>
