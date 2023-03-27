@@ -510,6 +510,8 @@ export type Symbol = {
   parent?: symbol;
 };
 
+export type Name = Symbol;
+
 export const useBluefishLayout = <T extends { children?: any; /* name?: string;  */ name?: Symbol }>(
   init: {
     bbox?: Partial<NewBBox>;

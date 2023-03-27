@@ -12,6 +12,8 @@ import {
   useName,
   Symbol,
   PropsWithBluefish,
+  useNames,
+  Name,
 } from '../bluefish';
 import { Ref } from '../components/Ref';
 import { Group } from '../components/Group';
@@ -137,8 +139,14 @@ export const Peritext: React.FC<PeritextProps & { spacing?: number }> = ({ chars
   const charsList = useName('chars');
   const markOpsList = useName('markOps');
 
-  const markOpNames = useNameList(markOps.map((markOp) => `${markOp.opId}`));
-  const charNames = useNameList(chars.map((char) => `${char.opId}`));
+  // const markOpNames = useNameList(markOps.map((markOp) => `${markOp.opId}`));
+  const markOpNames = useNames(Object.fromEntries(markOps.map((mark) => [mark.opId, 'markOp']))) as {
+    [key: string]: Name;
+  };
+  // const charNames = useNameList(chars.map((char) => `${char.opId}`));
+  const charNames = useNames(Object.fromEntries(chars.map((char) => [char.opId, 'char']))) as {
+    [key: string]: Name;
+  };
 
   return (
     <SVG width={1000} height={500}>
@@ -147,7 +155,7 @@ export const Peritext: React.FC<PeritextProps & { spacing?: number }> = ({ chars
         {/* chars */}
         <Row name={charsList} spacing={spacing ? +spacing : 10} alignment={'middle'}>
           {chars.map((char, i) => (
-            <CharSymbol name={charNames[i]} {...char} />
+            <CharSymbol name={charNames[char.opId]} {...char} />
           ))}
         </Row>
         {/* markOps */}
@@ -156,13 +164,13 @@ export const Peritext: React.FC<PeritextProps & { spacing?: number }> = ({ chars
           {markOps.map((markOp, i) => (
             /* TODO: need to find the ids */
             <MarkOp
-              name={markOpNames[i]}
+              name={markOpNames[markOp.opId]}
               {...{
                 ...markOp,
-                // start: { opId: charNames[markOps[i].start.opId] },
-                start: { opId: charNames.find((charName) => charName.symbol.description === markOps[i].start.opId)! },
-                // end: { opId: charNames[markOps[i].end.opId] },
-                end: { opId: charNames.find((charName) => charName.symbol.description === markOps[i].end.opId)! },
+                start: { opId: charNames[markOps[i].start.opId] },
+                // start: { opId: charNames.find((charName) => charName.symbol.description === markOps[i].start.opId)! },
+                end: { opId: charNames[markOps[i].end.opId] },
+                // end: { opId: charNames.find((charName) => charName.symbol.description === markOps[i].end.opId)! },
                 // TODO: maybe could also use the parent's namespace to look it up?
               }}
             />
@@ -176,7 +184,7 @@ export const Peritext: React.FC<PeritextProps & { spacing?: number }> = ({ chars
         </Space>
         <Group>
           {/* TODO: need to find the ids */}
-          {/* {markOps.map((markOp) => (
+          {markOps.map((markOp) => (
             <Group>
               <Connector
                 $from={'centerLeft'}
@@ -185,8 +193,8 @@ export const Peritext: React.FC<PeritextProps & { spacing?: number }> = ({ chars
                 strokeWidth={1}
                 strokeDasharray={3}
               >
-                <Ref to={markOp.start.opId} />
-                <Ref to={markOp.opId} />
+                <Ref to={charNames[markOp.start.opId]} />
+                <Ref to={markOpNames[markOp.opId]} />
               </Connector>
               <Connector
                 $from={'centerRight'}
@@ -195,11 +203,11 @@ export const Peritext: React.FC<PeritextProps & { spacing?: number }> = ({ chars
                 strokeWidth={1}
                 strokeDasharray={3}
               >
-                <Ref to={markOp.end.opId} />
-                <Ref to={markOp.opId} />
+                <Ref to={charNames[markOp.end.opId]} />
+                <Ref to={markOpNames[markOp.opId]} />
               </Connector>
             </Group>
-          ))} */}
+          ))}
         </Group>
       </Group>
     </SVG>
