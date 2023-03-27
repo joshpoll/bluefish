@@ -61,11 +61,11 @@ import { ChartAccent } from './examples/chart-accent';
 import { MinError } from './examples/min-error';
 import { RectPath } from './examples/grammars/gog/marks/RectPath';
 import { Polio } from './examples/grammars/gog/examples/polio';
-import { MathExample } from './examples/math';
 import { AlignNew } from './components/AlignNew';
 import { Distribute } from './components/Distribute';
 import { Background } from './components/Background';
-import { MathExample2 } from './examples/math2';
+import { MathExample } from './examples/math-example';
+import { Math } from './examples/math';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -124,8 +124,12 @@ function App() {
 
   return (
     <div className="App">
-      <SVG width={500} height={500}></SVG>
-      <MathExample2 />
+      <SVG width={200} height={200} />
+      <SVG width={200} height={200}>
+        <MathExample />
+      </SVG>
+
+      <Math latex={'x = \\frac{b \\pm \\sqrt{b^2 - 4ac}}{2a}'} />
 
       {/* <SVG width={500} height={500}>
         <Background> 
