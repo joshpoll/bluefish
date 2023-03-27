@@ -16,12 +16,16 @@ const dataSubset = data; /* .slice(0, 2); */
 
 const groupedData = tidy(
   dataSubset,
-  groupBy('type', [
-    summarize({
-      maxCount: max('count'),
-      meanCount: mean('count'),
-    }),
-  ]),
+  groupBy(
+    'type',
+    [
+      summarize({
+        maxCount: max('count'),
+        meanCount: mean('count'),
+      }),
+    ],
+    groupBy.object({ single: true }),
+  ),
 );
 
 export const BertinHotel = withBluefish((props: any) => {
@@ -55,12 +59,7 @@ export const BertinHotel = withBluefish((props: any) => {
             .padding(0.1)
         }
         y={({ height }) => scaleLinear([0, _.max(dataSubset.map((d) => d.count))!], [0, height])}
-        color={() =>
-          scaleSequential(interpolateReds).domain([
-            _.min(dataSubset.map((d) => d.count))!,
-            _.max(data.map((d) => d.count))!,
-          ])
-        }
+        color={() => (x: any) => x}
         height={500}
         width={0}
       >
@@ -76,8 +75,18 @@ export const BertinHotel = withBluefish((props: any) => {
           positioning={positioningOrdered.map((cat) => [cat])}
         >
           {({ key, data }) => {
-            // console.log('scaledY', key, data);
-            return <BarY name={key} totalWidth={300} spacing={0} x={'month'} y={'count'} color={'count'} data={data} />;
+            return (
+              <BarY
+                name={key}
+                totalWidth={300}
+                spacing={0}
+                x={'month'}
+                y={'count'}
+                color={(d: any) => (d.count > groupedData[d.type].meanCount ? 'black' : 'none')}
+                stroke="black"
+                data={data}
+              />
+            );
           }}
         </GroupBy>
       </Plot>

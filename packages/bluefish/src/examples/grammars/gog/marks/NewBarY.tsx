@@ -9,7 +9,7 @@ import { Row } from '../../../../components/Row';
 import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
 import { createSelector, Encoding } from './withEncodable';
 
-export type BarYProps<T> = Omit<React.SVGProps<SVGRectElement>, 'x' | 'y' | 'fill' | 'width' | 'height'> & {
+export type BarYProps<T> = Omit<React.SVGProps<SVGRectElement>, 'x' | 'y' | 'fill' | 'width' | 'height' | 'color'> & {
   x: Encoding<T>;
   y: Encoding<T>;
   color?: Encoding<T>;

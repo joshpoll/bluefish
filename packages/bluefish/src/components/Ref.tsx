@@ -52,9 +52,12 @@ export const resolveRef = (
 
         if (refObject === undefined) {
           throw new Error(
-            `Could not find component with symbol ${ref.symbol.symbol.description} and path ${ref.path.join(
+            `I couldn't find a component with symbol ${ref.symbol.symbol.description} and path ${ref.path.join(
               '.',
-            )}. Available symbols: ${Array.from(symbolMap.keys()).map((s) => s.description)}`,
+            )}. I searched ${Array.from(children?.values() ?? [])
+              .reverse()
+              .map((c) => c.description)}.
+            Available symbols: ${Array.from(symbolMap.keys()).map((s) => s.description)}`,
           );
         }
       }

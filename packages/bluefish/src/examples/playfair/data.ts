@@ -1,3 +1,5 @@
+import { continuous, discrete } from '../grammars/gog/marks/withEncodable';
+
 // http://mbostock.github.io/protovis/ex/wheat.html
 export const wheat = [
   { year: 1565, wheat: 41, wages: 5 },
@@ -55,6 +57,12 @@ export const wheat = [
   { year: 1821, wheat: 54 },
 ];
 
+export const wheatSchema = {
+  year: continuous(),
+  wheat: continuous({ zero: true }),
+  wages: continuous({ zero: true }),
+};
+
 export const monarch = [
   { name: 'Elizabeth', start: 1565, end: 1603 },
   { name: 'James I', start: 1603, end: 1625 },
@@ -69,3 +77,10 @@ export const monarch = [
   { name: 'George III', start: 1760, end: 1820 },
   { name: 'George IV', start: 1820, end: 1821 },
 ];
+
+export const monarchSchema = {
+  name: discrete(),
+  start: continuous(),
+  end: continuous(),
+  commonwealth: discrete(),
+};

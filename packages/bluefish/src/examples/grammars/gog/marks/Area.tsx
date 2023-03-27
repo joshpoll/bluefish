@@ -6,21 +6,15 @@ import { withBluefish, BBox, Measure, useBluefishLayout, PropsWithBluefish } fro
 import { NewBBox } from '../../../../NewBBox';
 import { PaperScope, Point } from 'paper/dist/paper-core';
 import { scaleLinear } from 'd3-scale';
-import { Encoding, createSelector } from './withEncodable';
 
-export type NewLineProps<T> = Omit<
-  React.SVGProps<SVGPathElement>,
-  'x' | 'y' | 'fill' | 'stroke' | 'width' | 'height'
-> & {
+export type AreaProps<T> = Omit<React.SVGProps<SVGPathElement>, 'x' | 'y' | 'fill' | 'stroke' | 'width' | 'height'> & {
   x: keyof T;
-  dx?: Encoding<T>;
   y: keyof T;
-  dy?: Encoding<T>;
   color?: keyof T;
   data?: T[];
 };
 
-export const NewLine = withBluefish(function NewLine(props: PropsWithBluefish<NewLineProps<any>>) {
+export const Area = withBluefish(function NewLine(props: PropsWithBluefish<AreaProps<any>>) {
   const context = React.useContext(PlotContext);
   const data = props.data ?? context.data;
   const xScale = context.scales.xScale
@@ -40,19 +34,14 @@ export const NewLine = withBluefish(function NewLine(props: PropsWithBluefish<Ne
   const colorScale = context.scales.colorScale;
   console.log('colorScale', colorScale);
 
-  const selectors = {
-    dx: createSelector(props.dx, 0),
-    dy: createSelector(props.dy, 0),
-  };
-
   return (
     <PathScale
       points={data
         .map((d: any) => [d[props.x], d[props.y]] as [number, number])
         .filter((d: any) => d[0] !== undefined && d[1] !== undefined && !isNaN(d[0]) && !isNaN(d[1]))}
-      deltas={data.map((d: any) => [selectors.dx(d), selectors.dy(d)] as [number, number])}
-      fill={'none'}
+      fill={props.color ?? 'black'}
       stroke={props.color ?? 'black'}
+      opacity={props.opacity ?? 1}
       strokeWidth={1.5}
       strokeLinecap={'round'}
       strokeLinejoin={'round'}
@@ -62,7 +51,7 @@ export const NewLine = withBluefish(function NewLine(props: PropsWithBluefish<Ne
     />
   );
 });
-NewLine.displayName = 'NewLine';
+Area.displayName = 'Area';
 
 export type PathProps = PropsWithBluefish<
   Omit<React.SVGProps<SVGPathElement>, 'd' | 'points'> &
@@ -70,11 +59,10 @@ export type PathProps = PropsWithBluefish<
       xScale: (d: any) => (y: number) => number;
       yScale: (d: any) => (y: number) => number;
       points: [number, number][];
-      deltas?: [number, number][];
     }
 >;
 
-const pathMeasurePolicy = ({ points, xScale, yScale, deltas }: PathProps): Measure => {
+const pathMeasurePolicy = ({ points, xScale, yScale }: PathProps): Measure => {
   const canvas = document.createElement('canvas');
   const paperScope = new PaperScope();
   paperScope.setup(canvas);
@@ -82,15 +70,12 @@ const pathMeasurePolicy = ({ points, xScale, yScale, deltas }: PathProps): Measu
     const xScaleFn = xScale(constraints.width);
     const yScaleFn = yScale(constraints.height);
 
-    const d =
-      d3Line().curve(curveCatmullRom)(points.map((p) => [xScaleFn(p[0]), yScaleFn(p[1])] as [number, number])) ?? '';
+    const scaledPoints = points.map((p) => [xScaleFn(p[0]), yScaleFn(p[1])] as [number, number]);
+
+    const d = d3Line().curve(curveCatmullRom)(scaledPoints) ?? '';
     const path = new paperScope.Path(d!);
-    // translate path by dx and dy
-    if (deltas) {
-      for (const i in path.segments) {
-        path.segments[i].point = path.segments[i].point.add(new Point(deltas[i][0], deltas[i][1]));
-      }
-    }
+    path.add(new paperScope.Point(scaledPoints[scaledPoints.length - 1][0], yScaleFn(0)));
+    path.add(new paperScope.Point(scaledPoints[0][0], yScaleFn(0)));
 
     const bounds = path.bounds;
 
@@ -106,6 +91,8 @@ const pathMeasurePolicy = ({ points, xScale, yScale, deltas }: PathProps): Measu
 
 export const PathScale = withBluefish((props: PropsWithBluefish<PathProps>) => {
   const { points, name, xScale, yScale, ...rest } = props;
+
+  console.log('opacity', props.opacity);
 
   const { id, bbox, boundary, domRef } = useBluefishLayout({}, props, pathMeasurePolicy(props));
 

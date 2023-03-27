@@ -131,7 +131,7 @@ function App() {
         </ColUseState>
       </svg>
       <br /> */}
-      <SVG width={500} height={500}>
+      <SVG width={1000} height={500}>
         <Playfair />
       </SVG>
       <SVG width={500} height={500}>

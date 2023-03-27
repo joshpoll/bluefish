@@ -168,7 +168,9 @@ const alignMeasurePolicy =
             return undefined;
           }
         })
-        .filter((v) => v !== undefined)[0] ?? 0;
+        .filter((v) => v !== undefined)[0] ??
+      options.y ??
+      0;
 
     console.log(
       '[AlignNew] potential vertical values',
@@ -210,7 +212,9 @@ const alignMeasurePolicy =
             return undefined;
           }
         })
-        .filter((v) => v !== undefined)[0] ?? 0;
+        .filter((v) => v !== undefined)[0] ??
+      options.x ??
+      0;
 
     // console.log('[AlignNew] verticalValue', verticalValue);
     // console.log('[AlignNew] horizontalValue', horizontalValue);

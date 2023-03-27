@@ -39,7 +39,9 @@ export type NewRectProps<T> = PropsWithBluefish<
     x1?: Encoding<T>;
     x2?: Encoding<T>;
     y1?: Encoding<T>;
+    height?: Encoding<T>;
     y2?: Encoding<T>;
+    names?: Symbol[];
   }
 >;
 
@@ -60,7 +62,8 @@ export const NewRect = withBluefish(function NewRect(props: NewRectProps<any>) {
 
   const rectNames = useNameList(Array.from(data.length).map((_, i) => `rect-${i}`));
 
-  // console.log('xScale in NewRect', xScale, props.x1, data, props.x1 ? data[props.x1] : undefined);
+  // console.log('xScale in NewRect', xScale, props.x1, data, props.x1 ? data[props.x1] :
+  // undefined);
 
   // TODO: use these values to set the default values for the selectors
   const defaultValues = {
@@ -73,6 +76,7 @@ export const NewRect = withBluefish(function NewRect(props: NewRectProps<any>) {
     x1: createSelector(props.x1),
     x2: createSelector(props.x2),
     y1: createSelector(props.y1),
+    height: createSelector(props.height),
     y2: createSelector(props.y2),
     stroke: createSelector(props.stroke),
     color: createSelector(props.color, 'black'),
@@ -81,15 +85,16 @@ export const NewRect = withBluefish(function NewRect(props: NewRectProps<any>) {
   };
 
   return (
-    <Group>
+    <Group positionChildren={false}>
       {(data as any[]).map((d, i) => {
         return (
           <RectScale
-            name={rectNames[i]}
-            x1={+selectors.x1(d)}
-            x2={+selectors.x2(d)}
-            y1={+selectors.y1(d)}
-            y2={+selectors.y2(d)}
+            name={props.names !== undefined ? props.names[i] : rectNames[i]}
+            x1={selectors.x1(d)}
+            x2={selectors.x2(d)}
+            y1={selectors.y1(d)}
+            y2={selectors.y2(d)}
+            height={selectors.height(d)}
             stroke={selectors.stroke(d)}
             fill={selectors.color(d)}
             fillOpacity={selectors.fillOpacity(d)}
@@ -112,24 +117,45 @@ export type RectScaleProps = PropsWithBluefish<
     x1?: number;
     x2?: number;
     y1?: number;
+    height?: number;
     y2?: number;
   }
 >;
 
-const rectMeasurePolicy = ({ x1, y1, x2, y2, xScale, yScale }: RectScaleProps): Measure => {
+const rectMeasurePolicy = ({ x1, y1, x2, y2, height, xScale, yScale }: RectScaleProps): Measure => {
   return (_measurables, constraints) => {
     const scaledX1 = x1 !== undefined ? xScale(constraints.width)(+x1) : undefined;
     const scaledY1 = y1 !== undefined ? yScale(constraints.height)(+y1) : undefined;
     const scaledX2 = x2 !== undefined ? xScale(constraints.width)(+x2) : undefined;
     const scaledY2 = y2 !== undefined ? yScale(constraints.height)(+y2) : undefined;
+    const scaledHeight = height !== undefined ? yScale(constraints.height)(+height) : undefined;
 
-    console.log('rectMeasurePolicy', x1, y1, x2, y2, xScale, yScale, scaledX1, scaledY1, scaledX2, scaledY2);
+    console.log(
+      'rectMeasurePolicy',
+      x1,
+      y1,
+      x2,
+      y2,
+      height,
+      xScale,
+      yScale,
+      scaledX1,
+      scaledY1,
+      scaledX2,
+      scaledY2,
+      scaledHeight,
+    );
 
     return {
       left: scaledX1 !== undefined && scaledX2 !== undefined ? Math.min(scaledX1, scaledX2) : undefined,
       top: scaledY1 !== undefined && scaledY2 !== undefined ? Math.min(scaledY1, scaledY2) : undefined,
       width: scaledX1 !== undefined && scaledX2 !== undefined ? Math.abs(scaledX2 - scaledX1) : undefined,
-      height: scaledY1 !== undefined && scaledY2 !== undefined ? Math.abs(scaledY1 - scaledY2) : undefined,
+      height:
+        height !== undefined
+          ? scaledHeight
+          : scaledY1 !== undefined && scaledY2 !== undefined
+          ? Math.abs(scaledY2 - scaledY1)
+          : undefined,
     };
   };
 };

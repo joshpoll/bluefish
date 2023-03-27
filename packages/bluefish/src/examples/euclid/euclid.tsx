@@ -4,6 +4,7 @@ import { Constraints, Measure, useBluefishLayout, useName, withBluefish } from '
 import { Align, Circle, Connector, Group, Padding, Ref } from '../../main';
 import { Distribute } from '../../components/Distribute';
 import { AlignNew } from '../../components/AlignNew';
+import { PaperScope } from 'paper/dist/paper-core';
 
 /* 
 operators TODO:
@@ -18,7 +19,7 @@ operators TODO:
 
 export const Point = withBluefish((props: any) => {
   // TODO: incorporate labels? maybe just punt to PointLabel?
-  return <Circle r={5} fill="black" />;
+  return <Circle r={5} fill={props.fill ?? 'black'} />;
 });
 
 // TODO: this component doesn't work because distribute doesn't use centers...
@@ -41,9 +42,11 @@ export const Offset = withBluefish((props: any) => {
 
 // export const Perpendicular = withBluefish((props: any) => {});
 
-const squareMeasurePolicy =
-  (options: any): Measure =>
-  (measurables, constraints: Constraints) => {
+const squareMeasurePolicy = (options: any): Measure => {
+  const canvas = document.createElement('canvas');
+  const paperScope = new PaperScope();
+  paperScope.setup(canvas);
+  return (measurables, constraints: Constraints) => {
     const placeables = measurables.map((measurable) => measurable.measure(constraints));
 
     // assume there are exactly four placeables
@@ -90,16 +93,33 @@ const squareMeasurePolicy =
     d.left = dCenter.x - d!.width! / 2;
     d.top = dCenter.y - d!.height! / 2;
 
+    // create a new Paper path between the points
+    const path = new paperScope.Path();
+    path.add(new paperScope.Point(aCenter.x, aCenter.y));
+    path.add(new paperScope.Point(bCenter.x, bCenter.y));
+    path.add(new paperScope.Point(dCenter.x, dCenter.y));
+    path.add(new paperScope.Point(cCenter.x, cCenter.y));
+
+    const bounds = path.bounds;
+
     return {
-      left: Math.min(a!.left!, b!.left!, c!.left!, d!.left!),
-      top: Math.min(a!.top!, b!.top!, c!.top!, d!.top!),
-      width: Math.max(a!.left! + a!.width!, b!.left! + b!.width!, c!.left! + c!.width!, d!.left! + d!.width!),
-      height: Math.max(a!.top! + a!.height!, b!.top! + b!.height!, c!.top! + c!.height!, d!.top! + d!.height!),
+      // left: Math.min(a!.left!, b!.left!, c!.left!, d!.left!),
+      // top: Math.min(a!.top!, b!.top!, c!.top!, d!.top!),
+      // width: Math.max(a!.left! + a!.width!, b!.left! + b!.width!, c!.left! + c!.width!, d!.left! + d!.width!),
+      // height: Math.max(a!.top! + a!.height!, b!.top! + b!.height!, c!.top! + c!.height!, d!.top!
+      // + d!.height!),
+      left: bounds.left,
+      top: bounds.top,
+      width: bounds.width,
+      height: bounds.height,
+      boundary: path,
     };
   };
+};
 
 export const Square = withBluefish((props: any) => {
-  const { id, domRef, children, bbox } = useBluefishLayout({}, props, squareMeasurePolicy(props));
+  // const { name, ...rest } = props;
+  const { id, domRef, children, bbox, boundary } = useBluefishLayout({}, props, squareMeasurePolicy(props));
 
   return (
     <g
@@ -108,6 +128,7 @@ export const Square = withBluefish((props: any) => {
       transform={`translate(${bbox!.coord?.translate?.x ?? 0}, ${bbox!.coord?.translate?.y ?? 0})`}
     >
       {children}
+      <path d={boundary?.pathData} fill={props.fill ?? 'none'} />
     </g>
   );
 });
@@ -129,9 +150,9 @@ export const Euclid = withBluefish((props: any) => {
   return (
     <Padding all={20}>
       <Group>
-        <Point name={a} label={'A'} />
-        <Point name={b} label={'B'} />
-        <Point name={c} label={'C'} />
+        <Point name={a} fill="none" />
+        <Point name={b} fill="none" />
+        <Point name={c} fill="none" />
         <Offset horizontal={30} vertical={-30}>
           <Ref select={a} />
           <Ref select={b} />
@@ -151,26 +172,26 @@ export const Euclid = withBluefish((props: any) => {
           <Ref select={b} />
           <Ref select={c} />
         </Offset>
-        <Connector stroke="black" strokeWidth="3">
+        <Connector stroke="yellow" strokeWidth="3">
           <Ref select={a} />
           <Ref select={b} />
         </Connector>
-        <Connector name={bc} stroke="black" strokeWidth="3">
+        <Connector name={bc} stroke="blue" strokeWidth="3">
           <Ref select={b} />
           <Ref select={c} />
         </Connector>
-        <Connector stroke="black" strokeWidth="3">
+        <Connector stroke="red" strokeWidth="3">
           <Ref select={c} />
           <Ref select={a} />
         </Connector>
         {/* triangle is complete! */}
-        <Square flip>
+        <Square flip fill="black">
           <Ref select={a} />
           <Ref select={b} />
-          <Point name={f} label={'F'} />
-          <Point name={g} label={'G'} />
+          <Point name={f} fill="none" />
+          <Point name={g} fill="none" />
         </Square>
-        <Connector stroke="black" strokeWidth="3">
+        {/* <Connector stroke="black" strokeWidth="3">
           <Ref select={a} />
           <Ref select={f} />
         </Connector>
@@ -181,14 +202,14 @@ export const Euclid = withBluefish((props: any) => {
         <Connector stroke="black" strokeWidth="3">
           <Ref select={g} />
           <Ref select={b} />
-        </Connector>
-        <Square flip>
+        </Connector> */}
+        <Square flip fill="blue">
           <Ref select={c} />
           <Ref select={a} />
-          <Point name={h} label={'H'} />
-          <Point name={k} label={'K'} />
+          <Point name={h} fill="none" />
+          <Point name={k} fill="none" />
         </Square>
-        <Connector stroke="black" strokeWidth="3">
+        {/* <Connector stroke="black" strokeWidth="3">
           <Ref select={c} />
           <Ref select={h} />
         </Connector>
@@ -199,14 +220,14 @@ export const Euclid = withBluefish((props: any) => {
         <Connector stroke="black" strokeWidth="3">
           <Ref select={k} />
           <Ref select={a} />
-        </Connector>
-        <Square name={square3} flip>
+        </Connector> */}
+        <Square name={square3} flip fill="red">
           <Ref select={b} />
           <Ref select={c} />
-          <Point name={e} label={'E'} />
-          <Point name={d} label={'D'} />
+          <Point name={e} fill="none" />
+          <Point name={d} fill="none" />
         </Square>
-        <Connector stroke="black" strokeWidth="3">
+        {/* <Connector stroke="black" strokeWidth="3">
           <Ref select={b} />
           <Ref select={e} />
         </Connector>
@@ -217,7 +238,7 @@ export const Euclid = withBluefish((props: any) => {
         <Connector stroke="black" strokeWidth="3">
           <Ref select={d} />
           <Ref select={c} />
-        </Connector>
+        </Connector> */}
         {/* squares are complete! */}
         {/* <Intersect name={l} label={'L'}>
         <Hidden>
