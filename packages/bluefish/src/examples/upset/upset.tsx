@@ -125,11 +125,12 @@ export const UpSet = withBluefish(() => {
             })}
             {/* TODO: this is a motivating use case for having connector/link take arb. args instead of just 2 */}
             {/* for each pair of neighboring genres in the set, add a connector between them */}
-            {set.genres.map((genre) => {
+            {set.genres.map((genre, i) => {
+              if (i === set.genres.length - 1) return null;
               return (
                 <Connector $from="center" $to="center" stroke="#333333" strokeWidth={2}>
                   <Ref select={genreSetDots[set.genres.join(',')][genre]} />
-                  <Ref select={genreSetDots[set.genres.join(',')][genre]} />
+                  <Ref select={genreSetDots[set.genres.join(',')][set.genres[i + 1]]} />
                 </Connector>
               );
             })}
