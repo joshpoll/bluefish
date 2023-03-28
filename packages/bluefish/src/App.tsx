@@ -125,11 +125,19 @@ function App() {
   return (
     <div className="App">
       <SVG width={200} height={200} />
+
+      <SVG width={500} height={500}>
+        <Group>
+          <Math
+            latex={
+              'h_v^k = \\lambda \\biggl( W_k \\sum_{u \\in N(v)}\\frac{h_u^{k - 1}}{| N(v) |} + B_k h_v^{k - 1} \\biggr), \\forall k > 0'
+            }
+          />
+        </Group>
+      </SVG>
       <SVG width={200} height={200}>
         <MathExample />
       </SVG>
-
-      <Math latex={'x = \\frac{b \\pm \\sqrt{b^2 - 4ac}}{2a}'} />
 
       {/* <SVG width={500} height={500}>
         <Background> 

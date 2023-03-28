@@ -1,20 +1,17 @@
-import { Measure, PropsWithBluefish, useBluefishLayout, useName, useNameList, withBluefish } from '../bluefish';
+import { Measure, PropsWithBluefish, useBluefishLayout, useName, useNameList, withBluefish, Symbol } from '../bluefish';
 import { mathjax } from 'mathjax-full/js/mathjax';
 import { TeX } from 'mathjax-full/js/input/tex';
 import { SVG } from 'mathjax-full/js/output/svg';
-import { SVGWrapper } from 'mathjax-full/js/output/svg/Wrapper';
-import { MathJax } from 'mathjax-full/js/components/startup';
 import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages';
 import { liteAdaptor } from 'mathjax-full/js/adaptors/liteAdaptor';
 import { RegisterHTMLHandler } from 'mathjax-full/js/handlers/html';
-import { SerializedMmlVisitor } from 'mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js';
-import { MmlNode } from 'mathjax-full/js/core/MmlTree/MmlNode';
 import { PropsWithChildren, ReactNode, useRef } from 'react';
 import { Group, NewBBox } from '../main';
 import { SVGWrapperFactory } from 'mathjax-full/js/output/svg/WrapperFactory';
 import { MyWrapperFactory } from './mathWrapper/myWrapperFactory';
 import { MySVGWrapper } from './mathWrapper/mySVGWrapper';
 import { rasterize } from '../rasterize';
+import _ from 'lodash';
 
 const DEFAULT_OPTIONS = {
   width: 1280,
@@ -36,8 +33,13 @@ type EquationTree = {
   node: SVGElement; // the SVG element of the node
   transform?: string;
   children: EquationTree[];
+  leafCount: number;
 };
 
+/**
+ * Traverse SVG element tree, returning a tree of the elements with their associated bounding
+ * boxes, as well as their transforms and leaf counts (number of leaf nodes corresponding to the subtree)
+ */
 function traverseTree(elem: SVGElement, parent: EquationTree | undefined): EquationTree {
   const rect = elem.getBoundingClientRect();
   const bbox: BoundingBox = {
@@ -51,22 +53,28 @@ function traverseTree(elem: SVGElement, parent: EquationTree | undefined): Equat
   const node = elem;
   const children: EquationTree[] = [];
   const transform = elem.getAttribute('transform');
+  let leafCount = 0;
 
+  for (const child of Array.from(elem.children)) {
+    const traversal = traverseTree(child as SVGElement, undefined);
+    children.push(traversal);
+    leafCount += traversal.leafCount;
+  }
+  if (children.length === 0) {
+    leafCount = 1;
+  }
   const tree = {
     bbox: bbox,
     node: node,
     children: children,
     transform: transform ?? undefined,
+    leafCount: leafCount,
   };
 
   if (parent !== undefined) {
     parent.children.push(tree);
   } else {
     parent = tree;
-  }
-
-  for (const child of Array.from(elem.children)) {
-    children.push(traverseTree(child as SVGElement, undefined));
   }
 
   return parent;
@@ -93,8 +101,7 @@ function texToSvg(str: string) {
   const tex = new TeX({ packages });
   const svg = new SVG({
     fontCache: FONT_CACHE ? 'local' : 'none',
-    wrapperFactory: new MyWrapperFactory(),
-  }); // insert wrapperfactory here
+  });
   const html = mathjax.document('', { InputJax: tex, OutputJax: svg });
 
   const node = html.convert(str, {
@@ -108,21 +115,35 @@ function texToSvg(str: string) {
   return svgString;
 }
 
-export type MathProps = PropsWithBluefish<{ latex: string }>; // latex string to render
+export type MathProps = PropsWithBluefish<{ latex: string; names?: Symbol[] }>; // latex string to render
 
 export const Math = withBluefish((props: MathProps) => {
   const parser = new DOMParser();
   const svgString = texToSvg(props.latex);
   const mathSVG = parser.parseFromString(svgString, 'image/svg+xml').firstChild?.firstChild as SVGElement;
-  const defs = mathSVG.firstChild as SVGElement;
+  const defs = mathSVG.firstChild as SVGElement; // SVG path definitions for elements
   const equation = defs.nextSibling as SVGElement;
   const node = useName('node');
 
-  const toRemove = document.body.appendChild(mathSVG);
+  const toRemove = document.body.appendChild(mathSVG); // add to DOM to get measurements
   const result = traverseTree(equation, undefined);
+  console.log('traversal', result);
+
+  const bounds = mathSVG.getBoundingClientRect(); // get bounding box of SVG
+  console.log('bounds of mathSVG', bounds);
+  const boundingBox = {
+    left: bounds.left,
+    right: bounds.right,
+    top: bounds.top,
+    bottom: bounds.bottom,
+    width: bounds.width,
+    height: bounds.height,
+  };
+
   toRemove?.remove();
 
-  const { id, bbox, domRef } = useBluefishLayout({}, props, mathMeasurePolicy2({}));
+  // pass bounding box results into math measure policy
+  const { id, bbox, domRef } = useBluefishLayout({}, props, mathMeasurePolicy2(boundingBox));
 
   return (
     <svg
@@ -130,20 +151,20 @@ export const Math = withBluefish((props: MathProps) => {
       ref={domRef}
       // style={{ verticalAlign: '-0.186ex' }}
       // xmlns={mathSVG.getAttribute('xmlns') ?? undefined}
-      width={mathSVG.getAttribute('width') ?? undefined}
-      height={mathSVG.getAttribute('height') ?? undefined}
+      width={bbox.width ?? undefined}
+      height={bbox.height ?? undefined}
       // role="img"
       // focusable="false"
       viewBox={mathSVG.getAttribute('viewBox') ?? undefined}
       // xmlnsXlink="http://www.w3.org/1999/xlink"
+      transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}
     >
       <defs dangerouslySetInnerHTML={{ __html: defs.innerHTML }} />
       <MathNode
         name={node}
-        bbox={result.bbox}
-        elem={result.node}
-        childrenTree={result.children}
+        node={result}
         transform={result.transform}
+        names={props.names ?? useNameList(_.range(result.leafCount).map((i) => `leaf-${i}`))}
       />
     </svg>
   );
@@ -158,48 +179,46 @@ type mathProps = PropsWithBluefish<{
   height?: number;
 }>;
 
-const mathMeasurePolicy2 = ({ left, right, top, bottom, width, height }: mathProps): Measure => {
+const mathMeasurePolicy2 = (props: mathProps): Measure => {
   return (_measurables, constraints) => {
     return {
-      left: left,
-      right: right,
-      bottom: bottom,
-      top: top,
-      width: width,
-      height: height,
+      left: props.left ?? 0,
+      right: props.right ?? 0,
+      bottom: props.bottom ?? 0,
+      top: props.top ?? 0,
+      width: props.width ?? 0,
+      height: props.height ?? 0,
     };
   };
 };
 
 type MathNodeProps = PropsWithBluefish<{
-  bbox: BoundingBox;
-  elem: Element;
-  childrenTree: EquationTree[];
+  node: EquationTree;
   transform?: string;
+  names: Symbol[]; // names to assign to leaves of tree
 }>;
 
-// const Node = withBluefish(props: {opId: string, }) => {
-//   return elem;
-// };
-
 export const MathNode = withBluefish((props: PropsWithChildren<MathNodeProps>) => {
-  const { id, bbox, domRef } = useBluefishLayout({}, props, mathMeasurePolicy2(props.bbox));
+  const { node, children } = props.node;
+  const boundingBox = props.node.bbox;
+  const { id, bbox, domRef } = useBluefishLayout({}, props, mathMeasurePolicy2(boundingBox));
 
-  if (props.childrenTree.length === 0) {
+  if (children.length === 0) {
+    // leaf node
     return (
       <g
         id={id}
         ref={domRef}
         transform={`${props.transform ?? ''}
       scale(${bbox?.coord?.scale?.x ?? 1} ${bbox?.coord?.scale?.y ?? 1})`}
-        height={props.bbox?.height ?? 0}
-        width={props.bbox?.width ?? 0}
-        dangerouslySetInnerHTML={{ __html: props.elem.outerHTML }}
+        height={bbox.height ?? 0}
+        width={bbox.width ?? 0}
+        dangerouslySetInnerHTML={{ __html: node.outerHTML }}
       />
     );
   }
-
-  const childrenNames = useNameList(props.childrenTree.map((child, index) => `child-${index}`));
+  let counter = 0;
+  console.log('bounding box', bbox);
 
   return (
     <g
@@ -207,19 +226,24 @@ export const MathNode = withBluefish((props: PropsWithChildren<MathNodeProps>) =
       ref={domRef}
       transform={`${props.transform ?? ''}
       scale(${bbox?.coord?.scale?.x ?? 1} ${bbox?.coord?.scale?.y ?? 1})`}
-      height={props.bbox?.height ?? 0}
-      width={props.bbox?.width ?? 0}
+      height={bbox.height ?? 0}
+      width={bbox.width ?? 0}
     >
-      {props.childrenTree.map((child, index) => {
-        return (
-          <MathNode
-            elem={child.node}
-            bbox={child.bbox}
-            childrenTree={child.children}
-            transform={child.transform}
-            name={childrenNames[index]}
-          />
-        );
+      {children.map((child, index) => {
+        const names = props.names.slice(counter, counter + child.leafCount);
+
+        counter += child.leafCount;
+        if (child.leafCount === 1) {
+          return <MathNode node={child} transform={child.transform} names={names} name={names[0]} />;
+        } else {
+          return (
+            <MathNode
+              node={child}
+              transform={child.transform}
+              names={props.names.slice(counter - child.leafCount, counter)}
+            />
+          );
+        }
       })}
     </g>
   );
