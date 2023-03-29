@@ -154,7 +154,10 @@ export function DomStructure() {
         child.childIndex = index + 1;
         child.totalNodes = totalChildren;
       });
-      groupObject.nodeDescription = groupObject.nodeDescription + ` with ${groupObject.nodeChildren.length} refs`;
+
+      if (groupObject.nodeChildren.length !== 0) {
+        groupObject.nodeDescription = groupObject.nodeDescription + ` with ${groupObject.nodeChildren.length} refs`;
+      }
 
       return groupObject;
     }
@@ -300,7 +303,7 @@ export function DomStructure() {
       // ~~~~ Creates DOM structure from JSON ~~~~
 
       const diagramNode = parseJSONtoDOM(allJSONs[0]);
-      diagramNode.setAttribute('style', 'overflow: auto; height: 600px; width: 500px;');
+      diagramNode.setAttribute('style', 'overflow: auto; height: 550px; width: 500px;');
       // diagramNode.style. = '';
 
       domNodeRef.current = diagramNode;
