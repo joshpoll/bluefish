@@ -49,13 +49,6 @@ export const UpSet = withBluefish(() => {
 
   const genresGTE = genreSetBoundedSize(6, Infinity);
 
-  // dot name for cross product of genres and genresGTE4
-  // const dots = useNameList(
-  //   genresGTE.reduce((acc, set) => {
-  //     return acc.concat(genres.map((genre) => `${set.genres.join(',')}-${genre}`));
-  //   }, [] as string[]),
-  // );
-
   // a record of records of dot names. 1st key is the set, 2nd key is the genre
   const dots = useNames(
     genresGTE.reduce((acc, set) => {

@@ -44,8 +44,6 @@ export const Playfair = withBluefish(() => {
           data={monarch}
           x1="start"
           x2="end"
-          // y1={0}
-          // y2={20}
           height={5}
           color={(d) => (d.commonwealth === true ? 'none' : 'black')}
           stroke="black"
