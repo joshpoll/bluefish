@@ -201,6 +201,7 @@ type MathNodeProps = PropsWithBluefish<{
 export const MathNode = withBluefish((props: PropsWithChildren<MathNodeProps>) => {
   const { node, children } = props.node;
   const boundingBox = props.node.bbox;
+  console.log('pre-measurement bounding box', boundingBox);
   const { id, bbox, domRef } = useBluefishLayout({}, props, mathMeasurePolicy2(boundingBox));
 
   if (children.length === 0) {
@@ -218,7 +219,7 @@ export const MathNode = withBluefish((props: PropsWithChildren<MathNodeProps>) =
     );
   }
   let counter = 0;
-  console.log('bounding box', bbox);
+  console.log('post-measurement bounding box', bbox);
 
   return (
     <g
