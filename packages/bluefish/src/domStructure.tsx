@@ -20,19 +20,10 @@ export function DomStructure() {
 
     rectangleBBox = (target as any).getBBox();
 
-    // const clonedElt = (target as any).cloneNode(true);
-    // const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    // svg.appendChild(clonedElt);
-    // document.body.appendChild(svg);
-    // const rectangleBBox = clonedElt.getBBox();
-    // document.body.removeChild(svg);
-
-    // console.log('this is the all attributed: ', JSON.stringify(target?.attributes), target?.attributes);
-
     // Get rectangle for highlighting
     let highlightRectangle = document.getElementById(highlightRectangleId);
 
-    if (rectangleBBox.x === 0 && rectangleBBox.y === 0) {
+    if ((rectangleBBox.x === 0 || rectangleBBox.x < 0) && (rectangleBBox.y === 0 || rectangleBBox.y < 0)) {
       const targetWidth = target?.getAttribute('width') as any;
       const targetHeight = target?.getAttribute('height') as any;
 
@@ -52,11 +43,6 @@ export function DomStructure() {
       highlightRectangle?.setAttribute('height', rectHeight);
     }
 
-    // highlightRectangle?.setAttribute('x', rectangleBBox.x);
-    // highlightRectangle?.setAttribute('y', rectangleBBox.y);
-    // highlightRectangle?.setAttribute('width', rectangleBBox.width + 5);
-    // highlightRectangle?.setAttribute('height', rectangleBBox.height + 5);
-
     highlightRectangle?.setAttribute('opacity', '0.5');
     highlightRectangle?.setAttribute('fill', 'red');
 
@@ -75,8 +61,6 @@ export function DomStructure() {
     const targetId = idSplit[0];
     const target = document.getElementById(targetId);
     rectangleBBox = (target as any).getBBox();
-
-    // rectangleBBox = (target as any).getBoundingClientRect();
 
     // Get rectangle for highlighting
     let highlightRectangle = document.getElementById(highlightRectangleId);
@@ -217,11 +201,18 @@ export function DomStructure() {
     const groupNode = document.createElement('div');
     groupNode.setAttribute('id', `${diagramJSON.nodeId}-desc`);
 
-    const groupDescription = `${diagramJSON.childIndex} of ${diagramJSON.totalNodes}. ${diagramJSON.nodeDescription}`;
+    let groupDescription = `${diagramJSON.childIndex} of ${diagramJSON.totalNodes}. ${diagramJSON.nodeDescription}`;
+
+    if (diagramJSON.childIndex === null || diagramJSON.totalNodes === null) {
+      groupDescription = `${diagramJSON.nodeDescription}`;
+    }
+
     groupNode.setAttribute('aria-label', groupDescription);
 
     // create paragraph node with nodedescription text
     const textNode = document.createElement('p');
+    textNode.setAttribute('style', 'text-align: left;');
+
     textNode.appendChild(document.createTextNode(groupDescription));
     textNode.setAttribute('aria-hidden', 'true');
     groupNode.appendChild(textNode);
@@ -232,6 +223,8 @@ export function DomStructure() {
 
     diagramJSON.nodeChildren.forEach((child: any) => {
       const liNode = document.createElement('li');
+      liNode.setAttribute('style', 'text-align: left;');
+
       const childNode = parseJSONtoDOM(child);
 
       liNode.appendChild(childNode);
@@ -307,12 +300,13 @@ export function DomStructure() {
       // ~~~~ Creates DOM structure from JSON ~~~~
 
       const diagramNode = parseJSONtoDOM(allJSONs[0]);
-      diagramNode.setAttribute('style', 'overflow: auto; height: 600px; width: 400px;');
+      diagramNode.setAttribute('style', 'overflow: auto; height: 600px; width: 500px;');
       // diagramNode.style. = '';
 
-      // append diagramNode to body
       domNodeRef.current = diagramNode;
-      document.body.appendChild(diagramNode);
+      app?.appendChild(diagramNode);
+
+      // document.body.appendChild(diagramNode);
     }, 1000);
   }, []);
 

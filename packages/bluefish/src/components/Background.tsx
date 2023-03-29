@@ -47,6 +47,7 @@ const backgroundMeasurePolicy: Measure = (measurables, constraints) => {
 export const Background = withBluefish((props: PropsWithChildren<{}>) => {
   const { id, domRef, bbox, children } = useBluefishLayout({}, props, backgroundMeasurePolicy);
   const childrenList = Children.toArray(children);
+  const { ...rest } = props;
 
   if (childrenList.length !== 2) {
     throw new Error('Expected 2 children from background element');
@@ -56,6 +57,7 @@ export const Background = withBluefish((props: PropsWithChildren<{}>) => {
   const background = childrenList[1]; // render background first, then foreground
   return (
     <g
+      {...rest}
       id={id}
       ref={domRef}
       transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}

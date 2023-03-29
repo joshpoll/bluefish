@@ -50,6 +50,7 @@ export const Text = withBluefish((props: TextProps) => {
 
   return (
     <g
+      {...rest}
       id={id}
       ref={domRef}
       transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})

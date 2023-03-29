@@ -5,6 +5,11 @@ type LayoutGroupProps = PropsWithChildren<{
 }>;
 
 export const LayoutGroup = (props: LayoutGroupProps) => {
-  return <g id={props.id}>{props.children}</g>;
+  const { id, ...rest } = props;
+  return (
+    <g aria-hidden={true} id={props.id}>
+      {props.children}
+    </g>
+  );
 };
 LayoutGroup.displayName = 'LayoutGroup';
