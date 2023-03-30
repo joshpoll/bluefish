@@ -120,16 +120,9 @@ function App() {
 
   return (
     <div className="App">
-      <SVG width={500} height={500}>
-        <Background>
-          <Padding all={10}>
-            <Circle cx={100} cy={200} r={50} fill={'red'} />
-          </Padding>
-          <Rect fill={'black'} />
-        </Background>
-      </SVG>
+      <ChartAccent />
 
-      <SVG width={500} height={500}>
+      {/* <SVG width={500} height={500}>
         <Background>
           <TreeSymbol
             data={{
@@ -190,7 +183,7 @@ function App() {
           />
           <Rect fill={'pink'} fillOpacity={0.8} />
         </Background>
-      </SVG>
+      </SVG> */}
     </div>
   );
 }
