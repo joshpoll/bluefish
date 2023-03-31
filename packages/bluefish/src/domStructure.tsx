@@ -1,5 +1,6 @@
 import React from 'react';
 import { useEffect } from 'react';
+import { X } from 'vega-lite/build/src/channel';
 
 export function DomStructure() {
   const domNodeRef = React.useRef<any>(null);
@@ -18,8 +19,22 @@ export function DomStructure() {
     const targetId = idSplit[0];
     const target = document.getElementById(targetId);
 
+    if (target === null) {
+      return;
+    }
+
     rectangleBBox = (target as any).getBBox();
 
+    const { x, y } = rectangleBBox;
+
+    const svg = Array.from(document.getElementsByTagName('svg'))[0];
+    let point = (svg as any).createSVGPoint();
+    point.x = x;
+    point.y = y;
+
+    point = point.matrixTransform((target as any).getCTM());
+    rectangleBBox.x = point.x;
+    rectangleBBox.y = point.y;
     // Get rectangle for highlighting
     let highlightRectangle = document.getElementById(highlightRectangleId);
 
@@ -303,7 +318,7 @@ export function DomStructure() {
       // ~~~~ Creates DOM structure from JSON ~~~~
 
       const diagramNode = parseJSONtoDOM(allJSONs[0]);
-      diagramNode.setAttribute('style', 'overflow: auto; height: 550px; width: 500px;');
+      diagramNode.setAttribute('style', 'overflow: auto; height: 550px; width: 1000px;');
       // diagramNode.style. = '';
 
       domNodeRef.current = diagramNode;

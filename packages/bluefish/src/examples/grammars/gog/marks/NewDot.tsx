@@ -82,7 +82,7 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
             texts={(data as any[]).map((d, i) => ({
               label: (
                 <Text
-                  aria-label={`label ${d[(props.label! as any).field!]}`}
+                  aria-label={`Dot Annotation With Value ${d[(props.label! as any).field!]}`}
                   contents={d[(props.label! as any).field!]}
                   fontSize={'8pt'}
                 />
@@ -103,7 +103,13 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
             aria-label={`Dot Labels`}
             name={labels}
             texts={(data as any[]).map((d, i) => ({
-              label: <Text contents={d[(props.label as string)!]} fontSize={'8pt'} />,
+              label: (
+                <Text
+                  aria-label={`Dot Annotation With Value ${d[(props.label! as string)!]}`}
+                  contents={d[(props.label as string)!]}
+                  fontSize={'8pt'}
+                />
+              ),
               ref: dots[i],
             }))}
             compare={undefined}

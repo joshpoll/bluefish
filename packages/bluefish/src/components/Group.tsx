@@ -30,8 +30,8 @@ const groupMeasurePolicy: Measure = (measurables, constraints) => {
   const top = _.min(_.map(placeables, 'top')) ?? 0;
   const right = _.max(_.map(placeables, 'right')) ?? 0;
   const bottom = _.max(_.map(placeables, 'bottom')) ?? 0;
-  console.log('asdfs', 'left', _.map(placeables, 'left'), _.min(_.map(placeables, 'left')));
-  console.log('asdfs', 'group bbox', { left, top, right, bottom });
+  // console.log('asdfs', 'left', _.map(placeables, 'left'), _.min(_.map(placeables, 'left')));
+  // console.log('asdfs', 'group bbox', { left, top, right, bottom });
   return {
     left,
     top,

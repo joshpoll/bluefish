@@ -78,10 +78,10 @@ export const plotMarkReified = (mark: Mark, scales: { [key in string]: Scale }, 
   const { data, encodings, scale, render } = mark;
   // 1. Use the encoding functions to extract channels from the data
   const channels = extractChannels(data, encodings);
-  console.log('channels', channels);
+  // console.log('channels', channels);
   // 2. Call the mark's scale function get the screen space coordinates.
   const scaledData = scale(channels, scales, dimensions);
-  console.log('scaledData', scaledData);
+  // console.log('scaledData', scaledData);
   return render(scaledData);
 };
 
@@ -150,7 +150,7 @@ export const Plot: React.FC<PropsWithBluefish<PlotProps>> = forwardRef((props, r
   const reifiedScales = reifyScales(scales as any, dimensions);
   // append "Scale" to scale names
   const renamedScales = renameScales(reifiedScales);
-  console.log('[renamedScales]', renamedScales);
+  // console.log('[renamedScales]', renamedScales);
   const { xScale, yScale, colorScale } = renamedScales;
 
   return (
@@ -173,11 +173,11 @@ export const Plot2 = withBluefish((props: PropsWithBluefish<Plot2Props>) => {
   const dimensions = { width: width ?? constraints?.width ?? 0, height: height ?? constraints?.height ?? 0 };
 
   // reify scales
-  console.log('scales', scales);
+  // console.log('scales', scales);
   const reifiedScales = reifyScales(scales as any, dimensions);
   // append "Scale" to scale names
   const renamedScales = renameScales(reifiedScales);
-  console.log('[renamedScales]', renamedScales);
+  // console.log('[renamedScales]', renamedScales);
   const { xScale, yScale, colorScale } = renamedScales;
 
   return (

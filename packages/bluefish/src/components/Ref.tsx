@@ -430,6 +430,6 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
     [props.to, context.bfMap, symbolContext.bfSymbolMap],
   );
 
-  return <g className="ref" data-to={measurable.current?.id}></g>;
+  return <g aria-label={'reference'} className="ref" data-to={measurable.current?.id}></g>;
 });
 Ref.displayName = 'Ref';

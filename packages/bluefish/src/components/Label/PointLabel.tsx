@@ -59,11 +59,11 @@ export const PointLabel = forwardRef(function PointLabel(props: PointLabelProps,
         {texts.map((text) => (
           <LayoutGroup>
             {text.label}
-            <Ref to={text.ref} />
+            <Ref aria-label={'reference'} to={text.ref} />
           </LayoutGroup>
         ))}
       </LayoutGroup>
-      <LayoutGroup>{avoidElements}</LayoutGroup>
+      <LayoutGroup aria-hidden={true}>{avoidElements}</LayoutGroup>
     </PointLabelAux>
   );
 });
@@ -189,6 +189,7 @@ export const PointLabelAux = withBluefish((props: PropsWithChildren<{}>) => {
 
   return (
     <g
+      aria-label={'Point Label'}
       {...rest}
       id={id}
       ref={domRef}

@@ -99,8 +99,6 @@ export const TickScale = withBluefish((props: tickScaleProps) => {
   const { xScale, yScale, name, ...rest } = props;
 
   const { id, bbox, domRef } = useBluefishLayout({}, props, tickMeasurePolicy(props));
-
-  console.log('Tick scale', bbox);
   return (
     <g
       {...rest}
