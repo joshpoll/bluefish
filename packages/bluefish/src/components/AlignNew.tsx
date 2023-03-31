@@ -103,10 +103,13 @@ type AlignProps = PropsWithBluefish<{
 
 export const AlignNew = withBluefish(function Align(props: AlignProps) {
   const { id, domRef, children, bbox } = useBluefishLayout({}, props, alignMeasurePolicy(props));
+  const { name, ...rest } = props;
 
   // return <AlignAux alignments={alignments}>{children.map((c) => c.child)}</AlignAux>;
   return (
     <g
+      aria-hidden={true}
+      {...rest}
       id={id}
       ref={domRef}
       transform={`translate(${bbox!.coord?.translate?.x ?? 0}, ${bbox!.coord?.translate?.y ?? 0})`}

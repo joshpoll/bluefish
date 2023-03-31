@@ -54,8 +54,8 @@ export const NewAxis = withBluefish(function NewAxis(props: PropsWithBluefish<Ne
   }
 
   return (
-    <Group>
-      <NewLine data={data} name={name} x={x} y={y} />
+    <Group aria-label={`${props.axis.toUpperCase()}-axis`}>
+      <NewLine aria-label={`${props.axis.toUpperCase()}-line`} data={data} name={name} x={x} y={y} />
       <AxisTick x={x as string} y={y as string} data={data} axis={props.axis} name={ticks} />
     </Group>
   );

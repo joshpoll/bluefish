@@ -29,11 +29,12 @@ export const AxisTick = withBluefish(function AxisTick(props: PropsWithBluefish<
   const align = useNameList(_.range(data.length).map((i) => `align-${i}`));
 
   return (
-    <Group>
+    <Group aria-label={`${props.axis.toUpperCase()}-axis ticks`}>
       {(data as any[]).map((d, i) => (
-        <Group>
+        <Group aria-label={props.axis === 'x' ? `Tick at value ${d[props.x]}` : `Tick at value ${d[props.y]}`}>
           <AlignNew>
             <TickScale
+              aria-hidden={true}
               guidePrimary={props.axis === 'x' ? 'bottomCenter' : 'centerLeft'}
               name={ticks[i]}
               cx={+d[props.x]}
@@ -102,6 +103,7 @@ export const TickScale = withBluefish((props: tickScaleProps) => {
   console.log('Tick scale', bbox);
   return (
     <g
+      {...rest}
       id={id}
       ref={domRef}
       transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})

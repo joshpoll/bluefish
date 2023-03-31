@@ -25,6 +25,7 @@ export const NewLine = withBluefish(function NewLine(props: PropsWithBluefish<Ne
 
   return (
     <PathScale
+      aria-label={props['aria-label'] ?? 'Line'}
       points={data.map((d: any) => [d[props.x], d[props.y]] as [number, number])}
       fill={'none'}
       stroke={props.color ?? 'black'}
@@ -96,6 +97,7 @@ export const PathScale = withBluefish((props: PropsWithBluefish<PathProps>) => {
 
   return (
     <g
+      {...rest}
       id={id}
       ref={domRef}
       transform={`translate(${bbox!.coord?.translate?.x ?? 0}, ${bbox!.coord?.translate?.y ?? 0})`}

@@ -45,6 +45,7 @@ export const Padding = withBluefish((props: PropsWithChildren<PaddingProps>) => 
 
   return (
     <g
+      {...props}
       id={id}
       ref={domRef}
       transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}

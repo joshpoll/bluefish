@@ -17,6 +17,7 @@ export const Circle = withBluefish((props: CircleProps) => {
 
   return (
     <g
+      {...rest}
       id={id}
       ref={domRef}
       transform={`translate(${bbox.coord?.translate?.x ?? 0} ${bbox.coord?.translate?.y ?? 0})

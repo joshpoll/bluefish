@@ -47,9 +47,10 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
   // const group = useName('group');
 
   return (
-    <Group>
+    <Group aria-label={props['aria-label'] ?? 'Points'}>
       {(data as any[]).map((d, i) => (
         <DotScale
+          aria-label={`Point with value ${d[props.y]} at ${d[props.x]}`}
           name={dots[i]}
           cx={+d[props.x]}
           cy={+d[props.y]}
@@ -76,9 +77,16 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
       {props.label !== undefined ? (
         typeof props.label === 'object' && 'field' in props.label ? (
           <PointLabel
+            aria-label={`Labels for each dot`}
             name={labels}
             texts={(data as any[]).map((d, i) => ({
-              label: <Text contents={d[(props.label! as any).field!]} fontSize={'8pt'} />,
+              label: (
+                <Text
+                  aria-label={`label ${d[(props.label! as any).field!]}`}
+                  contents={d[(props.label! as any).field!]}
+                  fontSize={'8pt'}
+                />
+              ),
               ref: dots[i],
             }))}
             compare={undefined}
@@ -92,6 +100,7 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
           />
         ) : (
           <PointLabel
+            aria-label={`Dot Labels`}
             name={labels}
             texts={(data as any[]).map((d, i) => ({
               label: <Text contents={d[(props.label as string)!]} fontSize={'8pt'} />,
@@ -140,6 +149,7 @@ export const DotScale = withBluefish((props: DotScaleProps) => {
 
   return (
     <g
+      {...rest}
       id={id}
       ref={domRef}
       transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})

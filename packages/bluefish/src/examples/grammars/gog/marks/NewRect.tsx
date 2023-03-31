@@ -50,33 +50,32 @@ export const NewRect = withBluefish(function NewRect(props: NewRect<any>) {
   // const group = useName('group');
 
   return (
-    <Group>
-      <RectScale
-        name={rect}
-        x1={+corner1[props.x]}
-        y1={+corner1[props.y]}
-        x2={+corner2[props.x]}
-        y2={+corner2[props.y]}
-        stroke={props.stroke}
-        fill={props.color ?? 'white'}
-        fillOpacity={props.fillOpacity ?? 1}
-        opacity={props.opacity ?? 1}
-        xScale={
-          (width) => xScale(width)
-          // scaleLinear(
-          //   [min<number>(data.map((d: any) => +d[props.x]))!, max<number>(data.map((d: any) => +d[props.x]))!],
-          //   [0, width],
-          // )
-        }
-        yScale={
-          (height) => yScale(height)
-          // scaleLinear(
-          //   [min<number>(data.map((d: any) => +d[props.y]))!, max<number>(data.map((d: any) => +d[props.y]))!],
-          //   [height, 0],
-          // )
-        }
-      />
-    </Group>
+    <RectScale
+      aria-label={props['aria-label'] ?? 'Rect Mark'}
+      name={rect}
+      x1={+corner1[props.x]}
+      y1={+corner1[props.y]}
+      x2={+corner2[props.x]}
+      y2={+corner2[props.y]}
+      stroke={props.stroke}
+      fill={props.color ?? 'white'}
+      fillOpacity={props.fillOpacity ?? 1}
+      opacity={props.opacity ?? 1}
+      xScale={
+        (width) => xScale(width)
+        // scaleLinear(
+        //   [min<number>(data.map((d: any) => +d[props.x]))!, max<number>(data.map((d: any) => +d[props.x]))!],
+        //   [0, width],
+        // )
+      }
+      yScale={
+        (height) => yScale(height)
+        // scaleLinear(
+        //   [min<number>(data.map((d: any) => +d[props.y]))!, max<number>(data.map((d: any) => +d[props.y]))!],
+        //   [height, 0],
+        // )
+      }
+    />
   );
 });
 NewRect.displayName = 'NewRect';
@@ -115,6 +114,7 @@ export const RectScale = withBluefish((props: RectScaleProps) => {
 
   return (
     <g
+      {...rest}
       id={id}
       ref={domRef}
       transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})

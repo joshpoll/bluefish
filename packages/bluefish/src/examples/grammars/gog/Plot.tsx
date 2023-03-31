@@ -171,6 +171,7 @@ export const Plot2 = withBluefish((props: PropsWithBluefish<Plot2Props>) => {
   let { data, width, height, children: _, name, guidePrimary, ...scales } = props;
   // compute dimensions from outer width, height, and margins
   const dimensions = { width: width ?? constraints?.width ?? 0, height: height ?? constraints?.height ?? 0 };
+
   // reify scales
   console.log('scales', scales);
   const reifiedScales = reifyScales(scales as any, dimensions);
@@ -181,6 +182,7 @@ export const Plot2 = withBluefish((props: PropsWithBluefish<Plot2Props>) => {
 
   return (
     <g
+      aria-label={'Plot'}
       transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})
 scale(${bbox?.coord?.scale?.x ?? 1} ${bbox?.coord?.scale?.y ?? 1})`}
     >

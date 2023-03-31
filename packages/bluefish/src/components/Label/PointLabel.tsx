@@ -51,9 +51,10 @@ export type PointLabelProps = PropsWithBluefish<{
   padding: number;
 }>;
 
-export const PointLabel = forwardRef(function PointLabel({ texts, avoidElements }: PointLabelProps, ref: any) {
+export const PointLabel = forwardRef(function PointLabel(props: PointLabelProps, ref: any) {
+  const { texts, avoidElements, ...rest } = props;
   return (
-    <PointLabelAux ref={ref}>
+    <PointLabelAux {...rest} ref={ref}>
       <LayoutGroup /* id="labelRefPairs" */>
         {texts.map((text) => (
           <LayoutGroup>
@@ -69,7 +70,7 @@ export const PointLabel = forwardRef(function PointLabel({ texts, avoidElements 
 
 const pointLabelMeasurePolicy = (props: {}): Measure => {
   return (measurables, constraints) => {
-    console.log('[pointLabelMeasurePolicy]', measurables, constraints);
+    // console.log('[pointLabelMeasurePolicy]', measurables, constraints);
     // const [_label, ref] = measurables;
     // const [labelBBox, refBBox] = measurables.map((m) => m.measure(constraints));
     // const refDomRef: SVGElement | null = ref.domRef;
@@ -184,9 +185,11 @@ const pointLabelMeasurePolicy = (props: {}): Measure => {
 
 export const PointLabelAux = withBluefish((props: PropsWithChildren<{}>) => {
   const { id, domRef, bbox, children } = useBluefishLayout({}, props, pointLabelMeasurePolicy(props));
+  const { ...rest } = props;
 
   return (
     <g
+      {...rest}
       id={id}
       ref={domRef}
       transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}
