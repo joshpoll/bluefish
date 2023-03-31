@@ -37,7 +37,7 @@ import { GlobalFrame } from './python-tutor';
 import { NewLine } from './examples/grammars/gog/marks/NewLine';
 import { NewDot } from './examples/grammars/gog/marks/NewDot';
 import { resolveRef } from './components/Ref';
-import { BluefishContextValue, useName, withBluefish } from './bluefish';
+import { lookup, BluefishContextValue, useName, withBluefish } from './bluefish';
 import { Rect } from './components/Rect';
 import { Col } from './components/Col';
 import { Test2 } from './components/Test2';
@@ -60,10 +60,11 @@ import { RELATIONS, Tree5 } from './examples/grammars/gotree/gotree-ex5';
 import { RectPath } from './examples/grammars/gog/marks/RectPath';
 import { Polio } from './examples/grammars/gog/examples/polio';
 import { AlignNew } from './components/AlignNew';
-import { Molecule } from './examples/chemistry/molecule';
+import { Molecule } from './examples/chemistry/Molecule';
 import { Distribute } from './components/Distribute';
 import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
 import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
+import { Background } from './components/Background';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -118,526 +119,130 @@ function App() {
   const autoAssign2 = useName('autoAssign2');
   const autoAssign3 = useName('autoAssign3');
 
+  const chemical1 = useName('chemical1');
+  const chemical2 = useName('chemical2');
+  const chemical3 = useName('chemical3');
+  const chemical4 = useName('chemical4');
+  const chemical5 = useName('chemical5');
+
   return (
     <div className="App">
-      {/* <svg width={500} height={500}>
-        <ColUseState spacing={10}>
-          <RectUseState width={100} height={100} fill={'red'} />
-          <RectUseState width={100} height={100} fill={'green'} />
-          <RectUseState width={100} height={100} fill={'blue'} />
-        </ColUseState>
-      </svg>
-      <br /> */}
-      <a href="#:r2ir:" aria-label="Go to r2ir">
-        Go to r2ir
-      </a>
-      <br />
-      <a href="#:r3ij:" aria-label="Go to r3ij">
-        Go to r3ij
-      </a>
-      <br />
-      <Molecule chemicalFormula={'C1CCCCC1'} />
-      <SVG width={500} height={500}>
-        <Matrix />
+      <SVG width={500} height={400}>
+        <Molecule name={'vertex-1'} chemicalFormula={'C1=CC=C(C=C1)C2=CC=CC=C2'} ariaLabel={'Biphenyl molecule'} />
       </SVG>
-      <SVG width={500} height={500}>
-        <AlignNew x={250} y={250} alignment="centerHorizontally">
-          <Rect name={autoAssign1} width={100} fill={'red'} />
-          <Rect name={autoAssign2} height={20} width={100} fill={'green'} />
-          <Rect name={autoAssign3} width={100} fill={'blue'} />
-        </AlignNew>
-        <Distribute direction="vertical" spacing={10} total={200}>
-          <Ref to={autoAssign1} />
-          <Ref to={autoAssign2} />
-          <Ref to={autoAssign3} />
-        </Distribute>
-      </SVG>
-      <SVG width={500} height={500}>
-        <AlignNew x={250} y={250} alignment="centerHorizontally">
-          <Line name={fixed1} x1={20} y1={20} x2={20} y2={30} strokeWidth={2} stroke={'black'} />
-          <Text name={fixed2} contents={'1'} />
-        </AlignNew>
-        <Distribute direction="vertical" spacing={10}>
-          <Ref to={fixed1} />
-          <Ref to={fixed2} />
-        </Distribute>
-      </SVG>
-      <SVG width={500} height={500}>
-        <AlignNew x={250} y={250}>
-          <Line guidePrimary="bottomCenter" x1={20} y1={20} x2={20} y2={30} strokeWidth={2} stroke={'black'} />
-          <Text guidePrimary="topCenter" contents={'1'} />
-        </AlignNew>
-      </SVG>
-      <SVG width={500} height={500}>
-        <AlignNew x={250} y={250}>
-          <Rect guidePrimary="bottomCenter" width={100} height={100} fill={'firebrick'} />
-          <Rect guidePrimary="topCenter" width={20} height={20} fill={'lightgreen'} />
-        </AlignNew>
-      </SVG>
-      <SVG width={500} height={500}>
-        <AlignNew x={250} y={250} alignment="center">
-          <Rect width={100} height={100} fill={'firebrick'} />
-          <Rect width={20} height={500} fill={'lightgreen'} />
-        </AlignNew>
-      </SVG>
-      <SVG width={500} height={500}>
-        <Group>
-          {/* <Group>
-            <Col spacing={5} alignment={'center'}>
-              <Line x1={20} y1={20} x2={20} y2={30} strokeWidth={2} stroke={'black'} /> */}
-          {/* <Text contents={'1'} /> */}
-          {/* <Rect width={20} height={20} fill={'red'} />
-            </Col>
-          </Group> */}
-          <Group>
-            {/* <Line name={ex1} x1={50} y1={20} x2={50} y2={30} strokeWidth={2} /> */}
-            <Rect name={ex1} width={20} height={20} fill={'red'} />
-            {/* <Text contents={'2'} /> */}
-            <Rect name={ex2} width={20} height={20} fill={'blue'} />
-            {/* <Align centerHorizontally={[<Ref to={ex1} />, <Ref to={ex2} />]} />
-            <Space vertically by={5}>
-              <Ref to={ex1} />
-              <Ref to={ex2} />
-            </Space> */}
-            <Col spacing={5} alignment={'center'}>
-              <Ref to={ex1} />
-              <Ref to={ex2} />
-            </Col>
-            {/* <Col spacing={5} alignment={'center'}>
-              <Line x1={50} y1={20} x2={50} y2={30} strokeWidth={2} /> */}
-            {/* <Text contents={'2'} /> */}
-            {/* <Rect width={20} height={20} fill={'red'} /> */}
-            {/* </Col> */}
-          </Group>
+      {/* Aspirin */}
+      {/* <SVG width={350} height={300}>
+        <Molecule name={'vertex-1'} chemicalFormula={'CC(OC1=C(C(=O)O)C=CC=C1)=O'} ariaLabel={'Aspirin molecule'} />
+      </SVG> */}
+      {/* Aspirin */}
+      {/* <SVG width={400} height={200}>
+        <Group aria-label={'Annotated Aspirin Molecule'}>
+          <Molecule name={chemical2} chemicalFormula={'CC(OC1=C(C(=O)O)C=CC=C1)=O'} ariaLabel={'Aspirin molecule'} />
+          <PointLabel
+            texts={[
+              {
+                label: (
+                  <Text
+                    aria-label={'Text Annotation with Value Benzene'}
+                    contents={'Benzene'}
+                    fill={'blue'}
+                    stroke={'blue'}
+                  />
+                ),
+                ref: lookup(chemical2, 'vertex-10'),
+              },
+            ]}
+            compare={undefined}
+            offset={[1]}
+            anchor={Anchors}
+            avoidElements={[]}
+            avoidRefElements
+            padding={0}
+            aria-label={'Benzene Text Annotation'}
+          />
+          <Background aria-label={'Benzene Shape Annotation'}>
+            <Group aria-label={'Annotated Atoms'}>
+              <Ref to={lookup(chemical2, 'vertex-3')} />
+              <Ref to={lookup(chemical2, 'vertex-4')} />
+              <Ref to={lookup(chemical2, 'vertex-8')} />
+              <Ref to={lookup(chemical2, 'vertex-9')} />
+              <Ref to={lookup(chemical2, 'vertex-10')} />
+              <Ref to={lookup(chemical2, 'vertex-11')} />
+            </Group>
+            <Circle fill={'none'} stroke={'blue'} aria-label={'Annotation Shape'} aria-hidden={true} />
+          </Background>
         </Group>
-      </SVG>
-      <SVG width={500} height={500}>
-        <Polio />
-      </SVG>
-      <SVG width={500} height={500}>
-        <RectPath
-          x={Math.PI / 2}
-          y={10}
-          width={Math.PI / 2}
-          height={20}
-          xyScale={({ width, height }) =>
-            (theta, r) => ({
-              x: width / 2 + r * Math.cos(theta),
-              y: height / 2 + r * Math.sin(theta),
-            })}
-          fill={'firebrick'}
-          stroke={'white'}
-          strokeWidth={2}
-        />
-        <RectPath
-          x={Math.PI}
-          y={10}
-          width={Math.PI / 2}
-          height={20}
-          xyScale={({ width, height }) =>
-            (theta, r) => ({
-              x: width / 2 + r * Math.cos(theta),
-              y: height / 2 + r * Math.sin(theta),
-            })}
-          fill={'cornflowerblue'}
-          stroke={'white'}
-          strokeWidth={2}
-        />
-        <RectPath
-          x={Math.PI * 1.5}
-          y={10}
-          width={Math.PI / 2}
-          height={20}
-          xyScale={({ width, height }) =>
-            (theta, r) => ({
-              x: width / 2 + r * Math.cos(theta),
-              y: height / 2 + r * Math.sin(theta),
-            })}
-          fill={'coral'}
-          stroke={'white'}
-          strokeWidth={2}
-        />
-        <RectPath
-          x={Math.PI * 2}
-          y={10}
-          width={Math.PI / 2}
-          height={20}
-          xyScale={({ width, height }) =>
-            (theta, r) => ({
-              x: width / 2 + r * Math.cos(theta),
-              y: height / 2 + r * Math.sin(theta),
-            })}
-          fill={'olive'}
-          stroke={'white'}
-          strokeWidth={2}
-        />
-      </SVG>
-      <SVG width={500} height={300}>
-        <Col spacing={10} alignment={'center'}>
-          <Tree1
-            data={{
-              value: 1,
-              subtrees: [
-                {
-                  value: 2,
-                  subtrees: [{ value: 3 }, { value: 4 }],
-                },
-                {
-                  value: 5,
-                  subtrees: [{ value: 6 }, { value: 7 }],
-                },
-              ],
-            }}
+      </SVG> */}
+      {/* Diphenyl ether */}
+      {/* <SVG width={500} height={500}>
+        <Group>
+          <Molecule
+            name={chemical1}
+            chemicalFormula={'C1=CC=C(C=C1)OC2=CC=CC=C2'}
+            ariaLabel={'Diphenyl ether molecule'}
           />
-          <Text contents={'flat component'} />
-        </Col>
-      </SVG>
-      <SVG width={500} height={300}>
-        <Col spacing={10} alignment={'center'}>
-          <Tree2
-            data={{
-              value: 1,
-              subtrees: [
-                {
-                  value: 2,
-                  subtrees: [{ value: 3 }, { value: 4 }],
-                },
-                {
-                  value: 5,
-                  subtrees: [{ value: 6 }, { value: 7 }],
-                },
-              ],
-            }}
+          <PointLabel
+            texts={[{ label: <Text contents={'Diphenyl Ether'} />, ref: lookup(chemical1, 'edge-4') }]}
+            compare={undefined}
+            offset={[1]}
+            anchor={Anchors}
+            avoidElements={[]}
+            avoidRefElements
+            padding={0}
           />
-          <Text contents={'node factored out'} />
-        </Col>
-      </SVG>
-      <SVG width={500} height={300}>
-        <Col spacing={10} alignment={'center'}>
-          <Tree3
-            data={{
-              value: 1,
-              subtrees: [
-                {
-                  value: 2,
-                  subtrees: [{ value: 3 }, { value: 4 }],
-                },
-                {
-                  value: 5,
-                  subtrees: [{ value: 6 }, { value: 7 }],
-                },
-              ],
-            }}
-            encoding={{
-              node: CustomNode,
-            }}
+        </Group>
+      </SVG> */}
+      {/* Nicotine */}
+      {/* <SVG width={500} height={500}>
+        <Group>
+          <Molecule name={chemical3} chemicalFormula={'CN1CCCC1C2=CN=CC=C2'} ariaLabel={'Nicotine'} />
+          <PointLabel
+            texts={[{ label: <Text contents={'Nicotine'} />, ref: lookup(chemical3) }]}
+            compare={undefined}
+            offset={[1]}
+            anchor={Anchors}
+            avoidElements={[]}
+            avoidRefElements
+            padding={0}
           />
-          <Text contents={'node in encoding'} />
-        </Col>
-      </SVG>
-      <SVG width={500} height={300}>
-        <Col spacing={10} alignment={'center'}>
-          <Tree4
-            data={{
-              value: 1,
-              subtrees: [
-                {
-                  value: 2,
-                  subtrees: [{ value: 3 }, { value: 4 }],
-                },
-                {
-                  value: 5,
-                  subtrees: [{ value: 6 }, { value: 7 }],
-                },
-              ],
-            }}
-            encoding={{
-              node: CustomNode,
-            }}
+        </Group>
+      </SVG> */}
+      {/* <SVG width={200} height={200}>
+        <Molecule name={chemical3} chemicalFormula={'CN1CCCC1C2=CN=CC=C2'} ariaLabel={'Nicotine'} />
+      </SVG> */}
+      {/* <SVG width={250} height={250}>
+        <Molecule name={chemical3} chemicalFormula={'C1=CC=CC=C1'} ariaLabel={'Benzene Ring'} />
+      </SVG> */}
+      {/* Sucrose */}
+      {/* <SVG width={500} height={500}>
+        <Group>
+          <Molecule name={chemical4} chemicalFormula={'C(C1C(C(C(C(O1)OC2(C(C(C(O2)CO)O)O)CO)O)O)O)O'} />
+          <PointLabel
+            texts={[{ label: <Text contents={'Sucrose'} />, ref: lookup(chemical4) }]}
+            compare={undefined}
+            offset={[1]}
+            anchor={Anchors}
+            avoidElements={[]}
+            avoidRefElements
+            padding={0}
           />
-          <Text contents={'link in encoding'} />
-        </Col>
-      </SVG>
-      <SVG width={500} height={500}>
-        <Col spacing={10} alignment={'center'}>
-          <Tree6
-            data={{
-              value: 1,
-              subtrees: [
-                {
-                  value: 2,
-                  subtrees: [{ value: 3 }, { value: 4 }],
-                },
-                {
-                  value: 5,
-                  subtrees: [{ value: 6 }, { value: 7 }],
-                },
-              ],
-            }}
-            encoding={{
-              node: CustomNode,
-              link: () => null,
-              rootSubtree: { row: {} },
-              subtreeSubtree: { row: {} },
-            }}
+        </Group>
+      </SVG> */}
+      {/* Penicillin */}
+      {/* <SVG width={600} height={600}>
+        <Group>
+          <Molecule name={chemical5} chemicalFormula={'CC1(C(N2C(S1)C(C2=O)NC(=O)CC3=CC=CC=C3)C(=O)O)C'} />
+          <PointLabel
+            texts={[{ label: <Text contents={'Penicillin'} />, ref: lookup(chemical5, 'edge-19') }]}
+            compare={undefined}
+            offset={[1]}
+            anchor={Anchors}
+            avoidElements={[]}
+            avoidRefElements
+            padding={0}
           />
-          <Tree5
-            data={{
-              value: 1,
-              subtrees: [
-                {
-                  value: 2,
-                  subtrees: [{ value: 3 }, { value: 4 }],
-                },
-                {
-                  value: 5,
-                  subtrees: [{ value: 6 }, { value: 7 }],
-                },
-              ],
-            }}
-            encoding={{
-              node: CustomNode,
-              link: () => null,
-              rootSubtree: RELATIONS.row({}),
-              subtreeSubtree: RELATIONS.row({}),
-            }}
-          />
-          <Tree5
-            data={{
-              value: 1,
-              subtrees: [
-                {
-                  value: 2,
-                  subtrees: [{ value: 3 }, { value: 4 }],
-                },
-                {
-                  value: 5,
-                  subtrees: [{ value: 6 }, { value: 7 }],
-                },
-              ],
-            }}
-            encoding={{
-              node: CustomNode,
-              // link: () => null,
-              rootSubtree: RELATIONS.row({}),
-              subtreeSubtree: RELATIONS.col({}),
-            }}
-          />
-          <Text contents={'relations in encoding'} />
-        </Col>
-      </SVG>
-      <br />
-      <SVG width={500} height={300}>
-        <Col spacing={5} alignment={'center'}>
-          <Padding left={40} top={10} right={20} bottom={30}>
-            <Plot
-              height={200}
-              data={driving}
-              x={({ width }) => scaleLinear([0, _.max(driving.map((d) => +d.miles))!], [0, width])}
-              y={({ height }) => scaleLinear([0, _.max(driving.map((d) => +d.gas))!], [height, 0])}
-              color={() => () => 'black'}
-            >
-              <NewLine name={line} x={'miles'} y={'gas'} />
-              <NewDot
-                x={'miles'}
-                y={'gas'}
-                label={{
-                  field: 'year',
-                  avoid: [
-                    /* line */
-                  ],
-                }}
-              />
-            </Plot>
-          </Padding>
-          <Text contents={'this is a test caption'} />
-          {/* <Rect width={100} height={100} fill={'red'} /> */}
-        </Col>
-      </SVG>
-      <SVG width={800} height={200}>
-        <Padding left={40} top={10} right={20} bottom={30}>
-          <Plot
-            data={alphabet}
-            x={({ width }) =>
-              scaleBand(
-                alphabet.map((d) => d.letter),
-                [0, width],
-              ).padding(0.1)
-            }
-            y={({ height }) => scaleLinear([0, _.max(alphabet.map((d) => +d.frequency))!], [0, height])}
-            color={() =>
-              scaleSequential(interpolateBlues).domain([
-                _.min(alphabet.map((d) => +d.frequency))!,
-                _.max(alphabet.map((d) => +d.frequency))!,
-              ])
-            }
-          >
-            {/* <BarY encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
-            <NewBarY spacing={5} x={'letter'} y={'frequency'} color={'frequency'} />
-            {/* <BarYWithBFN encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
-          </Plot>
-        </Padding>
-      </SVG>
-      <PeritextSymbol
-        chars={[
-          { value: 'T', opId: '1@A', deleted: false, marks: ['italic'] },
-          { value: 'h', opId: '2@A', deleted: true, marks: ['italic'] },
-          // { value: 'r', opId: '20@A', deleted: true, marks: ['italic'] },
-          { value: 'e', opId: '5@B', deleted: false, marks: ['bold', 'italic'] },
-          { value: ' ', opId: '6@B', deleted: false, marks: ['bold', 'italic'] },
-          { value: 'f', opId: '7@A', deleted: false, marks: ['bold'] },
-          { value: 'o', opId: '8@A', deleted: true, marks: [] },
-          { value: 'x', opId: '9@A', deleted: false, marks: [] },
-        ]}
-        markOps={[
-          {
-            action: 'addMark',
-            opId: '18@A',
-            start: { opId: '5@B' },
-            end: { opId: '7@A' },
-            markType: 'bold',
-            backgroundColor: '#F9EEEE',
-            borderColor: '#E57E97',
-          },
-          {
-            action: 'addMark',
-            opId: '10@B',
-            start: { opId: '1@A' },
-            end: { opId: '6@B' },
-            markType: 'italic',
-            backgroundColor: '#E3F2F7',
-            borderColor: '#00C2FF',
-          },
-        ]}
-      />
-      <SVG width={500} height={500}>
-        <Col alignment={'center'} spacing={5}>
-          <TreeSymbol
-            data={{
-              name: 'A',
-              value: {
-                value: '7',
-                marks: ['bold', 'italic'],
-              },
-              subtrees: [
-                {
-                  name: 'B',
-                  value: {
-                    value: '4',
-                    marks: ['bold', 'italic'],
-                  },
-                  subtrees: [
-                    {
-                      name: 'C',
-                      value: {
-                        value: '2',
-                        marks: ['bold', 'italic'],
-                      },
-                    },
-                    {
-                      name: 'D',
-                      value: {
-                        value: '2',
-                        marks: ['bold', 'italic'],
-                      },
-                    },
-                  ],
-                },
-                {
-                  name: 'E',
-                  value: {
-                    value: '3',
-                    marks: ['bold', 'italic'],
-                  },
-                  subtrees: [
-                    {
-                      name: 'F',
-                      value: {
-                        value: '1',
-                        marks: ['bold', 'italic'],
-                      },
-                    },
-                    {
-                      name: 'G',
-                      value: {
-                        value: '1',
-                        marks: ['bold', 'italic'],
-                      },
-                    },
-                  ],
-                },
-              ],
-            }}
-          />
-          <TreeSymbol
-            data={{
-              name: 'A',
-              value: {
-                value: '7',
-                marks: ['bold', 'italic'],
-              },
-              subtrees: [
-                {
-                  name: 'B',
-                  value: {
-                    value: '4',
-                    marks: ['bold', 'italic'],
-                  },
-                  subtrees: [
-                    {
-                      name: 'C',
-                      value: {
-                        value: '2',
-                        marks: ['bold', 'italic'],
-                      },
-                    },
-                    {
-                      name: 'D',
-                      value: {
-                        value: '2',
-                        marks: ['bold', 'italic'],
-                      },
-                    },
-                  ],
-                },
-                {
-                  name: 'E',
-                  value: {
-                    value: '3',
-                    marks: ['bold', 'italic'],
-                  },
-                  subtrees: [
-                    {
-                      name: 'F',
-                      value: {
-                        value: '1',
-                        marks: ['bold', 'italic'],
-                      },
-                    },
-                    {
-                      name: 'G',
-                      value: {
-                        value: '1',
-                        marks: ['bold', 'italic'],
-                      },
-                    },
-                  ],
-                },
-              ],
-            }}
-          />
-        </Col>
-      </SVG>
-      <br />
-      <SVG width={500} height={500}>
-        <Col spacing={10} alignment={'center'}>
-          <CharSymbol value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
-          <CharSymbol value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
-        </Col>
-      </SVG>
-      {/* <svg width={500} height={500}>
-        <RectUseState x={20} y={20} width={100} height={100} fill={'green'} />
-      </svg> */}
+        </Group>
+      </SVG> */}
     </div>
   );
 }
