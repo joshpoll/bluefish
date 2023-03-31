@@ -244,42 +244,46 @@ export const Molecule = withBluefish((props: any) => {
 
   return (
     <Group aria-label={props.ariaLabel} width={200} height={200}>
-      {vertices.map((v, index) => (
-        <Atom
-          name={verticesName[index]}
-          cx={(v.xLoc + minXOffset + 10) * 1.2}
-          cy={(v.yLoc + minYOffset + 10) * 1.2}
-          r={8}
-          fill={'black'}
-          content={v.value.element}
-          curId={v.id}
-          isTerminal={v.isTerminal}
-          bondCount={v.value.bondCount}
-          ariaHidden={false}
-        />
-      ))}
+      <Group aria-label={'Atoms'}>
+        {vertices.map((v, index) => (
+          <Atom
+            name={verticesName[index]}
+            cx={(v.xLoc + minXOffset + 10) * 1.2}
+            cy={(v.yLoc + minYOffset + 10) * 1.2}
+            r={8}
+            fill={'black'}
+            content={v.value.element}
+            curId={v.id}
+            isTerminal={v.isTerminal}
+            bondCount={v.value.bondCount}
+            ariaHidden={false}
+          />
+        ))}
+      </Group>
 
-      {edges.map((e, index) => (
-        <Bond
-          $from={'center'}
-          $to={'center'}
-          stroke={'black'}
-          strokeWidth={2}
-          content={'Bond'}
-          name={edgesName[index]}
-          bondType={e.bondType}
-          ringCenterX={e.lcr ? e.lcr.center.x : 0}
-          ringCenterY={e.lcr ? e.lcr.center.y : 0}
-          startLocationX={getLocationVertexWithId(e.sourceId, vertices).xLoc}
-          startLocationY={getLocationVertexWithId(e.sourceId, vertices).yLoc}
-          endLocationY={getLocationVertexWithId(e.destId, vertices).yLoc}
-          endLocationX={getLocationVertexWithId(e.destId, vertices).xLoc}
-          curId={e.id}
-        >
-          <Ref to={verticesName[e.sourceNum]} />
-          <Ref to={verticesName[e.destNum]} />
-        </Bond>
-      ))}
+      <Group aria-label={'Bonds'}>
+        {edges.map((e, index) => (
+          <Bond
+            $from={'center'}
+            $to={'center'}
+            stroke={'black'}
+            strokeWidth={2}
+            content={'Bond'}
+            name={edgesName[index]}
+            bondType={e.bondType}
+            ringCenterX={e.lcr ? e.lcr.center.x : 0}
+            ringCenterY={e.lcr ? e.lcr.center.y : 0}
+            startLocationX={getLocationVertexWithId(e.sourceId, vertices).xLoc}
+            startLocationY={getLocationVertexWithId(e.sourceId, vertices).yLoc}
+            endLocationY={getLocationVertexWithId(e.destId, vertices).yLoc}
+            endLocationX={getLocationVertexWithId(e.destId, vertices).xLoc}
+            curId={e.id}
+          >
+            <Ref to={verticesName[e.sourceNum]} />
+            <Ref to={verticesName[e.destNum]} />
+          </Bond>
+        ))}
+      </Group>
 
       {vertices.map((v) => (
         <Atom
@@ -295,9 +299,11 @@ export const Molecule = withBluefish((props: any) => {
         />
       ))}
 
-      {renderRings.map((r) => (
-        <Ring ring={r} vertexNameList={verticesName} edgeNameList={edgesName} />
-      ))}
+      <Group aria-label={'Rings'}>
+        {renderRings.map((r) => (
+          <Ring ring={r} vertexNameList={verticesName} edgeNameList={edgesName} />
+        ))}
+      </Group>
     </Group>
   );
 });
