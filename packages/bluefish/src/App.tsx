@@ -52,9 +52,9 @@ import { TreeSymbol } from './examples/tree-symbol-test';
 import { Peritext as PeritextSymbol } from './examples/peritext-symbol-test';
 import { interpolateBlues } from 'd3-scale-chromatic';
 import { BarY } from './examples/grammars/gog/marks/NewBarY';
-import { Tree as Tree1 } from './examples/grammars/gotree/gotree-ex1';
-import { Tree2 } from './examples/grammars/gotree/gotree-ex2';
-import { NodeProps, Tree3 } from './examples/grammars/gotree/gotree-ex3';
+// import { Tree as Tree1 } from './examples/grammars/gotree/gotree-ex1';
+// import { Tree2 } from './examples/grammars/gotree/gotree-ex2';
+// import { NodeProps, Tree3 } from './examples/grammars/gotree/gotree-ex3';
 import { Tree4 } from './examples/grammars/gotree/gotree-ex4';
 import { RELATIONS, Tree5 } from './examples/grammars/gotree/gotree-ex5';
 import { RectPath } from './examples/grammars/gog/marks/RectPath';
@@ -69,6 +69,9 @@ import { BertinHotel } from './examples/bertin/bertin';
 import { Playfair } from './examples/playfair/playfair';
 import { UpSet } from './examples/upset/upset';
 import { DrivingSafety } from './examples/driving-safety/driving-safety';
+import { Tree1 } from './examples/grammars/gotree/1-SingleVisualization';
+import { CircleNode, RectNode, TextNode, Tree2 } from './examples/grammars/gotree/2-AbstractedNode';
+import { Tree3, link, row, col, none, rect, circle, text } from './examples/grammars/gotree/3-EncodableTree';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -97,18 +100,18 @@ const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | 
 </>; */
 }
 
-const CustomNode = withBluefish(<T,>(props: NodeProps<T>) => {
-  const circle = useName('circle');
-  const text = useName('text');
+// const CustomNode = withBluefish(<T,>(props: NodeProps<T>) => {
+//   const circle = useName('circle');
+//   const text = useName('text');
 
-  return (
-    <Group>
-      <Rect name={circle} width={50} height={50} fill={'cornflowerblue'} />
-      <Text name={text} contents={`${props.value}`} fontSize={'20px'} />
-      <Align center={[<Ref to={text} />, <Ref to={circle} />]} />
-    </Group>
-  );
-});
+//   return (
+//     <Group>
+//       <Rect name={circle} width={50} height={50} fill={'cornflowerblue'} />
+//       <Text name={text} contents={`${props.value}`} fontSize={'20px'} />
+//       <Align center={[<Ref to={text} />, <Ref to={circle} />]} />
+//     </Group>
+//   );
+// });
 
 function App() {
   const line = useName('line');
@@ -329,7 +332,61 @@ function App() {
           strokeWidth={2}
         />
       </SVG> */}
+      <SVG width={500} height={500}>
+        <Row spacing={100} alignment="middle">
+          <Tree3
+            data={{
+              value: 0,
+              subtrees: [
+                { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
+                { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
+              ],
+            }}
+            encoding={{
+              node: rect,
+              link: none,
+              rootSubTree: col({ alignment: 'left', spacing: 5 }),
+              subTreeSubTree: col({ alignment: 'left', spacing: 5 }),
+            }}
+          />
+        </Row>
+      </SVG>
+      <SVG width={500} height={500}>
+        <Col spacing={50} alignment="center">
+          <Tree2
+            data={{
+              value: 0,
+              subtrees: [
+                { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
+                { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
+              ],
+            }}
+            $node={RectNode}
+          />
+          <Tree2
+            data={{
+              value: 0,
+              subtrees: [
+                { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
+                { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
+              ],
+            }}
+            $node={TextNode}
+          />
+        </Col>
+      </SVG>
       <SVG width={500} height={300}>
+        <Tree1
+          data={{
+            value: 0,
+            subtrees: [
+              { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
+              { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
+            ],
+          }}
+        />
+      </SVG>
+      {/* <SVG width={500} height={300}>
         <Col spacing={10} alignment={'center'}>
           <Tree1
             data={{
@@ -348,8 +405,8 @@ function App() {
           />
           <Text contents={'flat component'} />
         </Col>
-      </SVG>
-      <SVG width={500} height={300}>
+      </SVG> */}
+      {/* <SVG width={500} height={300}>
         <Col spacing={10} alignment={'center'}>
           <Tree2
             data={{
@@ -368,8 +425,8 @@ function App() {
           />
           <Text contents={'node factored out'} />
         </Col>
-      </SVG>
-      <SVG width={500} height={300}>
+      </SVG> */}
+      {/* <SVG width={500} height={300}>
         <Col spacing={10} alignment={'center'}>
           <Tree3
             data={{
@@ -391,8 +448,8 @@ function App() {
           />
           <Text contents={'node in encoding'} />
         </Col>
-      </SVG>
-      <SVG width={500} height={300}>
+      </SVG> */}
+      {/* <SVG width={500} height={300}>
         <Col spacing={10} alignment={'center'}>
           <Tree4
             data={{
@@ -414,7 +471,7 @@ function App() {
           />
           <Text contents={'link in encoding'} />
         </Col>
-      </SVG>
+      </SVG> */}
       <SVG width={500} height={500}>
         <Col spacing={10} alignment={'center'}>
           {/* <Tree6
@@ -438,7 +495,7 @@ function App() {
               subtreeSubtree: { row: {} },
             }}
           /> */}
-          <Tree5
+          {/* <Tree5
             data={{
               value: 1,
               subtrees: [
@@ -458,8 +515,8 @@ function App() {
               rootSubtree: RELATIONS.row({}),
               subtreeSubtree: RELATIONS.row({}),
             }}
-          />
-          <Tree5
+          /> */}
+          {/* <Tree5
             data={{
               value: 1,
               subtrees: [
@@ -479,7 +536,7 @@ function App() {
               rootSubtree: RELATIONS.row({}),
               subtreeSubtree: RELATIONS.col({}),
             }}
-          />
+          /> */}
           <Text contents={'relations in encoding'} />
         </Col>
       </SVG>

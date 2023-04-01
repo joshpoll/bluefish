@@ -6,10 +6,16 @@ export const Rect = withBluefish((props: RectProps) => {
   const { id, domRef, bbox } = useBluefishLayout({}, props, () => {
     const { x, y, width, height } = props;
     return {
-      left: x !== undefined ? +x : undefined,
-      top: y !== undefined ? +y : undefined,
+      left: 0,
+      top: 0,
       width: width !== undefined ? +width : undefined,
       height: height !== undefined ? +height : undefined,
+      coord: {
+        translate: {
+          x: x !== undefined ? +x : undefined,
+          y: y !== undefined ? +y : undefined,
+        },
+      },
     };
   });
 

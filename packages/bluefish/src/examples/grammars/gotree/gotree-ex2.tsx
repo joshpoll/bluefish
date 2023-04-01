@@ -32,13 +32,15 @@ export type TreeProps<T> = PropsWithBluefish<{
 export const Tree2 = withBluefish(function _Tree<T>({ data }: TreeProps<T>) {
   const { value, subtrees } = data;
 
+  const $node = Node;
+
   const node = useName('node');
   const subtreesName = useName('subtrees');
   const childNames = useNameList(_.range(subtrees?.length || 0).map((i) => `child-${i}`));
 
   return (
     <Group>
-      <Node name={node} value={value} />
+      <$node name={node} value={value} />
       <Row name={subtreesName} alignment={'top'} spacing={10}>
         {(subtrees || []).map((child, i) => (
           <Tree2 name={childNames[i]} data={child} />
