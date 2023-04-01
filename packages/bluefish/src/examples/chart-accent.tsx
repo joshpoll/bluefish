@@ -124,6 +124,7 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
   const rectAnnotation2 = useName('rectAnnotation2');
   const xAxis = useName('xAxis');
   const yAxis = useName('yAxis');
+  const springLabel = useName('springLabel');
 
   const chicagoTemps = temps.filter((temp) => temp.city === 'Chicago');
   const phoenixTemps = temps.filter((temp) => temp.city === 'Phoenix');
@@ -197,15 +198,33 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                 strokeWidth={1.5}
                 data={phoenixTemps}
               />
-              <NewDot aria-hidden={true} x={'month'} y={'temperature'} color={'#7c9834'} data={[phoenixTemps[6]]} />
+              <NewDot
+                aria-hidden={true}
+                x={'month'}
+                y={'temperature'}
+                color={'#7c9834'}
+                data={[phoenixTemps[4], phoenixTemps[6]]}
+              />
               <PointLabel
                 aria-label={`Label for Maximum Phoenix Temperature Point. Max: 95`}
                 texts={[
                   {
                     label: (
-                      <Padding top={0} right={0} left={10} bottom={20}>
-                        <Text contents={`Max: 95`} fontSize={'10pt'} />
-                      </Padding>
+                      <Row guidePrimary={'topCenter'} spacing={2} alignment={'bottom'}>
+                        <Padding
+                          aria-label={'Annotation for label'}
+                          left={10}
+                          right={0}
+                          bottom={10}
+                          top={10}
+                          guidePrimary={'center'}
+                        >
+                          <Text contents="(e)" aria-hidden={true} fill={'black'} fontSize={'16pt'} />
+                        </Padding>
+                        <Padding top={10} right={0} left={0} bottom={20}>
+                          <Text contents={`Max: 95`} fontSize={'10pt'} />
+                        </Padding>
+                      </Row>
                     ),
                     ref: lookup(phoenixDots, 'dot-6'),
                   },
@@ -217,6 +236,7 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                 avoidRefElements
                 padding={20}
               />
+
               <NewLine
                 aria-label={'Freezing Temperature'}
                 name={freezing}
@@ -342,9 +362,28 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                   corner1={{ temperature: 0, month: 2.5 }}
                   corner2={{ temperature: 100, month: 5.5 }}
                 />
-                <Padding aria-label={'Text label reading Spring'} all={10} guidePrimary={'topCenter'}>
-                  <Text contents="Spring" aria-hidden={true} fill={'#999999'} />
-                </Padding>
+                <Row name={springLabel} guidePrimary={'topCenter'} spacing={2} alignment={'bottom'}>
+                  <Padding
+                    aria-label={'Annotation for label'}
+                    left={5}
+                    right={0}
+                    bottom={0}
+                    top={0}
+                    guidePrimary={'center'}
+                  >
+                    <Text contents="(g)" aria-hidden={true} fill={'black'} fontSize={'16pt'} />
+                  </Padding>
+                  <Padding
+                    aria-label={'Text label reading Spring'}
+                    left={5}
+                    right={40}
+                    bottom={0}
+                    top={0}
+                    guidePrimary={'center'}
+                  >
+                    <Text contents="Spring" aria-hidden={true} fill={'#999999'} />
+                  </Padding>
+                </Row>
               </AlignNew>
               <NewRect
                 name={rectAnnotation2}
@@ -358,6 +397,63 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                 y={'temperature'}
                 corner1={{ temperature: 60, month: 8.5 }}
                 corner2={{ temperature: 95, month: 10.5 }}
+              />
+              <PointLabel
+                aria-label={`Label for Rect Annotation`}
+                texts={[
+                  {
+                    label: (
+                      <Padding
+                        aria-label={'Annotation for label'}
+                        left={5}
+                        right={0}
+                        bottom={0}
+                        top={15}
+                        guidePrimary={'center'}
+                      >
+                        <Text contents="(k)" aria-hidden={true} fill={'black'} fontSize={'16pt'} />
+                      </Padding>
+                    ),
+                    ref: rectAnnotation2,
+                  },
+                ]}
+                compare={undefined}
+                offset={[1]}
+                anchor={['top-right']}
+                avoidElements={[<Ref to={phoenixDots} />, <Ref to={springLabel} />]}
+                avoidRefElements
+                padding={0}
+              />
+              <PointLabel
+                aria-label={`Label for Phoenix Temperature in May. May: 82`}
+                texts={[
+                  {
+                    label: (
+                      <Row guidePrimary={'topCenter'} spacing={2} alignment={'bottom'}>
+                        <Padding
+                          aria-label={'Annotation for label'}
+                          left={5}
+                          right={0}
+                          bottom={0}
+                          top={15}
+                          guidePrimary={'center'}
+                        >
+                          <Text contents="(a)" aria-hidden={true} fill={'black'} fontSize={'16pt'} />
+                        </Padding>
+                        <Padding top={15} right={30} left={0} bottom={0}>
+                          <Text contents={`Phoenix in May: 82`} fontSize={'10pt'} />
+                        </Padding>
+                      </Row>
+                    ),
+                    ref: lookup(phoenixDots, 'dot-4'),
+                  },
+                ]}
+                compare={undefined}
+                offset={[1]}
+                anchor={Anchors}
+                avoidElements={[<Ref to={phoenixDots} />, <Ref to={springLabel} />]}
+                avoidRefElements
+                padding={0}
               />
             </Plot>
           </Padding>
