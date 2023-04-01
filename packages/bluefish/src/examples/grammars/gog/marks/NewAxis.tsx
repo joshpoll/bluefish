@@ -20,8 +20,9 @@ export type NewAxisProps<T> = Omit<
   y: keyof T;
   //   scale: any;
   color?: keyof T;
-  ticks: string[] | number[]; // just for now; can include other stuff later
-  axis: 'x' | 'y'; // TODO: make this better later
+  vals: number[]; // values of the ticks (values to map to the scale)
+  ticks: string[] | number[]; // tick labels
+  axis: 'x' | 'y'; // either x or y axis
 };
 
 export const NewAxis = withBluefish(function NewAxis(props: PropsWithBluefish<NewAxisProps<any>>) {
@@ -38,17 +39,19 @@ export const NewAxis = withBluefish(function NewAxis(props: PropsWithBluefish<Ne
   const y = props.y;
 
   if (props.axis === 'x') {
-    data = props.ticks.map((tick) => {
+    data = props.ticks.map((tick, index) => {
       let obj: any = {};
-      obj[x] = tick;
+      obj[x] = props.vals[index];
       obj[y] = 0;
+      obj.label = tick;
       return obj;
     });
   } else {
-    data = props.ticks.map((tick) => {
+    data = props.ticks.map((tick, index) => {
       let obj: any = {};
       obj[x] = 0;
-      obj[y] = tick;
+      obj[y] = props.vals[index];
+      obj.label = tick;
       return obj;
     });
   }

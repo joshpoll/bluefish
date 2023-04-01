@@ -118,6 +118,8 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
   const freezing = useName('freezing');
   const chicagoAvgRef = useName('chicagoAverage');
   const phoenixDots = useName('phoenixDots');
+  const chicagoDots = useName('chicagoDots');
+  const novDecDots = useName('novDecDots');
   const rectAnnotation = useName('rectAnnotation');
   const rectAnnotation2 = useName('rectAnnotation2');
   const xAxis = useName('xAxis');
@@ -171,8 +173,10 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                 y={'temperature'}
                 color={'#5ca3d1'}
                 stroke={'black'}
+                strokeWidth={1.5}
                 data={chicagoTemps.filter((data) => data.temperature < 32)}
                 label={'temperature'}
+                labelProps={{ fill: '#5ca3d1', fontSize: '9pt' }}
               />
               <NewLine
                 aria-label={'Phoenix Temperature Line'}
@@ -180,6 +184,7 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                 x={'month'}
                 y={'temperature'}
                 color={'#7c9834'}
+                stroke={'2'}
                 data={phoenixTemps}
                 curved={false}
               />
@@ -189,14 +194,35 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                 x={'month'}
                 y={'temperature'}
                 color={'#eaf3d9'}
+                strokeWidth={1.5}
                 data={phoenixTemps}
+              />
+              <NewDot aria-hidden={true} x={'month'} y={'temperature'} color={'#7c9834'} data={[phoenixTemps[6]]} />
+              <PointLabel
+                aria-label={`Label for Maximum Phoenix Temperature Point. Max: 95`}
+                texts={[
+                  {
+                    label: (
+                      <Padding top={0} right={0} left={10} bottom={20}>
+                        <Text contents={`Max: 95`} fontSize={'10pt'} />
+                      </Padding>
+                    ),
+                    ref: lookup(phoenixDots, 'dot-6'),
+                  },
+                ]}
+                compare={undefined}
+                offset={[1]}
+                anchor={Anchors}
+                avoidElements={[<Ref to={phoenixDots} />]}
+                avoidRefElements
+                padding={20}
               />
               <NewLine
                 aria-label={'Freezing Temperature'}
                 name={freezing}
                 x={'month'}
                 y={'temperature'}
-                color={'black'}
+                color={'#777777'}
                 stroke={'1'}
                 data={[
                   { temperature: 32, month: 0 },
@@ -207,7 +233,7 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                 aria-label={'Label for Freezing Line. Freezing Point: 32 Degrees'}
                 texts={[
                   {
-                    label: <Text contents={`Freezing Point: 32`} fontSize={'10pt'} />,
+                    label: <Text fill={'#777777'} contents={`Freezing Point: 32`} fontSize={'10pt'} />,
                     ref: freezing,
                   },
                 ]}
@@ -222,12 +248,14 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                 aria-label={'November and December Temperatures'}
                 x={'month'}
                 y={'temperature'}
+                name={novDecDots}
                 color={'#f0b14f'}
                 stroke={'#a16c00'}
                 data={temps.filter((data) => {
                   return data.month >= 11;
                 })}
                 label={{ field: 'temperature', avoid: [line1, line2] }}
+                labelProps={{ fill: '#f0b14f', fontSize: '9pt' }}
               />
               <NewLine
                 aria-label={'Chicago Average Temperature Line'}
@@ -240,6 +268,25 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                   { temperature: chicagoAvg, month: 0 },
                   { temperature: chicagoAvg, month: 13 },
                 ]}
+              />
+              <PointLabel
+                aria-label={`Label for Chicago's Average Temperature Line. Average: ${chicagoAvg.toFixed(2)}`}
+                texts={[
+                  {
+                    label: (
+                      <Padding top={0} bottom={0} left={30} right={0}>
+                        <Text contents={`Chicago's Avg: ${chicagoAvg.toFixed(2)}`} fontSize={'10pt'} fill={'#5ca3d1'} />
+                      </Padding>
+                    ),
+                    ref: chicagoAvgRef,
+                  },
+                ]}
+                compare={undefined}
+                offset={[1]}
+                anchor={Anchors}
+                avoidElements={[]}
+                avoidRefElements
+                padding={0}
               />
               <NewLine
                 aria-label={'Line Annotation'}
@@ -268,7 +315,8 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                 x={'month'}
                 y={'temperature'}
                 color={'black'}
-                ticks={Array.from(Array(14).keys())}
+                vals={Array.from(Array(14).keys())}
+                ticks={['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', '']}
                 axis={'x'}
               />
               <NewAxis
@@ -276,41 +324,9 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                 x={'month'}
                 y={'temperature'}
                 color={'black'}
+                vals={ticks(0, 100, 10)}
                 ticks={ticks(0, 100, 10)}
                 axis={'y'}
-              />
-              <PointLabel
-                aria-label={`Label for Chicago's Average Temperature Line. Average: ${chicagoAvg.toFixed(2)}`}
-                texts={[
-                  {
-                    label: (
-                      <Text contents={`Chicago's Avg: ${chicagoAvg.toFixed(2)}`} fontSize={'10pt'} fill={'#5ca3d1'} />
-                    ),
-                    ref: chicagoAvgRef,
-                  },
-                ]}
-                compare={undefined}
-                offset={[1]}
-                anchor={Anchors}
-                avoidElements={[]}
-                avoidRefElements
-                padding={0}
-              />
-              <NewDot aria-hidden={true} x={'month'} y={'temperature'} color={'#7c9834'} data={[phoenixTemps[6]]} />
-              <PointLabel
-                aria-label={`Label for Maximum Phoenix Temperature Point. Max: 95`}
-                texts={[
-                  {
-                    label: <Text contents={`Max: 95`} fontSize={'10pt'} />,
-                    ref: lookup(phoenixDots, 'dot-6'),
-                  },
-                ]}
-                compare={undefined}
-                offset={[1]}
-                anchor={Anchors}
-                avoidElements={[]}
-                avoidRefElements
-                padding={0}
               />
 
               <AlignNew aria-hidden={false} aria-label={'Spring Annotation Group'}>
@@ -327,7 +343,7 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                   corner2={{ temperature: 100, month: 5.5 }}
                 />
                 <Padding aria-label={'Text label reading Spring'} all={10} guidePrimary={'topCenter'}>
-                  <Text contents="Spring" aria-hidden={true} />
+                  <Text contents="Spring" aria-hidden={true} fill={'#999999'} />
                 </Padding>
               </AlignNew>
               <NewRect
@@ -337,6 +353,7 @@ export const ChartAccent: React.FC<{}> = withBluefish(() => {
                 fillOpacity={0.2}
                 color={'#f0b14f'}
                 stroke={'#f0b14f'}
+                strokeWidth={2}
                 x={'month'}
                 y={'temperature'}
                 corner1={{ temperature: 60, month: 8.5 }}

@@ -18,7 +18,7 @@ import { Group } from '../../../../components/Group';
 import { Anchors, PointLabel } from '../../../../components/Label/PointLabel';
 import { Text } from '../../../../components/Text';
 import _ from 'lodash';
-import { Ref } from '../../../../main';
+import { Padding, Ref } from '../../../../main';
 
 export type NewDotProps<T> = PropsWithBluefish<
   Omit<React.SVGProps<SVGCircleElement>, 'cx' | 'cy' | 'fill' | 'width' | 'height' | 'label'> & {
@@ -33,6 +33,7 @@ export type NewDotProps<T> = PropsWithBluefish<
           avoid: Symbol[];
         };
     data?: T[];
+    labelProps?: React.SVGProps<SVGTextElement>;
   }
 >;
 
@@ -45,6 +46,7 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
   const dots = useNameList(_.range(data.length).map((i) => `dot-${i}`));
   const labels = useName('labels');
   // const group = useName('group');
+  let { fontSize, fill, fontWeight } = props.labelProps ?? {};
 
   return (
     <Group aria-label={props['aria-label'] ?? 'Points'}>
@@ -57,6 +59,7 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
           data={d}
           r={3}
           stroke={props.stroke ?? 'black'}
+          strokeWidth={props.strokeWidth ?? 1}
           fill={props.color ?? 'white'}
           xScale={
             (width) => xScale(width)
@@ -81,11 +84,15 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
             name={labels}
             texts={(data as any[]).map((d, i) => ({
               label: (
-                <Text
-                  aria-label={`Dot Annotation With Value ${d[(props.label! as any).field!]}`}
-                  contents={d[(props.label! as any).field!]}
-                  fontSize={'8pt'}
-                />
+                <Padding left={10} right={0} top={0} bottom={5}>
+                  <Text
+                    aria-label={`Dot Annotation With Value ${d[(props.label! as any).field!]}`}
+                    contents={d[(props.label! as any).field!]}
+                    fontSize={fontSize ?? '8pt'}
+                    fill={fill ?? 'black'}
+                    fontWeight={fontWeight ?? 'normal'}
+                  />
+                </Padding>
               ),
               ref: dots[i],
             }))}
@@ -104,11 +111,15 @@ export const NewDot = withBluefish(function NewDot(props: NewDotProps<any>) {
             name={labels}
             texts={(data as any[]).map((d, i) => ({
               label: (
-                <Text
-                  aria-label={`Dot Annotation With Value ${d[(props.label! as string)!]}`}
-                  contents={d[(props.label as string)!]}
-                  fontSize={'8pt'}
-                />
+                <Padding left={10} right={0} top={0} bottom={5}>
+                  <Text
+                    aria-label={`Dot Annotation With Value ${d[(props.label! as string)!]}`}
+                    contents={d[(props.label as string)!]}
+                    fontSize={fontSize ?? '8pt'}
+                    fill={fill ?? 'black'}
+                    fontWeight={fontWeight ?? 'normal'}
+                  />
+                </Padding>
               ),
               ref: dots[i],
             }))}

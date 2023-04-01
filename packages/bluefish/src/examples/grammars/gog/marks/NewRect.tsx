@@ -58,6 +58,7 @@ export const NewRect = withBluefish(function NewRect(props: NewRect<any>) {
       x2={+corner2[props.x]}
       y2={+corner2[props.y]}
       stroke={props.stroke}
+      strokeWidth={props.strokeWidth ?? 1}
       fill={props.color ?? 'white'}
       fillOpacity={props.fillOpacity ?? 1}
       opacity={props.opacity ?? 1}

@@ -132,7 +132,7 @@ const pointLabelMeasurePolicy = (props: {}): Measure => {
       // optional sorting function to determine label layout priority order
       compare: undefined,
       // label offset from anchor point
-      offset: [1],
+      offset: [2],
       // offset orientation (e.g. 'top-left')
       anchor: Anchors,
       // optional list of elements to avoid (like a line mark)

@@ -60,7 +60,7 @@ export const AxisTick = withBluefish(function AxisTick(props: PropsWithBluefish<
               <Text
                 guidePrimary={props.axis === 'x' ? 'topCenter' : 'centerRight'}
                 name={labels[i]}
-                contents={d[props.axis === 'x' ? props.x : props.y]}
+                contents={d.label ?? d[props.axis === 'x' ? props.x : props.y]}
               />
             </Padding>
           </AlignNew>
