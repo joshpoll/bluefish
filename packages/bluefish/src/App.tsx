@@ -65,6 +65,7 @@ import { Distribute } from './components/Distribute';
 import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
 import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
 import { Background } from './components/Background';
+import { PythonTutor } from './python-tutor';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -127,9 +128,38 @@ function App() {
 
   return (
     <div className="App">
-      <SVG width={500} height={400}>
-        <Molecule name={'vertex-1'} chemicalFormula={'C1=CC=C(C=C1)C2=CC=CC=C2'} ariaLabel={'Biphenyl molecule'} />
+      <SVG width={800} height={400}>
+        <PythonTutor
+          variables={[
+            { pointObject: { opId: 'o1' }, value: '', name: 'c', opId: 'v1' },
+            { pointObject: { opId: 'o2' }, value: '', name: 'd', opId: 'v2' },
+            { pointObject: null, name: 'x', value: '5', opId: 'v3' },
+          ]}
+          opId={'pythonTutorFrame'}
+          objects={[
+            {
+              nextObject: { opId: 'o2' },
+              objectType: 'tuple',
+              value: '1',
+              opId: 'o1',
+            },
+            {
+              nextObject: { opId: 'o3' },
+              objectType: 'tuple',
+              value: '2',
+              opId: 'o2',
+            },
+            { nextObject: null, objectType: 'tuple', value: '3', opId: 'o3' },
+          ]}
+          rows={[
+            { depth: 0, nodes: ['', 'o2', 'o3'] },
+            { depth: 1, nodes: ['o1', '', ''] },
+          ]}
+        />
       </SVG>
+      {/* <SVG width={500} height={400}>
+        <Molecule name={'vertex-1'} chemicalFormula={'C1=CC=C(C=C1)C2=CC=CC=C2'} ariaLabel={'Biphenyl molecule'} />
+      </SVG> */}
       {/* Aspirin */}
       {/* <SVG width={350} height={300}>
         <Molecule name={'vertex-1'} chemicalFormula={'CC(OC1=C(C(=O)O)C=CC=C1)=O'} ariaLabel={'Aspirin molecule'} />
