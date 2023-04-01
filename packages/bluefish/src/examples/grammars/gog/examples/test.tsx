@@ -11,8 +11,6 @@ import { driving } from './driving';
 import { Dot } from '../marks/Dot';
 import { BarY as NewBarY } from '../marks/NewBarY';
 
-// see https://observablehq.com/@joshpoll/vvt-gog
-
 export const alphabet = [
   { letter: 'A', frequency: '0.08167' },
   { letter: 'B', frequency: '0.01492' },

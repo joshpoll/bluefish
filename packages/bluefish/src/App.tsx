@@ -75,7 +75,7 @@ import { Contain } from './components/Contain';
 import { Tree4 } from './examples/grammars/gotree/3-EncodableTree - FRESH';
 import { flexibleRect } from './examples/grammars/gotree/3-EncodableTree';
 import { Cars0, Cars1, Cars2, Cars3 } from './examples/cars/cars';
-import { Molecule } from './examples/chemistry/Molecule';
+// import { Molecule } from './examples/chemistry/Molecule';
 // import { ChartAccent } from './examples/chart-accent';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
@@ -139,46 +139,6 @@ function App() {
       <br />
       <br />
       <br />
-      {/* <ChartAccent /> */}
-      {/* Aspirin */}
-      <SVG width={400} height={200}>
-        <Group aria-label={'Annotated Aspirin Molecule'}>
-          <Molecule name={chemical2} chemicalFormula={'CC(OC1=C(C(=O)O)C=CC=C1)=O'} ariaLabel={'Aspirin molecule'} />
-          {/* <PointLabel
-            texts={[
-              {
-                label: (
-                  <Text
-                    aria-label={'Text Annotation with Value Benzene'}
-                    contents={'Benzene'}
-                    fill={'blue'}
-                    stroke={'blue'}
-                  />
-                ),
-                ref: lookup(chemical2, 'vertex-10'),
-              },
-            ]}
-            compare={undefined}
-            offset={[1]}
-            anchor={Anchors}
-            avoidElements={[]}
-            avoidRefElements
-            padding={0}
-            aria-label={'Benzene Text Annotation'}
-          />
-          <Contain aria-label={'Benzene Shape Annotation'}>
-            <Group aria-label={'Annotated Atoms'}>
-              <Ref to={lookup(chemical2, 'vertex-3')} />
-              <Ref to={lookup(chemical2, 'vertex-4')} />
-              <Ref to={lookup(chemical2, 'vertex-8')} />
-              <Ref to={lookup(chemical2, 'vertex-9')} />
-              <Ref to={lookup(chemical2, 'vertex-10')} />
-              <Ref to={lookup(chemical2, 'vertex-11')} />
-            </Group>
-            <Circle fill={'none'} stroke={'blue'} aria-label={'Annotation Shape'} aria-hidden={true} />
-          </Contain> */}
-        </Group>
-      </SVG>
       {/* <SVG width={500} height={500}>
         <Contain padding={{ all: 20 }}>
           <Rect width={300} height={300} fill={'blue'} />
