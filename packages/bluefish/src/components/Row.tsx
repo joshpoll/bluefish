@@ -12,7 +12,7 @@ import { NewBBoxClass } from '../NewBBox';
 
 export type VerticalAlignment = 'top' | 'middle' | 'bottom';
 
-export type RowProps = ({ spacing: number } | { totalWidth: number } | { spacing: number; totalWidth: number }) & {
+export type RowProps = { spacing?: number; totalWidth?: number } & {
   x?: number;
   y?: number;
   alignment: VerticalAlignment;
@@ -23,12 +23,12 @@ export const rowMeasurePolicy =
   (measurables, constraints: Constraints) => {
     console.log('[row] measure policy called', options, measurables);
     let placeables;
-    if ('totalWidth' in options && 'spacing' in options) {
+    if (options.totalWidth !== undefined && options.spacing !== undefined) {
       // width is completely determined by the totalWidth and spacing, so update the constraints
       placeables = measurables.map((measurable) =>
         measurable.measure({
           ...constraints,
-          width: (options.totalWidth - options.spacing * (measurables.length - 1)) / measurables.length,
+          width: (options.totalWidth! - options.spacing! * (measurables.length - 1)) / measurables.length,
         }),
       );
     } else {
@@ -58,16 +58,16 @@ export const rowMeasurePolicy =
 
     // spacing
     const width =
-      'totalWidth' in options
+      options.totalWidth !== undefined
         ? options.totalWidth
-        : _.sumBy(placeables, 'width') + options.spacing * (placeables.length - 1);
+        : _.sumBy(placeables, 'width') + options.spacing! * (placeables.length - 1);
 
     let spacing: number;
-    if ('spacing' in options) {
+    if (options.spacing !== undefined) {
       spacing = options.spacing;
     } else {
       const occupiedWidth = _.sumBy(placeables, 'width');
-      spacing = (options.totalWidth - occupiedWidth) / (placeables.length - 1);
+      spacing = (options.totalWidth! - occupiedWidth) / (placeables.length - 1);
     }
 
     if ('totalWidth' in options && 'spacing' in options) {

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { forwardRef, PropsWithChildren, useRef } from 'react';
-import { Measurable, Measure, useBluefishLayout, withBluefish } from '../../bluefish';
+import { Measurable, Measure, useBluefishLayout, withBluefish, PropsWithBluefish } from '../../bluefish';
 import { ReactChild } from '../../flatten-children';
 import { NewBBox } from '../../NewBBox';
 import { LayoutGroup } from '../LayoutGroup';
@@ -41,7 +41,7 @@ export const Anchors = [
   'bottom-right',
 ] as const;
 
-export type PointLabelProps = {
+export type PointLabelProps = PropsWithBluefish<{
   texts: { label: any; ref: any }[];
   compare: ((a: any, b: any) => number) | undefined;
   offset: number[];
@@ -49,11 +49,13 @@ export type PointLabelProps = {
   avoidElements: ReactChild[];
   avoidRefElements: boolean;
   padding: number;
-};
+}>;
 
-export const PointLabel = forwardRef(function PointLabel({ texts, avoidElements }: PointLabelProps, ref: any) {
+export const PointLabel = forwardRef(function PointLabel(props: PointLabelProps, ref: any) {
+  const { texts, avoidElements, ...rest } = props;
+
   return (
-    <PointLabelAux ref={ref}>
+    <PointLabelAux {...rest} ref={ref}>
       <LayoutGroup /* id="labelRefPairs" */>
         {texts.map((text) => (
           <LayoutGroup>
@@ -62,7 +64,7 @@ export const PointLabel = forwardRef(function PointLabel({ texts, avoidElements 
           </LayoutGroup>
         ))}
       </LayoutGroup>
-      <LayoutGroup>{avoidElements}</LayoutGroup>
+      <LayoutGroup aria-hidden>{avoidElements}</LayoutGroup>
     </PointLabelAux>
   );
 });
@@ -182,11 +184,15 @@ const pointLabelMeasurePolicy = (props: {}): Measure => {
   };
 };
 
-export const PointLabelAux = withBluefish((props: PropsWithChildren<{}>) => {
+export const PointLabelAux = withBluefish((props: PropsWithBluefish<{}>) => {
   const { id, domRef, bbox, children } = useBluefishLayout({}, props, pointLabelMeasurePolicy(props));
+
+  const { name, ...rest } = props;
 
   return (
     <g
+      aria-label={'Point Label'}
+      {...rest}
       id={id}
       ref={domRef}
       transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}

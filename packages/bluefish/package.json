@@ -39,6 +39,7 @@
     "react-dom": "^18.1.0",
     "react-is": "^18.2.0",
     "react-scripts": "5.0.1",
+    "smiles-drawer": "^2.1.7",
     "svg-path-reverse": "^1.3.0",
     "typescript": "^4.4.2",
     "web-vitals": "^2.1.0"

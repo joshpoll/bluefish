@@ -4543,7 +4543,8 @@ export const genreSetCounts = genreSetHashes
     genres: dehashGenreSet(genresHash),
     count: data.filter((d) => hashGenreSet(d['genres']) === genresHash).length,
   }))
-  .sort((a, b) => b.count - a.count);
+  // .sort((a, b) => b.count - a.count);
+  .sort((a, b) => a.count - b.count);
 
 export const genreSetBoundedSize = (min: number, max: number) => {
   return genreSetCounts.filter((d) => d.count >= min && d.count < max);

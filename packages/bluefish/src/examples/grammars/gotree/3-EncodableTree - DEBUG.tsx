@@ -1,13 +1,11 @@
 import _ from 'lodash';
-import { Alignment2D, lookup, PropsWithBluefish, useName, useNameList, withBluefish } from '../../../bluefish';
+import { lookup, PropsWithBluefish, useName, useNameList, withBluefish } from '../../../bluefish';
 import { Col, Connector, Group, Rect, Ref, Row, Text } from '../../../main';
 import { Align } from '../../../components/Align';
 import { Circle } from '../../../components/Circle';
 import { scaleLinear, scaleSequential } from 'd3-scale';
-import { interpolateReds, interpolateBlues, interpolateGreens } from 'd3-scale-chromatic';
+import { interpolateReds, interpolateBlues } from 'd3-scale-chromatic';
 import { Contain } from '../../../components/Contain';
-import { ColProps } from '../../../components/Col';
-import { RowProps } from '../../../components/Row';
 
 type TreeData = {
   value: number;
@@ -41,18 +39,12 @@ export const rect = withBluefish(({ value }: NodeProps) => {
   return <Rect width={widthScale(value)} height={50} fill={colorScale(value)} />;
 });
 
-export const flexibleRect = withBluefish(({ value, leaf }: NodeProps) => {
-  const colorScale = scaleSequential(interpolateGreens).domain([-0.5, 1.1]);
+export const containerRect = withBluefish(({ value, leaf }: NodeProps) => {
+  const colorScale = scaleSequential(interpolateReds).domain([-0.2, 1.1]);
 
-  return (
-    <Rect
-      width={leaf !== true ? undefined : 50}
-      height={leaf !== true ? undefined : 50}
-      fill={colorScale(value)}
-      // stroke={'#d3d3d3'}
-      // strokeWidth={2}
-    />
-  );
+  const widthScale = scaleLinear().domain([1, 0]).range([0, 200]);
+
+  return <Rect width={leaf ? 50 : undefined} height={widthScale(value)} fill={colorScale(value)} />;
 });
 
 export const text = withBluefish(({ value }: NodeProps) => {
@@ -64,22 +56,21 @@ export const text = withBluefish(({ value }: NodeProps) => {
   );
 });
 
-export const link = (options?: { from?: Alignment2D; to?: Alignment2D }) =>
-  withBluefish(({ children }: PropsWithBluefish) => {
-    return (
-      <Connector $from={options?.from ?? 'center'} $to={options?.to ?? 'topCenter'} stroke={'black'} strokeWidth={2}>
-        {children}
-      </Connector>
-    );
-  });
+export const link = withBluefish(({ children }: PropsWithBluefish) => {
+  return (
+    <Connector $from={'center'} $to={'topCenter'} stroke={'black'} strokeWidth={2}>
+      {children}
+    </Connector>
+  );
+});
 
 export const none = ({ children }: PropsWithBluefish) => {
   return <></>;
 };
 
-export const row = (props?: RowProps) => {
+export const row = (props?: any) => {
   const alignment = props?.alignment ?? 'top';
-  const spacing = (props as any)?.spacing ?? 10;
+  const spacing = props?.spacing ?? 10;
 
   return withBluefish(({ children }: PropsWithBluefish) => (
     <Row alignment={alignment} spacing={spacing}>
@@ -88,9 +79,9 @@ export const row = (props?: RowProps) => {
   ));
 };
 
-export const col = (props?: ColProps) => {
+export const col = (props?: any) => {
   const alignment = props?.alignment ?? 'center';
-  const spacing = (props as any)?.spacing ?? 20;
+  const spacing = props?.spacing ?? 20;
 
   return withBluefish(({ children }: PropsWithBluefish) => (
     <Col alignment={alignment} spacing={spacing}>
@@ -102,7 +93,11 @@ export const col = (props?: ColProps) => {
 export const contain = (props?: any) => {
   const padding = props?.padding ?? { all: 10 };
 
-  return withBluefish(({ children }: PropsWithBluefish) => <Contain padding={padding}>{children}</Contain>);
+  return withBluefish(({ children }: PropsWithBluefish) => (
+    <Contain direction="horizontal" padding={padding}>
+      {children}
+    </Contain>
+  ));
 };
 
 export const Tree3 = withBluefish(({ data, encoding, overdraw }: TreeProps) => {
@@ -115,30 +110,45 @@ export const Tree3 = withBluefish(({ data, encoding, overdraw }: TreeProps) => {
   return (
     <Group>
       <encoding.node name={node} value={value} leaf={subtrees.length === 0} />
-      <encoding.subTreeSubTree name={subtreeGroup}>
+      <Row name={subtreeGroup} alignment="top" spacing={10}>
         {subtrees.map((child, i) => (
           <Tree3 name={subtreeNames[i]} data={child} encoding={encoding} />
         ))}
-      </encoding.subTreeSubTree>
+      </Row>
       {subtrees.length > 0 ? (
-        <encoding.rootSubTree>
+        <Col alignment="center" spacing={20}>
           <Ref select={node} />
           <Ref select={subtreeGroup} />
-        </encoding.rootSubTree>
+        </Col>
       ) : null}
       {subtrees.map((_, i) => (
-        <encoding.link>
+        <Connector stroke="black" strokeWidth={2}>
           <Ref select={node} guidePrimary="center" />
           <Ref select={lookup(subtreeNames[i], 'node')} guidePrimary="topCenter" />
-        </encoding.link>
+        </Connector>
       ))}
       {/* overdraw */}
-      {overdraw ? (
-        <Align alignment="center">
-          <Ref select={node} />
-          <encoding.node value={value} leaf={subtrees.length === 0} />
-        </Align>
-      ) : null}
+      <Align alignment="center">
+        <Ref select={node} />
+        <encoding.node value={value} leaf={subtrees.length === 0} />
+      </Align>
     </Group>
   );
 });
+
+// <Tree3
+//             data={{
+//               value: 0,
+//               subtrees: [
+//                 { value: 0.5 /* subtrees: [{ value: 0.75 }, { value: 0.75 }] */ },
+//                 // { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
+//               ],
+//             }}
+//             encoding={{
+//               node: containerRect,
+//               link: none,
+//               // rootSubTree: col({ alignment: 'left', spacing: 5 }),
+//               rootSubTree: contain(),
+//               subTreeSubTree: col({ alignment: 'left', spacing: 5 }),
+//             }}
+//           />

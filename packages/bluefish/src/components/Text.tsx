@@ -59,8 +59,7 @@ export const Text = withBluefish((props: TextProps) => {
       visibility={hidden === true ? 'hidden' : 'visible'}
       id={id}
       ref={domRef}
-      transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})
-scale(${bbox?.coord?.scale?.x ?? 1} ${bbox?.coord?.scale?.y ?? 1})`}
+      transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}
     >
       <text
         {...rest}

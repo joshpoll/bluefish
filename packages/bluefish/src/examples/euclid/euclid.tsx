@@ -151,7 +151,7 @@ export const Euclid = withBluefish((props: any) => {
   const yellow = '#fac22b';
 
   return (
-    <Padding all={20}>
+    <Padding all={100}>
       <Group>
         <Point name={a} fill="none" size={0} />
         <Point name={b} fill="none" size={0} />
@@ -289,97 +289,3 @@ export const Euclid = withBluefish((props: any) => {
     </Padding>
   );
 });
-
-{
-  /* <Point name={a} label={'A'} />
-<Point name={b} label={'B'} />
-<Point name={c} label={'C'} />
-<Offset vertical={10} horizontal={-5}>
-  <Ref select={a} />
-  <Ref select={b} />
-</Offset>
-<Align alignment="centerHorizontally">
-  <Ref select={b} />
-  <Ref select={c} />
-</Align>
-// kind of a hack here b/c align works only on cartesian coordinates
-<Perpendicular>
-  <Ref select={a} />
-  <Ref select={b} />
-  <Ref select={c} />
-</Perpendicular>
-<Connector>
-  <Ref select={a} />
-  <Ref select={b} />
-</Connector>
-<Connector name={bc}>
-  <Ref select={b} />
-  <Ref select={c} />
-</Connector>
-<Connector>
-  <Ref select={c} />
-  <Ref select={a} />
-</Connector>
-// triangle is complete!
-<Square>
-  <Ref select={a} />
-  <Ref select={b} />
-  <Point name={f} label={'F'} />
-  <Point name={g} label={'G'} />
-</Square>
-<Square>
-  <Ref select={c} />
-  <Ref select={a} />
-  <Point name={h} label={'H'} />
-  <Point name={k} label={'K'} />
-</Square>
-<Square name={square3}>
-  <Ref select={b} />
-  <Ref select={c} />
-  <Point name={e} label={'E'} />
-  <Point name={d} label={'D'} />
-</Square>
-// squares are complete!
-<Intersect label={'L'}>
-  <Hidden>
-    <Connector>
-      <Ref select={d} />
-      <Ref select={e} />
-    </Connector>
-  </Hidden>
-  <Hidden>
-    <PerpendicularBisector>
-      <Ref select={a} />
-      <Ref select={bc} />
-    </PerpendicularBisector>
-  </Hidden>
-</Intersect>
-<Connector style="dashed">
-  <Ref select={a} />
-  <Ref select={l} />
-</Connector>
-
-// TODO: somehow create a local scope so all these creations get registered???
-const a = point('A');
-const b = point('B');
-const c = point('C');
-offset(10, -5, a, b);
-align('centerHorizontally', b, c);
-perpendicular(a, b, c);
-connector(a, b);
-const bc = connector(b, c);
-connector(c, a);
-// triangle is complete!
-const square1 = square(a, b, point('F'), point('G'));
-const square2 = square(c, a, point('H'), point('K'));
-const square3 = square(b, c, point('E'), point('D'));
-// squares are complete!
-const l = intersect('L', hide(connector(d, e)), hide(perpendicularBisector(a, bc)));
-connector('dashed', a, l);
-
-// every time a constructor is called, append a new element to the array
-// and return the element
-// if an element is referenced, create a reference to the element
-
- */
-}

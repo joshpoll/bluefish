@@ -44,7 +44,7 @@ export const Playfair = withBluefish(() => {
           data={monarch}
           x1="start"
           x2="end"
-          height={5}
+          height={10}
           color={(d) => (d.commonwealth === true ? 'none' : 'black')}
           stroke="black"
         />
@@ -58,12 +58,11 @@ export const Playfair = withBluefish(() => {
           <Ref select={monarchNames[i]} guidePrimary={i % 2 === 0 || m.commonwealth === true ? 'bottom' : 'top'} />
         ))}
       </Align>
-      {/* Then we can add the annotations to each of the rects */}
       {monarch.map((m, i) => (
         <>
-          <Distribute direction="vertical" spacing={5}>
+          <Distribute direction="vertical" spacing={1}>
             <Ref select={monarchNames[i]} />
-            <Text name={monarchNameNames[i]} contents={m.name} />
+            <Text name={monarchNameNames[i]} contents={m.name} fontStyle="italic" fontSize="12px" fontFamily="serif" />
           </Distribute>
           <Align alignment="centerHorizontally">
             <Ref select={monarchNames[i]} />

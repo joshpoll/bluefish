@@ -42,6 +42,10 @@ export type NewRectProps<T> = PropsWithBluefish<
     height?: Encoding<T>;
     y2?: Encoding<T>;
     names?: Symbol[];
+    x?: Encoding<T>;
+    y?: Encoding<T>;
+    corner1?: T; // one corner
+    corner2?: T; // the opposite corner
   }
 >;
 
@@ -88,12 +92,24 @@ export const NewRect = withBluefish(function NewRect(props: NewRectProps<any>) {
     <Group positionChildren={false}>
       {(data as any[]).map((d, i) => {
         return (
-          <RectScale
+          <ScaledRect
             name={props.names !== undefined ? props.names[i] : rectNames[i]}
-            x1={selectors.x1(d)}
-            x2={selectors.x2(d)}
-            y1={selectors.y1(d)}
-            y2={selectors.y2(d)}
+            x1={props.x1 !== undefined ? selectors.x1(d) : props.corner1[props.x!]}
+            x2={props.x2 !== undefined ? selectors.x2(d) : props.corner2[props.x!]}
+            y1={
+              props.y1 !== undefined
+                ? selectors.y1(d)
+                : props.corner1 !== undefined
+                ? props.corner1[props.y!]
+                : undefined
+            }
+            y2={
+              props.y2 !== undefined
+                ? selectors.y2(d)
+                : props.corner2 !== undefined
+                ? props.corner2[props.y!]
+                : undefined
+            }
             height={selectors.height(d)}
             stroke={selectors.stroke(d)}
             fill={selectors.color(d)}
@@ -110,7 +126,7 @@ export const NewRect = withBluefish(function NewRect(props: NewRectProps<any>) {
 });
 NewRect.displayName = 'NewRect';
 
-export type RectScaleProps = PropsWithBluefish<
+export type ScaledRectProps = PropsWithBluefish<
   React.SVGProps<SVGRectElement> & {
     xScale: (d: any) => (x: number) => number;
     yScale: (d: any) => (y: number) => number;
@@ -122,7 +138,7 @@ export type RectScaleProps = PropsWithBluefish<
   }
 >;
 
-const rectMeasurePolicy = ({ x1, y1, x2, y2, height, xScale, yScale }: RectScaleProps): Measure => {
+const rectMeasurePolicy = ({ x1, y1, x2, y2, height, xScale, yScale }: ScaledRectProps): Measure => {
   return (_measurables, constraints) => {
     const scaledX1 = x1 !== undefined ? xScale(constraints.width)(+x1) : undefined;
     const scaledY1 = y1 !== undefined ? yScale(constraints.height)(+y1) : undefined;
@@ -147,8 +163,8 @@ const rectMeasurePolicy = ({ x1, y1, x2, y2, height, xScale, yScale }: RectScale
     );
 
     return {
-      left: scaledX1 !== undefined && scaledX2 !== undefined ? Math.min(scaledX1, scaledX2) : undefined,
-      top: scaledY1 !== undefined && scaledY2 !== undefined ? Math.min(scaledY1, scaledY2) : undefined,
+      left: 0,
+      top: 0,
       width: scaledX1 !== undefined && scaledX2 !== undefined ? Math.abs(scaledX2 - scaledX1) : undefined,
       height:
         height !== undefined
@@ -156,11 +172,17 @@ const rectMeasurePolicy = ({ x1, y1, x2, y2, height, xScale, yScale }: RectScale
           : scaledY1 !== undefined && scaledY2 !== undefined
           ? Math.abs(scaledY2 - scaledY1)
           : undefined,
+      coord: {
+        translate: {
+          x: scaledX1 !== undefined && scaledX2 !== undefined ? Math.min(scaledX1, scaledX2) : undefined,
+          y: scaledY1 !== undefined && scaledY2 !== undefined ? Math.min(scaledY1, scaledY2) : undefined,
+        },
+      },
     };
   };
 };
 
-export const RectScale = withBluefish((props: RectScaleProps) => {
+export const ScaledRect = withBluefish((props: ScaledRectProps) => {
   const { xScale, yScale, x1, x2, y1, y2, name, ...rest } = props;
 
   const { id, bbox, domRef } = useBluefishLayout({}, props, rectMeasurePolicy(props));
@@ -176,4 +198,4 @@ scale(${bbox?.coord?.scale?.x ?? 1} ${bbox?.coord?.scale?.y ?? 1})`}
     </g>
   );
 });
-RectScale.displayName = 'RectScale';
+ScaledRect.displayName = 'RectScale';

@@ -37,7 +37,7 @@ import { scaleBand, scaleLinear, scaleSequential } from 'd3-scale';
 import { NewLine } from './examples/grammars/gog/marks/NewLine';
 import { NewDot } from './examples/grammars/gog/marks/NewDot';
 import { resolveRef } from './components/Ref';
-import { BluefishContextValue, useName, withBluefish } from './bluefish';
+import { BluefishContextValue, lookup, useName, withBluefish } from './bluefish';
 import { Rect } from './components/Rect';
 import { Col } from './components/Col';
 import { Test2 } from './components/Test2';
@@ -70,19 +70,13 @@ import { UpSet } from './examples/upset/upset';
 import { DrivingSafety } from './examples/driving-safety/driving-safety';
 import { Tree1 } from './examples/grammars/gotree/1-SingleVisualization';
 import { CircleNode, RectNode, TextNode, Tree2 } from './examples/grammars/gotree/2-AbstractedNode';
-import {
-  Tree3,
-  link,
-  row,
-  col,
-  none,
-  rect,
-  circle,
-  text,
-  contain,
-  containerRect,
-} from './examples/grammars/gotree/3-EncodableTree';
+import { Tree3, link, row, col, none, rect, circle, text, contain } from './examples/grammars/gotree/3-EncodableTree';
 import { Contain } from './components/Contain';
+import { Tree4 } from './examples/grammars/gotree/3-EncodableTree - FRESH';
+import { flexibleRect } from './examples/grammars/gotree/3-EncodableTree';
+import { Cars0, Cars1, Cars2, Cars3 } from './examples/cars/cars';
+import { Molecule } from './examples/chemistry/Molecule';
+// import { ChartAccent } from './examples/chart-accent';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -137,8 +131,54 @@ function App() {
   const autoAssign2 = useName('autoAssign2');
   const autoAssign3 = useName('autoAssign3');
 
+  const chemical2 = useName('chemical2');
+
   return (
     <div className="App">
+      <br />
+      <br />
+      <br />
+      <br />
+      {/* <ChartAccent /> */}
+      {/* Aspirin */}
+      <SVG width={400} height={200}>
+        <Group aria-label={'Annotated Aspirin Molecule'}>
+          <Molecule name={chemical2} chemicalFormula={'CC(OC1=C(C(=O)O)C=CC=C1)=O'} ariaLabel={'Aspirin molecule'} />
+          {/* <PointLabel
+            texts={[
+              {
+                label: (
+                  <Text
+                    aria-label={'Text Annotation with Value Benzene'}
+                    contents={'Benzene'}
+                    fill={'blue'}
+                    stroke={'blue'}
+                  />
+                ),
+                ref: lookup(chemical2, 'vertex-10'),
+              },
+            ]}
+            compare={undefined}
+            offset={[1]}
+            anchor={Anchors}
+            avoidElements={[]}
+            avoidRefElements
+            padding={0}
+            aria-label={'Benzene Text Annotation'}
+          />
+          <Contain aria-label={'Benzene Shape Annotation'}>
+            <Group aria-label={'Annotated Atoms'}>
+              <Ref to={lookup(chemical2, 'vertex-3')} />
+              <Ref to={lookup(chemical2, 'vertex-4')} />
+              <Ref to={lookup(chemical2, 'vertex-8')} />
+              <Ref to={lookup(chemical2, 'vertex-9')} />
+              <Ref to={lookup(chemical2, 'vertex-10')} />
+              <Ref to={lookup(chemical2, 'vertex-11')} />
+            </Group>
+            <Circle fill={'none'} stroke={'blue'} aria-label={'Annotation Shape'} aria-hidden={true} />
+          </Contain> */}
+        </Group>
+      </SVG>
       {/* <SVG width={500} height={500}>
         <Contain padding={{ all: 20 }}>
           <Rect width={300} height={300} fill={'blue'} />
@@ -288,9 +328,21 @@ function App() {
       {/* </Group>
         </Group>
       </SVG> */}
-      {/* <SVG width={500} height={500}>
+      <SVG width={500} height={500}>
+        <Cars0 />
+      </SVG>
+      <SVG width={500} height={500}>
+        <Cars1 />
+      </SVG>
+      <SVG width={500} height={500}>
+        <Cars2 />
+      </SVG>
+      <SVG width={500} height={500}>
+        <Cars3 />
+      </SVG>
+      <SVG width={500} height={500}>
         <Polio />
-      </SVG> */}
+      </SVG>
       {/* <SVG width={500} height={500}>
         <RectPath
           x={Math.PI / 2}
@@ -350,43 +402,84 @@ function App() {
         />
       </SVG> */}
       <SVG width={500} height={500}>
-        <Row spacing={100} alignment="middle">
-          {/* <Tree3
-            data={{
-              value: 0,
-              subtrees: [
-                { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
-                { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
-              ],
-            }}
-            encoding={{
-              node: rect,
-              link: none,
-              rootSubTree: col({ alignment: 'left', spacing: 5 }),
-              subTreeSubTree: col({ alignment: 'left', spacing: 5 }),
-            }}
-          /> */}
-          <Tree3
-            data={{
-              value: 0,
-              subtrees: [
-                { value: 0.5 /* subtrees: [{ value: 0.75 }, { value: 0.75 }] */ },
-                // { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
-              ],
-            }}
-            encoding={{
-              node: containerRect,
-              link: none,
-              // rootSubTree: col({ alignment: 'left', spacing: 5 }),
-              rootSubTree: contain(),
-              subTreeSubTree: col({ alignment: 'left', spacing: 5 }),
-            }}
-          />
-        </Row>
+        <Tree4
+          data={{
+            value: 0,
+            subtrees: [
+              {
+                value: 0.5,
+                subtrees: [{ value: 0.75 }, { value: 0.75 }],
+              },
+              { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
+            ],
+          }}
+          encoding={{
+            node: flexibleRect as any,
+            link: none,
+            rootSubTree: contain({ padding: { top: 20, bottom: 20, left: 20, right: 20 } }),
+            subTreeSubTree: col({ alignment: 'right', spacing: 20 }),
+          }}
+          overdraw={false}
+        />
+      </SVG>
+      <SVG width={500} height={500}>
+        <Padding all={20}>
+          <Row spacing={20} alignment={'top'}>
+            <Tree4
+              data={{
+                value: 0,
+                subtrees: [
+                  {
+                    value: 0.5,
+                    subtrees: [{ value: 0.75 }, { value: 0.75 }],
+                  },
+                  { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
+                ],
+              }}
+              encoding={{
+                node: flexibleRect as any,
+                link: none,
+                rootSubTree: contain({ padding: { top: 20, bottom: 20, left: 20, right: 20 } }),
+                subTreeSubTree: col({ alignment: 'right', spacing: 20 }),
+              }}
+              overdraw={false}
+            />
+            <Tree4
+              data={{
+                value: 0,
+                subtrees: [
+                  { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
+                  { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
+                ],
+              }}
+              encoding={{
+                node: rect as any,
+                link: none,
+                rootSubTree: col({ alignment: 'left', spacing: 5 }),
+                subTreeSubTree: col({ alignment: 'left', spacing: 5 }),
+              }}
+            />
+            <Tree4
+              data={{
+                value: 0,
+                subtrees: [
+                  { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
+                  { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
+                ],
+              }}
+              encoding={{
+                node: circle as any,
+                link: link({ to: 'centerLeft' }),
+                rootSubTree: row({ alignment: 'bottom' }),
+                subTreeSubTree: col(),
+              }}
+            />
+          </Row>
+        </Padding>
       </SVG>
       <SVG width={500} height={500}>
         <Col spacing={50} alignment="center">
-          <Tree2
+          {/* <Tree2
             data={{
               value: 0,
               subtrees: [
@@ -395,7 +488,7 @@ function App() {
               ],
             }}
             $node={RectNode}
-          />
+          /> */}
           {/* <Tree2
             data={{
               value: 0,
@@ -409,7 +502,7 @@ function App() {
         </Col>
       </SVG>
       <SVG width={500} height={300}>
-        <Tree1
+        {/* <Tree1
           data={{
             value: 0,
             subtrees: [
@@ -417,7 +510,7 @@ function App() {
               { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
             ],
           }}
-        />
+        /> */}
       </SVG>
       {/* <SVG width={500} height={300}>
         <Col spacing={10} alignment={'center'}>

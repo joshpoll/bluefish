@@ -201,9 +201,11 @@ const containMeasurePolicy =
 
 export const Contain = withBluefish((props: ContainerProps) => {
   const { id, domRef, bbox, children } = useBluefishLayout({}, props, containMeasurePolicy(props));
+  const { name, ...rest } = props;
 
   return (
     <g
+      {...rest}
       id={id}
       ref={domRef}
       transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}

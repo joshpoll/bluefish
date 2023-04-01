@@ -1,5 +1,5 @@
 import { polio_data, PolioData } from './polio-data';
-import { withBluefish } from '../../../../bluefish';
+import { withBluefish, useNames, Name, useName } from '../../../../bluefish';
 import { groupBy } from 'lodash';
 import { Plot2 as Plot } from '../Plot';
 import { BarY } from '../marks/NewBarY';
@@ -7,7 +7,8 @@ import { scaleBand, scaleLinear, scaleSequential } from 'd3-scale';
 import _ from 'lodash';
 import { interpolateReds } from 'd3-scale-chromatic';
 import { GroupBy } from '../marks/GroupBy';
-import { Rect } from '../../../../main';
+import { Align, Col, Group, Rect, Ref, Text } from '../../../../main';
+import { Distribute } from '../../../../components/Distribute';
 
 const USMap = [
   ['AK', null, null, null, null, null, null, null, null, null, 'ME'],
@@ -19,6 +20,8 @@ const USMap = [
   [null, null, null, 'OK', 'LA', 'MS', 'AL', 'GA', null, null, null],
   ['HI', null, null, 'TX', null, null, null, null, 'FL', null, 'PR'],
 ];
+
+const stateCodes = _.uniq(_.flatten(USMap)).filter((d) => d !== null) as string[];
 
 // map from x,y to state
 const positioning = ({ x, y }: { x: number; y: number }) => USMap[y][x];
@@ -41,7 +44,6 @@ export const Polio = withBluefish((props: any) => {
         ])
       }
     >
-      {/* <Partition>? */}
       <GroupBy
         field={'state'}
         totalWidth={500}
@@ -50,7 +52,12 @@ export const Polio = withBluefish((props: any) => {
         // numRows={10}
         positioning={USMap}
       >
-        {({ key, data }) => <BarY totalWidth={40} spacing={0} x={'year'} y={'total'} color={'total'} data={data} />}
+        {({ key, data }) => (
+          <>
+            <BarY totalWidth={40} spacing={0} x={'year'} y={'total'} color={'total'} data={data} />
+            <Text contents={key} />
+          </>
+        )}
       </GroupBy>
     </Plot>
   );
