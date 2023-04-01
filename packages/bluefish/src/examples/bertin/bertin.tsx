@@ -10,7 +10,7 @@ import { GroupBy } from '../grammars/gog/marks/GroupBy';
 import { scaleBand, scaleLinear, scaleSequential } from 'd3-scale';
 import { interpolateReds } from 'd3-scale-chromatic';
 import { BarY } from '../grammars/gog/marks/NewBarY';
-import { AlignNew } from '../../components/AlignNew';
+import { Align } from '../../components/Align';
 
 const dataSubset = data; /* .slice(0, 2); */
 
@@ -93,10 +93,10 @@ export const BertinHotel = withBluefish((props: any) => {
       {positioningOrdered.map((cat) => {
         return (
           // <Row spacing={5} alignment="top">
-          <AlignNew alignment="top">
+          <Align alignment="top">
             <Ref select={lookup(groupBys, cat)} />
             <Text x={300} contents={cat} />;
-          </AlignNew>
+          </Align>
           // </Row>
         );
       })}

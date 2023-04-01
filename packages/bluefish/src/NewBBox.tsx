@@ -81,7 +81,7 @@ export class NewBBoxClass {
   }
 
   get left() {
-    if (this.intrinsicLeft === undefined) {
+    if (this.intrinsicLeft === undefined || this.coord?.translate?.x === undefined) {
       return undefined;
     }
 
@@ -117,7 +117,7 @@ export class NewBBoxClass {
   }
 
   get right() {
-    if (this.intrinsicRight === undefined) {
+    if (this.intrinsicRight === undefined || this.coord?.translate?.x === undefined) {
       return undefined;
     }
 
@@ -125,6 +125,7 @@ export class NewBBoxClass {
   }
 
   set right(right: number | undefined) {
+    // console.log('padding setting right', right);
     if (isNaN(right)) {
       throw new Error('right is NaN');
     }
@@ -132,6 +133,7 @@ export class NewBBoxClass {
     if (right === undefined) {
       this.intrinsicRight = undefined;
     } else if (this.intrinsicRight === undefined) {
+      // console.log('padding hit intrinsicRight === undefined');
       this.intrinsicRight = right;
 
       // initialize coord if it's undefined
@@ -149,7 +151,7 @@ export class NewBBoxClass {
   }
 
   get top() {
-    if (this.intrinsicTop === undefined) {
+    if (this.intrinsicTop === undefined || this.coord?.translate?.y === undefined) {
       return undefined;
     }
 
@@ -181,7 +183,7 @@ export class NewBBoxClass {
   }
 
   get bottom() {
-    if (this.intrinsicBottom === undefined) {
+    if (this.intrinsicBottom === undefined || this.coord?.translate?.y === undefined) {
       return undefined;
     }
 
@@ -335,6 +337,7 @@ export class NewBBoxClass {
   }
 
   set intrinsicRight(right: number | undefined) {
+    // console.log('padding intrinsicRight', right, this.coord);
     if (isNaN(right)) {
       throw new Error('right must be a number');
     }

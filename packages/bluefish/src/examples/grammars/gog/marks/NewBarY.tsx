@@ -23,7 +23,7 @@ export const BarY = withBluefish(function BarY(props: BarYProps<any>) {
   const data = props.data ?? context.data;
   const totalWidth = props.totalWidth ?? context.dimensions.width;
   const colorScale = context.scales.colorScale;
-  console.log('colorScale', colorScale);
+  // console.log('colorScale', colorScale);
 
   // console.log('scaledY', props);
 
@@ -36,12 +36,12 @@ export const BarY = withBluefish(function BarY(props: BarYProps<any>) {
   return (
     <Row totalWidth={totalWidth} spacing={props.spacing!} alignment={'bottom'}>
       {(data as any[]).map((d) => {
-        console.log(
-          'scaledY',
-          +selectors.y(d),
-          data.map((d: any) => +selectors.y(d)),
-          max<number>(data.map((d: any) => +selectors.y(d))),
-        );
+        // console.log(
+        //   'scaledY',
+        //   +selectors.y(d),
+        //   data.map((d: any) => +selectors.y(d)),
+        //   max<number>(data.map((d: any) => +selectors.y(d))),
+        // );
         return (
           <RectScale
             height={+selectors.y(d)}
@@ -65,14 +65,14 @@ export type RectScaleProps = PropsWithBluefish<
 const rectMeasurePolicy = (props: RectScaleProps): Measure => {
   const { x, y, width, height } = props;
 
-  console.log('scaledY BEFORE', props);
+  // console.log('scaledY BEFORE', props);
 
   return (_, constraints) => {
     const scaledY = y !== undefined ? props.yScale(constraints.height)(+y) : undefined;
     const scaledHeight = height !== undefined ? props.yScale(constraints.height)(+height) : undefined;
 
-    console.log('scaledY AFTER', y, scaledY);
-    console.log('scaledY AFTER height', height, scaledHeight);
+    // console.log('scaledY AFTER', y, scaledY);
+    // console.log('scaledY AFTER height', height, scaledHeight);
 
     return {
       left: x !== undefined ? +x : undefined,

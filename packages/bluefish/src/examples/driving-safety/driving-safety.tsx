@@ -1,7 +1,7 @@
 import { scaleLinear } from 'd3-scale';
 import _ from 'lodash';
 import { lookup, useName } from '../../bluefish';
-import { AlignNew } from '../../components/AlignNew';
+import { Align } from '../../components/Align';
 import { Distribute } from '../../components/Distribute';
 import { Col, Padding, withBluefish, Text, Rect, Ref, Group } from '../../main';
 import { NewDot } from '../grammars/gog/marks/NewDot';
@@ -64,14 +64,14 @@ export const DrivingSafety = withBluefish(() => {
         <Ref select={annotation} />
         <Ref select={lookup(dots, 'dot-6')} />
       </Distribute>
-      <AlignNew>
+      <Align>
         <Ref select={annotation} guidePrimary="left" />
         <Ref select={lookup(dots, 'dot-10')} guidePrimary="right" />
-      </AlignNew>
-      <AlignNew>
+      </Align>
+      <Align>
         <Ref select={annotation} guidePrimary="right" />
         <Ref select={lookup(dots, 'dot-20')} guidePrimary="left" />
-      </AlignNew>
+      </Align>
     </Group>
   );
 });

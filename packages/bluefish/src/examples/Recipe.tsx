@@ -1,7 +1,6 @@
 import { withBluefish, useNameList, useName } from '../bluefish';
 import { Col } from '../components/Col';
 import { Align, Group, Padding, Rect, Ref, Text } from '../main';
-import { AlignNew } from '../components/AlignNew';
 type Ingredient = {
   type: 'ingredient';
   id: number;
@@ -31,14 +30,14 @@ const IngredientItem = withBluefish(({ ingredient }: { ingredient: Ingredient })
       <Padding name={text} all={5}>
         <Text contents={ingredient.name} />
       </Padding>
-      <AlignNew alignment="topLeft">
+      <Align alignment="topLeft">
         <Ref to={rect} />
         <Ref to={text} />
-      </AlignNew>
-      <AlignNew alignment="bottomRight">
+      </Align>
+      <Align alignment="bottomRight">
         <Ref to={rect} />
         <Ref to={text} />
-      </AlignNew>
+      </Align>
     </Group>
   );
 });

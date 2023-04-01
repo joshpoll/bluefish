@@ -8,7 +8,7 @@ import { NewDot } from '../grammars/gog/marks/NewDot';
 import { NewLine } from '../grammars/gog/marks/NewLine';
 import { NewRect } from '../grammars/gog/marks/Rect';
 import { Circle, Col, Connector, Group, Padding, Rect, Ref, Row, Text } from '../../main';
-import { AlignNew } from '../../components/AlignNew';
+import { Align } from '../../components/Align';
 import { Distribute } from '../../components/Distribute';
 import { Area } from '../grammars/gog/marks/Area';
 import { genreCounts, genres, genreSetBoundedSize } from './data';
@@ -30,11 +30,11 @@ export const Stack = withBluefish((props: StackProps) => {
   return (
     <Group>
       {props.children}
-      <AlignNew alignment={alignment as any}>
+      <Align alignment={alignment as any}>
         {children.map((child: any) => (
           <Ref select={child} />
         ))}
-      </AlignNew>
+      </Align>
       <Distribute spacing={props.spacing} total={props.total} direction={props.direction}>
         {children.map((child: any) => (
           <Ref select={child} />
@@ -110,10 +110,10 @@ export const UpSet = withBluefish(() => {
           <>
             {set.genres.map((genre) => {
               return (
-                <AlignNew alignment="center">
+                <Align alignment="center">
                   <Ref select={dots[set.genres.join(',')][genre]} />
                   <Circle name={genreSetDots[set.genres.join(',')][genre]} r={3.5} fill="#333333" />
-                </AlignNew>
+                </Align>
               );
             })}
             {/* TODO: this is a motivating use case for having connector/link take arb. args instead of just 2 */}
@@ -137,16 +137,16 @@ export const UpSet = withBluefish(() => {
         <Ref select={genreNames[0]} />
         <Ref select={matrix} />
       </Distribute>
-      <AlignNew alignment="left">
+      <Align alignment="left">
         {genres.map((_, i) => (
           <Ref select={genreNames[i]} />
         ))}
-      </AlignNew>
+      </Align>
       {genres.map((genre, i) => (
-        <AlignNew alignment="centerVertically">
+        <Align alignment="centerVertically">
           <Ref select={dots[Object.keys(dots)[0]][genre]} />
           <Ref select={genreNames[i]} />
-        </AlignNew>
+        </Align>
       ))}
       {genresGTE.map((set, i) => (
         <>
@@ -154,10 +154,10 @@ export const UpSet = withBluefish(() => {
             <Rect name={genreSetBarNames[i]} width={10} height={set.count} fill="#333333" />
             <Ref select={colNames[i]} />
           </Distribute>
-          <AlignNew alignment="centerHorizontally">
+          <Align alignment="centerHorizontally">
             <Ref select={genreSetBarNames[i]} />
             <Ref select={colNames[i]} />
-          </AlignNew>
+          </Align>
         </>
         // <>
         //   <Rect name={rectNames[i]} width={7} height={set.count} fill="#333333" />
@@ -176,10 +176,10 @@ export const UpSet = withBluefish(() => {
             <Ref select={genreBarNames[i]} />
             {/* <Ref select={genreNames[i]} /> */}
           </Distribute>
-          <AlignNew alignment="centerVertically">
+          <Align alignment="centerVertically">
             <Ref select={genreBarNames[i]} />
             <Ref select={genreNames[i]} />
-          </AlignNew>
+          </Align>
         </>
       ))}
     </Group>

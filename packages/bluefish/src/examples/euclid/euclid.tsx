@@ -3,7 +3,6 @@
 import { Constraints, Measure, useBluefishLayout, useName, withBluefish } from '../../bluefish';
 import { Align, Circle, Connector, Group, Padding, Ref } from '../../main';
 import { Distribute } from '../../components/Distribute';
-import { AlignNew } from '../../components/AlignNew';
 import { PaperScope } from 'paper/dist/paper-core';
 
 /* 
@@ -161,18 +160,18 @@ export const Euclid = withBluefish((props: any) => {
           <Ref select={a} />
           <Ref select={c} />
         </Distribute>
-        <AlignNew alignment="centerVertically">
+        <Align alignment="centerVertically">
           <Ref select={a} />
           <Ref select={c} />
-        </AlignNew>
+        </Align>
         {/* <Offset horizontal={30} vertical={-30}>
           <Ref select={a} />
           <Ref select={b} />
         </Offset> */}
-        {/* <AlignNew alignment="centerHorizontally">
+        {/* <Align alignment="centerHorizontally">
         <Ref select={b} />
         <Ref select={c} />
-      </AlignNew> */}
+      </Align> */}
         {/* kind of a hack here b/c align works only on cartesian coordinates */}
         {/* <Perpendicular>
         <Ref select={a} />

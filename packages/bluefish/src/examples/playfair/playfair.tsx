@@ -9,7 +9,7 @@ import { NewDot } from '../grammars/gog/marks/NewDot';
 import { NewLine } from '../grammars/gog/marks/NewLine';
 import { NewRect } from '../grammars/gog/marks/Rect';
 import { Col, Group, Ref, Text } from '../../main';
-import { AlignNew } from '../../components/AlignNew';
+import { Align } from '../../components/Align';
 import { Distribute } from '../../components/Distribute';
 import { Area } from '../grammars/gog/marks/Area';
 
@@ -49,15 +49,15 @@ export const Playfair = withBluefish(() => {
           stroke="black"
         />
       </Plot>
-      <AlignNew alignment="top">
+      <Align alignment="top">
         <Ref select={plot} />
         <Ref select={monarchNames[0]} />
-      </AlignNew>
-      <AlignNew>
+      </Align>
+      <Align>
         {monarch.map((m, i) => (
           <Ref select={monarchNames[i]} guidePrimary={i % 2 === 0 || m.commonwealth === true ? 'bottom' : 'top'} />
         ))}
-      </AlignNew>
+      </Align>
       {/* Then we can add the annotations to each of the rects */}
       {monarch.map((m, i) => (
         <>
@@ -65,10 +65,10 @@ export const Playfair = withBluefish(() => {
             <Ref select={monarchNames[i]} />
             <Text name={monarchNameNames[i]} contents={m.name} />
           </Distribute>
-          <AlignNew alignment="centerHorizontally">
+          <Align alignment="centerHorizontally">
             <Ref select={monarchNames[i]} />
             <Ref select={monarchNameNames[i]} />
-          </AlignNew>
+          </Align>
         </>
       ))}
     </Group>

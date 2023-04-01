@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { lookup, PropsWithBluefish, useName, useNameList, withBluefish } from '../../../bluefish';
 import { Col, Connector, Group, Padding, Rect, Ref, Row, Text } from '../../../main';
-import { AlignNew as Align } from '../../../components/AlignNew';
+import { Align } from '../../../components/Align';
 import { Circle } from '../../../components/Circle';
 import { scaleSequential } from 'd3-scale';
 import { interpolateReds, interpolateBlues } from 'd3-scale-chromatic';

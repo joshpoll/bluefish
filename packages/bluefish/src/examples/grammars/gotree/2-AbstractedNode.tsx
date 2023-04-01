@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { lookup, PropsWithBluefish, useName, useNameList, withBluefish } from '../../../bluefish';
 import { Col, Connector, Group, Rect, Ref, Row, Text } from '../../../main';
-import { AlignNew as Align } from '../../../components/AlignNew';
+import { Align } from '../../../components/Align';
 import { Circle } from '../../../components/Circle';
 import { scaleSequential } from 'd3-scale';
 import { interpolateReds, interpolateBlues } from 'd3-scale-chromatic';
@@ -33,8 +33,8 @@ export const RectNode = withBluefish(({ value }: NodeProps) => {
 
 export const TextNode = withBluefish(({ value }: NodeProps) => {
   return (
-    <Contain>
-      <Circle r={20} fill="white" /* stroke="black" */ />
+    <Contain padding={{ all: 10 }}>
+      <Circle fill="white" />
       <Text contents={`${value}`} />;
     </Contain>
   );
