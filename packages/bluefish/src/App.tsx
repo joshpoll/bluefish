@@ -182,12 +182,12 @@ function App() {
           <Text contents={'this is a test caption'} />
         </Col>
       </SVG> */}
-      {/* <SVG width={1000} height={500}>
+      <SVG width={1000} height={500}>
         <UpSet />
       </SVG>
       <SVG width={1000} height={500}>
         <Playfair />
-      </SVG> */}
+      </SVG>
       {/* <SVG width={500} height={500}>
         <BertinHotel />
       </SVG> */}
@@ -284,21 +284,27 @@ function App() {
       {/* </Group>
         </Group>
       </SVG> */}
-      {/* <SVG width={500} height={500}>
+      <br />
+      <SVG width={170} height={170}>
         <Cars0 />
       </SVG>
-      <SVG width={500} height={500}>
+      <SVG width={170} height={170}>
         <Cars1 />
-      </SVG> */}
-      <SVG width={500} height={500}>
-        <Cars2 />
       </SVG>
-      {/* <SVG width={500} height={500}>
-        <Cars3 />
+      <SVG width={200} height={200}>
+        <Padding all={30}>
+          <Cars2 />
+        </Padding>
       </SVG>
+      <SVG width={200} height={200}>
+        <Padding all={30}>
+          <Cars3 />
+        </Padding>
+      </SVG>
+      <br />
       <SVG width={500} height={500}>
         <Polio />
-      </SVG> */}
+      </SVG>
       {/* <SVG width={500} height={500}>
         <RectPath
           x={Math.PI / 2}

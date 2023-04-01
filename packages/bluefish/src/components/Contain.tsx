@@ -88,12 +88,16 @@ const containMeasurePolicy =
 
     if (direction === 'horizontal' || direction === 'both') {
       if (placeables[0].left === undefined && placeables[1].left === undefined) {
+        console.log('[connector] CONTAIN entering horizontal both undefined');
         // check if width is defined on one of them and use that instead
         if (placeables[0].width !== undefined) {
+          console.log('[connector] CONTAIN entering horizontal both undefined 0');
           placeables[0].left = 0;
         } else if (placeables[1].width !== undefined) {
+          console.log('[connector] CONTAIN entering horizontal both undefined 1');
           placeables[1].left = 0;
         } else {
+          console.log('[connector] CONTAIN entering horizontal both undefined 2');
           placeables[0].left = 0;
         }
       }
@@ -188,6 +192,8 @@ const containMeasurePolicy =
     const top = _.min(placeables.map((placeable) => placeable.top));
     const right = _.max(placeables.map((placeable) => placeable.right));
     const bottom = _.max(placeables.map((placeable) => placeable.bottom));
+
+    console.log('[connector] CONTAIN', { left, top, right, bottom });
 
     return {
       left,

@@ -69,7 +69,7 @@ export const Group = withBluefish(
         transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}
       >
         {children}
-        <rect x={bbox?.left} y={bbox?.top} width={bbox?.width} height={bbox?.height} fill="none" stroke="magenta" />
+        {/* <rect x={bbox?.left} y={bbox?.top} width={bbox?.width} height={bbox?.height} fill="none" stroke="magenta" /> */}
       </g>
     );
   },
