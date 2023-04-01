@@ -23,14 +23,14 @@ import { rowMeasurePolicy } from './Row';
 //     of: BluefishRef;
 //   };
 // };
-export type ConnectorProps = PropsWithBluefish<
+export type LinkProps = PropsWithBluefish<
   React.SVGProps<SVGLineElement> & {
     $from?: Alignment2D;
     $to?: Alignment2D;
   }
 >;
 
-const connectorMeasurePolicy = (props: ConnectorProps): Measure => {
+const connectorMeasurePolicy = (props: LinkProps): Measure => {
   return (measurables, constraints: any) => {
     const [from, to] = measurables.map((m) => m.measure(constraints));
     const [fromYDir, fromXDir] = splitAlignment(props.$from ?? measurables[0].guidePrimary ?? 'center');
@@ -106,7 +106,7 @@ const connectorMeasurePolicy = (props: ConnectorProps): Measure => {
 
 // TODO: note that if `children` is not placed, this doesn't actually measure anything!
 // I'm not sure why...
-export const Connector = withBluefish((props: PropsWithChildren<ConnectorProps>) => {
+export const Link = withBluefish((props: PropsWithChildren<LinkProps>) => {
   const { id, bbox, domRef, children } = useBluefishLayout({}, props, connectorMeasurePolicy(props));
 
   const { $from, $to, name, ...rest } = props;
@@ -125,4 +125,4 @@ export const Connector = withBluefish((props: PropsWithChildren<ConnectorProps>)
     </>
   );
 });
-Connector.displayName = 'Connector';
+Link.displayName = 'Link';

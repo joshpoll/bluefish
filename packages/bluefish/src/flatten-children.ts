@@ -34,11 +34,23 @@ export const flattenChildren = (children: ReactNode, depth: number = 0, keys: (s
       );
     } else if (isContextProvider(node)) {
       // like fragment case, but still renders the provider
-      acc.push(
-        cloneElement(node, {
-          key: keys.concat(String(node.key)).join('.'),
-          children: flattenChildren(node.props.children, depth + 1, keys.concat(node.key!)),
-        }),
+      // acc.push(
+      //   cloneElement(node, {
+      //     key: keys.concat(String(node.key)).join('.'),
+      //     children: flattenChildren(node.props.children, depth + 1, keys.concat(node.key!)),
+      //   }),
+      // );
+      acc.push.apply(
+        acc,
+        flattenChildren(
+          node.props.children,
+          depth + 1,
+          /**
+           * No need for index fallback, React will always assign keys
+           * See: https://reactjs.org/docs/react-api.html#reactchildrentoarray
+           */
+          keys.concat(node.key!),
+        ),
       );
     } else {
       if (isValidElement(node)) {

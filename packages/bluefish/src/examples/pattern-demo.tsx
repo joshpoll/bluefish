@@ -20,7 +20,7 @@ import { Group } from '../components/Group';
 import { Line } from '../components/Line';
 import { Arrow } from '../components/Arrow';
 import { Space } from '../components/Space';
-import { Connector } from '../components/Connector';
+import { Link } from '../components/Connector';
 import { first } from 'lodash';
 
 const ModelDerivation: React.FC = () => {};

@@ -8,7 +8,7 @@ import { Row } from '../../../../components/Row';
 import { Path } from '../../../../components/Path';
 import { Group } from '../../../../components/Group';
 import { Line } from '../../../../components/Line';
-import { Connector } from '../../../../components/Connector';
+import { Link } from '../../../../components/Connector';
 import { Text } from '../../../../components/Text';
 import { Ref } from '../../../../components/Ref';
 import { PropsWithBluefish, useName, useNameList, withBluefish } from '../../../../bluefish';

@@ -1,14 +1,14 @@
 import { polio_data, PolioData } from './polio-data';
-import { withBluefish, useNames, Name, useName } from '../../../../bluefish';
+import { withBluefish, useNames, Name, useName } from '../../bluefish';
 import { groupBy } from 'lodash';
-import { Plot2 as Plot } from '../Plot';
-import { BarY } from '../marks/NewBarY';
+import { Plot2 as Plot } from '../grammars/gog/Plot';
+import { BarY } from '../grammars/gog/marks/NewBarY';
 import { scaleBand, scaleLinear, scaleSequential } from 'd3-scale';
 import _ from 'lodash';
 import { interpolateReds } from 'd3-scale-chromatic';
-import { GroupBy } from '../marks/GroupBy';
-import { Align, Col, Group, Rect, Ref, Text } from '../../../../main';
-import { Distribute } from '../../../../components/Distribute';
+import { GroupBy } from '../grammars/gog/marks/GroupBy';
+import { Align, Col, Group, Rect, Ref, Text } from '../../main';
+import { Distribute } from '../../components/Distribute';
 
 const USMap = [
   ['AK', null, null, null, null, null, null, null, null, null, 'ME'],

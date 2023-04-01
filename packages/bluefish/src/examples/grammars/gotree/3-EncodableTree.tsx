@@ -128,12 +128,12 @@ export const Tree3 = withBluefish(({ data, encoding, overdraw }: TreeProps) => {
       ) : null}
       {subtrees.map((_, i) => (
         <encoding.link>
-          <Ref select={node} guidePrimary="center" />
-          <Ref select={lookup(subtreeNames[i], 'node')} guidePrimary="topCenter" />
+          <Ref select={node} />
+          <Ref select={lookup(subtreeNames[i], 'node')} />
         </encoding.link>
       ))}
       {/* overdraw */}
-      {overdraw ? (
+      {overdraw !== false ? (
         <Align alignment="center">
           <Ref select={node} />
           <encoding.node value={value} leaf={subtrees.length === 0} />
