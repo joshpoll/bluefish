@@ -21,11 +21,13 @@ const Variable = withBluefish(function _Variable({ data }: { data: any }) {
   const boxBorderBottom = `boxBorderBottom-${opId}`;
   const variable = `variable-${opId}`;
 
+  console.log('creating variable:', opId);
+
   // Declares font used in Python Tutor Diagrams
   const fontFamily = 'verdana, arial, helvetica, sans-serif';
 
   return (
-    <Group>
+    <Group name={opId}>
       {/* Creates frame of Variable component (text label & box for value) */}
       <Space name={variable as any} horizontally by={5}>
         <Text contents={name} fontSize={'24px'} fontFamily={fontFamily} fill={'black'} />
@@ -57,6 +59,8 @@ export const GlobalFrame = withBluefish(function _GlobalFrame({ variables, opId 
   const frameVariables = `frameVariables_${opId}`;
   const frameBorder = `frameBorder_${opId}`;
   const groupName = opId;
+
+  console.log('creating global frame:', opId);
 
   // Font declaration
   const fontFamily = 'Andale mono, monospace';
@@ -111,13 +115,13 @@ export const Objects = withBluefish(function _Objects({
   // let oneRefName = useName(`one_${opIdString}`);
   // let elemRefName = useName(`elem_${opIdString}`);
 
-  let itemRefName = `pointed${opIdString}`;
-  let boxRefName = `pointer${opIdString}`;
-  let valueRefName = `value_${opIdString}`;
-  let labelRefName = `label_${opIdString}`;
-  let zeroRefName = `zero_${opIdString}`;
-  let oneRefName = `one_${opIdString}`;
-  let elemRefName = `elem_${opIdString}`;
+  let itemRefName = `pointed${opId}`;
+  let boxRefName = `pointer${opId}`;
+  let valueRefName = `value_${opId}`;
+  let labelRefName = `label_${opId}`;
+  let zeroRefName = `zero_${opId}`;
+  let oneRefName = `one_${opId}`;
+  let elemRefName = `elem_${opId}`;
 
   console.log(
     'all refs of this object: ',
