@@ -9,11 +9,17 @@ const Variable = withBluefish(function _Variable({ data }: { data: any }) {
   const { pointObject, name, value, opId } = data;
 
   // References
-  const valueName = useName('value');
-  const box = useName('box');
-  const boxBorderLeft = useName('boxBorderLeft');
-  const boxBorderBottom = useName('boxBorderBottom');
-  const variable = useName('variable');
+  // const valueName = useName('value');
+  // const box = useName('box');
+  // const boxBorderLeft = useName('boxBorderLeft');
+  // const boxBorderBottom = useName('boxBorderBottom');
+  // const variable = useName('variable');
+
+  const valueName = `value-${opId}`;
+  const box = `box-${opId}`;
+  const boxBorderLeft = `boxBorderLeft-${opId}`;
+  const boxBorderBottom = `boxBorderBottom-${opId}`;
+  const variable = `variable-${opId}`;
 
   // Declares font used in Python Tutor Diagrams
   const fontFamily = 'verdana, arial, helvetica, sans-serif';
@@ -21,15 +27,15 @@ const Variable = withBluefish(function _Variable({ data }: { data: any }) {
   return (
     <Group>
       {/* Creates frame of Variable component (text label & box for value) */}
-      <Space name={variable} horizontally by={5}>
+      <Space name={variable as any} horizontally by={5}>
         <Text contents={name} fontSize={'24px'} fontFamily={fontFamily} fill={'black'} />
-        <Rect name={box} height={40} width={40} fill={'#e2ebf6'} />
+        <Rect name={box as any} height={40} width={40} fill={'#e2ebf6'} />
       </Space>
       {/* Creates left and bottom edge borders */}
-      <Rect name={boxBorderLeft} height={40} width={2} fill={'#a6b3b6'} />
-      <Rect name={boxBorderBottom} height={2} width={40} fill={'#a6b3b6'} />
+      <Rect name={boxBorderLeft as any} height={40} width={2} fill={'#a6b3b6'} />
+      <Rect name={boxBorderBottom as any} height={2} width={40} fill={'#a6b3b6'} />
       {/* Creates text labels of variable */}
-      <Text name={valueName} contents={value} fontFamily={fontFamily} fontSize={'24px'} fill={'black'} />
+      <Text name={valueName as any} contents={value} fontFamily={fontFamily} fontSize={'24px'} fill={'black'} />
       {/* Align text and border components to variable frame */}
       <Align bottomCenter={[<Ref to={boxBorderBottom} />, <Ref to={box} />]}></Align>
       <Align centerLeft={[<Ref to={boxBorderLeft} />, <Ref to={box} />]}></Align>
@@ -40,11 +46,17 @@ const Variable = withBluefish(function _Variable({ data }: { data: any }) {
 
 export const GlobalFrame = withBluefish(function _GlobalFrame({ variables, opId }: { variables: any; opId: any }) {
   // References
-  const frame = useName('frame');
-  const opIdLabel = useName('opIdLabel');
-  const frameVariables = useName('frameVariables');
-  const frameBorder = useName('frameBorder');
-  const groupName = useName(opId);
+  // const frame = useName('frame');
+  // const opIdLabel = useName('opIdLabel');
+  // const frameVariables = useName('frameVariables');
+  // const frameBorder = useName('frameBorder');
+  // const groupName = useName(opId);
+
+  const frame = `frame_${opId}`;
+  const opIdLabel = `opIdLabel_${opId}`;
+  const frameVariables = `frameVariables_${opId}`;
+  const frameBorder = `frameBorder_${opId}`;
+  const groupName = opId;
 
   // Font declaration
   const fontFamily = 'Andale mono, monospace';
@@ -52,15 +64,21 @@ export const GlobalFrame = withBluefish(function _GlobalFrame({ variables, opId 
   return (
     <Group name={groupName}>
       {/* Global Frame and relevant text */}
-      <Rect name={frame} height={300} width={200} fill={'#e2ebf6'} />
-      <Rect name={frameBorder} height={300} width={5} fill={'#a6b3b6'} />
-      <Text name={opIdLabel} contents={'Global Frame'} fontSize={'24px'} fontFamily={fontFamily} fill={'black'} />
+      <Rect name={frame as any} height={300} width={200} fill={'#e2ebf6'} />
+      <Rect name={frameBorder as any} height={300} width={5} fill={'#a6b3b6'} />
+      <Text
+        name={opIdLabel as any}
+        contents={'Global Frame'}
+        fontSize={'24px'}
+        fontFamily={fontFamily}
+        fill={'black'}
+      />
       <Align topCenter={[<Ref to={opIdLabel} />, <Ref to={frame} />]}></Align>
       {/* TODO: this Space and Align should be a Col, but Col overwrites *all* placeable positions
             even though opIdLabel has already been placed */}
       <Space vertically by={10}>
         <Ref to={opIdLabel} />
-        <Col name={frameVariables} spacing={10} alignment={'right'}>
+        <Col name={frameVariables as any} spacing={10} alignment={'right'}>
           {variables.map((variable: any) => (
             <Variable data={variable} />
           ))}
@@ -85,13 +103,21 @@ export const Objects = withBluefish(function _Objects({
   opId: any;
   opIdString?: any;
 }) {
-  const itemRefName = useName(`pointed${opIdString}`);
-  const boxRefName = useName(`pointer${opIdString}`);
-  const valueRefName = useName(`value_${opIdString}`);
-  const labelRefName = useName(`label_${opIdString}`);
-  const zeroRefName = useName(`zero_${opIdString}`);
-  const oneRefName = useName(`one_${opIdString}`);
-  const elemRefName = useName(`elem_${opIdString}`);
+  // let itemRefName = useName(`pointed${opIdString}`);
+  // let boxRefName = useName(`pointer${opIdString}`);
+  // let valueRefName = useName(`value_${opIdString}`);
+  // let labelRefName = useName(`label_${opIdString}`);
+  // let zeroRefName = useName(`zero_${opIdString}`);
+  // let oneRefName = useName(`one_${opIdString}`);
+  // let elemRefName = useName(`elem_${opIdString}`);
+
+  let itemRefName = `pointed${opIdString}`;
+  let boxRefName = `pointer${opIdString}`;
+  let valueRefName = `value_${opIdString}`;
+  let labelRefName = `label_${opIdString}`;
+  let zeroRefName = `zero_${opIdString}`;
+  let oneRefName = `one_${opIdString}`;
+  let elemRefName = `elem_${opIdString}`;
 
   console.log(
     'all refs of this object: ',
@@ -108,15 +134,15 @@ export const Objects = withBluefish(function _Objects({
 
   return (
     <Group name={opId}>
-      <Text name={labelRefName} contents={objectType} fontFamily={fontFamily} fontSize={'16px'} fill={'grey'} />
+      <Text name={labelRefName as any} contents={objectType} fontFamily={fontFamily} fontSize={'16px'} fill={'grey'} />
 
       {/* separate names for each rectangle so that the arrow can go from the center of pointer to the center left of pointed */}
-      <Group name={elemRefName}>
-        <Rect name={boxRefName} height={60} width={70} fill={'#ffffc6'} stroke={'grey'} />
-        <Rect name={itemRefName} height={60} width={70} fill={'#ffffc6'} stroke={'grey'} />
-        <Text name={valueRefName} contents={value} fontSize={'24px'} fill={'black'} />
-        <Text name={zeroRefName} contents={'0'} fontFamily={fontFamily} fontSize={'16px'} fill={'grey'} />
-        <Text name={oneRefName} contents={'1'} fontFamily={fontFamily} fontSize={'16px'} fill={'grey'} />
+      <Group name={elemRefName as any}>
+        <Rect name={boxRefName as any} height={60} width={70} fill={'#ffffc6'} stroke={'grey'} />
+        <Rect name={itemRefName as any} height={60} width={70} fill={'#ffffc6'} stroke={'grey'} />
+        <Text name={valueRefName as any} contents={value} fontSize={'24px'} fill={'black'} />
+        <Text name={zeroRefName as any} contents={'0'} fontFamily={fontFamily} fontSize={'16px'} fill={'grey'} />
+        <Text name={oneRefName as any} contents={'1'} fontFamily={fontFamily} fontSize={'16px'} fill={'grey'} />
 
         <Align center={[<Ref to={valueRefName} />, <Ref to={itemRefName} />]}></Align>
 
@@ -195,70 +221,70 @@ export const PythonTutor = withBluefish(function _PythonTutor({
       };
     });
 
-  const allNamesMap = new Map();
+  // const allNamesMap = new Map();
 
-  const space1Name = useName('space1');
-  const space2Name = useName('space2');
-  const objectMatrixName = useName('objects-matrix');
-  const rowsNames = useNameList(rows.map((row: any, index: any) => `row${index}`));
-  const colsNames = useNameList(cols.map((col: any, index: any) => `col${index}`));
+  // const space1Name = useName('space1');
+  // const space2Name = useName('space2');
+  // const objectMatrixName = useName('objects-matrix');
+  // const rowsNames = useNameList(rows.map((row: any, index: any) => `row${index}`));
+  // const colsNames = useNameList(cols.map((col: any, index: any) => `col${index}`));
 
-  const allRectNames = [];
-  for (let i = 0; i < rows.length; i++) {
-    let levels = rows[i].nodes;
-    for (let j = 0; j < levels.length; j++) {
-      allRectNames.push(`row${i}_col${j}`);
-    }
-  }
-  const rectNames = useNameList(allRectNames);
+  // const allRectNames = [];
+  // for (let i = 0; i < rows.length; i++) {
+  //   let levels = rows[i].nodes;
+  //   for (let j = 0; j < levels.length; j++) {
+  //     allRectNames.push(`row${i}_col${j}`);
+  //   }
+  // }
+  // const rectNames = useNameList(allRectNames);
 
-  const groupName = useName(opId);
-  const globalFrameName = useName('globalFrame');
+  // const groupName = useName(opId);
+  // const globalFrameName = useName('globalFrame');
 
-  rows.forEach((row: any, index: any) => {
-    allNamesMap.set(`row${index}`, rowsNames[index]);
-  });
+  // rows.forEach((row: any, index: any) => {
+  //   allNamesMap.set(`row${index}`, rowsNames[index]);
+  // });
 
-  cols.forEach((col: any, index: any) => {
-    allNamesMap.set(`col${index}`, colsNames[index]);
-  });
+  // cols.forEach((col: any, index: any) => {
+  //   allNamesMap.set(`col${index}`, colsNames[index]);
+  // });
 
-  const objectsWithActualNames: any[] = [];
+  // const objectsWithActualNames: any[] = [];
 
-  for (let i = 0; i < rows.length; i++) {
-    let levels = rows[i].nodes;
-    for (let j = 0; j < levels.length; j++) {
-      allNamesMap.set(`row${i}_col${j}`, rectNames[i * levels.length + j]);
-      if (rows[i].nodes[j] !== '') {
-        objectsWithActualNames.push(rows[i].nodes[j]);
-      }
-    }
-  }
+  // for (let i = 0; i < rows.length; i++) {
+  //   let levels = rows[i].nodes;
+  //   for (let j = 0; j < levels.length; j++) {
+  //     allNamesMap.set(`row${i}_col${j}`, rectNames[i * levels.length + j]);
+  //     if (rows[i].nodes[j] !== '') {
+  //       objectsWithActualNames.push(rows[i].nodes[j]);
+  //     }
+  //   }
+  // }
 
-  const objectNamesList = useNameList(objectsWithActualNames);
+  // const objectNamesList = useNameList(objectsWithActualNames);
 
   // push names to allNamesMap
-  objectsWithActualNames.forEach((obj: any, index: any) => {
-    allNamesMap.set(objectsWithActualNames[index], objectNamesList[index]);
-    const ob = objMap.get(objectsWithActualNames[index]);
-    objMap.set(objectsWithActualNames[index], { ...ob, opId: objectNamesList[index], opIdString: ob.opId });
-  });
+  // objectsWithActualNames.forEach((obj: any, index: any) => {
+  //   allNamesMap.set(objectsWithActualNames[index], objectNamesList[index]);
+  //   const ob = objMap.get(objectsWithActualNames[index]);
+  //   objMap.set(objectsWithActualNames[index], { ...ob, opId: objectNamesList[index], opIdString: ob.opId });
+  // });
 
-  console.log('allNamesMap', allNamesMap);
-  console.log('colsNames', colsNames);
-  console.log('cols', cols);
+  // console.log('allNamesMap', allNamesMap);
+  // console.log('colsNames', colsNames);
+  // console.log('cols', cols);
 
   return (
-    <Group name={groupName}>
-      <GlobalFrame variables={variables} opId={'globalFrame'} name={globalFrameName} />
+    <Group name={opId}>
+      <GlobalFrame variables={variables} opId={`globalframe` as any} />
 
-      <Group name={objectMatrixName}>
+      <Group name={`object-matrix` as any}>
         {rows.map((level: any, index: any) => (
-          <Row name={rowsNames[index]} spacing={50} alignment={'middle'}>
+          <Row name={`row${index}` as any} spacing={50} alignment={'middle'}>
             {level.nodes.map((obj: any, objIndex: any) =>
               obj == '' ? (
                 <Rect
-                  name={rectNames[level.depth * level.nodes.length + objIndex]}
+                  name={`row${level.depth}_col${objIndex}` as any}
                   height={60}
                   width={140}
                   fill={'none'}
@@ -271,22 +297,22 @@ export const PythonTutor = withBluefish(function _PythonTutor({
           </Row>
         ))}
         {cols.map((columns, index) => (
-          <Col name={colsNames[index]} spacing={50} alignment={'left'}>
+          <Col name={`col${index}` as any} spacing={50} alignment={'left'}>
             {columns.nodes.map((objectId: any) => (
-              <Ref to={allNamesMap.get(objectId)} />
+              <Ref to={objectId} />
             ))}
           </Col>
         ))}
       </Group>
 
-      <Space name={space1Name} horizontally by={60}>
-        <Ref to={globalFrameName} />
-        <Ref to={objectMatrixName} />
+      <Space horizontally by={60}>
+        <Ref to={`globalframe`} />
+        <Ref to={`object-matrix`} />
       </Space>
 
-      <Space name={space2Name} vertically by={-250}>
-        <Ref to={globalFrameName} />
-        <Ref to={objectMatrixName} />
+      <Space vertically by={-250}>
+        <Ref to={`globalframe`} />
+        <Ref to={`object-matrix`} />
       </Space>
 
       {objectLinks.map((link: any) => (
@@ -304,24 +330,23 @@ export const PythonTutor = withBluefish(function _PythonTutor({
   );
 });
 
-// TODO: Connector is throwing an error - finds ref object but cannot resolve ref
-// Likely because of local ref issues
 export const Link = withBluefish(function _Link({ opId, start, end }: { opId: any; start: any; end: any }) {
   const groupRef = useName(opId);
   const startName = useName(start.opId);
   const endName = useName(end.opId);
+  console.log('found this connector: ', opId, start, end);
   return (
     <Group>
       <Connector
-        name={groupRef}
+        name={opId}
         $from={'center'}
         $to={'centerLeft'}
         stroke={'cornflowerblue'}
         strokeWidth={3}
         strokeDasharray={0}
       >
-        <Ref to={startName} />
-        <Ref to={endName} />
+        <Ref to={start.opId} />
+        <Ref to={end.opId} />
       </Connector>
     </Group>
   );

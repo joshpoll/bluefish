@@ -34,10 +34,10 @@ export type SpaceProps = SpaceVerticalProps | SpaceHorizontalProps;
 const spaceMeasurePolicy =
   (options: SpaceProps): Measure =>
   (measurables, constraints: Constraints) => {
-    console.log(
-      'entering spacing node',
-      measurables.map((m) => m.name?.symbol.description),
-    );
+    // console.log(
+    //   'entering spacing node',
+    //   measurables.map((m) => m.name?.symbol.description),
+    // );
     const placeables = measurables.map((measurable) => measurable.measure(constraints));
 
     if ('vertically' in options) {
