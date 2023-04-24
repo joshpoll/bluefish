@@ -6,6 +6,7 @@ import { Ref } from '../../components/Ref';
 import { Atom } from './Atom';
 import { Bond } from './Bond';
 import { Ring } from './Ring';
+import { Rect } from '../../main';
 
 const SmilesDrawer = require('smiles-drawer/app.js');
 const SvgDrawer = require('smiles-drawer/src/SvgDrawer');
@@ -285,7 +286,7 @@ export const Molecule = withBluefish((props: any) => {
         ))}
       </Group>
 
-      {vertices.map((v) => (
+      {/* {vertices.map((v) => (
         <Atom
           cx={(v.xLoc + minXOffset + 10) * 1.2}
           cy={(v.yLoc + minYOffset + 10) * 1.2}
@@ -303,7 +304,7 @@ export const Molecule = withBluefish((props: any) => {
         {renderRings.map((r) => (
           <Ring ring={r} vertexNameList={verticesName} edgeNameList={edgesName} />
         ))}
-      </Group>
+      </Group> */}
     </Group>
   );
 });
