@@ -80,6 +80,8 @@ import { flexibleRect } from './examples/grammars/gotree/3-EncodableTree';
 import { Cars0, Cars1, Cars2, Cars3 } from './examples/cars/cars';
 import { Objects } from './examples/python-tutor/Objects';
 // import { ChartAccent } from './examples/chart-accent';
+// import { Molecule } from './examples/chemistry/Molecule';
+import { ChartAccent } from './examples/chart-accent';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -282,18 +284,18 @@ function App() {
           <Text contents={'this is a test caption'} />
         </Col>
       </SVG> */}
-      <SVG width={1000} height={500}>
+      {/* <SVG width={1000} height={500}>
         <UpSet />
       </SVG>
       <SVG width={1000} height={500}>
         <Playfair />
-      </SVG>
+      </SVG> */}
       {/* <SVG width={500} height={500}>
         <BertinHotel />
       </SVG> */}
-      <SVG width={500} height={500}>
+      {/* <SVG width={500} height={500}>
         <Euclid />
-      </SVG>
+      </SVG> */}
       {/* <SVG width={500} height={500}>
         <Recipe
           recipe={[
@@ -384,8 +386,7 @@ function App() {
       {/* </Group>
         </Group>
       </SVG> */}
-      <br />
-      {/* <SVG width={170} height={170}>
+      {/* <SVG width={500} height={500}>
         <Cars0 />
       </SVG>
       <SVG width={170} height={170}>
@@ -463,8 +464,9 @@ function App() {
           strokeWidth={2}
         />
       </SVG> */}
-      {/* <SVG width={500} height={500}>
-        <Tree3
+      <ChartAccent />
+      {/* {/* <SVG width={500} height={500}>
+        <Tree4
           data={{
             value: 0,
             subtrees: [
@@ -519,7 +521,7 @@ function App() {
             />
           </Row>
         </Padding>
-      </SVG>
+      </SVG> */}
       <SVG width={500} height={500}>
         <Col spacing={50} alignment="center">
           <Tree2
