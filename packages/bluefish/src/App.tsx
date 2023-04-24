@@ -81,7 +81,6 @@ import { Contain } from './components/Contain';
 import { Tree4 } from './examples/grammars/gotree/3-EncodableTree - FRESH';
 import { flexibleRect } from './examples/grammars/gotree/3-EncodableTree';
 import { Cars0, Cars1, Cars2, Cars3 } from './examples/cars/cars';
-// import { Molecule } from './examples/chemistry/Molecule';
 // import { ChartAccent } from './examples/chart-accent';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
@@ -141,6 +140,12 @@ function App() {
 
   return (
     <div className="App">
+      {/* <SVG width={400} height={400}>
+        <Molecule ariaLabel={'Diphenyl ether'} chemicalFormula={'C1=CC=C(C=C1)OC2=CC=CC=C2'} />
+      </SVG> */}
+      <SVG width={400} height={400}>
+        <Molecule ariaLabel={'Aspirin'} chemicalFormula={'CC(OC1=C(C(=O)O)C=CC=C1)=O'} />
+      </SVG>
       <br />
       <br />
       <br />
@@ -192,18 +197,18 @@ function App() {
           <Text contents={'this is a test caption'} />
         </Col>
       </SVG> */}
-      <SVG width={1000} height={500}>
+      {/* <SVG width={1000} height={500}>
         <UpSet />
-      </SVG>
-      <SVG width={1000} height={500}>
+      </SVG> */}
+      {/* <SVG width={1000} height={500}>
         <Playfair />
-      </SVG>
+      </SVG> */}
       {/* <SVG width={500} height={500}>
         <BertinHotel />
       </SVG> */}
-      <SVG width={500} height={500}>
+      {/* <SVG width={500} height={500}>
         <Euclid />
-      </SVG>
+      </SVG> */}
       {/* <SVG width={500} height={500}>
         <Recipe
           recipe={[
@@ -294,7 +299,7 @@ function App() {
       {/* </Group>
         </Group>
       </SVG> */}
-      <SVG width={500} height={500}>
+      {/* <SVG width={500} height={500}>
         <Cars0 />
       </SVG>
       <SVG width={500} height={500}>
@@ -308,7 +313,7 @@ function App() {
       </SVG>
       <SVG width={500} height={500}>
         <Polio />
-      </SVG>
+      </SVG> */}
       {/* <SVG width={500} height={500}>
         <RectPath
           x={Math.PI / 2}
@@ -367,7 +372,7 @@ function App() {
           strokeWidth={2}
         />
       </SVG> */}
-      <SVG width={500} height={500}>
+      {/* <SVG width={500} height={500}>
         <Tree4
           data={{
             value: 0,
@@ -442,10 +447,10 @@ function App() {
             />
           </Row>
         </Padding>
-      </SVG>
-      <SVG width={500} height={500}>
+      </SVG> */}
+      {/* <SVG width={500} height={500}>
         <Col spacing={50} alignment="center">
-          {/* <Tree2
+          <Tree2
             data={{
               value: 0,
               subtrees: [
@@ -454,8 +459,8 @@ function App() {
               ],
             }}
             $node={RectNode}
-          /> */}
-          {/* <Tree2
+          />
+          <Tree2
             data={{
               value: 0,
               subtrees: [
@@ -464,11 +469,11 @@ function App() {
               ],
             }}
             $node={TextNode}
-          /> */}
+          />
         </Col>
-      </SVG>
-      <SVG width={500} height={300}>
-        {/* <Tree1
+      </SVG> */}
+      {/* <SVG width={500} height={300}>
+        <Tree1
           data={{
             value: 0,
             subtrees: [
@@ -476,8 +481,8 @@ function App() {
               { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
             ],
           }}
-        /> */}
-      </SVG>
+        />
+      </SVG> */}
       {/* <SVG width={500} height={300}>
         <Col spacing={10} alignment={'center'}>
           <Tree1

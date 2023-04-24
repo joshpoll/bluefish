@@ -6,7 +6,6 @@ import { Ref } from '../../components/Ref';
 import { Atom } from './Atom';
 import { Bond } from './Bond';
 import { Ring } from './Ring';
-import { Rect } from '../../main';
 
 const SmilesDrawer = require('smiles-drawer/app.js');
 const SvgDrawer = require('smiles-drawer/src/SvgDrawer');
@@ -244,7 +243,7 @@ export const Molecule = withBluefish((props: any) => {
   console.log('these are the render rings: ', renderRings);
 
   return (
-    <Group aria-label={props.ariaLabel} width={200} height={200}>
+    <Group aria-label={props.ariaLabel}>
       <Group aria-label={'Atoms'}>
         {vertices.map((v, index) => (
           <Atom
@@ -286,7 +285,7 @@ export const Molecule = withBluefish((props: any) => {
         ))}
       </Group>
 
-      {/* {vertices.map((v) => (
+      {vertices.map((v) => (
         <Atom
           cx={(v.xLoc + minXOffset + 10) * 1.2}
           cy={(v.yLoc + minYOffset + 10) * 1.2}
@@ -300,7 +299,7 @@ export const Molecule = withBluefish((props: any) => {
         />
       ))}
 
-      <Group aria-label={'Rings'}>
+      {/* <Group aria-label={'Rings'}>
         {renderRings.map((r) => (
           <Ring ring={r} vertexNameList={verticesName} edgeNameList={edgesName} />
         ))}

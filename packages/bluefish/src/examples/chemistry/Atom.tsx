@@ -60,8 +60,8 @@ export const Atom = withBluefish((props: AtomProps) => {
       height: r !== undefined ? +r * 2 : undefined,
       coord: {
         translate: {
-          x: cx !== undefined ? +cx - +(r ?? 0) : undefined,
-          y: cy !== undefined ? +cy - +(r ?? 0) : undefined,
+          x: cx !== undefined ? +cx - +(r ?? 0) : undefined, // left
+          y: cy !== undefined ? +cy - +(r ?? 0) : undefined, // top
         },
       },
     };
@@ -82,21 +82,21 @@ export const Atom = withBluefish((props: AtomProps) => {
       aria-hidden={ariaHidden}
       width={1.3 * (bbox?.width ?? 0)}
       height={1.3 * (bbox?.height ?? 0)}
-      transform={`translate(${bbox.coord?.translate?.x ?? 0} ${bbox.coord?.translate?.y ?? 0}) scale(${
-        bbox.coord?.scale?.x ?? 1
-      } ${bbox.coord?.scale?.y ?? 1})`}
+      // transform={`translate(${bbox.coord?.translate?.x ?? 0} ${bbox.coord?.translate?.y ?? 0}) scale(${
+      //   bbox.coord?.scale?.x ?? 1
+      // } ${bbox.coord?.scale?.y ?? 1})`}
     >
       <circle
         {...rest}
-        cx={(bbox.left ?? 0) + (bbox.width ?? 0) / 2}
-        cy={(bbox.top ?? 0) + (bbox.height ?? 0) / 2}
+        cx={(bbox.coord?.translate?.x ?? 0) + (bbox.width ?? 0) / 2}
+        cy={(bbox.coord?.translate?.y ?? 0) + (bbox.height ?? 0) / 2}
         r={(1.3 * (bbox.width ?? 0)) / 2}
         fill={content === 'C' ? 'none' : 'white'}
       />
 
       <text
-        x={bbox.left ?? 0}
-        y={(bbox.top ?? 0) + (bbox.height ?? 0) / 2}
+        x={bbox.coord?.translate?.x ?? 0}
+        y={(bbox.coord?.translate?.y ?? 0) + (bbox.height ?? 0) / 2}
         font-size={23}
         text-anchor={'center'}
         dominant-baseline={'central'}

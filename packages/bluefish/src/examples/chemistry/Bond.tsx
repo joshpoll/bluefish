@@ -71,16 +71,10 @@ const connectorMeasurePolicy = (props: BondProps): Measure => {
     return {
       left: fromX,
       top: fromY,
-      width: Math.abs((toX ?? 0) - (fromX ?? 0)),
-      height: Math.abs((toY ?? 0) - (fromY ?? 0)),
+      width: (toX ?? 0) - (fromX ?? 0),
+      height: (toY ?? 0) - (fromY ?? 0),
       right: toX,
       bottom: toY,
-      coord: {
-        translate: {
-          x: 0,
-          y: 0,
-        },
-      },
     };
   };
 };
@@ -137,14 +131,7 @@ export const Bond = withBluefish((props: PropsWithChildren<BondProps>) => {
   const ringBondDirection = calculateRingBondDirection(startLocationY, endLocationY, ringCenterY);
 
   return (
-    <g
-      id={id}
-      ref={domRef}
-      {...rest}
-      aria-label={bondAria}
-      name={curId}
-      transform={`${bbox.coord?.translate?.x ?? 0} ${bbox.coord?.translate?.y ?? 0}`}
-    >
+    <g id={id} ref={domRef} {...rest} aria-label={bondAria} name={curId}>
       {children}
       {bondType === '=' && ringCenterX === 0 && ringCenterY === 0 ? (
         <line
