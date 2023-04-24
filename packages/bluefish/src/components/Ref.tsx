@@ -20,7 +20,7 @@ export type Lookup = {
 
 export type BluefishRef = string | React.RefObject<any> | Symbol | Lookup;
 
-export type RefProps = { to: BluefishRef; guidePrimary?: Alignment1D | Alignment2D };
+export type RefProps = { to?: BluefishRef; select?: BluefishRef; guidePrimary?: Alignment1D | Alignment2D };
 
 export const resolveRef = (
   ref: BluefishRef,
@@ -54,9 +54,12 @@ export const resolveRef = (
 
         if (refObject === undefined) {
           throw new Error(
-            `Could not find component with symbol ${ref.symbol.symbol.description} and path ${ref.path.join(
+            `I couldn't find a component with symbol ${ref.symbol.symbol.description} and path ${ref.path.join(
               '.',
-            )}. Available symbols: ${Array.from(symbolMap.keys()).map((s) => s.description)}`,
+            )}. I searched ${Array.from(children?.values() ?? [])
+              .reverse()
+              .map((c) => c.description)}.
+            Available symbols: ${Array.from(symbolMap.keys()).map((s) => s.description)}`,
           );
         }
       }
@@ -103,13 +106,19 @@ Symbol map: ${Array.from(symbolMap.entries()).map(
       // console.log('[ref] resolved symbol', refObject);
       return refObject as unknown as Measurable;
     }
+    // else if ref is a Ref component, then call this function again, but with its select prop
+  } else if ('type' in ref && (ref as any).type === Ref) {
+    // console.log('[ref] resolving ref', ref);
+    return resolveRef((ref as any).props.select, map, symbolMap);
   } else {
-    const refObject = ref.current;
-    if (refObject === null) {
-      throw new Error(`Ref object is null`);
-    } else {
-      return refObject;
-    }
+    console.log('[ref] resolving ref', ref);
+    throw new Error(`Unknown ref object`);
+    // const refObject = ref.current;
+    // if (refObject === null) {
+    //   throw new Error(`Ref object is null`);
+    // } else {
+    //   return refObject;
+    // }
   }
 };
 
@@ -344,6 +353,8 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
   const measurable = useRef<Measurable | null>(null);
   const id = useId();
 
+  const id = useId();
+
   useImperativeHandle(
     ref,
     (): Measurable => ({
@@ -366,7 +377,7 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
       measure(constraints: Constraints): NewBBoxClass {
         // console.log('[ref] measure', constraints, props.to);
         try {
-          measurable.current = resolveRef(props.to, context.bfMap, symbolContext.bfSymbolMap);
+          measurable.current = resolveRef(props.to ?? props.select!, context.bfMap, symbolContext.bfSymbolMap);
           // TODO: we might not need the slice here
           // console.log(
           //   '[ref] transform stacks for',
@@ -423,12 +434,12 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
             // measurable.current.name,
           );
         } catch (e) {
-          console.error('Error while measuring', props.to, e);
+          console.error('Error while measuring', props.to ?? props.select, e);
           throw e;
         }
       },
     }),
-    [props.to, context.bfMap, symbolContext.bfSymbolMap],
+    [props.guidePrimary, props.to, props.select, context.bfMap, symbolContext.bfSymbolMap],
   );
 
   return <g id={id} className="ref" data-to={measurable.current?.id}></g>;

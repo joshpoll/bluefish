@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
-import { withBluefish, PropsWithBluefishFn } from '../../../../bluefish';
+import { withBluefish, PropsWithBluefishFn, useNameList } from '../../../../bluefish';
 import { Col, Rect, Row, Text } from '../../../../main';
 import { PlotContext } from '../Plot';
 import { ReactNode } from 'react';
@@ -33,6 +33,11 @@ export const GroupBy = withBluefish((props: GroupByProps<any>) => {
     : {};
 
   const groupedData = _.groupBy(data, props.field);
+
+  // TODO: this is wrong because we have to sort by positioning...
+  const groupNames = useNameList(Object.keys(groupedData));
+
+  console.log('groupedData', groupedData);
 
   // compute numRows. if numRows is not specified, then compute it from the number of groups
   // const numRows =
@@ -84,7 +89,7 @@ export const GroupBy = withBluefish((props: GroupByProps<any>) => {
   return (
     <Col totalHeight={totalHeight} spacing={props.verticalSpacing} alignment="center">
       {grid.map((chunk, i) => (
-        <Row totalWidth={totalWidth} spacing={props.horizontalSpacing} alignment="middle">
+        <Row name={groupNames[i]} totalWidth={totalWidth} spacing={props.horizontalSpacing} alignment="middle">
           {chunk}
         </Row>
       ))}

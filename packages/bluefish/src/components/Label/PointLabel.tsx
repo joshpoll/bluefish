@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { forwardRef, PropsWithChildren, useRef } from 'react';
-import { Measurable, Measure, PropsWithBluefish, useBluefishLayout, withBluefish } from '../../bluefish';
+import { Measurable, Measure, useBluefishLayout, withBluefish, PropsWithBluefish } from '../../bluefish';
 import { ReactChild } from '../../flatten-children';
 import { NewBBox } from '../../NewBBox';
 import { LayoutGroup } from '../LayoutGroup';
@@ -53,6 +53,7 @@ export type PointLabelProps = PropsWithBluefish<{
 
 export const PointLabel = forwardRef(function PointLabel(props: PointLabelProps, ref: any) {
   const { texts, avoidElements, ...rest } = props;
+
   return (
     <PointLabelAux {...rest} ref={ref}>
       <LayoutGroup /* id="labelRefPairs" */>
@@ -63,7 +64,7 @@ export const PointLabel = forwardRef(function PointLabel(props: PointLabelProps,
           </LayoutGroup>
         ))}
       </LayoutGroup>
-      {/* <LayoutGroup aria-hidden={true}>{avoidElements}</LayoutGroup> */}
+      <LayoutGroup aria-hidden>{avoidElements}</LayoutGroup>
     </PointLabelAux>
   );
 });
@@ -183,9 +184,11 @@ const pointLabelMeasurePolicy = (props: {}): Measure => {
   };
 };
 
-export const PointLabelAux = withBluefish((props: PropsWithChildren<{}>) => {
+export const PointLabelAux = withBluefish((props: PropsWithBluefish<{}>) => {
   const { id, domRef, bbox, children } = useBluefishLayout({}, props, pointLabelMeasurePolicy(props));
-  const { ...rest } = props;
+  // const { ...rest } = props;
+
+  const { name, ...rest } = props;
 
   return (
     <g

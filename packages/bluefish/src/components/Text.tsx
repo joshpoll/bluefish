@@ -38,6 +38,12 @@ export const textMeasurePolicy = (props: TextProps) => {
     top: measurements.fontTop,
     height: measurements.fontHeight,
     bottom: measurements.fontDescent,
+    coord: {
+      translate: {
+        x: props.x,
+        y: props.y,
+      },
+    },
     // top: 0,
     /* width: measurements.width, */
     // height: measurements.fontHeight,
@@ -46,15 +52,14 @@ export const textMeasurePolicy = (props: TextProps) => {
 
 export const Text = withBluefish((props: TextProps) => {
   const { name, ...rest } = props;
-  const { id, domRef, bbox } = useBluefishLayout({}, props, textMeasurePolicy(props));
+  const { id, domRef, bbox, hidden } = useBluefishLayout({}, props, textMeasurePolicy(props));
 
   return (
     <g
-      {...rest}
+      visibility={hidden === true ? 'hidden' : 'visible'}
       id={id}
       ref={domRef}
-      transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})
-scale(${bbox?.coord?.scale?.x ?? 1} ${bbox?.coord?.scale?.y ?? 1})`}
+      transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}
     >
       <text
         {...rest}

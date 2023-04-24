@@ -9,9 +9,7 @@ import { Path } from '../../../../components/Path';
 import { Line } from '../marks/Line';
 import { driving } from './driving';
 import { Dot } from '../marks/Dot';
-import { NewBarY } from '../marks/NewBarY';
-
-// see https://observablehq.com/@joshpoll/vvt-gog
+import { BarY as NewBarY } from '../marks/NewBarY';
 
 export const alphabet = [
   { letter: 'A', frequency: '0.08167' },

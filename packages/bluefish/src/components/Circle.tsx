@@ -8,10 +8,16 @@ export const Circle = withBluefish((props: CircleProps) => {
   const { id, domRef, bbox } = useBluefishLayout({}, props, () => {
     const { cx, cy, r } = props;
     return {
-      left: cx !== undefined ? +cx - +(r ?? 0) : undefined,
-      top: cy !== undefined ? +cy - +(r ?? 0) : undefined,
+      left: 0,
+      top: 0,
       width: r !== undefined ? +r * 2 : undefined,
       height: r !== undefined ? +r * 2 : undefined,
+      coord: {
+        translate: {
+          x: cx !== undefined ? +cx - +(r ?? 0) : undefined,
+          y: cy !== undefined ? +cy - +(r ?? 0) : undefined,
+        },
+      },
     };
   });
 

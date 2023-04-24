@@ -226,6 +226,7 @@ export const useBluefishLayoutInternal = (
   const [width, setWidth] = useState(bbox.width);
   const [height, setHeight] = useState(bbox.height);
   const [boundary, setBoundary] = useState<paper.Path | undefined>(undefined);
+  const [hidden, setHidden] = useState<boolean | undefined>(undefined);
   // const [_coord, setCoord] = useState<CoordinateTransform | undefined>(coord);
   const coordRef = useRef<CoordinateTransform>(coord ?? {});
   const bboxClassRef = useRef<NewBBoxClass | undefined>(undefined);
@@ -289,7 +290,7 @@ export const useBluefishLayoutInternal = (
           //   }
           // });
           setTransformStacks(childrenRef.current, transformStackRef.current);
-          const { width, height, left, top, right, bottom, coord, boundary } = measure(
+          const { width, height, left, top, right, bottom, coord, boundary, hidden } = measure(
             childrenRef.current,
             constraints,
           );
@@ -301,10 +302,11 @@ export const useBluefishLayoutInternal = (
           setRight(right);
           setBottom(bottom);
           setBoundary(boundary);
+          setHidden(hidden);
           coordRef.current = coord ?? {};
 
           bbox = new NewBBoxClass(
-            { left, top, right, bottom, width, height, coord: coordRef.current },
+            { left, top, right, bottom, width, height, coord: coordRef.current, hidden },
             {
               left: (left) => {
                 // console.log(name, 'left set to', left);
@@ -329,6 +331,10 @@ export const useBluefishLayoutInternal = (
               height: (height) => {
                 // console.log(name, 'height set to', height);
                 return setHeight(height);
+              },
+              hidden: (hidden) => {
+                // console.log(name, 'hidden set to', hidden);
+                return setHidden(hidden);
               },
               coord: (coord) => {
                 // console.log(name, 'coord set to', coord);
@@ -371,6 +377,7 @@ export const useBluefishLayoutInternal = (
     coord: coordRef.current,
     constraints: constraintRef.current,
     boundary,
+    hidden,
     children: processChildren2(children, (child, keys) => (node: any) => {
       let location: { [key: string | number]: any } = childrenRef.current;
       // console.log('[location] finding location', keys, 'in', location);
@@ -503,6 +510,8 @@ export type Symbol = {
   parent?: symbol;
 };
 
+export type Name = Symbol;
+
 export const useBluefishLayout = <T extends { children?: any; /* name?: string;  */ name?: Symbol }>(
   init: {
     bbox?: Partial<NewBBox>;
@@ -516,7 +525,7 @@ export const useBluefishLayout = <T extends { children?: any; /* name?: string; 
   const domRef = useRef<any>(null);
 
   // console.log('useBluefishLayout2', props.name, props.children, ref, domRef);
-  const { left, top, bottom, right, width, height, children, coord, boundary, constraints, id } =
+  const { left, top, bottom, right, width, height, children, coord, boundary, constraints, id, hidden } =
     useBluefishLayoutInternal(
       measure,
       init?.bbox ?? {},
@@ -545,6 +554,7 @@ export const useBluefishLayout = <T extends { children?: any; /* name?: string; 
       height,
       coord,
     },
+    hidden,
     children,
   };
 };
@@ -826,6 +836,54 @@ export const useNameList = (names: string[]): Symbol[] => {
     };
   });
 };
+
+// like useNameList, but accepts an arbitrary JSON object with strings at the leaves and returns a
+// new object with the same structure but with Bluefish names at the leaves
+export const useNames = (
+  names: unknown[] | Record<number | string, unknown>,
+): unknown | Record<number | string, unknown> => {
+  const { bfSymbolMap } = useBluefishSymbolContext();
+
+  const {
+    ref: parentRef,
+    parent: { scope: parentSymbol },
+  } = useContext(RefContext);
+
+  const symbols = useMemo(() => {
+    // construct the output in a functional style
+    const recurse = (
+      names: unknown[] | Record<number | string, unknown>,
+      path: (number | string)[],
+    ): unknown[] | Record<number | string, unknown> => {
+      const output: Record<number | string, unknown> = {};
+      for (const [key, value] of Object.entries(names)) {
+        if (typeof value === 'string') {
+          const symbol = Symbol(`${path.join('.')}.${value}`);
+          output[key] = {
+            symbol,
+            parent: parentSymbol,
+          };
+          if (parentSymbol !== undefined) {
+            bfSymbolMap.set(parentSymbol, {
+              ref: bfSymbolMap.get(parentSymbol)?.ref ?? undefined,
+              children: new Set([...Array.from(bfSymbolMap.get(parentSymbol)?.children ?? []), symbol]),
+            });
+          }
+        } else if (typeof value === 'object' && value !== null) {
+          output[key] = recurse(value as Record<number | string, unknown>, [...path, key]);
+        }
+      }
+      return output;
+    };
+
+    return recurse(names, []);
+  }, [names, parentSymbol, bfSymbolMap]);
+
+  return symbols as Record<string, unknown>;
+};
+
+// TODO: maybe I can use a SolidJS-style (probably not originally theirs) store API to make this
+// a bit more ergonomic
 
 export const lookup = (symbol: Symbol, ...path: string[]) => {
   return {

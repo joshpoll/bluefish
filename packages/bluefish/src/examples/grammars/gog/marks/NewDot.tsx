@@ -114,10 +114,18 @@ const dotMeasurePolicy = ({ cx, cy, r, xScale, yScale }: DotScaleProps): Measure
     const scaledCY = cy !== undefined ? yScale(constraints.height)(+cy) : undefined;
 
     return {
-      left: scaledCX !== undefined ? +scaledCX - +(r ?? 0) : undefined,
-      top: scaledCY !== undefined ? +scaledCY - +(r ?? 0) : undefined,
+      // left: scaledCX !== undefined ? +scaledCX - +(r ?? 0) : undefined,
+      // top: scaledCY !== undefined ? +scaledCY - +(r ?? 0) : undefined,
+      left: 0,
+      top: 0,
       width: r !== undefined ? +r * 2 : undefined,
       height: r !== undefined ? +r * 2 : undefined,
+      coord: {
+        translate: {
+          x: scaledCX !== undefined ? +scaledCX : undefined,
+          y: scaledCY !== undefined ? +scaledCY : undefined,
+        },
+      },
     };
   };
 };

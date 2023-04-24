@@ -91,339 +91,163 @@ export const splitAlignment = (
   return [verticalAlignment, horizontalAlignment];
 };
 
-type AlignProps =
-  | { [K in Alignment2D]?: React.CElement<any, any> | React.CElement<any, any>[] }
-  | { [K in Alignment1DHorizontal]?: React.CElement<any, any> | React.CElement<any, any>[] }
-  | { [K in Alignment1DVertical]?: React.CElement<any, any> | React.CElement<any, any>[] };
+// type AlignProps =
+//   | { [K in Alignment2D]?: React.CElement<any, any> | React.CElement<any, any>[] }
+//   | { [K in Alignment1DHorizontal]?: React.CElement<any, any> | React.CElement<any, any>[] }
+//   | { [K in Alignment1DVertical]?: React.CElement<any, any> | React.CElement<any, any>[] };
+type AlignProps = PropsWithBluefish<{
+  x?: number;
+  y?: number;
+  alignment?: Alignment2D | Alignment1D;
+}>;
 
-export const Align = withBluefish(function Align(props: AlignProps & { name?: any }) {
-  const { name: _, ...rest } = props;
-  const children = Object.entries(rest).flatMap(([alignment, child]) => {
-    if (Array.isArray(child)) {
-      return child.map((c) => ({ alignment: alignment as Alignment2D, child: c }));
-    } else {
-      return { alignment: alignment as Alignment2D, child };
-    }
-  });
+export const Align = withBluefish(function Align(props: AlignProps) {
+  const { id, domRef, children, bbox } = useBluefishLayout({}, props, alignMeasurePolicy(props));
 
-  const alignments = children.map((c) => c.alignment).map(splitAlignment);
-
-  return <AlignAux alignments={alignments}>{children.map((c) => c.child)}</AlignAux>;
+  // return <AlignAux alignments={alignments}>{children.map((c) => c.child)}</AlignAux>;
+  return (
+    <g
+      id={id}
+      ref={domRef}
+      transform={`translate(${bbox!.coord?.translate?.x ?? 0}, ${bbox!.coord?.translate?.y ?? 0})`}
+    >
+      {children}
+    </g>
+  );
 });
-
-const isLeftFixed = (placeable: NewBBoxClass): boolean => {
-  return placeable.left !== undefined && placeable.coord !== undefined && placeable.coord.translate?.x !== undefined;
-};
-
-const isTopFixed = (placeable: NewBBoxClass): boolean => {
-  return placeable.top !== undefined && placeable.coord !== undefined && placeable.coord.translate?.y !== undefined;
-};
-
-const isRightFixed = (placeable: NewBBoxClass): boolean => {
-  return placeable.right !== undefined && placeable.coord !== undefined && placeable.coord.translate?.x !== undefined;
-};
-
-const isBottomFixed = (placeable: NewBBoxClass): boolean => {
-  return placeable.bottom !== undefined && placeable.coord !== undefined && placeable.coord.translate?.y !== undefined;
-};
-
-const isWidthFixed = (placeable: NewBBoxClass): boolean => {
-  return placeable.width !== undefined && placeable.coord !== undefined && placeable.coord.scale?.x !== undefined;
-};
-
-const isHeightFixed = (placeable: NewBBoxClass): boolean => {
-  return placeable.height !== undefined && placeable.coord !== undefined && placeable.coord.scale?.y !== undefined;
-};
 
 // COMBAK: this implementation is brittle. a more robust implementation would probably be to use some
 // version of the blue constraint solver here to locally propagate the equality constraints
 const alignMeasurePolicy =
-  (options: AlignAuxProps): Measure =>
+  (options: AlignProps): Measure =>
   (measurables, constraints: Constraints) => {
-    console.log('[align2] entering alignment node');
-    // const [mov, fix] = measurables.map((measurable) => measurable.measure(constraints));
+    // basically we have two giant equalities to solve here: the horizontal and vertical axes
+    // each component defines what horizontal and vertical alignment it wants (if any)
+    // it's our job to propagate values to all of them.
+
+    // first we identify all the components that have a fixed position
+    // then we propagate the fixed position to all the other components
+    // fin.
+
     const placeables = measurables.map((measurable) => measurable.measure(constraints));
 
-    // find components that have a fixed position
-    let fixedLeftComponents = placeables.filter(isLeftFixed);
-    let firstFixedLeftIndex = placeables.findIndex(isLeftFixed);
+    const alignments: [VerticalAlignment | undefined, HorizontalAlignment | undefined][] = measurables
+      .map((m) => m.guidePrimary ?? options.alignment)
+      .map((alignment) => (alignment !== undefined ? splitAlignment(alignment) : [undefined, undefined]));
 
-    let fixedTopComponents = placeables.filter(isTopFixed);
-    let firstFixedTopIndex = placeables.findIndex(isTopFixed);
+    const verticalPlaceables = _.zip(placeables, alignments).filter(([placeable, alignment]) => {
+      if (alignment === undefined) {
+        return false;
+      }
+      const [verticalAlignment, horizontalAlignment] = alignment;
+      return verticalAlignment !== undefined;
+    });
 
-    let fixedRightComponents = placeables.filter(isRightFixed);
-    let firstFixedRightIndex = placeables.findIndex(isRightFixed);
+    const horizontalPlaceables = _.zip(placeables, alignments).filter(([placeable, alignment]) => {
+      if (alignment === undefined) {
+        return false;
+      }
+      const [verticalAlignment, horizontalAlignment] = alignment;
+      return horizontalAlignment !== undefined;
+    });
 
-    let fixedBottomComponents = placeables.filter(isBottomFixed);
-    let firstFixedBottomIndex = placeables.findIndex(isBottomFixed);
-
-    console.log(
-      '[align2]',
-      _.zip(
-        measurables.map((m) => m.name?.symbol.description),
-        options.alignments,
-        placeables.map((p) =>
-          JSON.stringify({
-            left: p.left,
-            top: p.top,
-            width: p.width,
-            height: p.height,
-            right: p.right,
-            bottom: p.bottom,
-          }),
-        ),
-      ),
-    );
-    console.log('[align2] fixedXY', fixedLeftComponents, firstFixedLeftIndex, fixedTopComponents, firstFixedTopIndex);
-
-    if (fixedLeftComponents.length === 0) {
-      placeables[0].left = 0;
-      fixedLeftComponents = [placeables[0]];
-      firstFixedLeftIndex = 0;
-    }
-
-    if (fixedTopComponents.length === 0) {
-      placeables[0].top = 0;
-      fixedTopComponents = [placeables[0]];
-      firstFixedTopIndex = 0;
-    }
-
-    if (fixedRightComponents.length === 0) {
-      placeables[0].right = 0;
-      fixedRightComponents = [placeables[0]];
-      firstFixedRightIndex = 0;
-    }
-
-    if (fixedBottomComponents.length === 0) {
-      placeables[0].bottom = 0;
-      fixedBottomComponents = [placeables[0]];
-      firstFixedBottomIndex = 0;
-    }
-
-    console.log(
-      '[align2] fixedXY after',
-      fixedLeftComponents,
-      firstFixedLeftIndex,
-      fixedTopComponents,
-      firstFixedTopIndex,
-    );
-
-    // if (fixedXComponents.length > 0) {
-    //   // throw if there are multiple fixed x components and they don't all have the same x
-    //   const fixedX = fixedXComponents[0].left;
-    //   if (fixedXComponents.some((placeable) => placeable.left !== fixedX)) {
-    //     throw new Error(
-    //       `I expected all fixed x components to have the same x. Instead, I found: ${fixedXComponents
-    //         .map((placeable, i) => `${measurables[i].name} at ${placeable.left}`)
-    //         .join(', ')}`,
-    //     );
-    //   }
-    // }
-
-    // if (fixedYComponents.length > 0) {
-    //   // throw if there are multiple fixed y components and they don't all have the same y
-    //   const fixedY = fixedYComponents[0].top;
-    //   if (fixedYComponents.some((placeable) => placeable.top !== fixedY)) {
-    //     throw new Error(
-    //       `I expected all fixed y components to have the same y. Instead, I found: ${fixedYComponents
-    //         .map((placeable, i) => `${measurables[i].name} at ${placeable.top}`)
-    //         .join(', ')}`,
-    //     );
-    //   }
-    // }
-
-    const fixLeftAnchorPlaceable = fixedLeftComponents[0];
-    const fixLeftHorizontalAlignment = options.alignments[firstFixedLeftIndex][1];
-
-    const fixTopAnchorPlaceable = fixedTopComponents[0];
-    const fixTopVerticalAlignment = options.alignments[firstFixedTopIndex][0];
-
-    const fixRightAnchorPlaceable = fixedRightComponents[0];
-    const fixRightHorizontalAlignment = options.alignments[firstFixedRightIndex][1];
-
-    const fixBottomAnchorPlaceable = fixedBottomComponents[0];
-    const fixBottomVerticalAlignment = options.alignments[firstFixedBottomIndex][0];
-
-    let fixAnchor: { x?: number; y?: number } = {};
-
-    console.log(
-      '[align2] LeftAnchor',
-      JSON.stringify({
-        left: fixLeftAnchorPlaceable.left,
-        width: fixLeftAnchorPlaceable.width,
-        right: fixLeftAnchorPlaceable.right,
-      }),
-    );
-
-    console.log(
-      '[align2] TopAnchor',
-      JSON.stringify({
-        top: fixTopAnchorPlaceable.top,
-        height: fixTopAnchorPlaceable.height,
-        bottom: fixTopAnchorPlaceable.bottom,
-      }),
-    );
-
-    console.log(
-      '[align2] RightAnchor',
-      JSON.stringify({
-        left: fixRightAnchorPlaceable.left,
-        width: fixRightAnchorPlaceable.width,
-        right: fixRightAnchorPlaceable.right,
-      }),
-    );
-
-    console.log(
-      '[align2] BottomAnchor',
-      JSON.stringify({
-        top: fixBottomAnchorPlaceable.top,
-        height: fixBottomAnchorPlaceable.height,
-        bottom: fixBottomAnchorPlaceable.bottom,
-      }),
-    );
-
-    // console.log('[align2] alignments', options.alignments);
-
-    if (fixLeftHorizontalAlignment === 'left') {
-      fixAnchor.x = fixLeftAnchorPlaceable.left;
-    } else if (fixLeftHorizontalAlignment === 'center' && fixLeftAnchorPlaceable.width !== undefined) {
-      fixAnchor.x = fixLeftAnchorPlaceable.left! + fixLeftAnchorPlaceable.width / 2;
-    } else if (fixRightHorizontalAlignment === 'center' && fixRightAnchorPlaceable.width !== undefined) {
-      fixAnchor.x = fixRightAnchorPlaceable.right! - fixRightAnchorPlaceable.width / 2;
-    } else if (fixRightHorizontalAlignment === 'right') {
-      fixAnchor.x = fixRightAnchorPlaceable.right;
-    }
-
-    if (fixTopVerticalAlignment === 'top') {
-      fixAnchor.y = fixTopAnchorPlaceable.top;
-    } else if (fixTopVerticalAlignment === 'center' && fixTopAnchorPlaceable.height !== undefined) {
-      fixAnchor.y = fixTopAnchorPlaceable.top! + fixTopAnchorPlaceable.height / 2;
-    } else if (fixBottomVerticalAlignment === 'center' && fixBottomAnchorPlaceable.height !== undefined) {
-      fixAnchor.y = fixBottomAnchorPlaceable.bottom! - fixBottomAnchorPlaceable.height / 2;
-    } else if (fixBottomVerticalAlignment === 'bottom') {
-      fixAnchor.y = fixBottomAnchorPlaceable.bottom;
-    }
-
-    console.log('[align2] fixAnchor', fixAnchor);
-
-    for (const i in _.zip(options.alignments, placeables)) {
-      let [alignment, placeable] = _.zip(options.alignments, placeables)[i];
-      const [verticalAlignment, horizontalAlignment] = alignment ?? [undefined, undefined];
-
-      placeable = placeable!;
-
-      try {
-        if (horizontalAlignment !== undefined) {
-          switch (horizontalAlignment) {
-            case 'left':
-              placeable.left = fixAnchor.x;
-              // if (!isLeftFixed(placeable)) {
-              //   placeable.left = fixAnchor.x;
-              // } else {
-              //   // check that the left is the same as the fixed anchor
-              //   if (placeable.left !== fixAnchor.x) {
-              //     throw new Error(
-              //       `I expected ${'a component'} to have the same left as the fixed anchor (${
-              //         fixAnchor.x
-              //       }), but it was ${placeable.left} instead`,
-              //     );
-              //   }
-              // }
-              break;
-            case 'center':
-              if (placeable.width === undefined) {
-                throw new Error('cannot center align horizontally without width');
-              }
-              placeable.left = fixAnchor.x! - placeable.width! / 2;
-              // if (!isLeftFixed(placeable)) {
-              //   placeable.left = fixAnchor.x! - placeable.width! / 2;
-              // } else {
-              //   if (placeable.left! + placeable.width! / 2 !== fixAnchor.x) {
-              //     throw new Error(
-              //       `I expected ${'a component'} to have the same horizontal center as the fixed anchor (${
-              //         fixAnchor.x
-              //       }), but it was ${placeable.left! + placeable.width! / 2} instead`,
-              //     );
-              //   }
-              // }
-              break;
-            case 'right':
-              console.log(
-                '[align2] right',
-                JSON.stringify({
-                  left: placeable.left,
-                  width: placeable.width,
-                  right: placeable.right,
-                }),
-              );
-              placeable.right = fixAnchor.x;
-            // if (!isRightFixed(placeable)) {
-            //   placeable.right = fixAnchor.x;
-            // } else {
-            //   if (placeable.right !== fixAnchor.x) {
-            //     throw new Error(
-            //       `I expected ${'a component'} to have the same right as the fixed anchor (${
-            //         fixAnchor.x
-            //       }), but it was ${placeable.right} instead`,
-            //     );
-            //   }
-            //   break;
-            // }
-          }
-
-          if (verticalAlignment !== undefined) {
-            switch (verticalAlignment) {
-              case 'top':
-                placeable.top = fixAnchor.y;
-                if (!isTopFixed(placeable)) {
-                  placeable.top = fixAnchor.y;
-                } else {
-                  if (placeable.top !== fixAnchor.y) {
-                    throw new Error(
-                      `I expected ${'a component'} to have the same top as the fixed anchor (${
-                        fixAnchor.y
-                      }), but it was ${placeable.top} instead`,
-                    );
-                  }
-                }
-                break;
-              case 'center':
-                if (placeable.height === undefined) {
-                  throw new Error('cannot center align vertically without height');
-                }
-                placeable.top = fixAnchor.y! - placeable.height! / 2;
-                if (!isTopFixed(placeable)) {
-                  placeable.top = fixAnchor.y! - placeable.height! / 2;
-                } else {
-                  if (placeable.top! + placeable.height! / 2 !== fixAnchor.y) {
-                    throw new Error(
-                      `I expected ${'a component'} to have the same vertical center as the fixed anchor (${
-                        fixAnchor.y
-                      }), but it was ${placeable.top! + placeable.height! / 2} instead`,
-                    );
-                  }
-                }
-                break;
-              case 'bottom':
-                placeable.bottom = fixAnchor.y;
-                if (!isBottomFixed(placeable)) {
-                  placeable.bottom = fixAnchor.y;
-                } else {
-                  if (placeable.bottom !== fixAnchor.y) {
-                    throw new Error(
-                      `I expected ${'a component'} to have the same bottom as the fixed anchor (${
-                        fixAnchor.y
-                      }), but it was ${placeable.bottom} instead`,
-                    );
-                  }
-                }
-                break;
+    const verticalValue =
+      verticalPlaceables
+        .map(([placeable, alignment]) => {
+          const [verticalAlignment, horizontalAlignment] = alignment!;
+          if (verticalAlignment === 'top') {
+            return placeable!.top;
+          } else if (verticalAlignment === 'center') {
+            if (placeable!.top === undefined || placeable!.height === undefined) {
+              return undefined;
             }
+            return placeable!.top + placeable!.height / 2;
+          } else if (verticalAlignment === 'bottom') {
+            return placeable!.bottom;
+          } else {
+            return undefined;
           }
+        })
+        .filter((v) => v !== undefined)[0] ??
+      options.y ??
+      0;
+
+    console.log(
+      '[Align] potential vertical values',
+      options.alignment,
+      measurables.map((m) => m.name?.symbol?.description),
+      verticalPlaceables
+        .map(([placeable, alignment]) => {
+          const [verticalAlignment, horizontalAlignment] = alignment!;
+          if (verticalAlignment === 'top') {
+            return placeable!.top;
+          } else if (verticalAlignment === 'center') {
+            if (placeable!.top === undefined || placeable!.height === undefined) {
+              return undefined;
+            }
+            return placeable!.top + placeable!.height / 2;
+          } else if (verticalAlignment === 'bottom') {
+            return placeable!.bottom;
+          } else {
+            return undefined;
+          }
+        })
+        .filter((v) => v !== undefined),
+    );
+
+    const horizontalValue =
+      horizontalPlaceables
+        .map(([placeable, alignment]) => {
+          const [verticalAlignment, horizontalAlignment] = alignment!;
+          if (horizontalAlignment === 'left') {
+            return placeable!.left;
+          } else if (horizontalAlignment === 'center') {
+            if (placeable!.left === undefined || placeable!.width === undefined) {
+              return undefined;
+            }
+            return placeable!.left + placeable!.width / 2;
+          } else if (horizontalAlignment === 'right') {
+            return placeable!.right;
+          } else {
+            return undefined;
+          }
+        })
+        .filter((v) => v !== undefined)[0] ??
+      options.x ??
+      0;
+
+    // console.log('[Align] verticalValue', verticalValue);
+    // console.log('[Align] horizontalValue', horizontalValue);
+
+    for (const [placeable, alignment] of verticalPlaceables) {
+      // console.log('[Align] placeable', placeable);
+      // console.log('[Align] alignment', alignment);
+      const [verticalAlignment, horizontalAlignment] = alignment!;
+      if (verticalAlignment === 'top') {
+        placeable!.top = verticalValue;
+      } else if (verticalAlignment === 'center') {
+        if (placeable!.height === undefined) {
+          continue;
         }
-      } catch (e) {
-        // continue;
-        throw e;
+        placeable!.top = verticalValue - placeable!.height / 2;
+      } else if (verticalAlignment === 'bottom') {
+        placeable!.bottom = verticalValue;
+      }
+    }
+
+    for (const [placeable, alignment] of horizontalPlaceables) {
+      // console.log('[Align] placeable', placeable);
+      // console.log('[Align] alignment', alignment);
+      const [verticalAlignment, horizontalAlignment] = alignment!;
+      if (horizontalAlignment === 'left') {
+        placeable!.left = horizontalValue;
+      } else if (horizontalAlignment === 'center') {
+        if (placeable!.width === undefined) {
+          continue;
+        }
+        placeable!.left = horizontalValue - placeable!.width / 2;
+      } else if (horizontalAlignment === 'right') {
+        placeable!.right = horizontalValue;
       }
     }
 
@@ -441,19 +265,13 @@ const alignMeasurePolicy =
     const width = right === undefined || left === undefined ? undefined : right - left;
     const height = bottom === undefined || top === undefined ? undefined : bottom - top;
 
-    console.log(
-      '[align2] bbox',
-      JSON.stringify({
-        left,
-        right,
-        top,
-        bottom,
-        width,
-        height,
-      }),
-    );
-
     return {
+      coord: {
+        translate: {
+          x: options.x,
+          y: options.y,
+        },
+      },
       left,
       top,
       right,
@@ -462,18 +280,3 @@ const alignMeasurePolicy =
       height,
     };
   };
-
-export const AlignAux = withBluefish((props: PropsWithChildren<AlignAuxProps>) => {
-  const { id, domRef, children, bbox } = useBluefishLayout({}, props, alignMeasurePolicy(props));
-
-  return (
-    <g
-      id={id}
-      ref={domRef}
-      transform={`translate(${bbox!.coord?.translate?.x ?? 0}, ${bbox!.coord?.translate?.y ?? 0})`}
-    >
-      {children}
-    </g>
-  );
-});
-AlignAux.displayName = 'AlignAux';
