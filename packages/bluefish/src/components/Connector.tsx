@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { forwardRef, PropsWithChildren, useImperativeHandle } from 'react';
 import {
   withBluefish,
@@ -23,14 +24,14 @@ import { rowMeasurePolicy } from './Row';
 //     of: BluefishRef;
 //   };
 // };
-export type ConnectorProps = PropsWithBluefish<
+export type LinkProps = PropsWithBluefish<
   React.SVGProps<SVGLineElement> & {
     $from?: Alignment2D;
     $to?: Alignment2D;
   }
 >;
 
-const connectorMeasurePolicy = (props: ConnectorProps): Measure => {
+const connectorMeasurePolicy = (props: LinkProps): Measure => {
   return (measurables, constraints: any) => {
     const [from, to] = measurables.map((m) => m.measure(constraints));
     const [fromYDir, fromXDir] = splitAlignment(props.$from ?? measurables[0].guidePrimary ?? 'center');
@@ -93,7 +94,33 @@ const connectorMeasurePolicy = (props: ConnectorProps): Measure => {
     // const width = right - left;
     // const height = bottom - top;
 
-    return {
+    const left = _.min([fromX, toX]);
+    const top = _.min([fromY, toY]);
+    const right = _.max([fromX, toX]);
+    const bottom = _.max([fromY, toY]);
+
+    // if (
+    //   props.$from === 'centerRight' &&
+    //   props.$to === 'centerLeft' &&
+    //   props.stroke === 'black' &&
+    //   props.strokeWidth === 2
+    // )
+    //   console.log('[connector] bbox here', { left, top, right, bottom });
+
+    // // determine if line is going up-left or down-right
+    // const sense = (fromX: number, fromY: number, toX: number, toY: number) => {
+    //   if (fromX < toX && fromY < toY) {
+    //     return 'down-right';
+    //   } else if (fromX < toX && fromY > toY) {
+    //     return 'up-right';
+    //   } else if (fromX > toX && fromY < toY) {
+    //     return 'down-left';
+    //   } else if (fromX > toX && fromY > toY) {
+    //     return 'up-left';
+    //   }
+    // };
+
+    const oldBBox = {
       left: fromX,
       top: fromY,
       width: (toX ?? 0) - (fromX ?? 0),
@@ -101,13 +128,28 @@ const connectorMeasurePolicy = (props: ConnectorProps): Measure => {
       right: toX,
       bottom: toY,
     };
+
+    return {
+      left,
+      top,
+      right,
+      bottom,
+      width: (right ?? 0) - (left ?? 0),
+      height: (bottom ?? 0) - (top ?? 0),
+      coord: {
+        translate: { x: 0, y: 0 },
+      },
+      boundary: oldBBox as any,
+    };
   };
 };
 
 // TODO: note that if `children` is not placed, this doesn't actually measure anything!
 // I'm not sure why...
-export const Connector = withBluefish((props: PropsWithChildren<ConnectorProps>) => {
-  const { id, bbox, domRef, children } = useBluefishLayout({}, props, connectorMeasurePolicy(props));
+export const Link = withBluefish((props: PropsWithChildren<LinkProps>) => {
+  const { id, domRef, children, boundary } = useBluefishLayout({}, props, connectorMeasurePolicy(props));
+
+  const bbox = boundary as unknown as NewBBoxClass;
 
   const { $from, $to, name, ...rest } = props;
   return (
@@ -125,4 +167,4 @@ export const Connector = withBluefish((props: PropsWithChildren<ConnectorProps>)
     </>
   );
 });
-Connector.displayName = 'Connector';
+Link.displayName = 'Link';

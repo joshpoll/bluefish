@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { lookup, useName, withBluefish } from '../../bluefish';
 import { Contain } from '../../components/Contain';
 import { Distribute } from '../../components/Distribute';
-import { Align, Col, Connector, Group, Padding, Rect, Ref, Text } from '../../main';
+import { Align, Col, Connector as Link, Group, Padding, Rect, Ref, Text } from '../../main';
 import { NewDot } from '../grammars/gog/marks/NewDot';
 import { Plot2 as Plot } from '../grammars/gog/Plot';
 import { nonNullData } from './data';
@@ -95,10 +95,10 @@ export const Cars2 = withBluefish((props: any) => {
           <Ref select={plot} />
           <Ref select={label} />
         </Distribute>
-        <Connector>
+        <Link $from="centerRight" $to="centerLeft" stroke="black" strokeWidth={2}>
           <Ref select={maxDot} />
           <Ref select={label} />
-        </Connector>
+        </Link>
       </Group>
     </Padding>
   );
@@ -113,12 +113,12 @@ export const Cars3 = withBluefish((props: any) => {
   const maxDot = lookup(dots, `dot-${indexMaxEfficiency}`);
   const plot = useName('plot');
   const link = useName('link');
+
   const background = useName('background');
 
   return (
     <Padding all={20}>
       <Group>
-        <Rect name={background} />
         <Plot
           name={plot}
           data={nonNullData}
@@ -137,14 +137,30 @@ export const Cars3 = withBluefish((props: any) => {
           <Ref select={plot} />
           <Ref select={label} />
         </Distribute>
-        <Connector name={link}>
+        <Link name={link} $from="centerRight" $to="centerLeft" stroke="black" strokeWidth={2}>
           <Ref select={maxDot} />
           <Ref select={label} />
-        </Connector>
-        <Contain padding={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-          <Ref select={link} />
+        </Link>
+        <Rect name={background} fill="goldenrod" opacity={0.7} />
+        <Align alignment="left">
           <Ref select={background} />
-        </Contain>
+          <Ref select={link} />
+        </Align>
+        <Align alignment="right">
+          <Ref select={background} />
+          <Ref select={link} />
+        </Align>
+        <Align alignment="top">
+          <Ref select={background} />
+          <Ref select={link} />
+        </Align>
+        <Align alignment="bottom">
+          <Ref select={background} />
+          <Ref select={link} />
+        </Align>
+        {/* <Contain>
+          <Ref select={link} />
+        </Contain> */}
       </Group>
     </Padding>
   );

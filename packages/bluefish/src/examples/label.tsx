@@ -16,7 +16,7 @@ import { Group } from '../components/Group';
 import { Line } from '../components/Line';
 import { Arrow } from '../components/Arrow';
 import { Space } from '../components/Space';
-import { Connector } from '../components/Connector';
+import { Link } from '../components/Connector';
 import _ from 'lodash';
 import { rasterize } from '../rasterize';
 

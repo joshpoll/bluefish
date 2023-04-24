@@ -19,7 +19,7 @@ import { Space } from './components/Space';
 import { Ref } from './components/Ref';
 import { Line } from './components/Line';
 import { Arrow } from './components/Arrow';
-import { Connector } from './components/Connector';
+import { Link } from './components/Connector';
 import { Padding } from './components/Padding';
 import { NewBBox } from './NewBBox';
 import { Circle } from './components/Circle';
@@ -46,7 +46,7 @@ export {
   Ref,
   Line,
   Arrow,
-  Connector,
+  Link as Connector,
   Padding,
   Circle,
   // Path,

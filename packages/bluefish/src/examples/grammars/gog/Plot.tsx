@@ -94,7 +94,7 @@ export type PlotContextValue = {
 const groupMeasurePolicy =
   (props: Plot2Props): Measure =>
   (measurables, constraints) => {
-    console.log('[plot measurables]', measurables);
+    console.log('[plot] measurables', measurables);
     constraints = { width: props.width ?? constraints.width, height: props.height ?? constraints.height };
     const placeables = measurables.map((measurable, idx) => {
       // console.log('[set to] name', measurable.name);
@@ -103,6 +103,17 @@ const groupMeasurePolicy =
       console.log(`placed measurable ${idx}`, placeable);
       return placeable;
     });
+    console.log(
+      '[plot] placeables',
+      placeables.map((p) => ({
+        left: p.left,
+        top: p.top,
+        right: p.right,
+        bottom: p.bottom,
+        width: p.width,
+        height: p.height,
+      })),
+    );
     // placeables.forEach((placeable, idx) => {
     //   console.log(`placeable ${idx}`, placeable);
     //   if (placeable.left === undefined) {
@@ -120,17 +131,19 @@ const groupMeasurePolicy =
 
     const left = _.min(_.map(placeables, 'left')) ?? 0;
     const top = _.min(_.map(placeables, 'top')) ?? 0;
-    const right = _.max(_.map(placeables, 'right')) ?? 0;
-    const bottom = _.max(_.map(placeables, 'bottom')) ?? 0;
+    const width = _.max(_.map(placeables, 'width')) ?? 0;
+    const height = _.max(_.map(placeables, 'height')) ?? 0;
+    // const right = _.max(_.map(placeables, 'right')) ?? 0;
+    // const bottom = _.max(_.map(placeables, 'bottom')) ?? 0;
     console.log('asdfs', 'left', _.map(placeables, 'left'), _.min(_.map(placeables, 'left')));
-    console.log('[plot]', 'Plot bbox', { left, top, right, bottom });
+    console.log('[plot]', 'Plot bbox', { left, top, width, height });
     return {
       left,
       top,
-      right,
-      bottom,
-      width: right - left,
-      height: bottom - top,
+      width,
+      height,
+      right: left + width,
+      bottom: top + height,
     };
     // const width = _.max(_.map(placeables, 'width')) ?? 0;
     // const height = _.max(_.map(placeables, 'height')) ?? 0;
@@ -142,31 +155,11 @@ export const PlotContext = React.createContext<PlotContextValue>({
   scales: {},
 });
 
-export const Plot: React.FC<PropsWithBluefish<PlotProps>> = forwardRef((props, ref) => {
-  let { width, height, margin, data, children, name, ...scales } = props;
-  // compute dimensions from outer width, height, and margins
-  const dimensions = { width: width - margin.left - margin.right, height: height - margin.bottom - margin.top };
-  // reify scales
-  const reifiedScales = reifyScales(scales as any, dimensions);
-  // append "Scale" to scale names
-  const renamedScales = renameScales(reifiedScales);
-  console.log('[renamedScales]', renamedScales);
-  const { xScale, yScale, colorScale } = renamedScales;
-
-  return (
-    <Group ref={ref}>
-      <PlotContext.Provider value={{ dimensions, scales: renamedScales, data }}>
-        <Group>{children}</Group>
-      </PlotContext.Provider>
-    </Group>
-  );
-});
-
 // TODO: this is weird b/c we need access to the bbox information to compute the scales, which are
 // then passed as data.  Copilot proposes making the scales a separate component that can be
 // composed with the marks.
 export const Plot2 = withBluefish((props: PropsWithBluefish<Plot2Props>) => {
-  const { children, constraints } = useBluefishLayout({}, props, groupMeasurePolicy(props));
+  const { children, constraints, domRef, id } = useBluefishLayout({}, props, groupMeasurePolicy(props));
 
   let { data, width, height, children: _, name, guidePrimary, ...scales } = props;
   // compute dimensions from outer width, height, and margins
@@ -180,7 +173,7 @@ export const Plot2 = withBluefish((props: PropsWithBluefish<Plot2Props>) => {
   const { xScale, yScale, colorScale } = renamedScales;
 
   return (
-    <g>
+    <g id={id} ref={domRef}>
       <PlotContext.Provider
         value={{
           dimensions,
