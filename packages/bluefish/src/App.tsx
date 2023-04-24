@@ -56,8 +56,13 @@ import { BarY } from './examples/grammars/gog/marks/NewBarY';
 // import { Tree3 } from './examples/grammars/gotree/gotree-ex4';
 // import { RELATIONS, Tree5 } from './examples/grammars/gotree/gotree-ex5';
 import { RectPath } from './examples/grammars/gog/marks/RectPath';
+import { Molecule } from './examples/chemistry/Molecule';
 import { Polio } from './examples/polio/polio';
 import { Distribute } from './components/Distribute';
+// import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
+// import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
+import { Background } from './components/Background';
+// import { PythonTutor } from './python-tutor';
 // import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
 // import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
 import { Recipe } from './examples/Recipe';
@@ -71,7 +76,6 @@ import { Contain } from './components/Contain';
 // import { Tree3 } from './examples/grammars/gotree/3-EncodableTree - FRESH';
 import { flexibleRect } from './examples/grammars/gotree/3-EncodableTree';
 import { Cars0, Cars1, Cars2, Cars3 } from './examples/cars/cars';
-// import { Molecule } from './examples/chemistry/Molecule';
 // import { ChartAccent } from './examples/chart-accent';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
@@ -131,6 +135,12 @@ function App() {
 
   return (
     <div className="App">
+      {/* <SVG width={400} height={400}>
+        <Molecule ariaLabel={'Diphenyl ether'} chemicalFormula={'C1=CC=C(C=C1)OC2=CC=CC=C2'} />
+      </SVG> */}
+      <SVG width={400} height={400}>
+        <Molecule ariaLabel={'Aspirin'} chemicalFormula={'CC(OC1=C(C(=O)O)C=CC=C1)=O'} />
+      </SVG>
       <br />
       <br />
       <br />
@@ -182,18 +192,18 @@ function App() {
           <Text contents={'this is a test caption'} />
         </Col>
       </SVG> */}
-      <SVG width={1000} height={500}>
+      {/* <SVG width={1000} height={500}>
         <UpSet />
-      </SVG>
-      <SVG width={1000} height={500}>
+      </SVG> */}
+      {/* <SVG width={1000} height={500}>
         <Playfair />
-      </SVG>
+      </SVG> */}
       {/* <SVG width={500} height={500}>
         <BertinHotel />
       </SVG> */}
-      <SVG width={500} height={500}>
+      {/* <SVG width={500} height={500}>
         <Euclid />
-      </SVG>
+      </SVG> */}
       {/* <SVG width={500} height={500}>
         <Recipe
           recipe={[
@@ -420,7 +430,7 @@ function App() {
           </Row>
         </Padding>
       </SVG>
-      <SVG width={500} height={500}>
+      {/* <SVG width={500} height={500}>
         <Col spacing={50} alignment="center">
           <Tree2
             data={{
@@ -454,7 +464,346 @@ function App() {
             ],
           }}
         />
+      </SVG> */}
+      {/* <SVG width={500} height={300}>
+        <Col spacing={10} alignment={'center'}>
+          <Tree1
+            data={{
+              value: 1,
+              subtrees: [
+                {
+                  value: 2,
+                  subtrees: [{ value: 3 }, { value: 4 }],
+                },
+                {
+                  value: 5,
+                  subtrees: [{ value: 6 }, { value: 7 }],
+                },
+              ],
+            }}
+          />
+          <Text contents={'flat component'} />
+        </Col>
+      </SVG> */}
+      {/* <SVG width={500} height={300}>
+        <Col spacing={10} alignment={'center'}>
+          <Tree2
+            data={{
+              value: 1,
+              subtrees: [
+                {
+                  value: 2,
+                  subtrees: [{ value: 3 }, { value: 4 }],
+                },
+                {
+                  value: 5,
+                  subtrees: [{ value: 6 }, { value: 7 }],
+                },
+              ],
+            }}
+          />
+          <Text contents={'node factored out'} />
+        </Col>
+      </SVG> */}
+      {/* <SVG width={500} height={300}>
+        <Col spacing={10} alignment={'center'}>
+          <Tree3
+            data={{
+              value: 1,
+              subtrees: [
+                {
+                  value: 2,
+                  subtrees: [{ value: 3 }, { value: 4 }],
+                },
+                {
+                  value: 5,
+                  subtrees: [{ value: 6 }, { value: 7 }],
+                },
+              ],
+            }}
+            encoding={{
+              node: CustomNode,
+            }}
+          />
+          <Text contents={'node in encoding'} />
+        </Col>
+      </SVG> */}
+      {/* <SVG width={500} height={300}>
+        <Col spacing={10} alignment={'center'}>
+          <Tree4
+            data={{
+              value: 1,
+              subtrees: [
+                {
+                  value: 2,
+                  subtrees: [{ value: 3 }, { value: 4 }],
+                },
+                {
+                  value: 5,
+                  subtrees: [{ value: 6 }, { value: 7 }],
+                },
+              ],
+            }}
+            encoding={{
+              node: CustomNode,
+            }}
+          />
+          <Text contents={'link in encoding'} />
+        </Col>
+      </SVG> */}
+      {/* <SVG width={500} height={500}>
+        <Col spacing={10} alignment={'center'}> */}
+      {/* <Tree6
+            data={{
+              value: 1,
+              subtrees: [
+                {
+                  value: 2,
+                  subtrees: [{ value: 3 }, { value: 4 }],
+                },
+                {
+                  value: 5,
+                  subtrees: [{ value: 6 }, { value: 7 }],
+                },
+              ],
+            }}
+            encoding={{
+              node: CustomNode,
+              link: () => null,
+              rootSubtree: { row: {} },
+              subtreeSubtree: { row: {} },
+            }}
+          /> */}
+      {/* <Tree5
+            data={{
+              value: 1,
+              subtrees: [
+                {
+                  value: 2,
+                  subtrees: [{ value: 3 }, { value: 4 }],
+                },
+                {
+                  value: 5,
+                  subtrees: [{ value: 6 }, { value: 7 }],
+                },
+              ],
+            }}
+            encoding={{
+              node: CustomNode,
+              link: () => null,
+              rootSubtree: RELATIONS.row({}),
+              subtreeSubtree: RELATIONS.row({}),
+            }}
+          /> */}
+      {/* <Tree5
+            data={{
+              value: 1,
+              subtrees: [
+                {
+                  value: 2,
+                  subtrees: [{ value: 3 }, { value: 4 }],
+                },
+                {
+                  value: 5,
+                  subtrees: [{ value: 6 }, { value: 7 }],
+                },
+              ],
+            }}
+            encoding={{
+              node: CustomNode,
+              // link: () => null,
+              rootSubtree: RELATIONS.row({}),
+              subtreeSubtree: RELATIONS.col({}),
+            }}
+          /> */}
+      {/* <Text contents={'relations in encoding'} /> */}
+      {/* </Col>
+      </SVG> */}
+      <br />
+      {/* <SVG width={800} height={200}>
+        <Padding left={40} top={10} right={20} bottom={30}>
+          <Plot
+            data={alphabet}
+            x={({ width }) =>
+              scaleBand(
+                alphabet.map((d) => d.letter),
+                [0, width],
+              ).padding(0.1)
+            }
+            y={({ height }) => scaleLinear([0, _.max(alphabet.map((d) => +d.frequency))!], [0, height])}
+            color={() =>
+              scaleSequential(interpolateBlues).domain([
+                _.min(alphabet.map((d) => +d.frequency))!,
+                _.max(alphabet.map((d) => +d.frequency))!,
+              ])
+            }
+          > */}
+      {/* <BarY encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
+      {/* <NewBarY spacing={5} x={'letter'} y={'frequency'} color={'frequency'} /> */}
+      {/* <BarYWithBFN encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
+      {/* </Plot>
+        </Padding>
+      </SVG> */}
+      {/* <PeritextSymbol
+        chars={[
+          { value: 'T', opId: '1@A', deleted: false, marks: ['italic'] },
+          { value: 'h', opId: '2@A', deleted: true, marks: ['italic'] },
+          // { value: 'r', opId: '20@A', deleted: true, marks: ['italic'] },
+          { value: 'e', opId: '5@B', deleted: false, marks: ['bold', 'italic'] },
+          { value: ' ', opId: '6@B', deleted: false, marks: ['bold', 'italic'] },
+          { value: 'f', opId: '7@A', deleted: false, marks: ['bold'] },
+          { value: 'o', opId: '8@A', deleted: true, marks: [] },
+          { value: 'x', opId: '9@A', deleted: false, marks: [] },
+        ]}
+        markOps={[
+          {
+            action: 'addMark',
+            opId: '18@A',
+            start: { opId: '5@B' },
+            end: { opId: '7@A' },
+            markType: 'bold',
+            backgroundColor: '#F9EEEE',
+            borderColor: '#E57E97',
+          },
+          {
+            action: 'addMark',
+            opId: '10@B',
+            start: { opId: '1@A' },
+            end: { opId: '6@B' },
+            markType: 'italic',
+            backgroundColor: '#E3F2F7',
+            borderColor: '#00C2FF',
+          },
+        ]}
+      /> */}
+      {/* <SVG width={500} height={500}>
+        <Col alignment={'center'} spacing={5}>
+          <TreeSymbol
+            data={{
+              name: 'A',
+              value: {
+                value: '7',
+                marks: ['bold', 'italic'],
+              },
+              subtrees: [
+                {
+                  name: 'B',
+                  value: {
+                    value: '4',
+                    marks: ['bold', 'italic'],
+                  },
+                  subtrees: [
+                    {
+                      name: 'C',
+                      value: {
+                        value: '2',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                    {
+                      name: 'D',
+                      value: {
+                        value: '2',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                  ],
+                },
+                {
+                  name: 'E',
+                  value: {
+                    value: '3',
+                    marks: ['bold', 'italic'],
+                  },
+                  subtrees: [
+                    {
+                      name: 'F',
+                      value: {
+                        value: '1',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                    {
+                      name: 'G',
+                      value: {
+                        value: '1',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                  ],
+                },
+              ],
+            }}
+          />
+          <TreeSymbol
+            data={{
+              name: 'A',
+              value: {
+                value: '7',
+                marks: ['bold', 'italic'],
+              },
+              subtrees: [
+                {
+                  name: 'B',
+                  value: {
+                    value: '4',
+                    marks: ['bold', 'italic'],
+                  },
+                  subtrees: [
+                    {
+                      name: 'C',
+                      value: {
+                        value: '2',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                    {
+                      name: 'D',
+                      value: {
+                        value: '2',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                  ],
+                },
+                {
+                  name: 'E',
+                  value: {
+                    value: '3',
+                    marks: ['bold', 'italic'],
+                  },
+                  subtrees: [
+                    {
+                      name: 'F',
+                      value: {
+                        value: '1',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                    {
+                      name: 'G',
+                      value: {
+                        value: '1',
+                        marks: ['bold', 'italic'],
+                      },
+                    },
+                  ],
+                },
+              ],
+            }}
+          />
+        </Col>
       </SVG>
+      <br />
+      <SVG width={500} height={500}>
+        <Col spacing={10} alignment={'center'}>
+          <CharSymbol value={'b'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
+          <CharSymbol value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
+        </Col>
+      </SVG> */}
+      {/* <svg width={500} height={500}>
+        <RectUseState x={20} y={20} width={100} height={100} fill={'green'} />
+      </svg> */}
     </div>
   );
 }

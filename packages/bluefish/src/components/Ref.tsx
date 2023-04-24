@@ -27,6 +27,7 @@ export const resolveRef = (
   map: BluefishContextValue['bfMap'],
   symbolMap: BluefishSymbolMap,
 ): Measurable => {
+  console.log('resolving ref', ref, 'map', map, 'symbolMap', symbolMap);
   if (typeof ref === 'string') {
     const refObject = map.get(ref);
     if (refObject === undefined) {
@@ -35,6 +36,7 @@ export const resolveRef = (
       return refObject as unknown as Measurable;
     }
   } else if ('symbol' in ref) {
+    console.log('hitting the symbol');
     let refObject: symbol | React.MutableRefObject<any> | undefined =
       typeof ref.symbol === 'object' ? ref.symbol.symbol : ref.symbol;
     if ('type' in ref && ref.type === 'lookup') {
@@ -349,7 +351,6 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
 
   const transformStackRef = useRef<CoordinateTransform[] | undefined>(undefined);
   const measurable = useRef<Measurable | null>(null);
-
   const id = useId();
 
   useImperativeHandle(

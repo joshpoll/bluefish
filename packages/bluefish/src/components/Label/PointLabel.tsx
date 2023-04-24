@@ -186,6 +186,7 @@ const pointLabelMeasurePolicy = (props: {}): Measure => {
 
 export const PointLabelAux = withBluefish((props: PropsWithBluefish<{}>) => {
   const { id, domRef, bbox, children } = useBluefishLayout({}, props, pointLabelMeasurePolicy(props));
+  // const { ...rest } = props;
 
   const { name, ...rest } = props;
 
