@@ -65,7 +65,7 @@ import { Distribute } from './components/Distribute';
 // import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
 // import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
 import { Background } from './components/Background';
-import { PythonTutor } from './python-tutor';
+// import { PythonTutor } from './python-tutor';
 // import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
 // import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
 import { Recipe } from './examples/Recipe';

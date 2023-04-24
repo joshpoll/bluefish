@@ -353,8 +353,6 @@ export const Ref = forwardRef((props: RefProps, ref: any) => {
   const measurable = useRef<Measurable | null>(null);
   const id = useId();
 
-  const id = useId();
-
   useImperativeHandle(
     ref,
     (): Measurable => ({
