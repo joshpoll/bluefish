@@ -192,18 +192,18 @@ function App() {
           <Text contents={'this is a test caption'} />
         </Col>
       </SVG> */}
-      {/* <SVG width={1000} height={500}>
+      <SVG width={1000} height={500}>
         <UpSet />
-      </SVG> */}
-      {/* <SVG width={1000} height={500}>
+      </SVG>
+      <SVG width={1000} height={500}>
         <Playfair />
-      </SVG> */}
+      </SVG>
       {/* <SVG width={500} height={500}>
         <BertinHotel />
       </SVG> */}
-      {/* <SVG width={500} height={500}>
+      <SVG width={500} height={500}>
         <Euclid />
-      </SVG> */}
+      </SVG>
       {/* <SVG width={500} height={500}>
         <Recipe
           recipe={[
@@ -430,7 +430,7 @@ function App() {
           </Row>
         </Padding>
       </SVG>
-      {/* <SVG width={500} height={500}>
+      <SVG width={500} height={500}>
         <Col spacing={50} alignment="center">
           <Tree2
             data={{
@@ -464,7 +464,7 @@ function App() {
             ],
           }}
         />
-      </SVG> */}
+      </SVG>
       {/* <SVG width={500} height={300}>
         <Col spacing={10} alignment={'center'}>
           <Tree1

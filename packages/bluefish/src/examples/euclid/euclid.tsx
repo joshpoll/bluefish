@@ -111,6 +111,12 @@ const squareMeasurePolicy = (options: any): Measure => {
       top: bounds.top,
       width: bounds.width,
       height: bounds.height,
+      coord: {
+        translate: {
+          x: 0,
+          y: 0,
+        },
+      },
       boundary: path,
     };
   };
@@ -128,6 +134,7 @@ export const Square = withBluefish((props: any) => {
     >
       {children}
       <path d={boundary?.pathData} fill={props.fill ?? 'none'} />
+      {/* <rect x={bbox?.left} y={bbox?.top} width={bbox?.width} height={bbox?.height} fill="none" stroke="green" /> */}
     </g>
   );
 });
@@ -151,58 +158,58 @@ export const Euclid = withBluefish((props: any) => {
   const yellow = '#fac22b';
 
   return (
-    <Padding all={100}>
-      <Group>
-        <Point name={a} fill="none" size={0} />
-        <Point name={b} fill="none" size={0} />
-        <Point name={c} fill="none" size={0} />
-        <Distribute spacing={50} direction="horizontal">
-          <Ref select={a} />
-          <Ref select={c} />
-        </Distribute>
-        <Align alignment="centerVertically">
-          <Ref select={a} />
-          <Ref select={c} />
-        </Align>
-        {/* <Offset horizontal={30} vertical={-30}>
+    // <Padding all={100}>
+    <Group x={0} y={0}>
+      <Point name={a} fill="none" size={0} />
+      <Point name={b} fill="none" size={0} />
+      <Point name={c} fill="none" size={0} />
+      <Distribute spacing={50} direction="horizontal">
+        <Ref select={a} />
+        <Ref select={c} />
+      </Distribute>
+      <Align alignment="centerVertically">
+        <Ref select={a} />
+        <Ref select={c} />
+      </Align>
+      {/* <Offset horizontal={30} vertical={-30}>
           <Ref select={a} />
           <Ref select={b} />
         </Offset> */}
-        {/* <Align alignment="centerHorizontally">
+      {/* <Align alignment="centerHorizontally">
         <Ref select={b} />
         <Ref select={c} />
       </Align> */}
-        {/* kind of a hack here b/c align works only on cartesian coordinates */}
-        {/* <Perpendicular>
+      {/* kind of a hack here b/c align works only on cartesian coordinates */}
+      {/* <Perpendicular>
         <Ref select={a} />
         <Ref select={b} />
         <Ref select={c} />
       </Perpendicular> */}
-        {/* TODO: the drawing actually has the hypotenuse horizontal for symmetry reasons */}
-        <Offset horizontal={-18} vertical={24}>
-          <Ref select={b} />
-          <Ref select={a} />
-        </Offset>
-        <Connector stroke={yellow} strokeWidth="3">
-          <Ref select={a} />
-          <Ref select={b} />
-        </Connector>
-        <Connector name={bc} stroke={blue} strokeWidth="3">
-          <Ref select={b} />
-          <Ref select={c} />
-        </Connector>
-        <Connector stroke={red} strokeWidth="3">
-          <Ref select={c} />
-          <Ref select={a} />
-        </Connector>
-        {/* triangle is complete! */}
-        <Square flip fill="black">
-          <Ref select={a} />
-          <Ref select={b} />
-          <Point name={f} fill="none" />
-          <Point name={g} fill="none" />
-        </Square>
-        {/* <Connector stroke="black" strokeWidth="3">
+      {/* TODO: the drawing actually has the hypotenuse horizontal for symmetry reasons */}
+      <Offset horizontal={-18} vertical={24}>
+        <Ref select={b} />
+        <Ref select={a} />
+      </Offset>
+      <Connector stroke={yellow} strokeWidth="3">
+        <Ref select={a} />
+        <Ref select={b} />
+      </Connector>
+      <Connector name={bc} stroke={blue} strokeWidth="3">
+        <Ref select={b} />
+        <Ref select={c} />
+      </Connector>
+      <Connector stroke={red} strokeWidth="3">
+        <Ref select={c} />
+        <Ref select={a} />
+      </Connector>
+      {/* triangle is complete! */}
+      <Square flip fill="black">
+        <Ref select={a} />
+        <Ref select={b} />
+        <Point name={f} fill="none" />
+        <Point name={g} fill="none" />
+      </Square>
+      {/* <Connector stroke="black" strokeWidth="3">
           <Ref select={a} />
           <Ref select={f} />
         </Connector>
@@ -214,13 +221,13 @@ export const Euclid = withBluefish((props: any) => {
           <Ref select={g} />
           <Ref select={b} />
         </Connector> */}
-        <Square flip fill={blue}>
-          <Ref select={c} />
-          <Ref select={a} />
-          <Point name={h} fill="none" />
-          <Point name={k} fill="none" />
-        </Square>
-        {/* <Connector stroke="black" strokeWidth="3">
+      <Square flip fill={blue}>
+        <Ref select={c} />
+        <Ref select={a} />
+        <Point name={h} fill="none" />
+        <Point name={k} fill="none" />
+      </Square>
+      {/* <Connector stroke="black" strokeWidth="3">
           <Ref select={c} />
           <Ref select={h} />
         </Connector>
@@ -232,29 +239,29 @@ export const Euclid = withBluefish((props: any) => {
           <Ref select={k} />
           <Ref select={a} />
         </Connector> */}
-        <Square name={square3} flip fill={red}>
-          <Ref select={b} />
-          <Ref select={c} />
-          <Point name={e} fill="none" />
-          <Point name={d} fill="none" />
-        </Square>
-        <Connector stroke="black" strokeWidth="3">
-          <Ref select={a} />
-          <Ref select={d} />
-        </Connector>
-        <Connector stroke="black" strokeWidth="3">
-          <Ref select={b} />
-          <Ref select={h} />
-        </Connector>
-        <Connector stroke={red} strokeDasharray={5} strokeWidth={5}>
-          <Ref select={c} />
-          <Ref select={h} />
-        </Connector>
-        <Connector stroke={blue} strokeDasharray={5} strokeWidth={5}>
-          <Ref select={c} />
-          <Ref select={d} />
-        </Connector>
-        {/* <Connector stroke="black" strokeWidth="3">
+      <Square name={square3} flip fill={red}>
+        <Ref select={b} />
+        <Ref select={c} />
+        <Point name={e} fill="none" />
+        <Point name={d} fill="none" />
+      </Square>
+      <Connector stroke="black" strokeWidth="3">
+        <Ref select={a} />
+        <Ref select={d} />
+      </Connector>
+      <Connector stroke="black" strokeWidth="3">
+        <Ref select={b} />
+        <Ref select={h} />
+      </Connector>
+      <Connector stroke={red} strokeDasharray={5} strokeWidth={5}>
+        <Ref select={c} />
+        <Ref select={h} />
+      </Connector>
+      <Connector stroke={blue} strokeDasharray={5} strokeWidth={5}>
+        <Ref select={c} />
+        <Ref select={d} />
+      </Connector>
+      {/* <Connector stroke="black" strokeWidth="3">
           <Ref select={b} />
           <Ref select={e} />
         </Connector>
@@ -266,8 +273,8 @@ export const Euclid = withBluefish((props: any) => {
           <Ref select={d} />
           <Ref select={c} />
         </Connector> */}
-        {/* squares are complete! */}
-        {/* <Intersect name={l} label={'L'}>
+      {/* squares are complete! */}
+      {/* <Intersect name={l} label={'L'}>
         <Hidden>
           <Connector>
             <Ref select={d} />
@@ -285,7 +292,7 @@ export const Euclid = withBluefish((props: any) => {
         <Ref select={a} />
         <Ref select={l} />
       </Connector> */}
-      </Group>
-    </Padding>
+    </Group>
+    // </Padding>
   );
 });

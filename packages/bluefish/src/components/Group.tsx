@@ -4,7 +4,7 @@ import { Measure, NewPlaceable, PropsWithBluefish, useBluefishLayout, withBluefi
 import { NewBBox } from '../NewBBox';
 
 const groupMeasurePolicy =
-  (props: { positionChildren?: boolean }): Measure =>
+  (props: { positionChildren?: boolean; x?: number; y?: number }): Measure =>
   (measurables, constraints) => {
     const placeables = measurables.map((measurable, idx) => {
       // console.log('[set to] name', measurable.name);
@@ -43,6 +43,12 @@ const groupMeasurePolicy =
       bottom,
       width: right - left,
       height: bottom - top,
+      coord: {
+        translate: {
+          x: props.x ? props.x - left : undefined,
+          y: props.y ? props.y - top : undefined,
+        },
+      },
     };
     // const width = _.max(_.map(placeables, 'width')) ?? 0;
     // const height = _.max(_.map(placeables, 'height')) ?? 0;
@@ -55,20 +61,20 @@ export const Group = withBluefish(
       {
         positionChildren?: boolean;
         debug?: boolean;
+        x?: number;
+        y?: number;
       } & React.SVGProps<SVGGElement>
     >,
   ) => {
     const { id, domRef, bbox, children } = useBluefishLayout({}, props, groupMeasurePolicy(props));
-    const { name, ...rest } = props;
+    const { name, x, y, ...rest } = props;
 
     return (
       <g
         {...rest}
         id={id}
         ref={domRef}
-        // transform={`translate(${(bbox?.left ?? 0) + (bbox?.coord?.translate?.x ?? 0)} ${
-        //   (bbox?.top ?? 0) + (bbox?.coord?.translate?.y ?? 0)
-        // })`}
+        transform={`translate(${bbox?.coord?.translate?.x ?? 0} ${bbox?.coord?.translate?.y ?? 0})`}
       >
         {children}
         {/* <rect x={bbox?.left} y={bbox?.top} width={bbox?.width} height={bbox?.height} fill="none" stroke="magenta" /> */}
