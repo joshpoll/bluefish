@@ -39,9 +39,18 @@ const Variable = withBluefish(function _Variable({ data }: { data: any }) {
       {/* Creates text labels of variable */}
       <Text name={valueName as any} contents={value} fontFamily={fontFamily} fontSize={'24px'} fill={'black'} />
       {/* Align text and border components to variable frame */}
-      {/* <Align bottomCenter={[<Ref to={boxBorderBottom} />, <Ref to={box} />]}></Align> */}
-      {/* <Align centerLeft={[<Ref to={boxBorderLeft} />, <Ref to={box} />]}></Align> */}
-      {/* <Align topCenter={[<Ref to={valueName} />, <Ref to={box} />]}></Align> */}
+      <Align alignment="bottomCenter">
+        <Ref to={boxBorderBottom} />
+        <Ref to={box} />
+      </Align>
+      <Align alignment="centerLeft">
+        <Ref to={boxBorderLeft} />
+        <Ref to={box} />
+      </Align>
+      <Align alignment="topCenter">
+        <Ref to={valueName} />
+        <Ref to={box} />
+      </Align>
     </Group>
   );
 });
@@ -77,7 +86,10 @@ export const GlobalFrame = withBluefish(function _GlobalFrame({ variables, opId 
         fontFamily={fontFamily}
         fill={'black'}
       />
-      {/* <Align topCenter={[<Ref to={opIdLabel} />, <Ref to={frame} />]}></Align> */}
+      <Align alignment="topCenter">
+        <Ref to={opIdLabel} />
+        <Ref to={frame} />
+      </Align>
       {/* TODO: this Space and Align should be a Col, but Col overwrites *all* placeable positions
             even though opIdLabel has already been placed */}
       <Space vertically by={10}>
@@ -88,8 +100,14 @@ export const GlobalFrame = withBluefish(function _GlobalFrame({ variables, opId 
           ))}
         </Col>
       </Space>
-      {/* <Align right={[<Ref to={frameVariables} />, <Ref to={opIdLabel} />]}></Align> */}
-      {/* <Align centerLeft={[<Ref to={frameBorder} />, <Ref to={frame} />]}></Align> */}
+      <Align alignment="right">
+        <Ref to={frameVariables} />
+        <Ref to={opIdLabel} />
+      </Align>
+      <Align alignment="centerLeft">
+        <Ref to={frameBorder} />
+        <Ref to={frame} />
+      </Align>
     </Group>
   );
 });
@@ -148,11 +166,20 @@ export const Objects = withBluefish(function _Objects({
         <Text name={zeroRefName as any} contents={'0'} fontFamily={fontFamily} fontSize={'16px'} fill={'grey'} />
         <Text name={oneRefName as any} contents={'1'} fontFamily={fontFamily} fontSize={'16px'} fill={'grey'} />
 
-        {/* <Align center={[<Ref to={valueRefName} />, <Ref to={itemRefName} />]}></Align> */}
+        <Align alignment="center">
+          <Ref to={valueRefName} />
+          <Ref to={itemRefName} />
+        </Align>
 
-        {/* <Align left={[<Ref to={boxRefName} />, <Ref to={itemRefName} />]}></Align> */}
+        <Align alignment="left">
+          <Ref to={boxRefName} />
+          <Ref to={itemRefName} />
+        </Align>
 
-        {/* <Align topLeft={[<Ref to={oneRefName} />, <Ref to={boxRefName} />]}></Align> */}
+        <Align alignment="topLeft">
+          <Ref to={oneRefName} />
+          <Ref to={boxRefName} />
+        </Align>
       </Group>
 
       <Space vertically by={10}>

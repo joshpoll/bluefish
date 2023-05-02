@@ -62,7 +62,7 @@ import { Distribute } from './components/Distribute';
 // import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
 // import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
 import { Background } from './components/Background';
-// import { PythonTutor } from './python-tutor';
+import { PythonTutor } from './python-tutor';
 // import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
 // import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
 import { Recipe } from './examples/Recipe';
@@ -141,10 +141,35 @@ function App() {
       <SVG width={400} height={400}>
         <Molecule ariaLabel={'Aspirin'} chemicalFormula={'CC(OC1=C(C(=O)O)C=CC=C1)=O'} />
       </SVG>
-      <br />
-      <br />
-      <br />
-      <br />
+      <SVG width={800} height={400}>
+        <PythonTutor
+          variables={[
+            { pointObject: { opId: 'o1' }, value: '', name: 'c', opId: 'v1' },
+            { pointObject: { opId: 'o2' }, value: '', name: 'd', opId: 'v2' },
+            { pointObject: null, name: 'x', value: '5', opId: 'v3' },
+          ]}
+          opId={'pythonTutorFrame'}
+          objects={[
+            {
+              nextObject: { opId: 'o2' },
+              objectType: 'tuple',
+              value: '1',
+              opId: 'o1',
+            },
+            {
+              nextObject: { opId: 'o3' },
+              objectType: 'tuple',
+              value: '2',
+              opId: 'o2',
+            },
+            { nextObject: null, objectType: 'tuple', value: '3', opId: 'o3' },
+          ]}
+          rows={[
+            { depth: 0, nodes: ['', 'o2', 'o3'] },
+            { depth: 1, nodes: ['o1', '', ''] },
+          ]}
+        />
+      </SVG>
       {/* <SVG width={500} height={500}>
         <Contain padding={{ all: 20 }}>
           <Rect width={300} height={300} fill={'blue'} />
@@ -192,18 +217,18 @@ function App() {
           <Text contents={'this is a test caption'} />
         </Col>
       </SVG> */}
-      <SVG width={1000} height={500}>
+      {/* <SVG width={1000} height={500}>
         <UpSet />
       </SVG>
       <SVG width={1000} height={500}>
         <Playfair />
-      </SVG>
+      </SVG> */}
       {/* <SVG width={500} height={500}>
         <BertinHotel />
       </SVG> */}
-      <SVG width={500} height={500}>
+      {/* <SVG width={500} height={500}>
         <Euclid />
-      </SVG>
+      </SVG> */}
       {/* <SVG width={500} height={500}>
         <Recipe
           recipe={[
@@ -295,7 +320,7 @@ function App() {
         </Group>
       </SVG> */}
       <br />
-      <SVG width={170} height={170}>
+      {/* <SVG width={170} height={170}>
         <Cars0 />
       </SVG>
       <SVG width={170} height={170}>
@@ -314,7 +339,7 @@ function App() {
       <br />
       <SVG width={500} height={500}>
         <Polio />
-      </SVG>
+      </SVG> */}
       {/* <SVG width={500} height={500}>
         <RectPath
           x={Math.PI / 2}
@@ -373,7 +398,7 @@ function App() {
           strokeWidth={2}
         />
       </SVG> */}
-      <SVG width={500} height={500}>
+      {/* <SVG width={500} height={500}>
         <Tree3
           data={{
             value: 0,
@@ -464,7 +489,7 @@ function App() {
             ],
           }}
         />
-      </SVG>
+      </SVG> */}
       {/* <SVG width={500} height={300}>
         <Col spacing={10} alignment={'center'}>
           <Tree1
