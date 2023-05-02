@@ -62,7 +62,7 @@ import { Distribute } from './components/Distribute';
 // import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
 // import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
 import { Background } from './components/Background';
-import { PythonTutor } from './python-tutor';
+import { PythonTutor, Variable } from './examples/python-tutor/python-tutor';
 // import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
 // import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
 import { Recipe } from './examples/Recipe';
@@ -138,6 +138,9 @@ function App() {
       {/* <SVG width={400} height={400}>
         <Molecule ariaLabel={'Diphenyl ether'} chemicalFormula={'C1=CC=C(C=C1)OC2=CC=CC=C2'} />
       </SVG> */}
+      <SVG width={300} height={50}>
+        <Variable data={{ pointObject: null, name: 'x', value: '5', opId: 'v3' }} />
+      </SVG>
       <SVG width={400} height={400}>
         <Molecule ariaLabel={'Aspirin'} chemicalFormula={'CC(OC1=C(C(=O)O)C=CC=C1)=O'} />
       </SVG>
