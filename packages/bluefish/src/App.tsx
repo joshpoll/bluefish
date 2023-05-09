@@ -200,7 +200,6 @@ function App() {
               objectValues: [
                 { type: 'string', value: '1' },
                 { type: 'pointer', pointId: 'o2' },
-                { type: 'string', value: '30' },
                 { type: 'pointer', pointId: 'o3' },
               ],
             },

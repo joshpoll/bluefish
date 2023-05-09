@@ -89,14 +89,6 @@ export const PythonTutor = withBluefish(function ({ variables, objects, rows, op
                   stroke={'red'}
                 />
               ) : (
-                // <Objects
-                //   objectType={'tuple'}
-                //   objectValues={[
-                //     { type: 'string', value: '1' },
-                //     { type: 'string', value: '2' },
-                //   ]}
-                //   objectId={`testobject_${objIndex}`}
-                // />
                 <Objects {...objMap.get(obj)} />
               ),
             )}
