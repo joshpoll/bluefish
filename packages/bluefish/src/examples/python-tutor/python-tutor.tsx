@@ -10,7 +10,7 @@ import { Variable } from './Variable';
 import { GlobalFrame } from './GlobalFrame';
 import { Objects } from './Objects';
 
-export const PythonTutor = withBluefish(function ({ variables, objects, rows, opId }: any) {
+export const PythonTutor = withBluefish(function ({ variables, objects, rows }: any) {
   const globalFrame = 'globalFrame' as any;
   const objectMatrix = 'objectMatrix' as any;
 
@@ -73,27 +73,30 @@ export const PythonTutor = withBluefish(function ({ variables, objects, rows, op
   console.log('these are the rows:', rows);
 
   return (
-    <Group name={opId}>
+    <Group>
       <GlobalFrame variables={variables} opId={'globalFrame'} name={globalFrame} />
 
       <Group name={objectMatrix}>
-        {rows.map((level: any, index: any) => (
-          <Row name={`row${index}` as any} spacing={100} alignment={'middle'}>
-            {level.nodes.map((obj: any, objIndex: any) =>
-              obj == '' ? (
-                <Rect
-                  name={`row${level.depth}_col${objIndex}` as any}
-                  height={60}
-                  width={140}
-                  fill={'none'}
-                  stroke={'red'}
-                />
-              ) : (
-                <Objects {...objMap.get(obj)} />
-              ),
-            )}
-          </Row>
-        ))}
+        <Col alignment="left" spacing={75}>
+          {rows.map((level: any, index: any) => (
+            <Row name={`row${index}` as any} spacing={50} alignment={'bottom'}>
+              {level.nodes.map((obj: any, objIndex: any) =>
+                obj == '' ? (
+                  <Rect
+                    name={`row${level.depth}_col${objIndex}` as any}
+                    height={60}
+                    width={140}
+                    fill={'none'}
+                    stroke={'none'}
+                  />
+                ) : (
+                  <Objects {...objMap.get(obj)} />
+                ),
+              )}
+            </Row>
+          ))}
+        </Col>
+
         {/* {cols.map((columns: any, index: any) => (
           <Col alignment={'left'} name={`col${index}` as any} spacing={50}>
             {columns.nodes.map((objectId: any) => (
@@ -101,13 +104,13 @@ export const PythonTutor = withBluefish(function ({ variables, objects, rows, op
             ))}
           </Col>
         ))} */}
-        {cols.map((columns: any, index: any) => (
+        {/* {cols.map((columns: any, index: any) => (
           <Distribute direction={'vertical'} name={`col${index}` as any} spacing={50}>
             {columns.nodes.map((objectId: any) => (
               <Ref to={objectId} />
             ))}
           </Distribute>
-        ))}
+        ))} */}
       </Group>
 
       <Distribute direction={'horizontal'} spacing={60}>

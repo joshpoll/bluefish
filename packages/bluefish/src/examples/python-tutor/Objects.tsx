@@ -5,6 +5,7 @@ import { Text } from '../../components/Text';
 import { Ref } from '../../components/Ref';
 import { Distribute } from '../../components/Distribute';
 import { Row } from '../../components/Row';
+import { Align } from '../../components/Align';
 
 export type ObjectProps = {
   objectType: string;
@@ -35,6 +36,10 @@ export const Objects = withBluefish(function ({ objectType, objectValues, object
         <Ref to={objectTypeRef} />
         <Ref to={objectRef} />
       </Distribute>
+      <Align alignment={'left'}>
+        <Ref to={objectTypeRef} />
+        <Ref to={objectRef} />
+      </Align>
     </Group>
   );
 });

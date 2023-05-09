@@ -10,12 +10,10 @@ export const Variable = withBluefish(function _Variable({ data }: { data: any })
   const { pointObject, name, value, opId } = data;
 
   // References
-  const valueName = useName(`value-${opId}`);
-  const box = useName(`box-${opId}`);
-  const boxBorderLeft = useName(`boxBorderLeft-${opId}`);
-  const boxBorderBottom = useName(`boxBorderBottom-${opId}`);
-
-  console.log('creating variable:', opId);
+  const valueName = useName(`value`);
+  const box = useName(`box`);
+  const boxBorderLeft = useName(`boxBorderLeft`);
+  const boxBorderBottom = useName(`boxBorderBottom`);
 
   // Declares font used in Python Tutor Diagrams
   const fontFamily = 'verdana, arial, helvetica, sans-serif';

@@ -4,6 +4,7 @@ import { Group } from '../../components/Group';
 import { Rect } from '../../components/Rect';
 import { Ref } from '../../components/Ref';
 import { Text } from '../../components/Text';
+import { Padding } from '../../main';
 
 export type ElmTupleProps = {
   tupleIndex: string;
@@ -16,13 +17,16 @@ export const ElmTuple = withBluefish(({ tupleIndex, tupleData, objectId }: ElmTu
   return (
     <Group name={`elm_${tupleIndex}_${objectId}` as any}>
       <Rect name={`elmBox_${tupleIndex}_${objectId}` as any} height={60} width={70} fill={'#ffffc6'} stroke={'grey'} />
-      <Text
-        name={`elmLabel_${tupleIndex}_${objectId}` as any}
-        contents={`${tupleIndex}`}
-        fontFamily={fontFamily}
-        fontSize={'16px'}
-        fill={'grey'}
-      />
+      <Padding left={5} right={0} top={0} bottom={0} name={`elmLabel_${tupleIndex}_${objectId}` as any}>
+        <Text
+          // name={`elmLabel_${tupleIndex}_${objectId}` as any}
+          contents={`${tupleIndex}`}
+          fontFamily={fontFamily}
+          fontSize={'16px'}
+          fill={'gray'}
+        />
+        {/* <Rect name={`elmLabel_${tupleIndex}_${objectId}` as any} height={10} width={10} fill={'none'} stroke={'red'} /> */}
+      </Padding>
       {tupleData.type == 'string' ? (
         <Text
           name={`elmVal_${tupleIndex}_${objectId}` as any}

@@ -192,7 +192,6 @@ function App() {
             { pointObject: { opId: 'o2' }, value: '', name: 'd', opId: 'v2' },
             { pointObject: null, name: 'x', value: '5', opId: 'v3' },
           ]}
-          opId={'pythonTutorFrameV2'}
           objects={[
             {
               objectType: 'tuple',
@@ -221,8 +220,8 @@ function App() {
             },
           ]}
           rows={[
-            { depth: 0, nodes: ['', 'o2', 'o3'] },
-            { depth: 1, nodes: ['o1', '', ''] },
+            { depth: 0, nodes: ['o1', '', ''] },
+            { depth: 1, nodes: ['', 'o2', 'o3'] },
           ]}
         />
       </SVG>
