@@ -10,27 +10,15 @@ import { Variable } from './Variable';
 import { GlobalFrame } from './GlobalFrame';
 import { Objects } from './Objects';
 
-export const PythonTutor = withBluefish(function _PythonTutor({
-  variables,
-  objects,
-  rows,
-  opId,
-}: {
-  variables: any;
-  objects: any;
-  rows: any;
-  opId: any;
-}) {
-  // const globalFrame = useRef(null);
-  // const rowRef = useRef(null);
-
-  console.log('got into python tutor');
+export const PythonTutor = withBluefish(function ({ variables, objects, rows, opId }: any) {
+  const globalFrame = 'globalFrame' as any;
+  const objectMatrix = 'objectMatrix' as any;
 
   // lookup map for the yellow objects
   const objMap = new Map();
-  objects.forEach((obj: any) => objMap.set(obj.opId, obj));
+  objects.forEach((obj: any) => objMap.set(obj.objectId, obj));
 
-  // Lookup map for yellow objects by column
+  // lookup map for yellow objects grouped in columns
   const objIdByCol = new Map();
 
   rows.forEach((rowObject: any) => {
@@ -44,20 +32,29 @@ export const PythonTutor = withBluefish(function _PythonTutor({
     });
   });
 
-  const cols: any[] = [];
+  const cols: any = [];
   objIdByCol.forEach((values, keys) => {
     const columnObject = { depth: keys, nodes: values };
     cols.push(columnObject);
   });
 
+  const objectValues = objects.map((object: any) => {
+    const objectWithPointerInfo = object.objectValues.map((element: any, index: any) => {
+      return { ...element, objectId: object.objectId, objectOrder: index };
+    });
+    return objectWithPointerInfo;
+  });
+
+  const objectValuesFlat = objectValues.flat();
+
   // find start and end location for links between objects and objects
-  const objectLinks = objects
-    .filter((object: any) => object.nextObject !== null)
-    .map((object: any, index: any) => {
+  const objectLinks = objectValuesFlat
+    .filter((boxObject: any) => boxObject.type == 'pointer')
+    .map((element: any, index: any) => {
       return {
         opId: `objectLink${index}`,
-        start: { opId: `pointer${object.opId}` },
-        end: { opId: `pointed${object.nextObject.opId}` },
+        start: { opId: `elm_${element.objectOrder}_${element.objectId}` },
+        end: { opId: `elm_0_${element.pointId}` },
       };
     });
 
@@ -68,17 +65,20 @@ export const PythonTutor = withBluefish(function _PythonTutor({
       return {
         opId: `variableLink${index}`,
         start: { opId: variable.opId },
-        end: { opId: `pointed${variable.pointObject.opId}` },
+        end: { opId: `elm_0_${variable.pointObject.opId}` },
       };
     });
 
+  console.log('these are the cols: ', cols);
+  console.log('these are the rows:', rows);
+
   return (
     <Group name={opId}>
-      <GlobalFrame variables={variables} opId={`globalframe` as any} />
+      <GlobalFrame variables={variables} opId={'globalFrame'} name={globalFrame} />
 
-      <Group name={`object-matrix` as any}>
+      <Group name={objectMatrix}>
         {rows.map((level: any, index: any) => (
-          <Row name={`row${index}` as any} spacing={50} alignment={'middle'}>
+          <Row name={`row${index}` as any} spacing={100} alignment={'middle'}>
             {level.nodes.map((obj: any, objIndex: any) =>
               obj == '' ? (
                 <Rect
@@ -86,31 +86,46 @@ export const PythonTutor = withBluefish(function _PythonTutor({
                   height={60}
                   width={140}
                   fill={'none'}
-                  stroke={'none'}
+                  stroke={'red'}
                 />
               ) : (
+                // <Objects
+                //   objectType={'tuple'}
+                //   objectValues={[
+                //     { type: 'string', value: '1' },
+                //     { type: 'string', value: '2' },
+                //   ]}
+                //   objectId={`testobject_${objIndex}`}
+                // />
                 <Objects {...objMap.get(obj)} />
               ),
             )}
           </Row>
         ))}
-        {cols.map((columns, index) => (
-          <Col name={`col${index}` as any} spacing={50} alignment={'left'}>
+        {/* {cols.map((columns: any, index: any) => (
+          <Col alignment={'left'} name={`col${index}` as any} spacing={50}>
             {columns.nodes.map((objectId: any) => (
               <Ref to={objectId} />
             ))}
           </Col>
+        ))} */}
+        {cols.map((columns: any, index: any) => (
+          <Distribute direction={'vertical'} name={`col${index}` as any} spacing={50}>
+            {columns.nodes.map((objectId: any) => (
+              <Ref to={objectId} />
+            ))}
+          </Distribute>
         ))}
       </Group>
 
-      <Distribute direction="horizontal" spacing={60}>
-        <Ref to={`globalframe`} />
-        <Ref to={`object-matrix`} />
+      <Distribute direction={'horizontal'} spacing={60}>
+        <Ref to={globalFrame} />
+        <Ref to={objectMatrix} />
       </Distribute>
 
-      <Distribute direction="vertical" spacing={-250}>
-        <Ref to={`globalframe`} />
-        <Ref to={`object-matrix`} />
+      <Distribute direction={'vertical'} spacing={-250}>
+        <Ref to={globalFrame} />
+        <Ref to={objectMatrix} />
       </Distribute>
 
       {objectLinks.map((link: any) => (

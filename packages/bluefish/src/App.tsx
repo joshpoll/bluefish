@@ -141,12 +141,9 @@ function App() {
       {/* <SVG width={400} height={400}>
         <Molecule ariaLabel={'Diphenyl ether'} chemicalFormula={'C1=CC=C(C=C1)OC2=CC=CC=C2'} />
       </SVG> */}
-      <SVG width={300} height={50}>
-        <Variable data={{ pointObject: null, name: 'x', value: '5', opId: 'v3' }} />
-      </SVG>
-      <SVG width={400} height={400}>
+      {/* <SVG width={400} height={400}>
         <Molecule ariaLabel={'Aspirin'} chemicalFormula={'CC(OC1=C(C(=O)O)C=CC=C1)=O'} />
-      </SVG>
+      </SVG> */}
       {/* <SVG width={800} height={400}>
         <PythonTutor
           variables={[
@@ -176,7 +173,7 @@ function App() {
           ]}
         />
       </SVG> */}
-      <SVG width={500} height={100}>
+      {/* <SVG width={500} height={100}>
         <Objects
           objectType={'tuple'}
           objectValues={[
@@ -186,6 +183,48 @@ function App() {
             { type: 'string', value: '30' },
           ]}
           objectId={'object1'}
+        />
+      </SVG> */}
+      <SVG width={800} height={400}>
+        <PythonTutor
+          variables={[
+            { pointObject: { opId: 'o1' }, value: '', name: 'c', opId: 'v1' },
+            { pointObject: { opId: 'o2' }, value: '', name: 'd', opId: 'v2' },
+            { pointObject: null, name: 'x', value: '5', opId: 'v3' },
+          ]}
+          opId={'pythonTutorFrameV2'}
+          objects={[
+            {
+              objectType: 'tuple',
+              objectId: 'o1',
+              objectValues: [
+                { type: 'string', value: '1' },
+                { type: 'pointer', pointId: 'o2' },
+                { type: 'string', value: '30' },
+                { type: 'pointer', pointId: 'o3' },
+              ],
+            },
+            {
+              objectType: 'tuple',
+              objectId: 'o2',
+              objectValues: [
+                { type: 'string', value: '1' },
+                { type: 'string', value: '4' },
+              ],
+            },
+            {
+              objectType: 'tuple',
+              objectId: 'o3',
+              objectValues: [
+                { type: 'string', value: '3' },
+                { type: 'string', value: '10' },
+              ],
+            },
+          ]}
+          rows={[
+            { depth: 0, nodes: ['', 'o2', 'o3'] },
+            { depth: 1, nodes: ['o1', '', ''] },
+          ]}
         />
       </SVG>
       {/* <SVG width={500} height={500}>

@@ -1,4 +1,4 @@
-import { withBluefish } from '../../bluefish';
+import { useName, withBluefish } from '../../bluefish';
 import { Align } from '../../components/Align';
 import { Group } from '../../components/Group';
 import { Rect } from '../../components/Rect';
@@ -10,12 +10,10 @@ export const Variable = withBluefish(function _Variable({ data }: { data: any })
   const { pointObject, name, value, opId } = data;
 
   // References
-
-  const valueName = `value-${opId}`;
-  const box = `box-${opId}`;
-  const boxBorderLeft = `boxBorderLeft-${opId}`;
-  const boxBorderBottom = `boxBorderBottom-${opId}`;
-  const variable = `variable-${opId}`;
+  const valueName = useName(`value-${opId}`);
+  const box = useName(`box-${opId}`);
+  const boxBorderLeft = useName(`boxBorderLeft-${opId}`);
+  const boxBorderBottom = useName(`boxBorderBottom-${opId}`);
 
   console.log('creating variable:', opId);
 
@@ -27,13 +25,13 @@ export const Variable = withBluefish(function _Variable({ data }: { data: any })
       {/* Creates frame of Variable component (text label & box for value) */}
       <Row spacing={5} alignment="middle">
         <Text contents={name} fontSize={'24px'} fontFamily={fontFamily} fill={'black'} />
-        <Rect name={box as any} height={40} width={40} fill={'#e2ebf6'} />
+        <Rect name={box} height={40} width={40} fill={'#e2ebf6'} />
       </Row>
       {/* Creates left and bottom edge borders */}
-      <Rect name={boxBorderLeft as any} height={40} width={2} fill={'#a6b3b6'} />
-      <Rect name={boxBorderBottom as any} height={2} width={40} fill={'#a6b3b6'} />
+      <Rect name={boxBorderLeft} height={40} width={2} fill={'#a6b3b6'} />
+      <Rect name={boxBorderBottom} height={2} width={40} fill={'#a6b3b6'} />
       {/* Creates text labels of variable */}
-      <Text name={valueName as any} contents={value} fontFamily={fontFamily} fontSize={'24px'} fill={'black'} />
+      <Text name={valueName} contents={value} fontFamily={fontFamily} fontSize={'24px'} fill={'black'} />
       {/* Align text and border components to variable frame */}
       <Align alignment="bottomCenter">
         <Ref to={boxBorderBottom} />
