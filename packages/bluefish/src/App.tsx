@@ -62,7 +62,9 @@ import { Distribute } from './components/Distribute';
 // import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
 // import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
 import { Background } from './components/Background';
-import { PythonTutor, Variable } from './examples/python-tutor/python-tutor';
+import { PythonTutor } from './examples/python-tutor/python-tutor';
+import { Variable } from './examples/python-tutor/Variable';
+import { ElmTuple } from './examples/python-tutor/ElmTuple';
 // import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
 // import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
 import { Recipe } from './examples/Recipe';
@@ -76,6 +78,7 @@ import { Contain } from './components/Contain';
 // import { Tree3 } from './examples/grammars/gotree/3-EncodableTree - FRESH';
 import { flexibleRect } from './examples/grammars/gotree/3-EncodableTree';
 import { Cars0, Cars1, Cars2, Cars3 } from './examples/cars/cars';
+import { Objects } from './examples/python-tutor/Objects';
 // import { ChartAccent } from './examples/chart-accent';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
@@ -144,7 +147,7 @@ function App() {
       <SVG width={400} height={400}>
         <Molecule ariaLabel={'Aspirin'} chemicalFormula={'CC(OC1=C(C(=O)O)C=CC=C1)=O'} />
       </SVG>
-      <SVG width={800} height={400}>
+      {/* <SVG width={800} height={400}>
         <PythonTutor
           variables={[
             { pointObject: { opId: 'o1' }, value: '', name: 'c', opId: 'v1' },
@@ -171,6 +174,18 @@ function App() {
             { depth: 0, nodes: ['', 'o2', 'o3'] },
             { depth: 1, nodes: ['o1', '', ''] },
           ]}
+        />
+      </SVG> */}
+      <SVG width={500} height={100}>
+        <Objects
+          objectType={'tuple'}
+          objectValues={[
+            { type: 'string', value: '1' },
+            { type: 'string', value: '2' },
+            { type: 'pointer', pointId: 'object1' },
+            { type: 'string', value: '30' },
+          ]}
+          objectId={'object1'}
         />
       </SVG>
       {/* <SVG width={500} height={500}>
