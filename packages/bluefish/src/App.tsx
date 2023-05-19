@@ -227,8 +227,8 @@ function App() {
       </SVG> */}
       <SVG width={800} height={400}>
         <PythonTutor
-          variables={[variable('c', pointer(0), 0), variable('d', pointer(1), 1), variable('x', 5, 2)]}
-          objects={[tuple([1, pointer(1), pointer(2)], 0), tuple([1, 4], 1), tuple([3, 10], 2)]}
+          variables={[variable('c', pointer(0)), variable('d', pointer(1)), variable('x', 5)]}
+          objects={[tuple([1, pointer(1), pointer(2)]), tuple([1, 4]), tuple([3, 10])]}
           rows={[
             [0, null, null],
             [null, 1, 2],

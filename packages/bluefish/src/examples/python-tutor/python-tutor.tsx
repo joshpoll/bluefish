@@ -11,11 +11,10 @@ import { GlobalFrame } from './GlobalFrame';
 import { Objects } from './Objects';
 import { not } from 'ndarray-ops';
 
-export const variable = (variableName: string, variableValue: any, variableId: any) => {
+export const variable = (variableName: string, variableValue: any) => {
   let notPointer = variableValue !== null && (typeof variableValue === 'string' || typeof variableValue === 'number');
   return {
     name: variableName,
-    opId: `v${variableId}`,
     value: notPointer ? variableValue : '',
     pointObject: notPointer ? null : variableValue.pointObject,
   };
@@ -25,7 +24,7 @@ export const pointer = (pointedId: any) => {
   return { pointObject: { opId: `o${pointedId}` } };
 };
 
-export const tuple = (objectList: any, objectIndex: any) => {
+export const tuple = (objectList: any) => {
   let objectValues: any = [];
   objectList.forEach((object: any, index: any) => {
     let notPointer = object !== null && (typeof object === 'string' || typeof object === 'number');
@@ -41,7 +40,6 @@ export const tuple = (objectList: any, objectIndex: any) => {
   return {
     objectType: 'tuple',
     objectValues: objectValues,
-    objectId: `o${objectIndex}`,
   };
 };
 
@@ -65,6 +63,15 @@ export const PythonTutor = withBluefish(function ({ variables, objects, rows }: 
   const objectMatrix = 'objectMatrix' as any;
 
   rows = formatRows(rows);
+
+  // Add automatic naming based on indices
+  variables = variables.map((v: any, index: any) => {
+    return { ...v, opId: `v${index}` };
+  });
+
+  objects = objects.map((o: any, index: any) => {
+    return { ...o, objectId: `o${index}` };
+  });
 
   // lookup map for the yellow objects
   const objMap = new Map();
