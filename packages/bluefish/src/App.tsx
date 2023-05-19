@@ -282,18 +282,18 @@ function App() {
           <Text contents={'this is a test caption'} />
         </Col>
       </SVG> */}
-      {/* <SVG width={1000} height={500}>
+      <SVG width={1000} height={500}>
         <UpSet />
       </SVG>
       <SVG width={1000} height={500}>
         <Playfair />
-      </SVG> */}
+      </SVG>
       {/* <SVG width={500} height={500}>
         <BertinHotel />
       </SVG> */}
-      {/* <SVG width={500} height={500}>
+      <SVG width={500} height={500}>
         <Euclid />
-      </SVG> */}
+      </SVG>
       {/* <SVG width={500} height={500}>
         <Recipe
           recipe={[
