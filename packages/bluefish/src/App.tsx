@@ -62,7 +62,9 @@ import { Distribute } from './components/Distribute';
 // import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
 // import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
 import { Background } from './components/Background';
-// import { PythonTutor } from './python-tutor';
+import { PythonTutor, pointer, tuple, variable } from './examples/python-tutor/python-tutor';
+import { Variable } from './examples/python-tutor/Variable';
+import { ElmTuple } from './examples/python-tutor/ElmTuple';
 // import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
 // import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
 import { Recipe } from './examples/Recipe';
@@ -76,6 +78,7 @@ import { Contain } from './components/Contain';
 // import { Tree3 } from './examples/grammars/gotree/3-EncodableTree - FRESH';
 import { flexibleRect } from './examples/grammars/gotree/3-EncodableTree';
 import { Cars0, Cars1, Cars2, Cars3 } from './examples/cars/cars';
+import { Objects } from './examples/python-tutor/Objects';
 // import { ChartAccent } from './examples/chart-accent';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
@@ -138,13 +141,100 @@ function App() {
       {/* <SVG width={400} height={400}>
         <Molecule ariaLabel={'Diphenyl ether'} chemicalFormula={'C1=CC=C(C=C1)OC2=CC=CC=C2'} />
       </SVG> */}
-      <SVG width={400} height={400}>
+      {/* <SVG width={400} height={400}>
         <Molecule ariaLabel={'Aspirin'} chemicalFormula={'CC(OC1=C(C(=O)O)C=CC=C1)=O'} />
+      </SVG> */}
+      {/* <SVG width={800} height={400}>
+        <PythonTutor
+          variables={[
+            { pointObject: { opId: 'o1' }, value: '', name: 'c', opId: 'v1' },
+            { pointObject: { opId: 'o2' }, value: '', name: 'd', opId: 'v2' },
+            { pointObject: null, name: 'x', value: '5', opId: 'v3' },
+          ]}
+          opId={'pythonTutorFrame'}
+          objects={[
+            {
+              nextObject: { opId: 'o2' },
+              objectType: 'tuple',
+              value: '1',
+              opId: 'o1',
+            },
+            {
+              nextObject: { opId: 'o3' },
+              objectType: 'tuple',
+              value: '2',
+              opId: 'o2',
+            },
+            { nextObject: null, objectType: 'tuple', value: '3', opId: 'o3' },
+          ]}
+          rows={[
+            { depth: 0, nodes: ['', 'o2', 'o3'] },
+            { depth: 1, nodes: ['o1', '', ''] },
+          ]}
+        />
+      </SVG> */}
+      {/* <SVG width={500} height={100}>
+        <Objects
+          objectType={'tuple'}
+          objectValues={[
+            { type: 'string', value: '1' },
+            { type: 'string', value: '2' },
+            { type: 'pointer', pointId: 'object1' },
+            { type: 'string', value: '30' },
+          ]}
+          objectId={'object1'}
+        />
+      </SVG> */}
+      {/* <SVG width={800} height={400}>
+        <PythonTutor
+          variables={[
+            { pointObject: { opId: 'o1' }, value: '', name: 'c', opId: 'v1' },
+            { pointObject: { opId: 'o2' }, value: '', name: 'd', opId: 'v2' },
+            { pointObject: null, name: 'x', value: '5', opId: 'v3' },
+          ]}
+          objects={[
+            {
+              objectType: 'tuple',
+              objectId: 'o1',
+              objectValues: [
+                { type: 'string', value: '1' },
+                { type: 'pointer', pointId: 'o2' },
+                { type: 'pointer', pointId: 'o3' },
+              ],
+            },
+            {
+              objectType: 'tuple',
+              objectId: 'o2',
+              objectValues: [
+                { type: 'string', value: '1' },
+                { type: 'string', value: '4' },
+              ],
+            },
+            {
+              objectType: 'tuple',
+              objectId: 'o3',
+              objectValues: [
+                { type: 'string', value: '3' },
+                { type: 'string', value: '10' },
+              ],
+            },
+          ]}
+          rows={[
+            { depth: 0, nodes: ['o1', '', ''] },
+            { depth: 1, nodes: ['', 'o2', 'o3'] },
+          ]}
+        />
+      </SVG> */}
+      <SVG width={800} height={400}>
+        <PythonTutor
+          variables={[variable('c', pointer(0)), variable('d', pointer(1)), variable('x', 5)]}
+          objects={[tuple([1, pointer(1), pointer(2)]), tuple([1, 4]), tuple([3, 10])]}
+          rows={[
+            [0, null, null],
+            [null, 1, 2],
+          ]}
+        />
       </SVG>
-      <br />
-      <br />
-      <br />
-      <br />
       {/* <SVG width={500} height={500}>
         <Contain padding={{ all: 20 }}>
           <Rect width={300} height={300} fill={'blue'} />
@@ -192,18 +282,18 @@ function App() {
           <Text contents={'this is a test caption'} />
         </Col>
       </SVG> */}
-      <SVG width={1000} height={500}>
+      {/* <SVG width={1000} height={500}>
         <UpSet />
       </SVG>
       <SVG width={1000} height={500}>
         <Playfair />
-      </SVG>
+      </SVG> */}
       {/* <SVG width={500} height={500}>
         <BertinHotel />
       </SVG> */}
-      <SVG width={500} height={500}>
+      {/* <SVG width={500} height={500}>
         <Euclid />
-      </SVG>
+      </SVG> */}
       {/* <SVG width={500} height={500}>
         <Recipe
           recipe={[
@@ -295,7 +385,7 @@ function App() {
         </Group>
       </SVG> */}
       <br />
-      <SVG width={170} height={170}>
+      {/* <SVG width={170} height={170}>
         <Cars0 />
       </SVG>
       <SVG width={170} height={170}>
@@ -314,7 +404,7 @@ function App() {
       <br />
       <SVG width={500} height={500}>
         <Polio />
-      </SVG>
+      </SVG> */}
       {/* <SVG width={500} height={500}>
         <RectPath
           x={Math.PI / 2}
@@ -373,7 +463,7 @@ function App() {
           strokeWidth={2}
         />
       </SVG> */}
-      <SVG width={500} height={500}>
+      {/* <SVG width={500} height={500}>
         <Tree3
           data={{
             value: 0,
@@ -464,7 +554,7 @@ function App() {
             ],
           }}
         />
-      </SVG>
+      </SVG> */}
       {/* <SVG width={500} height={300}>
         <Col spacing={10} alignment={'center'}>
           <Tree1
