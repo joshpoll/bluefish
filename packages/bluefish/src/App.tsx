@@ -62,7 +62,7 @@ import { Distribute } from './components/Distribute';
 // import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
 // import { Matrix } from './examples/grammars/gog/examples/neo/Matrix';
 import { Background } from './components/Background';
-import { PythonTutor } from './examples/python-tutor/python-tutor';
+import { PythonTutor, pointer, tuple, variable } from './examples/python-tutor/python-tutor';
 import { Variable } from './examples/python-tutor/Variable';
 import { ElmTuple } from './examples/python-tutor/ElmTuple';
 // import { Tree5 as Tree6 } from './examples/grammars/gotree/gotree-ex6 copy';
@@ -185,7 +185,7 @@ function App() {
           objectId={'object1'}
         />
       </SVG> */}
-      <SVG width={800} height={400}>
+      {/* <SVG width={800} height={400}>
         <PythonTutor
           variables={[
             { pointObject: { opId: 'o1' }, value: '', name: 'c', opId: 'v1' },
@@ -222,6 +222,16 @@ function App() {
           rows={[
             { depth: 0, nodes: ['o1', '', ''] },
             { depth: 1, nodes: ['', 'o2', 'o3'] },
+          ]}
+        />
+      </SVG> */}
+      <SVG width={800} height={400}>
+        <PythonTutor
+          variables={[variable('c', pointer(0), 0), variable('d', pointer(1), 1), variable('x', 5, 2)]}
+          objects={[tuple([1, pointer(1), pointer(2)], 0), tuple([1, 4], 1), tuple([3, 10], 2)]}
+          rows={[
+            [0, null, null],
+            [null, 1, 2],
           ]}
         />
       </SVG>

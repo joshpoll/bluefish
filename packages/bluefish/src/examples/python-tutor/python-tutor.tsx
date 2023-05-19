@@ -9,10 +9,62 @@ import { ElmTuple } from './ElmTuple';
 import { Variable } from './Variable';
 import { GlobalFrame } from './GlobalFrame';
 import { Objects } from './Objects';
+import { not } from 'ndarray-ops';
+
+export const variable = (variableName: string, variableValue: any, variableId: any) => {
+  let notPointer = variableValue !== null && (typeof variableValue === 'string' || typeof variableValue === 'number');
+  return {
+    name: variableName,
+    opId: `v${variableId}`,
+    value: notPointer ? variableValue : '',
+    pointObject: notPointer ? null : variableValue.pointObject,
+  };
+};
+
+export const pointer = (pointedId: any) => {
+  return { pointObject: { opId: `o${pointedId}` } };
+};
+
+export const tuple = (objectList: any, objectIndex: any) => {
+  let objectValues: any = [];
+  objectList.forEach((object: any, index: any) => {
+    let notPointer = object !== null && (typeof object === 'string' || typeof object === 'number');
+
+    let tempObject = {
+      type: notPointer ? 'string' : 'pointer',
+      value: notPointer ? object : '',
+      pointId: notPointer ? '' : object.pointObject.opId,
+    };
+    objectValues.push(tempObject);
+  });
+
+  return {
+    objectType: 'tuple',
+    objectValues: objectValues,
+    objectId: `o${objectIndex}`,
+  };
+};
+
+const formatRows = (objectList: any) => {
+  console.log('received these objectList: ', objectList);
+  let rows: any = [];
+  objectList.forEach((object: any, index: any) => {
+    let tempObject = {
+      depth: index,
+      nodes: object.map((element: any) => {
+        return element === null ? '' : `o${element}`;
+      }),
+    };
+    rows.push(tempObject);
+  });
+  return rows;
+};
 
 export const PythonTutor = withBluefish(function ({ variables, objects, rows }: any) {
   const globalFrame = 'globalFrame' as any;
   const objectMatrix = 'objectMatrix' as any;
+
+  rows = formatRows(rows);
 
   // lookup map for the yellow objects
   const objMap = new Map();
