@@ -82,6 +82,7 @@ import { Objects } from './examples/python-tutor/Objects';
 // import { ChartAccent } from './examples/chart-accent';
 // import { Molecule } from './examples/chemistry/Molecule';
 import { ChartAccent } from './examples/chart-accent';
+import { JetpackCompose } from './examples/jetpack-compose';
 
 const blob = (blobOptions: blobs2.BlobOptions, svgOptions?: blobs2.SvgOptions | undefined): JSX.Element => {
   return <path {...svgOptions} d={blobs2.svgPath(blobOptions)}></path>;
@@ -140,6 +141,8 @@ function App() {
 
   return (
     <div className="App">
+      <br />
+      <JetpackCompose />
       {/* <SVG width={400} height={400}>
         <Molecule ariaLabel={'Diphenyl ether'} chemicalFormula={'C1=CC=C(C=C1)OC2=CC=CC=C2'} />
       </SVG> */}
@@ -227,7 +230,7 @@ function App() {
           ]}
         />
       </SVG> */}
-      <SVG width={800} height={400}>
+      {/* <SVG width={800} height={400}>
         <PythonTutor
           variables={[variable('c', pointer(0)), variable('d', pointer(1)), variable('x', 5)]}
           objects={[tuple([1, pointer(1), pointer(2)]), tuple([1, 4]), tuple([3, 10])]}
@@ -236,7 +239,7 @@ function App() {
             [null, 1, 2],
           ]}
         />
-      </SVG>
+      </SVG> */}
       {/* <SVG width={500} height={500}>
         <Contain padding={{ all: 20 }}>
           <Rect width={300} height={300} fill={'blue'} />
@@ -464,7 +467,7 @@ function App() {
           strokeWidth={2}
         />
       </SVG> */}
-      <ChartAccent />
+      {/* <ChartAccent /> */}
       {/* {/* <SVG width={500} height={500}>
         <Tree4
           data={{
@@ -522,7 +525,7 @@ function App() {
           </Row>
         </Padding>
       </SVG> */}
-      <SVG width={500} height={500}>
+      {/* <SVG width={500} height={500}>
         <Col spacing={50} alignment="center">
           <Tree2
             data={{
