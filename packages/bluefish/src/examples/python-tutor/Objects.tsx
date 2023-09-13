@@ -21,7 +21,7 @@ export const Objects = withBluefish(function ({ objectType, objectValues, object
 
   const fontFamily = 'verdana, arial, helvetica, sans-serif';
 
-  console.log('creating an object with id: ', objectId, objectType, objectValues);
+  //console.log('creating an object with id: ', objectId, objectType, objectValues);
 
   return (
     <Group name={objectId}>

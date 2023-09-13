@@ -16,7 +16,7 @@ const distributeMeasurePolicy =
     const placeables = measurables.map((measurable) => measurable.measure(constraints));
 
     if (options.direction === 'horizontal' && options.spacing === 3.7) {
-      console.log('distribute placeables', placeables);
+      //console.log('distribute placeables', placeables);
     }
 
     if (options.direction === 'vertical') {

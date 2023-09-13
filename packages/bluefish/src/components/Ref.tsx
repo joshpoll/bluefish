@@ -27,7 +27,7 @@ export const resolveRef = (
   map: BluefishContextValue['bfMap'],
   symbolMap: BluefishSymbolMap,
 ): Measurable => {
-  console.log('resolving ref', ref, 'map', map, 'symbolMap', symbolMap);
+  //console.log('resolving ref', ref, 'map', map, 'symbolMap', symbolMap);
   if (typeof ref === 'string') {
     const refObject = map.get(ref);
     if (refObject === undefined) {
@@ -36,16 +36,16 @@ export const resolveRef = (
       return refObject as unknown as Measurable;
     }
   } else if ('symbol' in ref) {
-    console.log('hitting the symbol');
+    //console.log('hitting the symbol');
     let refObject: symbol | React.MutableRefObject<any> | undefined =
       typeof ref.symbol === 'object' ? ref.symbol.symbol : ref.symbol;
     if ('type' in ref && ref.type === 'lookup') {
-      console.log('resolving path', ref.path);
+      //console.log('resolving path', ref.path);
       for (const position of ref.path) {
-        console.log('position', position);
+        //console.log('position', position);
         const children: Set<symbol> | undefined = symbolMap.get(refObject as symbol)?.children;
         // search children set for symbol with matching description
-        console.log('children', Array.from(children?.values() ?? []));
+        //console.log('children', Array.from(children?.values() ?? []));
         // iterate through children and find the first occurrence where child.description ===
         // position
         // COMBAK: this reverse is used to get around React double-render... this is because the
@@ -68,16 +68,16 @@ export const resolveRef = (
       refObject = ref.symbol as symbol;
     }
     const savedRefObject = refObject;
-    console.log('ref', ref, 'savedRefObject', savedRefObject);
+    //console.log('ref', ref, 'savedRefObject', savedRefObject);
     // now that we have resolved the symbol, we need to find the actual ref associated with it
 
     // const refObject = symbolMap.get(ref.symbol)?.ref;
     // const foo = symbolMap.get(ref.symbol);
-    console.log(
-      '[test]',
-      Array.from(symbolMap.entries()).filter((e) => e[1].children.size > 0),
-      // Array.from(symbolMap.entries()).map((e) => e[1].children.length),
-    );
+    // console.log(
+    //   '[test]',
+    //   Array.from(symbolMap.entries()).filter((e) => e[1].children.size > 0),
+    //   // Array.from(symbolMap.entries()).map((e) => e[1].children.length),
+    // );
     // debugger;
     if (refObject === undefined) {
       throw new Error(
@@ -111,7 +111,7 @@ Symbol map: ${Array.from(symbolMap.entries()).map(
     // console.log('[ref] resolving ref', ref);
     return resolveRef((ref as any).props.select, map, symbolMap);
   } else {
-    console.log('[ref] resolving ref', ref);
+    //console.log('[ref] resolving ref', ref);
     throw new Error(`Unknown ref object`);
     // const refObject = ref.current;
     // if (refObject === null) {
@@ -172,26 +172,26 @@ export class RefBBox extends NewBBoxClass {
     this._transform = transform;
     this._ref = ref;
     this._name = name;
-    console.log(
-      '[ref] asdfs created ref bbox',
-      this._name,
-      JSON.stringify({
-        left: this._ref.left,
-        top: this._ref.top,
-        right: this._ref.right,
-        bottom: this._ref.bottom,
-        width: this._ref.width,
-        height: this._ref.height,
-      }),
-      JSON.stringify({
-        left: this.left,
-        top: this.top,
-        right: this.right,
-        bottom: this.bottom,
-        width: this.width,
-        height: this.height,
-      }),
-    );
+    // console.log(
+    //   '[ref] asdfs created ref bbox',
+    //   this._name,
+    //   JSON.stringify({
+    //     left: this._ref.left,
+    //     top: this._ref.top,
+    //     right: this._ref.right,
+    //     bottom: this._ref.bottom,
+    //     width: this._ref.width,
+    //     height: this._ref.height,
+    //   }),
+    //   JSON.stringify({
+    //     left: this.left,
+    //     top: this.top,
+    //     right: this.right,
+    //     bottom: this.bottom,
+    //     width: this.width,
+    //     height: this.height,
+    //   }),
+    // );
   }
 
   get left() {

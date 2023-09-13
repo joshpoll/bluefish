@@ -29,9 +29,9 @@ const colMeasurePolicy =
       };
     }
 
-    console.log('[colMeasurePolicy2] inputs', options, measurables, constraints);
+    //console.log('[colMeasurePolicy2] inputs', options, measurables, constraints);
     const placeables = measurables.map((measurable) => measurable.measure(constraints));
-    console.log('[colMeasurePolicy2] placeables', placeables);
+    //console.log('[colMeasurePolicy2] placeables', placeables);
 
     // alignment
     const width = _.max(_.map(placeables, 'width')) ?? 0;
@@ -75,12 +75,12 @@ const colMeasurePolicy =
 
     let y = 0;
     placeables.forEach((placeable) => {
-      console.log('placing', placeable, `${placeable.top} -> ${y}`);
+      //console.log('placing', placeable, `${placeable.top} -> ${y}`);
       placeable.top = y;
-      console.log('placeable.top', placeable.top);
-      console.log('placed', placeable, 'y', y);
+      //console.log('placeable.top', placeable.top);
+      //console.log('placed', placeable, 'y', y);
       y += placeable.height! + spacing;
-      console.log('y', y);
+      //console.log('y', y);
     });
 
     return {

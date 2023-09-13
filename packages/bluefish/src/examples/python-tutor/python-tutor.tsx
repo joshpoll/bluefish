@@ -44,7 +44,7 @@ export const tuple = (objectList: any) => {
 };
 
 const formatRows = (objectList: any) => {
-  console.log('received these objectList: ', objectList);
+  //console.log('received these objectList: ', objectList);
   let rows: any = [];
   objectList.forEach((object: any, index: any) => {
     let tempObject = {
@@ -128,8 +128,8 @@ export const PythonTutor = withBluefish(function ({ variables, objects, rows }: 
       };
     });
 
-  console.log('these are the cols: ', cols);
-  console.log('these are the rows:', rows);
+  //console.log('these are the cols: ', cols);
+  //console.log('these are the rows:', rows);
 
   return (
     <Group>
@@ -201,7 +201,7 @@ export const Link = withBluefish(function _Link({ opId, start, end }: { opId: an
   const groupRef = useName(opId);
   const startName = useName(start.opId);
   const endName = useName(end.opId);
-  console.log('found this connector: ', opId, start, end);
+  //console.log('found this connector: ', opId, start, end);
   return (
     <Group>
       <Connector

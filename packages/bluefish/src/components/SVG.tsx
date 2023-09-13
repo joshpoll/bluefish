@@ -18,9 +18,9 @@ export const useMeasure = (measure: Measure, childrenRef?: any): BBox => {
 };
 
 const svgMeasurePolicy: Measure = (measurables, constraints) => {
-  console.log('[svg] measure policy called');
+  //console.log('[svg] measure policy called');
   const placeables = measurables.map((measurable) => measurable.measure(constraints));
-  console.log('placeables', placeables);
+  //console.log('placeables', placeables);
   placeables.forEach((placeable) => {
     if (placeable.left === undefined) {
       placeable.left = 0;
@@ -52,7 +52,7 @@ export const SVG = (props: PropsWithChildren<SVGProps>) => {
   // TODO: this is wrong because useEffect is called after render
   useEffect(
     () => {
-      console.log('[svg] measuring');
+      //console.log('[svg] measuring');
       svgMeasurePolicy(childrenRef.current, { width: props.width, height: props.height });
 
       return () => {

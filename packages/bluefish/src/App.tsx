@@ -138,94 +138,11 @@ function App() {
 
   return (
     <div className="App">
-      {/* <SVG width={400} height={400}>
-        <Molecule ariaLabel={'Diphenyl ether'} chemicalFormula={'C1=CC=C(C=C1)OC2=CC=CC=C2'} />
-      </SVG> */}
-      {/* <SVG width={400} height={400}>
-        <Molecule ariaLabel={'Aspirin'} chemicalFormula={'CC(OC1=C(C(=O)O)C=CC=C1)=O'} />
-      </SVG> */}
+      {/* Each Align of the element tuple objects uses refs -> scaling size of objects scales Ref usage */}
+
+      {/* Less than 10 Objects */}
+      {/* Times: 98.2ms, 108.3ms, 158.4ms, 90.4ms, 88.1ms */}
       {/* <SVG width={800} height={400}>
-        <PythonTutor
-          variables={[
-            { pointObject: { opId: 'o1' }, value: '', name: 'c', opId: 'v1' },
-            { pointObject: { opId: 'o2' }, value: '', name: 'd', opId: 'v2' },
-            { pointObject: null, name: 'x', value: '5', opId: 'v3' },
-          ]}
-          opId={'pythonTutorFrame'}
-          objects={[
-            {
-              nextObject: { opId: 'o2' },
-              objectType: 'tuple',
-              value: '1',
-              opId: 'o1',
-            },
-            {
-              nextObject: { opId: 'o3' },
-              objectType: 'tuple',
-              value: '2',
-              opId: 'o2',
-            },
-            { nextObject: null, objectType: 'tuple', value: '3', opId: 'o3' },
-          ]}
-          rows={[
-            { depth: 0, nodes: ['', 'o2', 'o3'] },
-            { depth: 1, nodes: ['o1', '', ''] },
-          ]}
-        />
-      </SVG> */}
-      {/* <SVG width={500} height={100}>
-        <Objects
-          objectType={'tuple'}
-          objectValues={[
-            { type: 'string', value: '1' },
-            { type: 'string', value: '2' },
-            { type: 'pointer', pointId: 'object1' },
-            { type: 'string', value: '30' },
-          ]}
-          objectId={'object1'}
-        />
-      </SVG> */}
-      {/* <SVG width={800} height={400}>
-        <PythonTutor
-          variables={[
-            { pointObject: { opId: 'o1' }, value: '', name: 'c', opId: 'v1' },
-            { pointObject: { opId: 'o2' }, value: '', name: 'd', opId: 'v2' },
-            { pointObject: null, name: 'x', value: '5', opId: 'v3' },
-          ]}
-          objects={[
-            {
-              objectType: 'tuple',
-              objectId: 'o1',
-              objectValues: [
-                { type: 'string', value: '1' },
-                { type: 'pointer', pointId: 'o2' },
-                { type: 'pointer', pointId: 'o3' },
-              ],
-            },
-            {
-              objectType: 'tuple',
-              objectId: 'o2',
-              objectValues: [
-                { type: 'string', value: '1' },
-                { type: 'string', value: '4' },
-              ],
-            },
-            {
-              objectType: 'tuple',
-              objectId: 'o3',
-              objectValues: [
-                { type: 'string', value: '3' },
-                { type: 'string', value: '10' },
-              ],
-            },
-          ]}
-          rows={[
-            { depth: 0, nodes: ['o1', '', ''] },
-            { depth: 1, nodes: ['', 'o2', 'o3'] },
-          ]}
-        />
-      </SVG> */}
-      <SVG width={800} height={400}>
         <PythonTutor
           variables={[variable('c', pointer(0)), variable('d', pointer(1)), variable('x', 5)]}
           objects={[tuple([1, pointer(1), pointer(2)]), tuple([1, 4]), tuple([3, 10])]}
@@ -234,666 +151,92 @@ function App() {
             [null, 1, 2],
           ]}
         />
-      </SVG>
-      {/* <SVG width={500} height={500}>
-        <Contain padding={{ all: 20 }}>
-          <Rect width={300} height={300} fill={'blue'} />
-          <Rect fill={'red'} />
-        </Contain>
       </SVG> */}
-      {/* <svg width={500} height={500}>
-        <ColUseState spacing={10}>
-          <RectUseState width={100} height={100} fill={'red'} />
-          <RectUseState width={100} height={100} fill={'green'} />
-          <RectUseState width={100} height={100} fill={'blue'} />
-        </ColUseState>
-      </svg>
-      <br /> */}
-      {/* <SVG width={500} height={1000}>
-        <DrivingSafety />
-      </SVG> */}
-      {/* <SVG width={500} height={300}>
-        <Col spacing={5} alignment={'center'}>
-          <Padding left={40} top={10} right={20} bottom={30}>
-            <Plot
-              height={200}
-              data={driving}
-              x={({ width }) =>
-                scaleLinear([_.min(driving.map((d) => +d.miles))!, _.max(driving.map((d) => +d.miles))!], [0, width])
-              }
-              y={({ height }) =>
-                scaleLinear([_.min(driving.map((d) => +d.gas))!, _.max(driving.map((d) => +d.gas))!], [height, 0])
-              }
-              color={() => () => 'black'}
-            >
-              <NewLine name={line} x={'miles'} y={'gas'} />
-              <NewDot
-                x={'miles'}
-                y={'gas'}
-                label={{
-                  field: 'year',
-                  avoid: [
-                    
-                  ],
-                }}
-              />
-            </Plot>
-          </Padding>
-          <Text contents={'this is a test caption'} />
-        </Col>
-      </SVG> */}
-      <SVG width={1000} height={500}>
-        <UpSet />
-      </SVG>
-      <SVG width={1000} height={500}>
-        <Playfair />
-      </SVG>
-      {/* <SVG width={500} height={500}>
-        <BertinHotel />
-      </SVG> */}
-      <SVG width={500} height={500}>
-        <Euclid />
-      </SVG>
-      {/* <SVG width={500} height={500}>
-        <Recipe
-          recipe={[
-            {
-              type: 'ingredient',
-              id: 1,
-              name: '1/2 cup (50 g) onion',
-            },
-            {
-              type: 'ingredient',
-              id: 2,
-              name: '2 tablespoons (30 g) bacon grease',
-            },
+
+      {/* Around 10 tuple length objects */}
+      {/* Times: 247.9ms, 247.8ms, 252.7ms, 219.4ms, 215.7ms */}
+      {/* <SVG width={800} height={400}>
+        <PythonTutor
+          variables={[variable('c', pointer(0)), variable('d', pointer(1)), variable('x', 5)]}
+          objects={[
+            tuple([1, pointer(1), pointer(2)]),
+            tuple([57, 69, 73, 48, 44, 81, 76, 50, 64, 1]),
+            tuple([54, 29, 64, 66, 8, 38, 13, 1, 42, 68]),
+          ]}
+          rows={[
+            [0, null, null],
+            [null, 1, 2],
           ]}
         />
       </SVG> */}
-      {/* <SVG width={500} height={500}>
-        <Matrix />
-      </SVG> */}
-      {/* <SVG width={500} height={500}>
-        <AlignNew x={250} y={250} alignment="centerHorizontally">
-          <Rect name={autoAssign1} width={100} fill={'red'} />
-          <Rect name={autoAssign2} height={20} width={100} fill={'green'} />
-          <Rect name={autoAssign3} width={100} fill={'blue'} />
-        </AlignNew>
-        <Distribute direction="vertical" spacing={10} total={200}>
-          <Ref to={autoAssign1} />
-          <Ref to={autoAssign2} />
-          <Ref to={autoAssign3} />
-        </Distribute>
-      </SVG>
-      <SVG width={500} height={500}>
-        <AlignNew x={250} y={250} alignment="centerHorizontally">
-          <Line name={fixed1} x1={20} y1={20} x2={20} y2={30} strokeWidth={2} stroke={'black'} />
-          <Text name={fixed2} contents={'1'} />
-        </AlignNew>
-        <Distribute direction="vertical" spacing={10}>
-          <Ref to={fixed1} />
-          <Ref to={fixed2} />
-        </Distribute>
-      </SVG> */}
-      {/* <SVG width={500} height={500}>
-        <AlignNew x={250} y={250}>
-          <Line guidePrimary="bottomCenter" x1={20} y1={20} x2={20} y2={30} strokeWidth={2} stroke={'black'} />
-          <Text guidePrimary="topCenter" contents={'1'} />
-        </AlignNew>
-      </SVG> */}
-      {/* <SVG width={500} height={500}>
-        <AlignNew x={250} y={250}>
-          <Rect guidePrimary="bottomCenter" width={100} height={100} fill={'firebrick'} />
-          <Rect guidePrimary="topCenter" width={20} height={20} fill={'lightgreen'} />
-        </AlignNew>
-      </SVG> */}
-      {/* <SVG width={500} height={500}>
-        <AlignNew x={250} y={250} alignment="center">
-          <Rect width={100} height={100} fill={'firebrick'} />
-          <Rect width={20} height={500} fill={'lightgreen'} />
-        </AlignNew>
-      </SVG> */}
-      {/* <SVG width={500} height={500}>
-        <Group> */}
-      {/* <Group>
-            <Col spacing={5} alignment={'center'}>
-              <Line x1={20} y1={20} x2={20} y2={30} strokeWidth={2} stroke={'black'} /> */}
-      {/* <Text contents={'1'} /> */}
-      {/* <Rect width={20} height={20} fill={'red'} />
-            </Col>
-          </Group> */}
-      {/* <Group> */}
-      {/* <Line name={ex1} x1={50} y1={20} x2={50} y2={30} strokeWidth={2} /> */}
-      {/* <Rect name={ex1} width={20} height={20} fill={'red'} /> */}
-      {/* <Text contents={'2'} /> */}
-      {/* <Rect name={ex2} width={20} height={20} fill={'blue'} /> */}
-      {/* <Align centerHorizontally={[<Ref to={ex1} />, <Ref to={ex2} />]} />
-            <Space vertically by={5}>
-              <Ref to={ex1} />
-              <Ref to={ex2} />
-            </Space> */}
-      {/* <Col spacing={5} alignment={'center'}>
-              <Ref to={ex1} />
-              <Ref to={ex2} />
-            </Col> */}
-      {/* <Col spacing={5} alignment={'center'}>
-              <Line x1={50} y1={20} x2={50} y2={30} strokeWidth={2} /> */}
-      {/* <Text contents={'2'} /> */}
-      {/* <Rect width={20} height={20} fill={'red'} /> */}
-      {/* </Col> */}
-      {/* </Group>
-        </Group>
-      </SVG> */}
-      <br />
-      {/* <SVG width={170} height={170}>
-        <Cars0 />
-      </SVG>
-      <SVG width={170} height={170}>
-        <Cars1 />
-      </SVG>
-      <SVG width={200} height={200}>
-        <Padding all={30}>
-          <Cars2 />
-        </Padding>
-      </SVG>
-      <SVG width={200} height={200}>
-        <Padding all={30}>
-          <Cars3 />
-        </Padding>
-      </SVG>
-      <br />
-      <SVG width={500} height={500}>
-        <Polio />
-      </SVG> */}
-      {/* <SVG width={500} height={500}>
-        <RectPath
-          x={Math.PI / 2}
-          y={10}
-          width={Math.PI / 2}
-          height={20}
-          xyScale={({ width, height }) =>
-            (theta, r) => ({
-              x: width / 2 + r * Math.cos(theta),
-              y: height / 2 + r * Math.sin(theta),
-            })}
-          fill={'firebrick'}
-          stroke={'white'}
-          strokeWidth={2}
-        />
-        <RectPath
-          x={Math.PI}
-          y={10}
-          width={Math.PI / 2}
-          height={20}
-          xyScale={({ width, height }) =>
-            (theta, r) => ({
-              x: width / 2 + r * Math.cos(theta),
-              y: height / 2 + r * Math.sin(theta),
-            })}
-          fill={'cornflowerblue'}
-          stroke={'white'}
-          strokeWidth={2}
-        />
-        <RectPath
-          x={Math.PI * 1.5}
-          y={10}
-          width={Math.PI / 2}
-          height={20}
-          xyScale={({ width, height }) =>
-            (theta, r) => ({
-              x: width / 2 + r * Math.cos(theta),
-              y: height / 2 + r * Math.sin(theta),
-            })}
-          fill={'coral'}
-          stroke={'white'}
-          strokeWidth={2}
-        />
-        <RectPath
-          x={Math.PI * 2}
-          y={10}
-          width={Math.PI / 2}
-          height={20}
-          xyScale={({ width, height }) =>
-            (theta, r) => ({
-              x: width / 2 + r * Math.cos(theta),
-              y: height / 2 + r * Math.sin(theta),
-            })}
-          fill={'olive'}
-          stroke={'white'}
-          strokeWidth={2}
+
+      {/* 50 tuple length objects */}
+      {/* Times: 366.2, 328.3ms, 432ms, 339.7ms, 374.7ms*/}
+      {/* <SVG width={800} height={400}>
+        <PythonTutor
+          variables={[variable('c', pointer(0)), variable('d', pointer(1)), variable('x', 5)]}
+          objects={[
+            tuple([1, pointer(1), pointer(2), 4, 3, 2]),
+            tuple([41, 75, 97, 89, 25, 44, 90, 34]),
+            tuple([
+              61, 77, 64, 53, 78, 52, 15, 19, 99, 78, 47, 15, 79, 34, 76, 9, 76, 70, 17, 71, 98, 98, 69, 48, 98, 69, 78,
+              91, 9, 61, 31, 33, 5, 28, 99, 48, 22, 49, 25, 12, 36, 34, 70, 13, 81, 22, 6, 95, 25, 83,
+            ]),
+          ]}
+          rows={[
+            [0, null, null],
+            [null, 1, 2],
+          ]}
         />
       </SVG> */}
-      {/* <SVG width={500} height={500}>
-        <Tree3
-          data={{
-            value: 0,
-            subtrees: [
-              { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
-              { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
-            ],
-          }}
-          encoding={{
-            node: circle as any,
-            link: link({ to: 'centerLeft' }),
-            rootSubTree: row({ alignment: 'bottom' }),
-            subTreeSubTree: col(),
-          }}
+
+      {/* 100 tuple length object */}
+      {/* Times:  404.6ms, */}
+      <SVG width={800} height={400}>
+        <PythonTutor
+          variables={[variable('c', pointer(0)), variable('d', pointer(1)), variable('x', 5)]}
+          objects={[
+            tuple([1, pointer(1), pointer(2), 4, 3, 2]),
+            tuple([41, 75, 97, 89, 25, 44, 90, 34]),
+            tuple([
+              59, 80, 35, 89, 69, 67, 83, 28, 61, 83, 17, 34, 43, 26, 67, 71, 58, 15, 56, 30, 0, 41, 17, 79, 57, 98, 15,
+              48, 72, 32, 15, 53, 31, 34, 4, 68, 67, 91, 89, 91, 64, 71, 2, 83, 32, 80, 87, 4, 35, 89, 15, 90, 16, 50,
+              25, 98, 51, 78, 22, 0, 28, 14, 59, 43, 32, 9, 59, 51, 68, 93, 18, 57, 22, 10, 28, 55, 60, 70, 32, 82, 80,
+              61, 38, 24, 86, 8, 61, 45, 35, 10, 46, 89, 17, 89, 41, 23, 70, 80, 81, 8,
+            ]),
+          ]}
+          rows={[
+            [0, null, null],
+            [null, 1, 2],
+          ]}
         />
       </SVG>
-      <SVG width={500} height={500}>
-        <Padding all={20}>
-          <Row spacing={20} alignment={'top'}>
-            <Tree3
-              data={{
-                value: 0,
-                subtrees: [
-                  {
-                    value: 0.5,
-                    subtrees: [{ value: 0.75 }, { value: 0.75 }],
-                  },
-                  { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
-                ],
-              }}
-              encoding={{
-                node: flexibleRect as any,
-                link: none,
-                rootSubTree: contain({ padding: { top: 20, bottom: 20, left: 20, right: 20 } }),
-                subTreeSubTree: col({ alignment: 'right', spacing: 20 }),
-              }}
-              overdraw={false}
-            />
-            <Tree3
-              data={{
-                value: 0,
-                subtrees: [
-                  { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
-                  { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
-                ],
-              }}
-              encoding={{
-                node: rect as any,
-                link: none,
-                rootSubTree: col({ alignment: 'left', spacing: 5 }),
-                subTreeSubTree: col({ alignment: 'left', spacing: 5 }),
-              }}
-            />
-          </Row>
-        </Padding>
-      </SVG>
-      <SVG width={500} height={500}>
-        <Col spacing={50} alignment="center">
-          <Tree2
-            data={{
-              value: 0,
-              subtrees: [
-                { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
-                { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
-              ],
-            }}
-            $node={RectNode}
-          />
-          <Tree2
-            data={{
-              value: 0,
-              subtrees: [
-                { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
-                { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
-              ],
-            }}
-            $node={TextNode}
-          />
-        </Col>
-      </SVG>
-      <SVG width={500} height={300}>
-        <Tree1
-          data={{
-            value: 0,
-            subtrees: [
-              { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
-              { value: 0.5, subtrees: [{ value: 0.75 }, { value: 0.75 }] },
-            ],
-          }}
+
+      {/* Performance testing - computer wasn't happy; profiler paused and didn't give response */}
+      {/* <SVG width={800} height={400}>
+        <PythonTutor
+          variables={[variable('c', pointer(0)), variable('d', pointer(1)), variable('x', 5)]}
+          objects={[
+            tuple([1, pointer(1), pointer(2), 4, 3, 2]),
+            tuple([
+              62, 55, 14, 44, 57, 16, 81, 84, 29, 82, 20, 13, 66, 40, 46, 66, 48, 2, 87, 91, 86, 57, 99, 45, 86, 69, 63,
+              10, 78, 40, 32, 28, 68, 16, 33, 79, 82, 13, 67, 89, 56, 7, 94, 13, 19, 93, 19, 26, 59, 33, 60, 24, 21, 76,
+              15, 12, 51, 23, 42, 95, 25, 38, 7, 61, 1, 97, 96, 16, 64, 13, 50, 83, 52, 95, 16, 71, 11, 62, 5, 36, 57,
+              35, 41, 15, 34, 63, 90, 22, 8, 56, 16, 41, 26, 9, 38, 26, 6, 9, 48, 78,
+            ]),
+            tuple([
+              61, 25, 23, 18, 89, 16, 33, 75, 7, 86, 3, 19, 63, 19, 58, 34, 85, 92, 46, 54, 37, 9, 91, 67, 59, 46, 35,
+              45, 81, 97, 9, 61, 0, 80, 10, 36, 44, 16, 30, 19, 33, 59, 21, 74, 18, 46, 71, 30, 91, 8, 60, 61, 53, 70,
+              74, 99, 88, 14, 71, 74, 43, 92, 17, 27, 66, 37, 25, 3, 43, 86, 27, 45, 58, 44, 24, 60, 40, 64, 34, 54, 87,
+              1, 56, 37, 39, 72, 36, 1, 43, 73, 10, 77, 12, 9, 85, 59, 32, 63, 13, 64,
+            ]),
+          ]}
+          rows={[
+            [0, null, null],
+            [null, 1, 2],
+          ]}
         />
       </SVG> */}
-      {/* <SVG width={500} height={300}>
-        <Col spacing={10} alignment={'center'}>
-          <Tree1
-            data={{
-              value: 1,
-              subtrees: [
-                {
-                  value: 2,
-                  subtrees: [{ value: 3 }, { value: 4 }],
-                },
-                {
-                  value: 5,
-                  subtrees: [{ value: 6 }, { value: 7 }],
-                },
-              ],
-            }}
-          />
-          <Text contents={'flat component'} />
-        </Col>
-      </SVG> */}
-      {/* <SVG width={500} height={300}>
-        <Col spacing={10} alignment={'center'}>
-          <Tree2
-            data={{
-              value: 1,
-              subtrees: [
-                {
-                  value: 2,
-                  subtrees: [{ value: 3 }, { value: 4 }],
-                },
-                {
-                  value: 5,
-                  subtrees: [{ value: 6 }, { value: 7 }],
-                },
-              ],
-            }}
-          />
-          <Text contents={'node factored out'} />
-        </Col>
-      </SVG> */}
-      {/* <SVG width={500} height={300}>
-        <Col spacing={10} alignment={'center'}>
-          <Tree3
-            data={{
-              value: 1,
-              subtrees: [
-                {
-                  value: 2,
-                  subtrees: [{ value: 3 }, { value: 4 }],
-                },
-                {
-                  value: 5,
-                  subtrees: [{ value: 6 }, { value: 7 }],
-                },
-              ],
-            }}
-            encoding={{
-              node: CustomNode,
-            }}
-          />
-          <Text contents={'node in encoding'} />
-        </Col>
-      </SVG> */}
-      {/* <SVG width={500} height={300}>
-        <Col spacing={10} alignment={'center'}>
-          <Tree4
-            data={{
-              value: 1,
-              subtrees: [
-                {
-                  value: 2,
-                  subtrees: [{ value: 3 }, { value: 4 }],
-                },
-                {
-                  value: 5,
-                  subtrees: [{ value: 6 }, { value: 7 }],
-                },
-              ],
-            }}
-            encoding={{
-              node: CustomNode,
-            }}
-          />
-          <Text contents={'link in encoding'} />
-        </Col>
-      </SVG> */}
-      {/* <SVG width={500} height={500}>
-        <Col spacing={10} alignment={'center'}> */}
-      {/* <Tree6
-            data={{
-              value: 1,
-              subtrees: [
-                {
-                  value: 2,
-                  subtrees: [{ value: 3 }, { value: 4 }],
-                },
-                {
-                  value: 5,
-                  subtrees: [{ value: 6 }, { value: 7 }],
-                },
-              ],
-            }}
-            encoding={{
-              node: CustomNode,
-              link: () => null,
-              rootSubtree: { row: {} },
-              subtreeSubtree: { row: {} },
-            }}
-          /> */}
-      {/* <Tree5
-            data={{
-              value: 1,
-              subtrees: [
-                {
-                  value: 2,
-                  subtrees: [{ value: 3 }, { value: 4 }],
-                },
-                {
-                  value: 5,
-                  subtrees: [{ value: 6 }, { value: 7 }],
-                },
-              ],
-            }}
-            encoding={{
-              node: CustomNode,
-              link: () => null,
-              rootSubtree: RELATIONS.row({}),
-              subtreeSubtree: RELATIONS.row({}),
-            }}
-          /> */}
-      {/* <Tree5
-            data={{
-              value: 1,
-              subtrees: [
-                {
-                  value: 2,
-                  subtrees: [{ value: 3 }, { value: 4 }],
-                },
-                {
-                  value: 5,
-                  subtrees: [{ value: 6 }, { value: 7 }],
-                },
-              ],
-            }}
-            encoding={{
-              node: CustomNode,
-              // link: () => null,
-              rootSubtree: RELATIONS.row({}),
-              subtreeSubtree: RELATIONS.col({}),
-            }}
-          /> */}
-      {/* <Text contents={'relations in encoding'} /> */}
-      {/* </Col>
-      </SVG> */}
-      <br />
-      {/* <SVG width={800} height={200}>
-        <Padding left={40} top={10} right={20} bottom={30}>
-          <Plot
-            data={alphabet}
-            x={({ width }) =>
-              scaleBand(
-                alphabet.map((d) => d.letter),
-                [0, width],
-              ).padding(0.1)
-            }
-            y={({ height }) => scaleLinear([0, _.max(alphabet.map((d) => +d.frequency))!], [0, height])}
-            color={() =>
-              scaleSequential(interpolateBlues).domain([
-                _.min(alphabet.map((d) => +d.frequency))!,
-                _.max(alphabet.map((d) => +d.frequency))!,
-              ])
-            }
-          > */}
-      {/* <BarY encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
-      {/* <NewBarY spacing={5} x={'letter'} y={'frequency'} color={'frequency'} /> */}
-      {/* <BarYWithBFN encodings={{ x: 'letter', y: 'frequency', color: 'frequency' }} /> */}
-      {/* </Plot>
-        </Padding>
-      </SVG> */}
-      {/* <PeritextSymbol
-        chars={[
-          { value: 'T', opId: '1@A', deleted: false, marks: ['italic'] },
-          { value: 'h', opId: '2@A', deleted: true, marks: ['italic'] },
-          // { value: 'r', opId: '20@A', deleted: true, marks: ['italic'] },
-          { value: 'e', opId: '5@B', deleted: false, marks: ['bold', 'italic'] },
-          { value: ' ', opId: '6@B', deleted: false, marks: ['bold', 'italic'] },
-          { value: 'f', opId: '7@A', deleted: false, marks: ['bold'] },
-          { value: 'o', opId: '8@A', deleted: true, marks: [] },
-          { value: 'x', opId: '9@A', deleted: false, marks: [] },
-        ]}
-        markOps={[
-          {
-            action: 'addMark',
-            opId: '18@A',
-            start: { opId: '5@B' },
-            end: { opId: '7@A' },
-            markType: 'bold',
-            backgroundColor: '#F9EEEE',
-            borderColor: '#E57E97',
-          },
-          {
-            action: 'addMark',
-            opId: '10@B',
-            start: { opId: '1@A' },
-            end: { opId: '6@B' },
-            markType: 'italic',
-            backgroundColor: '#E3F2F7',
-            borderColor: '#00C2FF',
-          },
-        ]}
-      /> */}
-      {/* <SVG width={500} height={500}>
-        <Col alignment={'center'} spacing={5}>
-          <TreeSymbol
-            data={{
-              name: 'A',
-              value: {
-                value: '7',
-                marks: ['bold', 'italic'],
-              },
-              subtrees: [
-                {
-                  name: 'B',
-                  value: {
-                    value: '4',
-                    marks: ['bold', 'italic'],
-                  },
-                  subtrees: [
-                    {
-                      name: 'C',
-                      value: {
-                        value: '2',
-                        marks: ['bold', 'italic'],
-                      },
-                    },
-                    {
-                      name: 'D',
-                      value: {
-                        value: '2',
-                        marks: ['bold', 'italic'],
-                      },
-                    },
-                  ],
-                },
-                {
-                  name: 'E',
-                  value: {
-                    value: '3',
-                    marks: ['bold', 'italic'],
-                  },
-                  subtrees: [
-                    {
-                      name: 'F',
-                      value: {
-                        value: '1',
-                        marks: ['bold', 'italic'],
-                      },
-                    },
-                    {
-                      name: 'G',
-                      value: {
-                        value: '1',
-                        marks: ['bold', 'italic'],
-                      },
-                    },
-                  ],
-                },
-              ],
-            }}
-          />
-          <TreeSymbol
-            data={{
-              name: 'A',
-              value: {
-                value: '7',
-                marks: ['bold', 'italic'],
-              },
-              subtrees: [
-                {
-                  name: 'B',
-                  value: {
-                    value: '4',
-                    marks: ['bold', 'italic'],
-                  },
-                  subtrees: [
-                    {
-                      name: 'C',
-                      value: {
-                        value: '2',
-                        marks: ['bold', 'italic'],
-                      },
-                    },
-                    {
-                      name: 'D',
-                      value: {
-                        value: '2',
-                        marks: ['bold', 'italic'],
-                      },
-                    },
-                  ],
-                },
-                {
-                  name: 'E',
-                  value: {
-                    value: '3',
-                    marks: ['bold', 'italic'],
-                  },
-                  subtrees: [
-                    {
-                      name: 'F',
-                      value: {
-                        value: '1',
-                        marks: ['bold', 'italic'],
-                      },
-                    },
-                    {
-                      name: 'G',
-                      value: {
-                        value: '1',
-                        marks: ['bold', 'italic'],
-                      },
-                    },
-                  ],
-                },
-              ],
-            }}
-          />
-        </Col>
-      </SVG>
-      <br />
-      <SVG width={500} height={500}>
-        <Col spacing={10} alignment={'center'}>
-          <CharSymbol value={'b'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
-          <CharSymbol value={'a'} opId={'8@A'} marks={['bold', 'italic']} deleted={false} />
-        </Col>
-      </SVG> */}
-      {/* <svg width={500} height={500}>
-        <RectUseState x={20} y={20} width={100} height={100} fill={'green'} />
-      </svg> */}
     </div>
   );
 }

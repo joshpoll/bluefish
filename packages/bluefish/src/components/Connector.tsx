@@ -36,8 +36,8 @@ const connectorMeasurePolicy = (props: LinkProps): Measure => {
     const [from, to] = measurables.map((m) => m.measure(constraints));
     const [fromYDir, fromXDir] = splitAlignment(props.$from ?? measurables[0].guidePrimary ?? 'center');
     const [toYDir, toXDir] = splitAlignment(props.$to ?? measurables[1].guidePrimary ?? 'center');
-    console.log('[connector] from', from, fromYDir, fromXDir);
-    console.log('[connector] to', to, toYDir, toXDir);
+    //console.log('[connector] from', from, fromYDir, fromXDir);
+    //console.log('[connector] to', to, toYDir, toXDir);
 
     let fromX, fromY, toX, toY;
     if (fromXDir === 'left') {
@@ -56,17 +56,17 @@ const connectorMeasurePolicy = (props: LinkProps): Measure => {
       fromY = from.top! + from.height! / 2;
     }
 
-    console.log(
-      '[connector] to BBox',
-      JSON.stringify({
-        left: to.left,
-        right: to.right,
-        top: to.top,
-        bottom: to.bottom,
-        width: to.width,
-        height: to.height,
-      }),
-    );
+    // console.log(
+    //   '[connector] to BBox',
+    //   JSON.stringify({
+    //     left: to.left,
+    //     right: to.right,
+    //     top: to.top,
+    //     bottom: to.bottom,
+    //     width: to.width,
+    //     height: to.height,
+    //   }),
+    // );
     if (toXDir === 'left') {
       toX = to.left;
     } else if (toXDir === 'right') {
@@ -83,8 +83,8 @@ const connectorMeasurePolicy = (props: LinkProps): Measure => {
       toY = to.top! + to.height! / 2;
     }
 
-    console.log('[connector] from', fromX, fromY);
-    console.log('[connector] to', toX, toY);
+    //console.log('[connector] from', fromX, fromY);
+    //console.log('[connector] to', toX, toY);
 
     // const left = Math.min(fromX!, toX!);
     // const top = Math.min(fromY!, toY!);
