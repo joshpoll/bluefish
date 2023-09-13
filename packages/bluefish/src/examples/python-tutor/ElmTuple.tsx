@@ -27,7 +27,7 @@ export const ElmTuple = withBluefish(({ tupleIndex, tupleData, objectId }: ElmTu
         />
         {/* <Rect name={`elmLabel_${tupleIndex}_${objectId}` as any} height={10} width={10} fill={'none'} stroke={'red'} /> */}
       </Padding>
-      {tupleData.type == 'string' ? (
+      {tupleData.type === 'string' ? (
         <Text
           name={`elmVal_${tupleIndex}_${objectId}` as any}
           contents={tupleData.value}

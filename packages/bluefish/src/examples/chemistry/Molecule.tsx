@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useRef, useState } from 'react';
 import { withBluefish, useName, useNameList } from '../../bluefish';
 import { SVG } from '../../components/SVG';
@@ -15,8 +16,8 @@ const ArrayHelper = require('smiles-drawer/src/ArrayHelper');
 
 export const Molecule = withBluefish((props: any) => {
   let options = {};
-  let edges: any[] = [];
-  let vertices: any[] = [];
+  let bonds: any[] = [];
+  let atoms: any[] = [];
   let rings: any[] = [];
 
   let chemicalDrawer = new SvgDrawer(options);
@@ -48,8 +49,8 @@ export const Molecule = withBluefish((props: any) => {
 
     let [tempEdges, tempVertices, tempRings] = extractVerticeEdgeRingInformation(chemicalDrawer);
 
-    edges = edges.concat(tempEdges);
-    vertices = vertices.concat(tempVertices);
+    bonds = bonds.concat(tempEdges);
+    atoms = atoms.concat(tempVertices);
     rings = rings.concat(tempRings);
   });
 
@@ -101,22 +102,22 @@ export const Molecule = withBluefish((props: any) => {
 
   // const vNames = vertices.map((v) => v.id);
   // console.log('names of vertices: ', vNames);
-  const verticesName = useNameList(vertices.map((v) => v.id));
-  const edgesName = useNameList(edges.map((e) => e.id));
+  const atomNames = useNameList(atoms.map((v) => v.id));
+  const bondNames = useNameList(bonds.map((e) => e.id));
   const ringsName = useNameList(rings.map((r) => r.id));
 
   // Remap the vertices and edges to include the names
-  vertices = vertices.map((v, index) => {
+  atoms = atoms.map((v, index) => {
     return {
       ...v,
-      name: verticesName[index],
+      name: atomNames[index],
     };
   });
 
-  edges = edges.map((e, index) => {
+  bonds = bonds.map((e, index) => {
     return {
       ...e,
-      name: edgesName[index],
+      name: bondNames[index],
     };
   });
 
@@ -173,7 +174,7 @@ export const Molecule = withBluefish((props: any) => {
     return [minX, minY];
   }
 
-  const [minXOffset, minYOffset] = findOffsetsToFitDiagram(vertices);
+  const [minXOffset, minYOffset] = findOffsetsToFitDiagram(atoms);
 
   function findEdgesVerticesOfRing(ringElm: any, edges: any, vertices: any) {
     let ringEdges: any[] = [];
@@ -232,11 +233,11 @@ export const Molecule = withBluefish((props: any) => {
     return [sepEdges, sepVertices, sepRings];
   }
 
-  console.log('these are the vertices: ', vertices);
-  console.log('these are the edges: ', edges);
+  console.log('these are the vertices: ', atoms);
+  console.log('these are the edges: ', bonds);
   console.log('these are the rings: ', rings);
 
-  const [renderEdges, renderVertices, renderRings] = separateEdgesVerticesRings(edges, vertices, rings);
+  const [renderEdges, renderVertices, renderRings] = separateEdgesVerticesRings(bonds, atoms, rings);
 
   console.log('these are the render vertices: ', renderVertices);
   console.log('these are the render edges: ', renderEdges);
@@ -244,48 +245,29 @@ export const Molecule = withBluefish((props: any) => {
 
   return (
     <Group aria-label={props.ariaLabel}>
-      <Group aria-label={'Atoms'}>
-        {vertices.map((v, index) => (
+      <Group aria-label="Atoms">
+        {atoms.map((v, index) => (
           <Atom
-            name={verticesName[index]}
+            name={atomNames[index]}
             cx={(v.xLoc + minXOffset + 10) * 1.2}
             cy={(v.yLoc + minYOffset + 10) * 1.2}
             r={8}
-            fill={'black'}
+            fill="black"
             content={v.value.element}
-            curId={v.id}
-            isTerminal={v.isTerminal}
-            bondCount={v.value.bondCount}
-            ariaHidden={false}
           />
         ))}
       </Group>
 
-      <Group aria-label={'Bonds'}>
-        {edges.map((e, index) => (
-          <Bond
-            $from={'center'}
-            $to={'center'}
-            stroke={'black'}
-            strokeWidth={2}
-            content={'Bond'}
-            name={edgesName[index]}
-            bondType={e.bondType}
-            ringCenterX={e.lcr ? e.lcr.center.x : 0}
-            ringCenterY={e.lcr ? e.lcr.center.y : 0}
-            startLocationX={getLocationVertexWithId(e.sourceId, vertices).xLoc}
-            startLocationY={getLocationVertexWithId(e.sourceId, vertices).yLoc}
-            endLocationY={getLocationVertexWithId(e.destId, vertices).yLoc}
-            endLocationX={getLocationVertexWithId(e.destId, vertices).xLoc}
-            curId={e.id}
-          >
-            <Ref to={verticesName[e.sourceNum]} />
-            <Ref to={verticesName[e.destNum]} />
+      <Group aria-label="Bonds">
+        {bonds.map((e, index) => (
+          <Bond stroke="black" strokeWidth={2} name={bondNames[index]} bondType={e.bondType}>
+            <Ref select={atomNames[e.sourceNum]} />
+            <Ref select={atomNames[e.destNum]} />
           </Bond>
         ))}
       </Group>
 
-      {vertices.map((v) => (
+      {atoms.map((v) => (
         <Atom
           cx={(v.xLoc + minXOffset + 10) * 1.2}
           cy={(v.yLoc + minYOffset + 10) * 1.2}

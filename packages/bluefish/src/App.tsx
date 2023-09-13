@@ -138,12 +138,12 @@ function App() {
 
   return (
     <div className="App">
-      {/* <SVG width={400} height={400}>
+      <SVG width={400} height={400}>
         <Molecule ariaLabel={'Diphenyl ether'} chemicalFormula={'C1=CC=C(C=C1)OC2=CC=CC=C2'} />
-      </SVG> */}
-      {/* <SVG width={400} height={400}>
+      </SVG>
+      <SVG width={400} height={400}>
         <Molecule ariaLabel={'Aspirin'} chemicalFormula={'CC(OC1=C(C(=O)O)C=CC=C1)=O'} />
-      </SVG> */}
+      </SVG>
       {/* <SVG width={800} height={400}>
         <PythonTutor
           variables={[
@@ -463,7 +463,7 @@ function App() {
           strokeWidth={2}
         />
       </SVG> */}
-      {/* <SVG width={500} height={500}>
+      <SVG width={500} height={500}>
         <Tree3
           data={{
             value: 0,
@@ -554,7 +554,7 @@ function App() {
             ],
           }}
         />
-      </SVG> */}
+      </SVG>
       {/* <SVG width={500} height={300}>
         <Col spacing={10} alignment={'center'}>
           <Tree1
