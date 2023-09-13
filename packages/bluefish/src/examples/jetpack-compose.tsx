@@ -1,9 +1,13 @@
-import { useName, useNameList, withBluefish } from '../bluefish';
+import { scaleLinear } from 'd3-scale';
+import { lookup, useName, useNameList, withBluefish } from '../bluefish';
 import { Contain } from '../components/Contain';
 import { Distribute } from '../components/Distribute';
 import { Rect } from '../components/Rect';
 import { SVG } from '../components/SVG';
 import { Align, Col, Group, Padding, Ref, Row, Text } from '../main';
+import { Plot2 as Plot, Plot2 } from './grammars/gog/Plot';
+import { NewAxis } from './grammars/gog/marks/NewAxis';
+import { ScaledRect } from './grammars/gog/marks/Rect';
 
 const ComposeText = withBluefish((props: { contents: string; fontSize?: string; fill?: string; x?: number }) => {
   return (
@@ -21,13 +25,13 @@ const ComposeText = withBluefish((props: { contents: string; fontSize?: string; 
 
 // Make expanded view as well
 const dayToSleepBars = [
-  { day: 'Sun', sleep: 7, selected: true },
-  { day: 'Mon', sleep: 6.5 },
-  { day: 'Tue', sleep: 8 },
-  { day: 'Wed', sleep: 7 },
-  { day: 'Thu', sleep: 7.2 },
-  { day: 'Fri', sleep: 8 },
-  { day: 'Sat', sleep: 9 },
+  { day: 'Sun', sleep: 7, startTime: 22, selected: true },
+  { day: 'Mon', sleep: 6.5, startTime: 21 },
+  { day: 'Tue', sleep: 8, startTime: 21 },
+  { day: 'Wed', sleep: 7, startTime: 21 },
+  { day: 'Thu', sleep: 7.2, startTime: 22 },
+  { day: 'Fri', sleep: 8, startTime: 22 },
+  { day: 'Sat', sleep: 9, startTime: 23 },
 ];
 
 const displayedHours = [20, 21, 22, 23, 0, 1, 2];
@@ -54,7 +58,7 @@ const Gradient = withBluefish((props: GradientProps) => {
     <g>
       <linearGradient id={props.id} x1={props.x1} x2={props.x2} y1={props.y1} y2={props.y2}>
         {props.colorOffsets.map((colorOffset) => (
-          <stop offset={`${colorOffset.offset}%`} stop-color={colorOffset.color} />
+          <stop offset={`${colorOffset.offset}%`} stopColor={colorOffset.color} />
         ))}
       </linearGradient>
     </g>
@@ -64,13 +68,18 @@ const Gradient = withBluefish((props: GradientProps) => {
 export const JetpackCompose: React.FC<{}> = withBluefish(() => {
   const resolution = useName('resolution');
   const hours = useName('hours');
+  const hoursList = useNameList(displayedHours.map((hour) => `hour-${hour}`));
   const sleepBarRows = useName('sleepBarRows');
   const sleepBars = useNameList(dayToSleepBars.map((item, i) => `sleepBar-${i}`));
+  const days = useNameList(dayToSleepBars.map((item, i) => `day-${i}`));
+  const daysColumn = useName('daysColumn');
   const selectedResolution = useName('selectedResolution');
   const selectedResolutionRect = useName('selectedResolutionRect');
 
-  const hoursBarLength = displayedHours.length * 70 + 10;
+  console.log('hours list', hoursList);
 
+  const xScale = (width: number) => scaleLinear([0, 5], [0, width]);
+  // const yScale = (height: number) => scaleLinear([0, 100], [height, 0]);
   return (
     <SVG width={1000} height={800}>
       <Gradient
@@ -93,74 +102,131 @@ export const JetpackCompose: React.FC<{}> = withBluefish(() => {
       />
       <Padding all={10}>
         <Group>
-          <Distribute direction="vertical" spacing={50}>
-            <Row spacing={100} alignment="middle" name={resolution}>
-              {displayedResolutions.map((resolution) =>
-                resolution.selected === true ? (
-                  <Group name={selectedResolution}>
-                    <Align alignment="center">
-                      <Padding {...{ left: 20, right: 0, bottom: 2, top: 0 }}>
-                        {/* not a great fix but makes the alignment actually on center */}
-                        <Rect
-                          width={80}
-                          height={30}
-                          fill="#fff"
-                          rx="10px"
-                          stroke="#EEDFAB"
-                          strokeWidth={2}
-                          name={selectedResolutionRect}
-                        />
-                      </Padding>
+          <Distribute direction="vertical" spacing={30}>
+            <Group name={resolution}>
+              <Row spacing={100} alignment="middle">
+                {displayedResolutions.map((resolution) =>
+                  resolution.selected === true ? (
+                    <Group name={selectedResolution}>
+                      <Align alignment="center">
+                        <Padding {...{ left: 20, right: 0, bottom: 2, top: 0 }}>
+                          {/* not a great fix but makes the alignment actually on center */}
+                          <Rect
+                            width={80}
+                            height={30}
+                            fill="#fff"
+                            rx="10px"
+                            stroke="#EEDFAB"
+                            strokeWidth={2}
+                            name={selectedResolutionRect}
+                          />
+                        </Padding>
 
-                      <Padding {...{ left: 0, right: 0, bottom: 2, top: 0 }}>
-                        <ComposeText contents={resolution.name} fontSize="20" />
-                      </Padding>
-                    </Align>
-                  </Group>
-                ) : (
-                  <ComposeText contents={resolution.name} fontSize="20" fill="#717171" />
-                ),
-              )}
-            </Row>
-            <Group>
-              {/* make this a contain */}
-              <Align alignment="centerRight">
-                <Rect width={hoursBarLength} height={40} fill="url(#hoursBarGradient)" rx="10px" />
-                <Padding name={hours} left={0} right={50} top={5} bottom={5}>
-                  <Row spacing={60} alignment="middle">
-                    {displayedHours.map((hour) => (
-                      <ComposeText contents={hour.toString()} />
-                    ))}
-                  </Row>
-                </Padding>
-              </Align>
+                        <Padding {...{ left: 0, right: 0, bottom: 2, top: 0 }}>
+                          <ComposeText contents={resolution.name} fontSize="20" />
+                        </Padding>
+                      </Align>
+                    </Group>
+                  ) : (
+                    <ComposeText contents={resolution.name} fontSize="20" fill="#717171" />
+                  ),
+                )}
+              </Row>
             </Group>
+            <Contain padding={{ left: 30, right: 30, top: 15, bottom: 15 }} name={hours}>
+              <Rect fill="url(#hoursBarGradient)" rx="10px" />
+              <Row spacing={60} alignment="middle">
+                {displayedHours.map((hour, ind) => (
+                  <ComposeText contents={hour.toString()} name={hoursList[ind]} key={`hour-${ind}`} />
+                ))}
+              </Row>
+            </Contain>
+            <Group name={sleepBarRows} x={0}>
+              <Group name={daysColumn}>
+                {dayToSleepBars.map((dayToSleepBar, ind) => (
+                  <ComposeText contents={dayToSleepBar.day} key={`day-${ind}`} name={days[ind]} x={0} />
+                ))}
+              </Group>
 
-            {/* Make a sort of plot where the rectangles scale */}
-            <Col spacing={20} alignment="center" name={sleepBarRows}>
-              {dayToSleepBars.map((dayToSleepBar, ind) => (
-                <Row alignment={dayToSleepBar.selected === true ? 'top' : 'middle'} totalWidth={hoursBarLength + 80}>
-                  <ComposeText contents={dayToSleepBar.day} />
+              <Distribute spacing={20} direction={'vertical'}>
+                {dayToSleepBars.map((dayToSleepBar, ind) => (
+                  // Use some sort of scaled rectangle here
                   <Rect
+                    height={dayToSleepBar.selected === true ? 100 : 30}
                     width={sleepBarWidth(dayToSleepBar.sleep)}
-                    height={dayToSleepBar.selected === true ? 80 : 30}
                     fill="url(#sleepBarGradient)"
                     rx="10px"
                     name={sleepBars[ind]}
+                    key={`sleepbar-${ind}`}
                   />
-                </Row>
-              ))}
-            </Col>
+                ))}
+              </Distribute>
+            </Group>
           </Distribute>
-          <Align x={0} alignment="right">
+          <Distribute spacing={60} direction={'horizontal'}>
+            <Ref to={daysColumn} guidePrimary={'centerRight'} />
+            <Ref to={hours} guidePrimary={'centerLeft'} />
+          </Distribute>
+
+          {/* {dayToSleepBars.map((bar, ind) => {
+            return (
+              <Align alignment="left">
+                <Ref to={hoursList.filter((hour) => hour.symbol.description === `hour-${bar.startTime}`)[0]} />
+                <Ref to={sleepBars[ind]} />
+              </Align>
+            );
+          })} */}
+          <Align alignment="right">
             <Ref to={hours} />
-            <Ref to={sleepBarRows} />
+            {sleepBars.map((sleepBar) => (
+              <Ref to={sleepBar} />
+            ))}
           </Align>
 
-          <Align x={0} alignment="centerHorizontally">
-            <Ref to={resolution} />
+          {dayToSleepBars.map((dayToSleepBar, ind) => (
+            <Align alignment={dayToSleepBar.selected ? 'top' : 'centerVertically'}>
+              <Ref to={days[ind]} />
+              <Ref to={sleepBars[ind]} />
+            </Align>
+          ))}
+
+          <Align alignment="centerHorizontally">
+            {/* <Ref to={resolution} guidePrimary="center" /> */}
             <Ref to={sleepBarRows} />
           </Align>
+          {/* <Group>
+            <Plot
+              data={dayToSleepBars}
+              x={({ width }) =>
+                () =>
+                  xScale(width)}
+              width={600}
+            >
+              <NewAxis axis={'x'} x={'startTime'} y={'sleep'} ticks={[20, 21, 22, 23, 0, 1, 2]} />
+              <Distribute direction="vertical" spacing={30}>
+                <ScaledRect
+                  xScale={xScale}
+                  yScale={() => (y: number) => y}
+                  height={20}
+                  fill="red"
+                  x1={3}
+                  x2={5}
+                  y1={0}
+                  y2={1}
+                />
+                <ScaledRect
+                  xScale={xScale}
+                  yScale={() => (y: number) => y}
+                  height={20}
+                  fill="red"
+                  x1={3}
+                  x2={5}
+                  y1={0}
+                  y2={1}
+                />
+              </Distribute>
+            </Plot>
+          </Group> */}
         </Group>
       </Padding>
     </SVG>
