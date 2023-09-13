@@ -82,6 +82,7 @@ export const JetpackCompose: React.FC<{}> = withBluefish(() => {
   // const yScale = (height: number) => scaleLinear([0, 100], [height, 0]);
   return (
     <SVG width={1000} height={800}>
+      {/* Define Gradients */}
       <Gradient
         id="sleepBarGradient"
         colorOffsets={[
@@ -103,6 +104,7 @@ export const JetpackCompose: React.FC<{}> = withBluefish(() => {
       <Padding all={10}>
         <Group>
           <Distribute direction="vertical" spacing={30}>
+            {/* Top-level resolution bar */}
             <Group name={resolution}>
               <Row spacing={100} alignment="middle">
                 {displayedResolutions.map((resolution) =>
@@ -133,6 +135,8 @@ export const JetpackCompose: React.FC<{}> = withBluefish(() => {
                 )}
               </Row>
             </Group>
+
+            {/* Hours container */}
             <Contain padding={{ left: 30, right: 30, top: 15, bottom: 15 }} name={hours}>
               <Rect fill="url(#hoursBarGradient)" rx="10px" />
               <Row spacing={60} alignment="middle">
@@ -141,6 +145,8 @@ export const JetpackCompose: React.FC<{}> = withBluefish(() => {
                 ))}
               </Row>
             </Contain>
+
+            {/* Main Sleep bars content, including the intervals and days */}
             <Group name={sleepBarRows} x={0}>
               <Group name={daysColumn}>
                 {dayToSleepBars.map((dayToSleepBar, ind) => (
@@ -163,19 +169,22 @@ export const JetpackCompose: React.FC<{}> = withBluefish(() => {
               </Distribute>
             </Group>
           </Distribute>
+          {/* Alignment */}
+
           <Distribute spacing={60} direction={'horizontal'}>
             <Ref to={daysColumn} guidePrimary={'centerRight'} />
             <Ref to={hours} guidePrimary={'centerLeft'} />
           </Distribute>
 
-          {/* {dayToSleepBars.map((bar, ind) => {
+          {dayToSleepBars.map((bar, ind) => {
             return (
               <Align alignment="left">
                 <Ref to={hoursList.filter((hour) => hour.symbol.description === `hour-${bar.startTime}`)[0]} />
                 <Ref to={sleepBars[ind]} />
               </Align>
             );
-          })} */}
+          })}
+
           <Align alignment="right">
             <Ref to={hours} />
             {sleepBars.map((sleepBar) => (
@@ -194,39 +203,6 @@ export const JetpackCompose: React.FC<{}> = withBluefish(() => {
             {/* <Ref to={resolution} guidePrimary="center" /> */}
             <Ref to={sleepBarRows} />
           </Align>
-          {/* <Group>
-            <Plot
-              data={dayToSleepBars}
-              x={({ width }) =>
-                () =>
-                  xScale(width)}
-              width={600}
-            >
-              <NewAxis axis={'x'} x={'startTime'} y={'sleep'} ticks={[20, 21, 22, 23, 0, 1, 2]} />
-              <Distribute direction="vertical" spacing={30}>
-                <ScaledRect
-                  xScale={xScale}
-                  yScale={() => (y: number) => y}
-                  height={20}
-                  fill="red"
-                  x1={3}
-                  x2={5}
-                  y1={0}
-                  y2={1}
-                />
-                <ScaledRect
-                  xScale={xScale}
-                  yScale={() => (y: number) => y}
-                  height={20}
-                  fill="red"
-                  x1={3}
-                  x2={5}
-                  y1={0}
-                  y2={1}
-                />
-              </Distribute>
-            </Plot>
-          </Group> */}
         </Group>
       </Padding>
     </SVG>
