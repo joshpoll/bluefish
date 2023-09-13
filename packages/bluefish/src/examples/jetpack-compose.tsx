@@ -200,7 +200,7 @@ export const JetpackCompose: React.FC<{}> = withBluefish(() => {
           ))}
 
           <Align alignment="centerHorizontally">
-            {/* <Ref to={resolution} guidePrimary="center" /> */}
+            <Ref to={resolution} />
             <Ref to={sleepBarRows} />
           </Align>
         </Group>
