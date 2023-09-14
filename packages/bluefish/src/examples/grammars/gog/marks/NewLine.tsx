@@ -8,16 +8,14 @@ import { PaperScope, Point } from 'paper/dist/paper-core';
 import { scaleLinear } from 'd3-scale';
 import { Encoding, createSelector } from './withEncodable';
 
-export type NewLineProps<T> = Omit<
-  React.SVGProps<SVGPathElement>,
-  'x' | 'y' | 'fill' | 'stroke' | 'width' | 'height'
-> & {
+export type NewLineProps<T> = Omit<React.SVGProps<SVGPathElement>, 'x' | 'y' | 'fill' | 'width' | 'height'> & {
   x: keyof T;
   dx?: Encoding<T>;
   y: keyof T;
   dy?: Encoding<T>;
   color?: keyof T;
   data?: T[];
+  curved?: boolean;
 };
 
 export const NewLine = withBluefish(function NewLine(props: PropsWithBluefish<NewLineProps<any>>) {
@@ -51,9 +49,10 @@ export const NewLine = withBluefish(function NewLine(props: PropsWithBluefish<Ne
         .map((d: any) => [d[props.x], d[props.y]] as [number, number])
         .filter((d: any) => d[0] !== undefined && d[1] !== undefined && !isNaN(d[0]) && !isNaN(d[1]))}
       deltas={data.map((d: any) => [selectors.dx(d), selectors.dy(d)] as [number, number])}
+      // curved={props.curved} // curved unless otherwise specified
       fill={'none'}
       stroke={props.color ?? 'black'}
-      strokeWidth={1.5}
+      strokeWidth={+(props.stroke ?? 1.5)}
       strokeLinecap={'round'}
       strokeLinejoin={'round'}
       strokeMiterlimit={1}
@@ -71,10 +70,11 @@ export type PathProps = PropsWithBluefish<
       yScale: (d: any) => (y: number) => number;
       points: [number, number][];
       deltas?: [number, number][];
+      curved?: boolean;
     }
 >;
 
-const pathMeasurePolicy = ({ points, xScale, yScale, deltas }: PathProps): Measure => {
+const pathMeasurePolicy = ({ points, xScale, yScale, deltas, curved }: PathProps): Measure => {
   const canvas = document.createElement('canvas');
   const paperScope = new PaperScope();
   paperScope.setup(canvas);
@@ -82,8 +82,7 @@ const pathMeasurePolicy = ({ points, xScale, yScale, deltas }: PathProps): Measu
     const xScaleFn = xScale(constraints.width);
     const yScaleFn = yScale(constraints.height);
 
-    const d =
-      d3Line().curve(curveCatmullRom)(points.map((p) => [xScaleFn(p[0]), yScaleFn(p[1])] as [number, number])) ?? '';
+    const d = d3Line().curve(curveCatmullRom)(points.map((p) => [xScaleFn(p[0]), yScaleFn(p[1])] as [number, number]));
     const path = new paperScope.Path(d!);
     // translate path by dx and dy
     if (deltas) {
@@ -91,7 +90,8 @@ const pathMeasurePolicy = ({ points, xScale, yScale, deltas }: PathProps): Measu
         path.segments[i].point = path.segments[i].point.add(new Point(deltas[i][0], deltas[i][1]));
       }
     }
-
+    console.log(points);
+    console.log(path);
     const bounds = path.bounds;
 
     return {
@@ -105,7 +105,7 @@ const pathMeasurePolicy = ({ points, xScale, yScale, deltas }: PathProps): Measu
 };
 
 export const PathScale = withBluefish((props: PropsWithBluefish<PathProps>) => {
-  const { points, name, xScale, yScale, ...rest } = props;
+  const { points, name, xScale, yScale, guidePrimary, ...rest } = props;
 
   const { id, bbox, boundary, domRef } = useBluefishLayout({}, props, pathMeasurePolicy(props));
 

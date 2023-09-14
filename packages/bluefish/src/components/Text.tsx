@@ -51,7 +51,7 @@ export const textMeasurePolicy = (props: TextProps) => {
 };
 
 export const Text = withBluefish((props: TextProps) => {
-  const { name, ...rest } = props;
+  const { name, guidePrimary, ...rest } = props;
   const { id, domRef, bbox, hidden } = useBluefishLayout({}, props, textMeasurePolicy(props));
 
   return (

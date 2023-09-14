@@ -4,7 +4,7 @@ import { NewBBox } from '../NewBBox';
 export type CircleProps = PropsWithBluefish<React.SVGProps<SVGCircleElement>>;
 
 export const Circle = withBluefish((props: CircleProps) => {
-  const { name, ...rest } = props;
+  const { name, guidePrimary, ...rest } = props;
   const { id, domRef, bbox } = useBluefishLayout({}, props, () => {
     const { cx, cy, r } = props;
     return {
