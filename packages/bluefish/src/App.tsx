@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { render } from './component';
@@ -142,7 +142,7 @@ function App() {
 
       {/* Less than 10 Objects */}
       {/* Times: 98.2ms, 108.3ms, 158.4ms, 90.4ms, 88.1ms */}
-      <SVG width={800} height={400}>
+      {/* <SVG width={800} height={400}>
         <PythonTutor
           variables={[variable('c', pointer(0)), variable('d', pointer(1)), variable('x', 5)]}
           objects={[tuple([1, pointer(1), pointer(2)]), tuple([1, 4]), tuple([3, 10])]}
@@ -151,7 +151,7 @@ function App() {
             [null, 1, 2],
           ]}
         />
-      </SVG>
+      </SVG> */}
 
       {/* Around 10 tuple length objects */}
       {/* Times: 247.9ms, 247.8ms, 252.7ms, 219.4ms, 215.7ms */}
@@ -378,7 +378,7 @@ function App() {
 
       {/* 750 tuple length object */}
       {/* Times:  957.33ms, 1.01s, 987.50ms, 1.07s, 975.67ms */}
-      {/* <SVG width={800} height={400}>
+      <SVG width={800} height={400}>
         <PythonTutor
           variables={[variable('c', pointer(0)), variable('d', pointer(1)), variable('x', 5)]}
           objects={[
@@ -420,7 +420,7 @@ function App() {
             [null, 1, 2],
           ]}
         />
-      </SVG> */}
+      </SVG>
     </div>
   );
 }

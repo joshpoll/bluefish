@@ -18,6 +18,7 @@ export const useMeasure = (measure: Measure, childrenRef?: any): BBox => {
 };
 
 const svgMeasurePolicy: Measure = (measurables, constraints) => {
+  const start = Date.now();
   //console.log('[svg] measure policy called');
   const placeables = measurables.map((measurable) => measurable.measure(constraints));
   //console.log('placeables', placeables);
@@ -29,6 +30,7 @@ const svgMeasurePolicy: Measure = (measurables, constraints) => {
       placeable.top = 0;
     }
   });
+  console.log('[svg] measure policy took', Date.now() - start, 'ms');
   return { width: constraints.width, height: constraints.height };
 };
 
