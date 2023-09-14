@@ -143,12 +143,22 @@ function App() {
     <div className="App">
       <br />
       <JetpackCompose />
-      {/* <SVG width={400} height={400}>
+      <SVG width={400} height={400}>
         <Molecule ariaLabel={'Diphenyl ether'} chemicalFormula={'C1=CC=C(C=C1)OC2=CC=CC=C2'} />
-      </SVG> */}
+      </SVG>
       {/* <SVG width={400} height={400}>
         <Molecule ariaLabel={'Aspirin'} chemicalFormula={'CC(OC1=C(C(=O)O)C=CC=C1)=O'} />
       </SVG> */}
+      <SVG width={800} height={400}>
+        <PythonTutor
+          variables={[variable('c', pointer(0)), variable('d', pointer(1)), variable('x', 5)]}
+          objects={[tuple([1, pointer(1), pointer(2)]), tuple([1, 4]), tuple([3, 10])]}
+          rows={[
+            [0, null, null],
+            [null, 1, 2],
+          ]}
+        />
+      </SVG>
       {/* <SVG width={800} height={400}>
         <PythonTutor
           variables={[
@@ -287,18 +297,18 @@ function App() {
           <Text contents={'this is a test caption'} />
         </Col>
       </SVG> */}
-      {/* <SVG width={1000} height={500}>
+      <SVG width={1000} height={500}>
         <UpSet />
       </SVG>
       <SVG width={1000} height={500}>
         <Playfair />
-      </SVG> */}
+      </SVG>
       {/* <SVG width={500} height={500}>
         <BertinHotel />
       </SVG> */}
       {/* <SVG width={500} height={500}>
         <Euclid />
-      </SVG> */}
+      </SVG>
       {/* <SVG width={500} height={500}>
         <Recipe
           recipe={[
