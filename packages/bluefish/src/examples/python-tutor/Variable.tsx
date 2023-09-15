@@ -7,11 +7,11 @@ import { Row } from '../../components/Row';
 import { Text } from '../../components/Text';
 
 export const Variable = withBluefish(function _Variable({ data }: { data: any }) {
-  const { pointObject, name, value, opId } = data;
+  const { name, value, id } = data;
 
   // References
-  const valueName = useName(`value`);
-  const box = useName(`box`);
+  const variableValue = useName(`variableValue`);
+  const variableBox = useName(`variableBox`);
   const boxBorderLeft = useName(`boxBorderLeft`);
   const boxBorderBottom = useName(`boxBorderBottom`);
 
@@ -19,29 +19,29 @@ export const Variable = withBluefish(function _Variable({ data }: { data: any })
   const fontFamily = 'verdana, arial, helvetica, sans-serif';
 
   return (
-    <Group name={opId}>
+    <Group name={id}>
       {/* Creates frame of Variable component (text label & box for value) */}
       <Row spacing={5} alignment="middle">
         <Text contents={name} fontSize={'24px'} fontFamily={fontFamily} fill={'black'} />
-        <Rect name={box} height={40} width={40} fill={'#e2ebf6'} />
+        <Rect name={variableBox} height={40} width={40} fill={'#e2ebf6'} />
       </Row>
       {/* Creates left and bottom edge borders */}
       <Rect name={boxBorderLeft} height={40} width={2} fill={'#a6b3b6'} />
       <Rect name={boxBorderBottom} height={2} width={40} fill={'#a6b3b6'} />
       {/* Creates text labels of variable */}
-      <Text name={valueName} contents={value} fontFamily={fontFamily} fontSize={'24px'} fill={'black'} />
+      <Text name={variableValue} contents={value} fontFamily={fontFamily} fontSize={'24px'} fill={'black'} />
       {/* Align text and border components to variable frame */}
       <Align alignment="bottomCenter">
         <Ref to={boxBorderBottom} />
-        <Ref to={box} />
+        <Ref to={variableBox} />
       </Align>
       <Align alignment="centerLeft">
         <Ref to={boxBorderLeft} />
-        <Ref to={box} />
+        <Ref to={variableBox} />
       </Align>
       <Align alignment="topCenter">
-        <Ref to={valueName} />
-        <Ref to={box} />
+        <Ref to={variableValue} />
+        <Ref to={variableBox} />
       </Align>
     </Group>
   );

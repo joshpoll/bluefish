@@ -1,15 +1,10 @@
-import { forwardRef, useRef } from 'react';
-import { Group, Rect, Align, Ref, SVG, Text, Connector } from '../../main';
+import { Group, Rect, Ref, Connector } from '../../main';
 import { Col } from '../../components/Col';
 import { Row } from '../../components/Row';
-import { useName, useNameList, withBluefish } from '../../bluefish';
-import React from 'react';
+import { withBluefish } from '../../bluefish';
 import { Distribute } from '../../components/Distribute';
-import { ElmTuple } from './ElmTuple';
-import { Variable } from './Variable';
 import { GlobalFrame } from './GlobalFrame';
 import { Objects } from './Objects';
-import { not } from 'ndarray-ops';
 
 export const variable = (variableName: string, variableValue: any) => {
   let notPointer = variableValue !== null && (typeof variableValue === 'string' || typeof variableValue === 'number');
@@ -20,21 +15,21 @@ export const variable = (variableName: string, variableValue: any) => {
   };
 };
 
-export const pointer = (pointedId: any) => {
-  return { pointObject: { opId: `o${pointedId}` } };
+export const pointer = (targetId: any) => {
+  return { pointObject: { id: `object${targetId}` } };
 };
 
 export const tuple = (objectList: any) => {
   let objectValues: any = [];
-  objectList.forEach((object: any, index: any) => {
+  objectList.forEach((object: any) => {
     let notPointer = object !== null && (typeof object === 'string' || typeof object === 'number');
 
-    let tempObject = {
+    let tempTuple = {
       type: notPointer ? 'string' : 'pointer',
       value: notPointer ? object : '',
-      pointId: notPointer ? '' : object.pointObject.opId,
+      pointId: notPointer ? '' : object.pointObject.id,
     };
-    objectValues.push(tempObject);
+    objectValues.push(tempTuple);
   });
 
   return {
@@ -44,13 +39,12 @@ export const tuple = (objectList: any) => {
 };
 
 const formatRows = (objectList: any) => {
-  console.log('received these objectList: ', objectList);
   let rows: any = [];
   objectList.forEach((object: any, index: any) => {
     let tempObject = {
       depth: index,
       nodes: object.map((element: any) => {
-        return element === null ? '' : `o${element}`;
+        return element === null ? '' : `object${element}`;
       }),
     };
     rows.push(tempObject);
@@ -66,26 +60,26 @@ export const PythonTutor = withBluefish(function ({ variables, objects, rows }: 
 
   // Add automatic naming based on indices
   variables = variables.map((v: any, index: any) => {
-    return { ...v, opId: `v${index}` };
+    return { ...v, id: `variable${index}` };
   });
 
   objects = objects.map((o: any, index: any) => {
-    return { ...o, objectId: `o${index}` };
+    return { ...o, id: `object${index}` };
   });
 
-  // lookup map for the yellow objects
+  // Create lookup map for yellow objects by id
   const objMap = new Map();
-  objects.forEach((obj: any) => objMap.set(obj.objectId, obj));
+  objects.forEach((obj: any) => objMap.set(obj.id, obj));
 
-  // lookup map for yellow objects grouped in columns
+  // Create lookup map for yellow objects by column
   const objIdByCol = new Map();
-
   rows.forEach((rowObject: any) => {
     rowObject.nodes.forEach((node: any, index: any) => {
       objIdByCol.set(
         index,
         (objIdByCol.has(index) ? objIdByCol.get(index) : []).concat([
-          node === '' ? `row${rowObject.depth}_col${index}` : node,
+          // If node is empty, create a placeholder id for element
+          node === '' ? `elementAt_row${rowObject.depth}col${index}` : node,
         ]),
       );
     });
@@ -99,50 +93,47 @@ export const PythonTutor = withBluefish(function ({ variables, objects, rows }: 
 
   const objectValues = objects.map((object: any) => {
     const objectWithPointerInfo = object.objectValues.map((element: any, index: any) => {
-      return { ...element, objectId: object.objectId, objectOrder: index };
+      return { ...element, parentObject: object.id, index: index };
     });
     return objectWithPointerInfo;
   });
 
   const objectValuesFlat = objectValues.flat();
 
-  // find start and end location for links between objects and objects
+  // Find start and end location for links between objects and objects
   const objectLinks = objectValuesFlat
-    .filter((boxObject: any) => boxObject.type == 'pointer')
+    .filter((tupleObject: any) => tupleObject.type === 'pointer')
     .map((element: any, index: any) => {
       return {
-        opId: `objectLink${index}`,
-        start: { opId: `elm_${element.objectOrder}_${element.objectId}` },
-        end: { opId: `elm_0_${element.pointId}` },
+        id: `objectLink${index}`,
+        start: { id: `${element.parentObject}_tuple${element.index}` },
+        end: { id: `${element.pointId}_tuple0` },
       };
     });
 
-  // find start and end locations for links between global frame and objects
+  // Find start and end locations for links between global frame and objects
   const variableLinks = variables
     .filter((variable: any) => variable.pointObject !== null)
     .map((variable: any, index: any) => {
       return {
-        opId: `variableLink${index}`,
-        start: { opId: variable.opId },
-        end: { opId: `elm_0_${variable.pointObject.opId}` },
+        id: `variableLink${index}`,
+        start: { id: variable.id },
+        end: { id: `${variable.pointObject.id}_tuple0` },
       };
     });
 
-  console.log('these are the cols: ', cols);
-  console.log('these are the rows:', rows);
-
   return (
     <Group>
-      <GlobalFrame variables={variables} opId={'globalFrame'} name={globalFrame} />
+      <GlobalFrame variables={variables} id={'globalFrame'} name={globalFrame} />
 
       <Group name={objectMatrix}>
         <Col alignment="left" spacing={75}>
           {rows.map((level: any, index: any) => (
             <Row name={`row${index}` as any} spacing={50} alignment={'bottom'}>
               {level.nodes.map((obj: any, objIndex: any) =>
-                obj == '' ? (
+                obj === '' ? (
                   <Rect
-                    name={`row${level.depth}_col${objIndex}` as any}
+                    name={`elementAt_row${level.depth}col${objIndex}` as any}
                     height={60}
                     width={140}
                     fill={'none'}
@@ -155,21 +146,6 @@ export const PythonTutor = withBluefish(function ({ variables, objects, rows }: 
             </Row>
           ))}
         </Col>
-
-        {/* {cols.map((columns: any, index: any) => (
-          <Col alignment={'left'} name={`col${index}` as any} spacing={50}>
-            {columns.nodes.map((objectId: any) => (
-              <Ref to={objectId} />
-            ))}
-          </Col>
-        ))} */}
-        {/* {cols.map((columns: any, index: any) => (
-          <Distribute direction={'vertical'} name={`col${index}` as any} spacing={50}>
-            {columns.nodes.map((objectId: any) => (
-              <Ref to={objectId} />
-            ))}
-          </Distribute>
-        ))} */}
       </Group>
 
       <Distribute direction={'horizontal'} spacing={60}>
@@ -183,37 +159,29 @@ export const PythonTutor = withBluefish(function ({ variables, objects, rows }: 
       </Distribute>
 
       {objectLinks.map((link: any) => (
-        <Group>
-          <Link {...link} />
-        </Group>
+        <Link {...link} />
       ))}
 
       {variableLinks.map((link: any) => (
-        <Group>
-          <Link {...link} />
-        </Group>
+        <Link {...link} />
       ))}
     </Group>
   );
 });
 
-export const Link = withBluefish(function _Link({ opId, start, end }: { opId: any; start: any; end: any }) {
-  const groupRef = useName(opId);
-  const startName = useName(start.opId);
-  const endName = useName(end.opId);
-  console.log('found this connector: ', opId, start, end);
+export const Link = withBluefish(function _Link({ id, start, end }: { id: any; start: any; end: any }) {
   return (
     <Group>
       <Connector
-        name={opId}
+        name={id}
         $from={'center'}
         $to={'centerLeft'}
         stroke={'cornflowerblue'}
         strokeWidth={3}
         strokeDasharray={0}
       >
-        <Ref to={start.opId} />
-        <Ref to={end.opId} />
+        <Ref to={start.id} />
+        <Ref to={end.id} />
       </Connector>
     </Group>
   );

@@ -8,30 +8,25 @@ import { Ref } from '../../components/Ref';
 import { Variable } from './Variable';
 import { Text } from '../../components/Text';
 
-export const GlobalFrame = withBluefish(function _GlobalFrame({ variables, opId }: { variables: any; opId: any }) {
+export const GlobalFrame = withBluefish(function _GlobalFrame({ variables, id }: { variables: any; id: any }) {
   // References
-  const frame = useName(`frame_${opId}`);
-  const opIdLabel = useName(`opIdLabel_${opId}`);
-  const frameVariables = useName(`frameVariables_${opId}`);
-  const frameBorder = useName(`frameBorder_${opId}`);
-
-  // Font declaration
+  const frame = useName(`frame_${id}`);
+  const frameLabel = useName(`frameLabel_${id}`);
+  const frameVariables = useName(`frameVariables_${id}`);
+  const frameBorder = useName(`frameBorder_${id}`);
   const fontFamily = 'Andale mono, monospace';
 
   return (
-    <Group name={opId}>
-      {/* Global Frame and relevant text */}
+    <Group name={id}>
       <Rect name={frame} height={300} width={200} fill={'#e2ebf6'} />
       <Rect name={frameBorder} height={300} width={5} fill={'#a6b3b6'} />
-      <Text name={opIdLabel} contents={'Global Frame'} fontSize={'24px'} fontFamily={fontFamily} fill={'black'} />
+      <Text name={frameLabel} contents={'Global Frame'} fontSize={'24px'} fontFamily={fontFamily} fill={'black'} />
       <Align alignment="topCenter">
-        <Ref to={opIdLabel} />
+        <Ref to={frameLabel} />
         <Ref to={frame} />
       </Align>
-      {/* TODO: this Space and Align should be a Col, but Col overwrites *all* placeable positions
-            even though opIdLabel has already been placed */}
       <Distribute direction="vertical" spacing={10}>
-        <Ref to={opIdLabel} />
+        <Ref to={frameLabel} />
         <Col name={frameVariables} spacing={10} alignment={'right'}>
           {variables.map((variable: any) => (
             <Variable data={variable} />
@@ -40,7 +35,7 @@ export const GlobalFrame = withBluefish(function _GlobalFrame({ variables, opId 
       </Distribute>
       <Align alignment="right">
         <Ref to={frameVariables} />
-        <Ref to={opIdLabel} />
+        <Ref to={frameLabel} />
       </Align>
       <Align alignment="centerLeft">
         <Ref to={frameBorder} />
