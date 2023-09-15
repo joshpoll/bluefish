@@ -143,6 +143,9 @@ function App() {
   return (
     <div className="App">
       <br />
+      {/* <SVG width={500} height={500}>
+        <Euclid />
+      </SVG> */}
       <Planets />
       {/* <JetpackCompose />
       <SVG width={400} height={400}>

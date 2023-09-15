@@ -139,6 +139,108 @@ export const Square = withBluefish((props: any) => {
   );
 });
 
+// computes bounding box for the line-line intersection of the input children. assumes there are
+// exactly two
+function intersectionMeasurePolicy(props: any): Measure {
+  const canvas = document.createElement('canvas');
+  const paperScope = new PaperScope();
+  paperScope.setup(canvas);
+  return (measurables, constraints: Constraints) => {
+    const placeables = measurables.map((measurable) => measurable.measure(constraints));
+
+    // assume there are exactly two placeables
+    const [a, b] = placeables;
+
+    const aBoundary = (a! as any).boundary as paper.Path;
+    const bBoundary = (b! as any).boundary as paper.Path;
+
+    const intersection = aBoundary.getIntersections(bBoundary)[0].point;
+
+    return {
+      left: intersection.x,
+      top: intersection.y,
+      width: 0,
+      height: 0,
+      coord: {
+        translate: {
+          x: 0,
+          y: 0,
+        },
+      },
+      // boundary: intersection,
+    };
+  };
+}
+
+// line-line intersection
+export const Intersect = withBluefish((props: any) => {
+  const { id, domRef, children, bbox, boundary } = useBluefishLayout({}, props, intersectionMeasurePolicy(props));
+
+  return (
+    <g
+      id={id}
+      ref={domRef}
+      transform={`translate(${bbox!.coord?.translate?.x ?? 0}, ${bbox!.coord?.translate?.y ?? 0})`}
+    >
+      {children}
+      <circle cx={bbox?.left} cy={bbox?.top} r={5} fill="black" />
+    </g>
+  );
+});
+
+// computes path for a perpendicular line. assumes there are exactly two
+// children. the first is pointlike and the second is linelike. the line is perpendicular to the
+// second child and passes through the first child
+function perpendicularLineMeasurePolicy(props: any): Measure {
+  const canvas = document.createElement('canvas');
+  const paperScope = new PaperScope();
+  paperScope.setup(canvas);
+  return (measurables, constraints: Constraints) => {
+    const placeables = measurables.map((measurable) => measurable.measure(constraints));
+
+    // assume there are exactly two placeables
+    const [a, b] = placeables;
+    console.log('here', a, b);
+
+    // use the paper library to compute the perpendicular line
+    const aPoint = new paperScope.Point(a!.left!, a!.top!);
+    const bPath = (b! as any).boundary as paper.Path;
+    const pointOnLine = bPath.getNearestPoint(aPoint);
+    const perpendicularLine = new paperScope.Path();
+    perpendicularLine.add(aPoint);
+    perpendicularLine.add(pointOnLine);
+
+    return {
+      left: perpendicularLine.bounds.left,
+      top: perpendicularLine.bounds.top,
+      width: perpendicularLine.bounds.width,
+      height: perpendicularLine.bounds.height,
+      coord: {
+        translate: {
+          x: 0,
+          y: 0,
+        },
+      },
+      boundary: perpendicularLine,
+    };
+  };
+}
+
+const PerpendicularLine = withBluefish((props: any) => {
+  const { id, domRef, children, bbox, boundary } = useBluefishLayout({}, props, perpendicularLineMeasurePolicy(props));
+
+  return (
+    <g
+      id={id}
+      ref={domRef}
+      transform={`translate(${bbox!.coord?.translate?.x ?? 0}, ${bbox!.coord?.translate?.y ?? 0})`}
+    >
+      {children}
+      <path d={boundary?.pathData} stroke="black" />
+    </g>
+  );
+});
+
 export const Euclid = withBluefish((props: any) => {
   const a = useName('a');
   const b = useName('b');
@@ -274,24 +376,24 @@ export const Euclid = withBluefish((props: any) => {
           <Ref select={c} />
         </Connector> */}
       {/* squares are complete! */}
-      {/* <Intersect name={l} label={'L'}>
-        <Hidden>
-          <Connector>
-            <Ref select={d} />
-            <Ref select={e} />
-          </Connector>
-        </Hidden>
-        <Hidden>
-          <PerpendicularBisector>
-            <Ref select={a} />
-            <Ref select={bc} />
-          </PerpendicularBisector>
-        </Hidden>
+      <Intersect name={l} label={'L'}>
+        {/* <Hidden> */}
+        <Connector>
+          <Ref select={d} />
+          <Ref select={e} />
+        </Connector>
+        {/* </Hidden> */}
+        {/* <Hidden> */}
+        <PerpendicularLine>
+          <Ref select={a} />
+          <Ref select={bc} />
+        </PerpendicularLine>
+        {/* </Hidden> */}
       </Intersect>
       <Connector strokeDasharray={4}>
         <Ref select={a} />
         <Ref select={l} />
-      </Connector> */}
+      </Connector>
     </Group>
     // </Padding>
   );

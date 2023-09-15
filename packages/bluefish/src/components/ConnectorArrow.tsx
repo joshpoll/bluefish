@@ -13,7 +13,6 @@ import {
 import { NewBBox, NewBBoxClass } from '../NewBBox';
 import { Alignment2D, splitAlignment } from './Align';
 import { rowMeasurePolicy } from './Row';
-import { PaperScope } from 'paper/dist/paper-core';
 
 // export type ConnectorProps = React.SVGProps<SVGLineElement> & {
 //   $from: {
@@ -33,9 +32,6 @@ export type LinkProps = PropsWithBluefish<
 >;
 
 const connectorMeasurePolicy = (props: LinkProps): Measure => {
-  const canvas = document.createElement('canvas');
-  const paperScope = new PaperScope();
-  paperScope.setup(canvas);
   return (measurables, constraints: any) => {
     const [from, to] = measurables.map((m) => m.measure(constraints));
     const [fromYDir, fromXDir] = splitAlignment(props.$from ?? measurables[0].guidePrimary ?? 'center');
@@ -133,7 +129,16 @@ const connectorMeasurePolicy = (props: LinkProps): Measure => {
       bottom: toY,
     };
 
-    const newBBox = oldBBox;
+    // add padding to oldBBox
+    const padding = 5;
+    const newBBox = {
+      left: oldBBox.left,
+      top: oldBBox.top! + padding,
+      width: oldBBox.width,
+      height: oldBBox.height! - 2 * padding,
+      right: oldBBox.right,
+      bottom: oldBBox.bottom! - padding,
+    };
 
     return {
       left,
@@ -145,23 +150,17 @@ const connectorMeasurePolicy = (props: LinkProps): Measure => {
       coord: {
         translate: { x: 0, y: 0 },
       },
-      // boundary: newBBox as any,
-      boundary: new paperScope.Path({
-        segments: [
-          [fromX, fromY],
-          [toX, toY],
-        ],
-      }),
+      boundary: newBBox as any,
     };
   };
 };
 
 // TODO: note that if `children` is not placed, this doesn't actually measure anything!
 // I'm not sure why...
-export const Link = withBluefish((props: PropsWithChildren<LinkProps>) => {
+export const ConnectorArrow = withBluefish((props: PropsWithChildren<LinkProps>) => {
   const { id, domRef, children, boundary } = useBluefishLayout({}, props, connectorMeasurePolicy(props));
 
-  const bbox = boundary?.bounds;
+  const bbox = boundary as unknown as NewBBoxClass;
 
   const { $from, $to, name, ...rest } = props;
   return (
@@ -174,9 +173,30 @@ export const Link = withBluefish((props: PropsWithChildren<LinkProps>) => {
         x1={bbox?.left ?? 0}
         x2={(bbox?.left ?? 0) + (bbox?.width ?? 0)}
         y1={bbox?.top ?? 0}
-        y2={(bbox?.top ?? 0) + (bbox?.height ?? 0)}
+        y2={(bbox?.top ?? 0) + (bbox?.height ?? 0) - 7}
+      />
+      {/* draw a triangle at the end of the line like an arrowhead */}
+      {/* <polygon
+        points={`${(bbox?.left ?? 0) + (bbox?.width ?? 0)},${(bbox?.top ?? 0) + (bbox?.height ?? 0)} ${
+          (bbox?.left ?? 0) + (bbox?.width ?? 0) - 10
+        },${(bbox?.top ?? 0) + (bbox?.height ?? 0) - 5} ${(bbox?.left ?? 0) + (bbox?.width ?? 0) - 10},${
+          (bbox?.top ?? 0) + (bbox?.height ?? 0) + 5
+        }`}
+        fill={props.stroke ?? 'black'}
+      /> */}
+      {/* the version above isn't rotated correctly */}
+      <polygon
+        points={`${(bbox?.left ?? 0) + (bbox?.width ?? 0)},${(bbox?.top ?? 0) + (bbox?.height ?? 0)} ${
+          (bbox?.left ?? 0) + (bbox?.width ?? 0) - 10
+        },${(bbox?.top ?? 0) + (bbox?.height ?? 0) - 5} ${(bbox?.left ?? 0) + (bbox?.width ?? 0) - 10},${
+          (bbox?.top ?? 0) + (bbox?.height ?? 0) + 5
+        }`}
+        fill={props.stroke ?? 'black'}
+        transform={`rotate(90 ${(bbox?.left ?? 0) + (bbox?.width ?? 0)} ${(bbox?.top ?? 0) + (bbox?.height ?? 0)})
+        translate(0, 0)
+        `}
       />
     </>
   );
 });
-Link.displayName = 'Link';
+ConnectorArrow.displayName = 'ConnectorArrow';

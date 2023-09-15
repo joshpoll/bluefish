@@ -1,5 +1,6 @@
 import { useName, withBluefish } from '../bluefish';
 import { Background } from '../components/Background';
+import { ConnectorArrow } from '../components/ConnectorArrow';
 import { Distribute } from '../components/Distribute';
 import { Align, Circle, Col, Connector, Group, Padding, Rect, Ref, Row, SVG, Text } from '../main';
 
@@ -46,21 +47,21 @@ export const Planets = withBluefish(() => {
             <Ref to={planets} />
           </Distribute>
 
-          <Connector stroke={'black'} strokeWidth={3}>
+          <ConnectorArrow stroke={'black'} strokeWidth={3}>
             <Ref select={label} guidePrimary={'bottomCenter'} />
             <Ref select={mercury} guidePrimary={'topCenter'} />
-          </Connector>
+          </ConnectorArrow>
 
           <Background padding={{ all: 15 }}>
             <Ref select={planets} />
-            <Rect fill="None" strokeWidth={3} stroke="Black" />
+            <Rect fill="none" strokeWidth={3} stroke="black" />
           </Background>
-          {/* <Background padding={{ left: 10, right: 30, top: 10, bottom: 10 }}>
+          {/* <Background padding={{ left: 10, right: 20, top: 10, bottom: 10 }}>
             <Group>
               <Ref select={label} />
               <Ref select={mercury} />
             </Group>
-            <Rect fill="None" strokeWidth={3} stroke="Black" />
+            <Rect fill="none" strokeWidth={3} stroke="black" />
           </Background> */}
         </Group>
       </Padding>
