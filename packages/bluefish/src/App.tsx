@@ -193,11 +193,10 @@ function App() {
           </Background>
           <Background>
             <Group fixed={true}>
-              <Ref to={lookup(chemical2, 'vertex-8')} />
               <Ref to={lookup(chemical2, 'vertex-9')} />
-              <Ref to={lookup(chemical2, 'vertex-10')} />
-              <Ref to={lookup(chemical2, 'vertex-11')} />
               <Ref to={lookup(chemical2, 'vertex-3')} />
+              <Ref to={lookup(chemical2, 'vertex-8')} />
+              <Ref to={lookup(chemical2, 'vertex-11')} />
             </Group>
             <Circle fill={'none'} stroke={'blue'} />
           </Background>
