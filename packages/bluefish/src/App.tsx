@@ -138,15 +138,124 @@ function App() {
   const autoAssign2 = useName('autoAssign2');
   const autoAssign3 = useName('autoAssign3');
 
+  const chemical1 = useName('chemical1');
   const chemical2 = useName('chemical2');
+  const chemical3 = useName('chemical3');
+  const chemical4 = useName('chemical4');
+  const chemical5 = useName('chemical5');
 
   return (
     <div className="App">
+      {/* Diphenyl ether */}
+      {/* <SVG width={500} height={500}>
+        <Group>
+          <Molecule name={chemical1} chemicalFormula={'C1=CC=C(C=C1)OC2=CC=CC=C2'} />
+          <PointLabel
+            texts={[{ label: <Text contents={'Diphenyl Ether'} />, ref: lookup(chemical1, 'vertex-5') }]}
+            compare={undefined}
+            offset={[1]}
+            anchor={Anchors}
+            avoidElements={[]}
+            avoidRefElements
+            padding={0}
+          />
+        </Group>
+      </SVG> */}
+
+      {/* Aspirin */}
+      <SVG width={500} height={500}>
+        <Group>
+          <Molecule name={chemical2} chemicalFormula={'CC(OC1=C(C(=O)O)C=CC=C1)=O'} />
+          <PointLabel
+            texts={[
+              { label: <Text contents={'Aspirin'} />, ref: lookup(chemical2, 'vertex-7') },
+              {
+                label: <Text contents={'Benzene'} fill={'blue'} stroke={'blue'} />,
+                ref: lookup(chemical2, 'vertex-10'),
+              },
+              { label: <Text contents={'Ester'} fill={'red'} stroke={'red'} />, ref: lookup(chemical2, 'vertex-0') },
+            ]}
+            compare={undefined}
+            offset={[1]}
+            anchor={Anchors}
+            avoidElements={[]}
+            avoidRefElements
+            padding={0}
+          />
+          <Background>
+            <Group fixed={true}>
+              <Ref to={lookup(chemical2, 'vertex-0')} />
+              <Ref to={lookup(chemical2, 'vertex-1')} />
+              <Ref to={lookup(chemical2, 'vertex-2')} />
+              <Ref to={lookup(chemical2, 'vertex-12')} />
+            </Group>
+            <Rect fill={'none'} stroke={'red'} />
+          </Background>
+          <Background>
+            <Group fixed={true}>
+              <Ref to={lookup(chemical2, 'vertex-8')} />
+              <Ref to={lookup(chemical2, 'vertex-9')} />
+              <Ref to={lookup(chemical2, 'vertex-10')} />
+              <Ref to={lookup(chemical2, 'vertex-11')} />
+              <Ref to={lookup(chemical2, 'vertex-3')} />
+            </Group>
+            <Circle fill={'none'} stroke={'blue'} />
+          </Background>
+        </Group>
+      </SVG>
+
+      {/* Nicotine */}
+      {/* <SVG width={500} height={500}>
+        <Group>
+          <Molecule name={chemical3} chemicalFormula={'CN1CCCC1C2=CN=CC=C2'} />
+          <PointLabel
+            texts={[{ label: <Text contents={'Nicotine'} />, ref: lookup(chemical3, 'vertex-10') }]}
+            compare={undefined}
+            offset={[1]}
+            anchor={Anchors}
+            avoidElements={[]}
+            avoidRefElements
+            padding={0}
+          />
+        </Group>
+      </SVG> */}
+
+      {/* Sucrose */}
+      {/* <SVG width={500} height={500}>
+        <Group>
+          <Molecule name={chemical4} chemicalFormula={'C(C1C(C(C(C(O1)OC2(C(C(C(O2)CO)O)O)CO)O)O)O)O'} />
+          <PointLabel
+            texts={[{ label: <Text contents={'Sucrose'} />, ref: lookup(chemical4, 'vertex-21') }]}
+            compare={undefined}
+            offset={[1]}
+            anchor={Anchors}
+            avoidElements={[]}
+            avoidRefElements
+            padding={0}
+          />
+        </Group>
+      </SVG> */}
+
+      {/* Penicillin */}
+      {/* <SVG width={600} height={600}>
+        <Group>
+          <Molecule name={chemical5} chemicalFormula={'CC1(C(N2C(S1)C(C2=O)NC(=O)CC3=CC=CC=C3)C(=O)O)C'} />
+          <PointLabel
+            texts={[{ label: <Text contents={'Penicillin'} />, ref: lookup(chemical5, 'vertex-21') }]}
+            compare={undefined}
+            offset={[1]}
+            anchor={Anchors}
+            avoidElements={[]}
+            avoidRefElements
+            padding={0}
+          />
+        </Group>
+      </SVG> */}
       <br />
       {/* <SVG width={500} height={500}>
         <Euclid />
       </SVG> */}
-      <Planets />
+      {/* <Planets /> */}
       {/* <JetpackCompose />
       <SVG width={400} height={400}>
         <Molecule ariaLabel={'Diphenyl ether'} chemicalFormula={'C1=CC=C(C=C1)OC2=CC=CC=C2'} />

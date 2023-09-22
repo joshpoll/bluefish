@@ -4,7 +4,7 @@ import { Measure, NewPlaceable, PropsWithBluefish, useBluefishLayout, withBluefi
 import { NewBBox } from '../NewBBox';
 
 const groupMeasurePolicy =
-  (props: { positionChildren?: boolean; x?: number; y?: number }): Measure =>
+  (props: { positionChildren?: boolean; x?: number; y?: number; fixed?: boolean }): Measure =>
   (measurables, constraints) => {
     const placeables = measurables.map((measurable, idx) => {
       // console.log('[set to] name', measurable.name);
@@ -45,8 +45,8 @@ const groupMeasurePolicy =
       height: bottom - top,
       coord: {
         translate: {
-          x: props.x ? props.x - left : undefined,
-          y: props.y ? props.y - top : undefined,
+          x: props.x ? props.x - left : props.fixed ? 0 : undefined,
+          y: props.y ? props.y - top : props.fixed ? 0 : undefined,
         },
       },
     };
@@ -63,6 +63,7 @@ export const Group = withBluefish(
         debug?: boolean;
         x?: number;
         y?: number;
+        fixed?: boolean;
       } & React.SVGProps<SVGGElement>
     >,
   ) => {
