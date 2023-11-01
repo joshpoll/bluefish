@@ -2,7 +2,7 @@ import { useName, withBluefish } from '../bluefish';
 import { Background } from '../components/Background';
 import { ConnectorArrow } from '../components/ConnectorArrow';
 import { Distribute } from '../components/Distribute';
-import { Align, Circle, Col, Connector, Group, Padding, Rect, Ref, Row, SVG, Text } from '../main';
+import { Align, Circle, Col, Connector, Group, Padding, Rect, Ref, Row, SVG, Text, Arrow } from '../main';
 
 export const Planets = withBluefish(() => {
   const mercury = useName('mercury');
@@ -14,14 +14,14 @@ export const Planets = withBluefish(() => {
       <Padding all={80}>
         <Group>
           <Background>
-            <Row spacing={50} alignment="centerY" name={planets}>
+            <Row spacing={50} alignment="middle" name={planets}>
               <Circle name={mercury} r={15} fill="#EBE3CF" />
               <Circle r={36} fill="#DC933C" />
               <Circle r={38} fill="#179DD7" />
               <Circle r={21} fill="#F1CF8E" />
             </Row>
           </Background>
-          <Align alignment="centerX">
+          <Align alignment="center">
             <Text name={label} contents="Mercury" />
             <Ref select={mercury} />
           </Align>
@@ -29,16 +29,17 @@ export const Planets = withBluefish(() => {
             <Ref to={label} />
             <Ref to={planets} />
           </Distribute>
-          <Arrow>
+					{/*<Arrow>
             <Ref select={label} />
             <Ref select={mercury} />
-          </Arrow>
+          </Arrow>*/}
         </Group>
       </Padding>
     </SVG>
   );
 });
 
+/*
 const [mercury, mercuryBounds] = useMeasure();
 const [label, labelBounds] = useMeasure();
 
@@ -56,9 +57,10 @@ const [label, labelBounds] = useMeasure();
     y={mercuryBounds.top - labelBounds.height - 10}
   />
   <Rect
-    x={min(mercuryBounds.left, labelBounds.left)}
-    y={min(mercuryBounds.top, labelBounds.top)}
-    width={max(mercuryBounds.right, labelBounds.right) - min(mercuryBounds.left, labelBounds.left)}
-    height={max(mercuryBounds.bottom, labelBounds.bottom) - min(mercuryBounds.top, labelBounds.top)}
+    x={Math.min(mercuryBounds.left, labelBounds.left)}
+    y={Math.min(mercuryBounds.top, labelBounds.top)}
+    width={Math.max(mercuryBounds.right, labelBounds.right) - Math.min(mercuryBounds.left, labelBounds.left)}
+    height={Math.max(mercuryBounds.bottom, labelBounds.bottom) - Math.min(mercuryBounds.top, labelBounds.top)}
   />
 </Group>;
+//*/
