@@ -48,12 +48,15 @@
     "start": "react-scripts start",
     "build": "npx rollup -c rollup.config.ts",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "plugin:storybook/recommended"
     ]
   },
   "browserslist": {
@@ -73,15 +76,29 @@
     "@rollup/plugin-json": "^5.0.1",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-replace": "^5.0.1",
+    "@storybook/addon-essentials": "^7.5.2",
+    "@storybook/addon-interactions": "^7.5.2",
+    "@storybook/addon-links": "^7.5.2",
+    "@storybook/addon-onboarding": "^1.0.8",
+    "@storybook/blocks": "^7.5.2",
+    "@storybook/preset-create-react-app": "^7.5.2",
+    "@storybook/react": "^7.5.2",
+    "@storybook/react-webpack5": "^7.5.2",
+    "@storybook/testing-library": "^0.2.2",
     "@types/d3-array": "^3.0.3",
     "@types/lodash": "^4.14.182",
     "@types/ndarray": "^1.0.11",
     "@types/ndarray-ops": "^1.2.4",
     "@types/react-is": "^17.0.3",
+    "babel-plugin-named-exports-order": "^0.0.2",
+    "eslint-plugin-storybook": "^0.6.15",
     "ndarray": "^1.0.19",
     "ndarray-ops": "^1.2.2",
     "prettier": "^2.7.1",
+    "prop-types": "^15.8.1",
     "rollup-plugin-polyfill-node": "^0.11.0",
-    "vega-scale": "^7.2.0"
+    "storybook": "^7.5.2",
+    "vega-scale": "^7.2.0",
+    "webpack": "^5.89.0"
   }
 }
